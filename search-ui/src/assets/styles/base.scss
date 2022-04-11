@@ -1,0 +1,387 @@
+@import 'theme.scss';
+
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/BCSans/BCSans-Regular.woff2') format('woff2'),
+    /* Optimized for very modern browsers */
+      url('../fonts/BCSans/BCSans-Regular.woff') format('woff'); /* Modern Browsers */
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/BCSans/BCSans-Italic.woff2') format('woff2'),
+    /* Optimized for very modern browsers */
+      url('../fonts/BCSans/BCSans-Italic.woff') format('woff'); /* Modern Browsers */
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/BCSans/BCSans-Bold.woff2') format('woff2'),
+    /* Modern Browsers */ url('../fonts/BCSans/BCSans-Bold.woff') format('woff'); /* Optimized for very modern browsers */
+}
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/BCSans/BCSans-BoldItalic.woff2') format('woff2'),
+    /* Modern Browsers */ url('../fonts/BCSans/BCSans-BoldItalic.woff')
+      format('woff'); /* Optimized for very modern browsers */
+}
+
+html,
+body {
+  min-height: 100vh;
+}
+
+html {
+  // default font size (14px)
+  font-size: 0.875rem;
+}
+
+@media (min-width: 960px) {
+  html {
+    // default font size (16px)
+    font-size: 1rem;
+  }
+}
+
+body {
+  font-size: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: $gray9;
+}
+
+h1,
+h2 {
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 2.25rem;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 2.25rem;
+}
+
+p {
+  font-weight: 400;
+}
+
+.v-application {
+  font-family: 'BCSans', Verdana, Arial, sans-serif; // BC Government Font
+}
+
+.theme--light.v-application {
+  background-color: $gray1;
+  color: $gray7;
+}
+
+.form-input {
+  display: flex;
+  border: 1px solid $gray5;
+  width: 10rem;
+
+  .prefix {
+    flex: 0 0 auto;
+    width: 2.5rem;
+    padding: 0.5rem;
+    background-color: $gray1;
+    border-right: 1px solid $gray5;
+    text-align: center;
+  }
+
+  input,
+  select {
+    padding-left: 0.5rem;
+    height: 36px;
+  }
+
+  input {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  select {
+    flex: 1 1 auto;
+    -webkit-appearance: menulist;
+  }
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.pre-line {
+  white-space: pre-line;
+}
+
+.align-center {
+  text-align: center !important;
+}
+
+.align-left {
+  text-align: left !important;
+}
+
+.align-right {
+  text-align: right !important;
+}
+
+// custom common padding shortcut classes
+.pb-30px {
+  padding-bottom: 30px !important;
+}
+.pt-30px {
+  padding-top: 30px !important;
+}
+.py-30px {
+  padding-bottom: 30px !important;
+  padding-top: 30px !important;
+}
+
+// common border styles
+.border-btm {
+  border-bottom: 1px solid $gray3;
+}
+.border-tp {
+  border-top: 1px solid $gray3;
+}
+
+.rounded-bottom {
+  border-radius: 0px 0px 4px 4px;
+}
+
+.rounded-top {
+  border-radius: 4px 4px 0px 0px;
+}
+
+// dialog styles
+.dialog-btn {
+  box-shadow: none;
+  min-width: 6rem !important;
+}
+
+.dialog-checkbox {
+  color: $gray9;
+}
+
+.dialog-title {
+  color: $gray9;
+  font-size: 1.5rem;
+  line-height: 1.625rem;
+}
+
+.dialog-text {
+  color: $gray7;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+// fade animations
+.fade-out {
+  animation: fadeOut 2s forwards;
+}
+
+// NB: 'fade enter' looks better without transition
+// .fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+// .fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+    display: block;
+  }
+  100% {
+    opacity: 0;
+    display: none;
+    z-index: -5;
+  }
+}
+
+// Hides an element to all devices except screen readers
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Vue Affix
+.vue-affix {
+  width: 282px;
+}
+
+.v-application div.invalid-message {
+  border-left: 3px solid $error !important;
+}
+
+// common error styles
+span.invalid-message {
+  font-size: 16px;
+  color: $error !important;
+}
+
+span.invalid-color {
+  color: $error;
+}
+
+.invalid-link {
+  padding: 0.25rem;
+  font-size: 16px;
+  color: #1669bb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// common text styles
+.generic-link {
+  color: #1669bb;
+  text-decoration: underline;
+}
+
+.generic-label {
+  color: $gray9;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.disabled-text {
+  opacity: 0.4;
+}
+
+// common tooltip styles
+.top-tooltip,
+.left-tooltip {
+  margin-left: 0 !important;
+}
+
+.top-tooltip:after {
+  top: 100% !important;
+  left: 45% !important;
+  margin-top: 0 !important;
+  border-right: 10px solid transparent !important;
+  border-left: 10px solid transparent !important;
+  border-top: 8px solid RGBA(73, 80, 87, 0.95) !important;
+}
+
+.left-tooltip:after {
+  top: 50% !important;
+  left: 100% !important;
+  margin-top: -10px !important;
+  border-bottom: 10px solid transparent !important;
+  border-top: 10px solid transparent !important;
+  border-right: 10px solid transparent !important;
+  border-left: 8px solid RGBA(73, 80, 87, 0.95) !important;
+}
+
+.bottom-tooltip {
+  width: 390px !important;
+}
+
+.bottom-tooltip:after {
+  left: 45% !important;
+  top: 0 !important;
+  margin-top: -18px !important;
+  border-top: 10px solid transparent !important;
+  border-left: 10px solid transparent !important;
+  border-right: 10px solid transparent !important;
+  border-bottom: 8px solid RGBA(73, 80, 87, 0.95) !important;
+}
+
+// tombstone styles
+.tombstone-header {
+  color: $gray9;
+  font-size: 1.25rem;
+  font-weight: bold;
+  vertical-align: bottom;
+}
+.tombstone-info {
+  color: $gray7;
+  font-size: 0.875rem;
+  vertical-align: bottom;
+}
+.tombstone-sub-header {
+  color: $gray7;
+  font-size: 1rem;
+  padding-top: 6px;
+  vertical-align: bottom;
+}
+
+// common table header classes
+.min-column-lg {
+  min-width: 15.5rem;
+  width: 100%;
+}
+
+.min-column-md {
+  min-width: 13rem;
+  width: 100%;
+}
+
+.min-column-mdl {
+  min-width: 14rem;
+  width: 100%;
+}
+
+.min-column-mds {
+  min-width: 13rem;
+  width: 100%;
+  max-width: 13rem;
+}
+
+.min-column-mdxs {
+  min-width: 9rem;
+  width: 100%;
+}
+
+.min-column-sm {
+  max-width: 6rem;
+  min-width: 6rem;
+  width: 100%;
+}
+
+// pdf button
+.pdf-btn {
+  background-color: transparent !important;
+  color: $primary-blue !important;
+  justify-content: start;
+}
+.pdf-btn::before, .pdf-btn::after, .pdf-btn:hover {
+  background-color: transparent !important;
+  color: $primary-blue !important;
+  text-decoration: underline;
+}

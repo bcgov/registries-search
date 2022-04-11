@@ -1,0 +1,278 @@
+// Vuetify Overrides
+@import 'theme.scss';
+
+.v-list-item--link:before {
+  background-color: inherit;
+}
+
+// tables
+table {
+  table-layout: fixed;
+}
+th {
+  color: $gray9 !important;
+  font-size: 0.875rem !important;
+}
+td {
+  color: $gray7 !important;
+  font-size: 0.875rem !important;
+  min-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tbody {
+  tr:hover {
+    background-color: transparent !important;
+  }
+}
+
+// Buttons
+.v-btn {
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: normal;
+  padding: inherit 28px !important;
+  text-transform: none;
+  .v-icon + span,
+  span + .v-icon {
+    margin-left: 0.25rem;
+  }
+}
+
+.v-btn:before {
+  color: inherit;
+}
+
+.v-btn.primary {
+  background-color: $primary-blue !important;
+  color: white !important;
+  font-weight: 700;
+}
+
+.v-btn.primary.copy-normal {
+  font-weight: normal;
+}
+
+.v-btn:not(.v-btn--round).v-size--default {
+  height: 44px;
+  min-width: 40px;
+}
+
+.v-btn:not(.v-btn--round).v-size--large {
+  min-width: 88px;
+}
+
+.v-btn.outlined {
+  color: $primary-blue !important;
+  background-color: white !important;
+  border: 1px solid $primary-blue !important;
+}
+
+.v-btn--outlined, .v-btn--text {
+  font-weight: normal;
+}
+
+// sbc-common-components
+.sbc-header {
+  .v-btn {
+    background-color: rgba(0, 0, 0, 0) !important;
+    text-transform: none !important;
+    font-weight: normal !important;
+    letter-spacing: normal !important;
+    font-size: 0.875rem !important;
+  }
+}
+
+// Text Inputs
+.v-text-field--box .v-label--active,
+.v-text-field--full-width .v-label--active,
+.v-text-field--outline .v-label--active {
+  transform: translateY(-8px) scale(0.75);
+}
+
+// Dialogs
+.v-dialog {
+  margin: 2rem;
+
+  .v-card {
+    .v-card__title {
+      padding: 1.25rem 1.5rem;
+      color: $BCgovFontColorInverted;
+      background: $BCgovBlue5;
+      font-size: 1.5em;
+      font-weight: 400;
+    }
+
+    .v-card__text {
+      padding: 1.5rem !important;
+      font-weight: 300;
+    }
+
+    .v-card__actions {
+      padding: 1rem;
+    }
+  }
+}
+
+// Expansion Panels
+.v-expansion-panel:before {
+  box-shadow: none;
+}
+
+.v-expansion-panel.align-items-top {
+  .v-expansion-panel-header__icon {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+}
+
+.v-expansion-panel-header.no-dropdown {
+  .v-expansion-panel-header__icon {
+    display: none;
+  }
+}
+
+// tooltips
+.v-tooltip__content {
+  width: 270px !important;
+  background-color: RGB(73, 80, 87) !important;
+  color: white !important;
+  border-radius: 4px;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  letter-spacing: 0;
+}
+
+.v-tooltip__content:after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 100% !important;
+  margin-top: -10px !important;
+  border-top: 10px solid transparent !important;
+  border-bottom: 10px solid transparent !important;
+  border-right: 8px solid RGBA(73, 80, 87, 0.95) !important;
+}
+
+.v-breadcrumbs__divider {
+  padding: 0 !important;
+}
+
+.v-data-table__selected {
+  background: $blueSelected !important;
+}
+
+.v-select__selections {
+  line-height: 1.5rem !important;
+}
+
+.v-simple-checkbox .theme--light.v-icon {
+  color: $primary-blue;
+}
+
+.folio-edit-txt .v-messages {
+  text-align: end !important;
+}
+
+.v-data-table__empty-wrapper {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.theme--light.v-input input,
+.theme--light.v-input textarea {
+  color: $gray9;
+}
+
+.theme--light.v-application .v-input--selection-controls__ripple,
+.theme--light.v-application .mdi-checkbox-blank-outline
+ {
+  color: $gray7 !important;
+}
+
+.v-application .v-btn.v-btn--outlined.remove-btn:disabled {
+  color: #d3272c !important;
+  caret-color: #d3272c !important;
+  opacity: 0.4 !important;
+}
+
+.v-btn.edit-btn:disabled {
+  color: $primary-blue !important;
+  opacity: 0.4 !important;
+}
+
+.theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+  background-color: $primary-blue !important;
+  opacity: 0.4 !important;
+  color: white !important;
+}
+
+.v-btn.v-btn--outlined:disabled {
+  color: #1669bb !important;
+  caret-color: #1669bb !important;
+  border: thin solid currentColor;
+  opacity: 0.4 !important;
+}
+
+.theme--light.v-btn.v-btn--disabled .v-icon,
+.theme--light.v-btn.v-btn--disabled .v-btn__loading,
+.theme--light.v-btn.v-btn--disabled .v-icon, .theme--light.v-btn.v-btn--disabled .v-btn__loading {
+  color: #1669bb !important;
+  opacity: 0.4 !important;
+}
+
+// list items
+.theme--light.v-list-item .registration-list-item {
+  font-size: 0.875rem;
+  padding-left: 16px;
+}
+
+.theme--light.v-divider {
+  color: $gray3 !important;
+  margin: 0 10px;
+}
+
+.theme--light.v-label:not(.v-label--is-disabled), .theme--light.v-messages {
+  color: $gray7;
+}
+
+.theme--light.v-text-field.v-input--is-disabled .v-input__slot::before {
+  border-color: rgba(0, 0, 0, 0.42);
+  opacity: 0.4;
+  border-image: none;
+}
+
+.theme--light.v-text-field--filled.v-input--is-disabled > .v-input__control > .v-input__slot {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.v-list--dense .list-item {
+  font-size: 0.875rem;
+  padding: 0;
+}
+
+.theme--light.v-list-item .v-list-item__mask {
+  color: inherit;
+}
+
+// v-snackbar
+.v-snack__wrapper.theme--dark {
+  background-color: $gray7;
+  margin-bottom: 140px;
+  width: 450px;
+}
+.v-snack__wrapper .v-snack__content {
+  font-size: 0.875rem;
+  letter-spacing: normal;
+  padding: 18px 20px;
+}
+
+.snackbar-btn-close.v-btn--icon.v-size--small,
+.snackbar-btn-close.v-btn--icon.v-size--small::before,
+.snackbar-btn-close.v-btn--icon.v-size--small .v-icon {
+  background-color: transparent;
+  height: 14px;
+  width: 14px;
+}

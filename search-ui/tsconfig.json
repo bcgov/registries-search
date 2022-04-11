@@ -2,9 +2,12 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "strict": true,
     "jsx": "preserve",
     "moduleResolution": "node",
+    "experimentalDecorators": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
