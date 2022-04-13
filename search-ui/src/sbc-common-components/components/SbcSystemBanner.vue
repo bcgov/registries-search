@@ -1,5 +1,7 @@
 <template>
-  <v-alert tile v-model="show" :type="type" :icon="icon" :dismissible="dismissible"><span v-html="message"></span></v-alert>
+  <v-alert tile v-model="show" :type="type" :icon="icon" :dismissible="dismissible">
+    <span v-html="message"></span>
+  </v-alert>
 </template>
 
 <script lang="ts">

@@ -1,12 +1,15 @@
 /* eslint-disable */
+// External
 import Keycloak, { KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions } from 'keycloak-js'
+import { Store } from 'vuex'
+import { getModule } from 'vuex-module-decorators'
+// BC Registry
 import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { Store } from 'vuex'
-import { getModule } from 'vuex-module-decorators'
-import AuthModule from '../modules/auth'
 import { decodeKCToken } from 'sbc-common-components/src/util/common-util'
+// Local
+import AuthModule from '../modules/auth'
 
 class KeyCloakService {
   private kc: KeycloakInstance | undefined

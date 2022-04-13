@@ -8,6 +8,7 @@ export const useNavigation = () => {
     if (inAuth) {
       redirectInTriggeredApp(routePath)
     } else {
+      // prettier-ignore
       window.location.assign(`${ConfigHelper.getAuthContextPath()}/${routePath}`)
     }
   }
@@ -18,11 +19,12 @@ export const useNavigation = () => {
     if (resolvedRoutes.matched.length > 0) {
       router.push(`/${routePath}`)
     } else {
+      // prettier-ignore
       // navigate to auth app if route is not found in the triggered app
       window.location.assign(`${ConfigHelper.getAuthContextPath()}/${routePath}`)
     }
   }
   return {
-    redirectToPath
+    redirectToPath,
   }
 }

@@ -147,7 +147,11 @@
                 <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
                   <v-list-item-content>
                     <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
-                    <v-list-item-subtitle>{{ pendingApprovalCount }} <span>{{pendingApprovalCount == '1' ? 'team member' : 'team members'}}</span> require approval to access this account</v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      {{ pendingApprovalCount }}
+                      <span>{{pendingApprovalCount == '1' ? 'team member' : 'team members'}}</span>
+                      require approval to access this account
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -205,7 +209,9 @@
                   </v-list-item-avatar>
                   <v-list-item-content class="user-info">
                     <v-list-item-title class="user-name" data-test="menu-user-name">{{ username }}</v-list-item-title>
-                    <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">{{ accountName }}</v-list-item-subtitle>
+                    <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
+                      {{ accountName }}
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
                 <!-- BEGIN: Hide if authentication is IDIR -->
@@ -330,18 +336,20 @@
       <!-- <mobile-device-alert /> -->
     </div>
     <div class="position: relative">
-      <!-- <notification-panel :showNotifications="notificationPanel" @closeNotifications="closeNotificationPanel()" /> -->
+      <!-- <notification-panel
+        :showNotifications="notificationPanel"
+        @closeNotifications="closeNotificationPanel()"
+      /> -->
     </div>
   </div>
 </template>
 
 <script lang="ts">
 // External
-import { LDClient } from 'launchdarkly-js-client-sdk'
 import { computed, defineComponent, nextTick, onMounted, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { useActions, useGetters } from 'vuex-composition-helpers'
+import { useGetters } from 'vuex-composition-helpers'
 import { getModule } from 'vuex-module-decorators'
 // BC Registry
 // sbc modules
@@ -353,12 +361,18 @@ import { UserSettings } from 'sbc-common-components/src/models/userSettings'
 // sbc services
 import LaunchDarklyService from 'sbc-common-components/src/services/launchdarkly.services'
 // sbc utils
-import { ALLOWED_URIS_FOR_PENDING_ORGS, Account, IdpHint, LoginSource, Pages, Role } from 'sbc-common-components/src/util/constants'
+import {
+  ALLOWED_URIS_FOR_PENDING_ORGS, Account, IdpHint, LoginSource, Pages, Role
+} from 'sbc-common-components/src/util/constants'
 import { AccountStatus, LDFlags } from 'sbc-common-components/src/util/enums'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
-import { getAccountIdFromCurrentUrl, removeAccountIdFromUrl, appendAccountId } from 'sbc-common-components/src/util/common-util'
+import {
+  getAccountIdFromCurrentUrl, removeAccountIdFromUrl, appendAccountId
+} from 'sbc-common-components/src/util/common-util'
 // Local
-// import { BrowserVersionAlert, MobileDeviceAlert, NotificationPanel, SbcProductSelector } from '@/sbc-common-components/components'
+// import {
+//   BrowserVersionAlert, MobileDeviceAlert, NotificationPanel, SbcProductSelector
+// } from '@/sbc-common-components/components'
 import { useNavigation } from '@/sbc-common-components/composables'
 
 export default defineComponent({
@@ -405,8 +419,10 @@ export default defineComponent({
     // notification
     const markAsRead = async () => { await store.dispatch('notification/markAsRead') }
     const fetchNotificationCount = async () => { await store.dispatch('notification/fetchNotificationCount') }
-    const fetchNotificationUnreadPriorityCount = async () => { await store.dispatch('notification/fetchNotificationUnreadPriorityCount') }
-    const fetchNotificationUnreadCount = async () => { await store.dispatch('notification/fetchNotificationUnreadCount') }
+    const fetchNotificationUnreadPriorityCount = async () => {
+      await store.dispatch('notification/fetchNotificationUnreadPriorityCount') }
+    const fetchNotificationUnreadCount = async () => {
+      await store.dispatch('notification/fetchNotificationUnreadCount') }
     const syncNotifications = async () => { await store.dispatch('notification/syncNotifications') }
     // navigation helpers
     const { redirectToPath } = useNavigation()
@@ -431,10 +447,12 @@ export default defineComponent({
       isAuthenticated: computed(() => isAuthenticated?.value as boolean),
       // notifications module
       notificationCount: computed(() => store.state.notification.notificationCount as number),
-      notificationUnreadPriorityCount: computed(() => store.state.notification.notificationUnreadPriorityCount as number),
+      notificationUnreadPriorityCount: computed(() =>
+        store.state.notification.notificationUnreadPriorityCount as number),
       notificationUnreadCount: computed(() => store.state.notification.notificationUnreadCount as number),
       // launch darkly
-      disableBCEIDMultipleAccount: computed(() => LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
+      disableBCEIDMultipleAccount: computed(() =>
+        LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
       isWhatsNewOpen: computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false),
       // other
       showTransactions: computed(() => state.currentAccount?.accountType === Account.PREMIUM),
@@ -458,10 +476,8 @@ export default defineComponent({
       getModule(AccountModule, store)
       getModule(AuthModule, store)
       getModule(NotificationModule, store)
-      console.log(store)
-      console.log(syncWithSessionStorage)
+
       syncWithSessionStorage()
-      // syncWithSessionStorage()
       if (state.isAuthenticated?.value) {
         await loadUserInfo()
         await syncAccount()
@@ -526,7 +542,9 @@ export default defineComponent({
     }
     const checkAccountStatus = async () => {
       // redirect if accoutn status is suspended
-      if ([AccountStatus.NSF_SUSPENDED, AccountStatus.SUSPENDED].some(status => status === state.currentAccount.value?.accountStatus)) {
+      if ([AccountStatus.NSF_SUSPENDED, AccountStatus.SUSPENDED].some(
+          status => status === state.currentAccount.value?.accountStatus)
+      ) {
         redirectToPath(props.inAuth, `${Pages.ACCOUNT_FREEZ}`)
       } else if (state.currentAccount?.value?.accountStatus === AccountStatus.PENDING_STAFF_REVIEW) {
         const targetPath = window.location.pathname
@@ -603,6 +621,7 @@ export default defineComponent({
       goToUserProfile,
       login,
       logout,
+      loginOptions,
       store,
       switchAccount,
       syncWithSessionStorage

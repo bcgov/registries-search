@@ -1,14 +1,17 @@
 /* eslint-disable */
+// External
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+// BC Registry
 import AccountService from 'sbc-common-components/src/services/account.services'
 import { Member } from 'sbc-common-components/src/models/member'
 import { UserSettings } from 'sbc-common-components/src/models/userSettings'
 import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
-import KeyCloakService from '../services/keycloak.services'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 import { SessionStorageKeys, LoginSource, Role } from 'sbc-common-components/src/util/constants'
 import UserService from 'sbc-common-components/src/services/user.services'
 import { getAccountIdFromCurrentUrl } from 'sbc-common-components/src/util/common-util'
+// Local
+import KeyCloakService from '../services/keycloak.services'
 
 @Module({
   name: 'account',

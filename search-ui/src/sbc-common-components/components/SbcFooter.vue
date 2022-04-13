@@ -31,9 +31,7 @@ export default defineComponent({
   },
   setup(props) {
     const state = reactive({
-      aboutText: computed(() => {
-        return props.setAboutText
-      })
+      aboutText: computed(() => { return props.setAboutText })
     })
     return {
      ...state
