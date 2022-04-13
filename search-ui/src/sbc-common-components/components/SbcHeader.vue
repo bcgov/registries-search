@@ -1,0 +1,812 @@
+<template>
+  <div>
+    <header class="app-header" id="appHeader">
+      <v-container class="justify-space-between">
+        <a @click="goToHome()" class="brand">
+          <picture>
+            <source media="(min-width: 601px)"
+              srcset="~sbc-common-components/src/assets/img/gov_bc_logo_horiz.png">
+            <source media="(max-width: 600px)"
+              srcset="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png">
+            <img class="brand__image"
+              src="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png"
+              alt="Government of British Columbia Logo"
+              title="Government of British Columbia">
+          </picture>
+          <span class="brand__title">BC Registries <span class="brand__title--wrap">and Online Services</span></span>
+        </a>
+        <div v-if="showActions" class="app-header__actions">
+
+          <!-- Product Selector -->
+          <!-- <sbc-product-selector v-if="showProductSelector" /> -->
+
+          <!-- What's New -->
+          <v-btn
+            text
+            dark
+            large
+            width="150"
+            aria-label="whatsnew"
+            attach="#appHeader"
+            @click.stop="notificationPanel=true"
+            v-if="!isAuthenticated && notificationCount > 0 && isWhatsNewOpen"
+          >
+            <v-badge
+              dot
+              overlap
+              offset-y="-5"
+              offset-x="10"
+              :color="notificationUnreadPriorityCount > 0 ? 'error' : 'blue'"
+              v-if="notificationUnreadCount > 0"
+            >
+            </v-badge>
+            What's New
+          </v-btn>
+
+          <!-- Login Menu -->
+          <v-menu
+            fixed
+            bottom
+            left
+            width="330"
+            transition="slide-y-transition"
+            attach="#appHeader"
+            v-if="!isAuthenticated && showLoginMenu"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                large
+                text
+                dark
+                class="mx-1 pr-2 pl-3"
+                aria-label="log in"
+                id="loginBtn"
+                v-on="on">
+                <span>Log in</span>
+                <v-icon class="ml-1">mdi-menu-down</v-icon>
+              </v-btn>
+            </template>
+            <v-card>
+              <div>
+                <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
+                <v-divider></v-divider>
+              </div>
+              <v-list
+                tile
+                dense
+              >
+                <v-list-item
+                  v-for="loginOption in loginOptions"
+                  :key="loginOption.idpHint"
+                  @click="login(loginOption.idpHint)"
+                  class="pr-6"
+                >
+                  <v-list-item-icon left>
+                    <v-icon>{{loginOption.icon}}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>{{loginOption.option}}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+
+          <!-- Notifications -->
+          <v-menu
+            fixed
+            bottom
+            left
+            transition="slide-y-transition"
+            attach="#appHeader"
+            v-if="isAuthenticated"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                dark
+                large
+                class="mobile-icon-only mx-1 px-2"
+                aria-label="notifications"
+                v-on="on"
+              >
+                <v-icon>
+                  mdi-bell-outline
+                </v-icon>
+                <v-badge
+                  dot
+                  overlap
+                  offset-y="-5"
+                  offset-x="10"
+                  color="error"
+                  v-if="pendingApprovalCount > 0"
+                >
+                </v-badge>
+                <span>
+                  Notifications
+                </span>
+                <v-icon class="ml-1">
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-card>
+              <div class="menu-header">
+                <v-card-title class="body-1">
+                  Notifications
+                </v-card-title>
+                <v-divider></v-divider>
+              </div>
+              <v-list
+                tile
+                dense
+              >
+                <!-- No Items -->
+                <v-list-item v-if="pendingApprovalCount === 0">
+                  <v-list-item-title class="text-center">No notifications</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
+                  <v-list-item-content>
+                    <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
+                    <v-list-item-subtitle>{{ pendingApprovalCount }} <span>{{pendingApprovalCount == '1' ? 'team member' : 'team members'}}</span> require approval to access this account</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+
+          <!-- Account -->
+          <v-menu
+            bottom
+            left
+            transition="slide-y-transition"
+            attach="#appHeader"
+            v-if="isAuthenticated"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                large
+                text
+                class="user-account-btn"
+                aria-label="my account"
+                v-on="on"
+              >
+                <v-avatar
+                  tile
+                  left
+                  color="#4d7094"
+                  size="32"
+                  class="user-avatar">
+                  {{ username.slice(0,1) }}
+                </v-avatar>
+                <div class="user-info">
+                  <div class="user-name" data-test="user-name">{{ username }}</div>
+                  <div class="account-name" v-if="!isStaff" data-test="account-name">{{ accountName }}</div>
+                </div>
+                <v-icon class="ml-1">
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
+            </template>
+
+            <v-card>
+              <!-- User Profile -->
+              <v-list
+                tile
+                dense
+              >
+                <v-list-item two-line>
+                  <v-list-item-avatar
+                    tile
+                    left
+                    color="#4d7094"
+                    size="36"
+                    class="user-avatar white--text">
+                    {{ username.slice(0,1) }}
+                  </v-list-item-avatar>
+                  <v-list-item-content class="user-info">
+                    <v-list-item-title class="user-name" data-test="menu-user-name">{{ username }}</v-list-item-title>
+                    <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">{{ accountName }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <!-- BEGIN: Hide if authentication is IDIR -->
+                <v-list-item @click="goToUserProfile()" v-if="isBcscOrBceid">
+                  <v-list-item-icon left>
+                    <v-icon>mdi-account-outline</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Edit Profile</v-list-item-title>
+                </v-list-item>
+                <!-- END -->
+                <v-list-item @click="logout()">
+                  <v-list-item-icon left>
+                    <v-icon>mdi-logout-variant</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Log out</v-list-item-title>
+                </v-list-item>
+              </v-list>
+
+              <v-divider></v-divider>
+
+              <!-- Account Settings -->
+              <v-list
+                tile
+                dense
+                v-if="currentAccount && !isStaff"
+              >
+                <v-subheader>ACCOUNT SETTINGS</v-subheader>
+                <v-list-item @click="goToAccountInfo(currentAccount)">
+                  <v-list-item-icon left>
+                    <v-icon>mdi-information-outline</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Account Info</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="goToTeamMembers()">
+                  <v-list-item-icon left>
+                    <v-icon>mdi-account-group-outline</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Team Members</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-if="showTransactions"
+                  @click="goToTransactions()">
+                  <v-list-item-icon left>
+                    <v-icon>mdi-file-document-outline</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Transactions</v-list-item-title>
+                </v-list-item>
+              </v-list>
+
+              <v-divider></v-divider>
+
+              <!-- Switch Account -->
+              <div v-if="!isStaff ">
+                <v-subheader v-if="switchableAccounts.length > 1">SWITCH ACCOUNT</v-subheader>
+                <v-list
+                  tile
+                  dense
+                  v-if="switchableAccounts.length > 1"
+                  class="switch-account"
+                >
+
+                  <v-list-item
+                    color="primary"
+                    :class="{'v-list-item--active' : settings.id === currentAccount.id}"
+                    v-for="(settings, id) in switchableAccounts"
+                    :key="id"
+                    @click="switchAccount(settings, inAuth)"
+                    :two-line="settings.additionalLabel"
+                  >
+
+                    <v-list-item-icon left>
+                      <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                    <v-list-item-title>{{ settings.label }}</v-list-item-title>
+                    <v-list-item-subtitle
+                    class="font-italic"
+                    :class="{'primary--text' : settings.id === currentAccount.id}"
+                    v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                </v-list>
+
+                <v-divider></v-divider>
+
+                <!-- Create a New Account -->
+                <v-list
+                  tile
+                  dense
+                  v-if="canCreateAccount">
+                  <v-list-item @click="goToCreateBCSCAccount()">
+                    <v-list-item-icon left>
+                      <v-icon>mdi-plus</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title
+                    >
+                      Create account
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </v-card>
+          </v-menu>
+
+          <v-btn
+            text
+            dark
+            large
+            @click="goToCreateAccount()"
+            v-if="!isAuthenticated"
+          >
+            Create Account
+          </v-btn>
+        </div>
+      </v-container>
+    </header>
+    <div id="warning-bar">
+      <!-- <browser-version-alert /> -->
+    </div>
+    <div id="warning-modal">
+      <!-- <mobile-device-alert /> -->
+    </div>
+    <div class="position: relative">
+      <!-- <notification-panel :showNotifications="notificationPanel" @closeNotifications="closeNotificationPanel()" /> -->
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+// External
+import { LDClient } from 'launchdarkly-js-client-sdk'
+import { computed, defineComponent, nextTick, onMounted, reactive, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useActions, useGetters } from 'vuex-composition-helpers'
+import { getModule } from 'vuex-module-decorators'
+// BC Registry
+// sbc modules
+import AccountModule from '../modules/account'
+import AuthModule from '../modules/auth'
+import NotificationModule from 'sbc-common-components/src/store/modules/notification'
+// sbc interfaces
+import { UserSettings } from 'sbc-common-components/src/models/userSettings'
+// sbc services
+import LaunchDarklyService from 'sbc-common-components/src/services/launchdarkly.services'
+// sbc utils
+import { ALLOWED_URIS_FOR_PENDING_ORGS, Account, IdpHint, LoginSource, Pages, Role } from 'sbc-common-components/src/util/constants'
+import { AccountStatus, LDFlags } from 'sbc-common-components/src/util/enums'
+import ConfigHelper from 'sbc-common-components/src/util/config-helper'
+import { getAccountIdFromCurrentUrl, removeAccountIdFromUrl, appendAccountId } from 'sbc-common-components/src/util/common-util'
+// Local
+// import { BrowserVersionAlert, MobileDeviceAlert, NotificationPanel, SbcProductSelector } from '@/sbc-common-components/components'
+import { useNavigation } from '@/sbc-common-components/composables'
+
+export default defineComponent({
+  name: 'SbcHeader',
+  components: {
+    // SbcProductSelector,
+    // BrowserVersionAlert,
+    // MobileDeviceAlert,
+    // NotificationPanel
+  },
+  props: {
+    redirectOnLoginSuccess: { default: '' },
+    redirectOnLoginFail: { default: '' },
+    redirectOnLogout: { default: '' },
+    inAuth: { default: false },
+    showLoginMenu: { default: false },
+    dashboardReturnUrl: { default: '' },
+  },
+  setup(props, { emit }) {
+    const route = useRoute()
+    const router = useRouter()
+    const store = useStore()
+    // set modules
+    if (!store.hasModule('account')) store.registerModule('account', AccountModule)
+    if (!store.hasModule('auth')) store.registerModule('auth', AuthModule)
+    if (!store.hasModule('notification')) store.registerModule('notification', NotificationModule)
+    // module getters
+    // account
+    const { accountName, switchableAccounts, username } = useGetters(
+      ['account/accountName', 'account/switchableAccounts', 'account/username'])
+    // auth
+    const { currentLoginSource, isAuthenticated } = useGetters(
+      ['auth/currentLoginSource', 'auth/isAuthenticated'])
+    // module actions
+    // account
+    const loadUserInfo = async () => { await store.dispatch('account/loadUserInfo') }
+    const syncAccount = async () => { await store.dispatch('account/syncAccount') }
+    const syncCurrentAccount = async (settings: UserSettings) => {
+      await store.dispatch('account/syncCurrentAccount', settings)
+    }
+    const syncUserProfile = async () => { await store.dispatch('account/syncUserProfile') }
+    // auth
+    const syncWithSessionStorage = () => { store.dispatch('auth/syncWithSessionStorage') }
+    // notification
+    const markAsRead = async () => { await store.dispatch('notification/markAsRead') }
+    const fetchNotificationCount = async () => { await store.dispatch('notification/fetchNotificationCount') }
+    const fetchNotificationUnreadPriorityCount = async () => { await store.dispatch('notification/fetchNotificationUnreadPriorityCount') }
+    const fetchNotificationUnreadCount = async () => { await store.dispatch('notification/fetchNotificationUnreadCount') }
+    const syncNotifications = async () => { await store.dispatch('notification/syncNotifications') }
+    // navigation helpers
+    const { redirectToPath } = useNavigation()
+    // constants
+    const loginOptions = [
+      { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-account-card-details-outline' },
+      { idpHint: IdpHint.BCEID, option: 'BCeID', icon: 'mdi-two-factor-authentication'},
+      { idpHint: IdpHint.IDIR, option: 'IDIR', icon: 'mdi-account-group-outline'}
+    ]
+
+    // define component state
+    const state = reactive({
+      // account module
+      accountName: computed(() => accountName?.value as string || ''),
+      currentAccount: computed(() => store.state.account.currentAccount as UserSettings),
+      currentUser: computed(() => store.state.account.currentUser as any),
+      pendingApprovalCount: computed(() => store.state.account.pendingApprovalCount as number),
+      switchableAccounts: computed(() => switchableAccounts?.value as UserSettings[]),
+      username: computed(() => username?.value as string),
+      // auth module
+      currentLoginSource: computed(() => currentLoginSource?.value as string),
+      isAuthenticated: computed(() => isAuthenticated?.value as boolean),
+      // notifications module
+      notificationCount: computed(() => store.state.notification.notificationCount as number),
+      notificationUnreadPriorityCount: computed(() => store.state.notification.notificationUnreadPriorityCount as number),
+      notificationUnreadCount: computed(() => store.state.notification.notificationUnreadCount as number),
+      // launch darkly
+      disableBCEIDMultipleAccount: computed(() => LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
+      isWhatsNewOpen: computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false),
+      // other
+      showTransactions: computed(() => state.currentAccount?.accountType === Account.PREMIUM),
+      // only for internal staff who belongs to bcreg
+      isStaff: computed(() => state.currentUser?.roles?.includes(Role.Staff) as boolean || false),
+      // only for GOVN type users
+      isGovmUser: computed(() => state.currentUser?.roles?.includes(Role.GOVMAccountUser) as boolean || false),
+      isBceid: computed(() => state.currentLoginSource === LoginSource.BCEID),
+      isBcscOrBceid: computed(
+        () => [LoginSource.BCSC.valueOf(), LoginSource.BCEID.valueOf()].indexOf(state.currentLoginSource) >= 0),
+      canCreateAccount: computed(() => {
+        const disabledLogins:any = [LoginSource.BCROS.valueOf(), LoginSource.IDIR.valueOf()]
+        if (state.disableBCEIDMultipleAccount) {
+          disabledLogins.push(LoginSource.BCEID.valueOf())
+        }
+        return disabledLogins.indexOf(state.currentLoginSource) < 0
+      })
+    })
+    // mounted lifecycle
+    onMounted(async () => {
+      getModule(AccountModule, store)
+      getModule(AuthModule, store)
+      getModule(NotificationModule, store)
+      console.log(store)
+      console.log(syncWithSessionStorage)
+      syncWithSessionStorage()
+      // syncWithSessionStorage()
+      if (state.isAuthenticated?.value) {
+        await loadUserInfo()
+        await syncAccount()
+        await updateProfile()
+        // checking for account status
+        await checkAccountStatus()
+      }
+
+      // fetching what's new information, need to wait the notifications load and get the counts
+      await syncNotifications()
+      await fetchNotificationCount()
+      await fetchNotificationUnreadPriorityCount()
+      await fetchNotificationUnreadCount()
+
+      // remove id from URLsince its already stored in session
+      if (getAccountIdFromCurrentUrl()) {
+        await nextTick()
+        window.history.replaceState({}, document.title, removeAccountIdFromUrl(window.location.href))
+      }
+    })
+
+    // component functions
+    const updateProfile = async (): Promise<void> => {
+      if (state.isBceid?.value) {
+        await syncUserProfile()
+      }
+    }
+    const goToHome = () => {
+      const url = props.inAuth ? Pages.HOME : appendAccountId(Pages.HOME)
+      redirectToPath(props.inAuth, url)
+    }
+    const goToUserProfile = () => {
+      const url = props.inAuth ? Pages.USER_PROFILE : appendAccountId(Pages.USER_PROFILE)
+      redirectToPath(props.inAuth, url)
+    }
+    const goToCreateAccount = () => {
+      redirectToPath(props.inAuth, Pages.CHOOSE_AUTH_METHOD)
+    }
+    const goToCreateBCSCAccount = () => {
+      const redirectUrl: string = props.dashboardReturnUrl ?
+        `${Pages.CREATE_ACCOUNT}?redirectToUrl=${encodeURIComponent(props.dashboardReturnUrl)}` : Pages.CREATE_ACCOUNT
+      redirectToPath(props.inAuth, redirectUrl)
+    }
+    const goToAccountInfo = async (settings: UserSettings) => {
+      if (!state.currentAccount?.value || !settings) {
+        return
+      }
+      await syncCurrentAccount(settings)
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/account-info`)
+    }
+    const goToTeamMembers = () => {
+      if (!state.currentAccount?.value) {
+        return
+      }
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/team-members`)
+    }
+    const goToTransactions = () => {
+      if (!state.currentAccount?.value) {
+        return
+      }
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/transactions`)
+    }
+    const checkAccountStatus = async () => {
+      // redirect if accoutn status is suspended
+      if ([AccountStatus.NSF_SUSPENDED, AccountStatus.SUSPENDED].some(status => status === state.currentAccount.value?.accountStatus)) {
+        redirectToPath(props.inAuth, `${Pages.ACCOUNT_FREEZ}`)
+      } else if (state.currentAccount?.value?.accountStatus === AccountStatus.PENDING_STAFF_REVIEW) {
+        const targetPath = window.location.pathname
+        const substringCheck = (element:string) => targetPath.indexOf(element) > -1
+        // check if any of the url is the allowed uri
+        const isAllowedUrl = ALLOWED_URIS_FOR_PENDING_ORGS.findIndex(substringCheck) > -1
+        if (!isAllowedUrl) {
+          const accountName = encodeURIComponent(btoa(state.accountName?.value))
+          redirectToPath(props.inAuth, `${Pages.PENDING_APPROVAL}/${accountName}/true`)
+        }
+      }
+    }
+    const switchAccount = async (settings: UserSettings, inAuth?: boolean) => {
+      emit('account-switch-started')
+      if (route.params.orgId) {
+        // If route includes a URL param for account, we need to refresh with the new account id
+        router.push({ name: route.name, params: { orgId: settings.id } })
+      }
+      await syncCurrentAccount(settings)
+      emit('account-switch-completed')
+
+      if (!inAuth) {
+        window.location.assign(appendAccountId(`${ConfigHelper.getAuthContextPath()}/${Pages.HOME}`))
+      }
+    }
+    const logout = (): void => {
+      if (props.redirectOnLogout) {
+        const url = encodeURIComponent(props.redirectOnLogout)
+        window.location.assign(`${getContextPath()}signout/${url}`)
+      } else {
+        window.location.assign(`${getContextPath()}signout`)
+      }
+    }
+    const login = (idpHint: string): void => {
+      if (props.redirectOnLoginSuccess) {
+        let url = encodeURIComponent(props.redirectOnLoginSuccess)
+        url += props.redirectOnLoginFail ? `/${encodeURIComponent(props.redirectOnLoginFail)}` : ''
+        window.location.assign(`${getContextPath()}signin/${idpHint}/${url}`)
+      } else {
+        window.location.assign(`${getContextPath()}signin/${idpHint}`)
+      }
+    }
+    const getContextPath = (): string => {
+      // [FAS] - Logout not redirecting to Login Screen#11120
+      //  adeded default as /, if no base URL precent
+      let baseUrl = (router && (router as any)['history'] && (router as any)['history'].base) || '/'
+      baseUrl += (baseUrl.length && baseUrl[baseUrl.length - 1] !== '/') ? '/' : ''
+      return baseUrl
+    }
+    const closeNotificationPanel = async (): Promise<void> => {
+      state.notificationPanel.value = false
+      if (state.notificationUnreadCount.value > 0) {
+        await markAsRead()
+      }
+    }
+
+    // component watchers
+    watch(state.isAuthenticated, async (val: boolean) => {
+      if (val) {
+        await updateProfile()
+      }
+    })
+
+    return {
+      ...props,
+      ...state,
+      closeNotificationPanel,
+      goToAccountInfo,
+      goToCreateAccount,
+      goToCreateBCSCAccount,
+      goToHome,
+      goToTeamMembers,
+      goToTransactions,
+      goToUserProfile,
+      login,
+      logout,
+      store,
+      switchAccount,
+      syncWithSessionStorage
+    }
+  }
+})
+</script>
+
+<style lang="scss" scoped>
+@import "~sbc-common-components/src/assets/scss/layout.scss";
+@import "~sbc-common-components/src/assets/scss/theme.scss";
+
+$app-header-font-color: #ffffff;
+
+.app-header {
+  height: $app-header-height;
+  color: $app-header-font-color;
+  border-bottom: 2px solid $BCgovGold5;
+  background-color: $BCgovBlue5;
+
+  .container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand__image {
+  display: block;
+  margin-right: 1.25rem;
+  max-height: $app-header-height;
+}
+
+.brand__title {
+  letter-spacing: -0.03rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.user-avatar {
+  border-radius: 0.15rem;
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+.switch-account{
+  height:42vh;
+  overflow-y: scroll;
+
+}
+@media (max-width: 900px) {
+  .brand__image {
+    margin-right: 0.75rem;
+    margin-left: -0.15rem;
+  }
+
+  .brand__title {
+    font-size: 1rem;
+    line-height: 1.25rem;
+  }
+
+  .brand__title--wrap {
+    display: block;
+  }
+}
+
+.v-btn.user-account-btn {
+  padding-right: 0.5rem !important;
+  padding-left: 0.5rem !important;
+  text-align: left;
+  color: $app-header-font-color;
+  letter-spacing: 0.02rem;
+  font-size: 0.8rem;
+
+  .user-avatar {
+    margin-right: 0.75rem;
+  }
+
+  .user-name {
+    line-height: 1.125rem;
+    font-size: 0.875rem;
+  }
+
+  .account-name {
+    margin-bottom: 0.01rem;
+    font-size: 0.7rem;
+    opacity: 0.75;
+    max-width: 15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.v-btn.notifications-btn {
+  min-width: 3.142rem !important;
+  color: $app-header-font-color;
+
+  .v-badge {
+    margin-right: 0.25rem;
+  }
+}
+
+.v-list {
+  border-radius: 0;
+
+  .v-list-item__title,
+  .v-list-item__subtitle {
+    line-height: normal !important;
+  }
+}
+
+.v-list .v-list-item__title.user-name,
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.v-list .v-list-item__subtitle.account-name,
+.account-name {
+  font-size: 0.75rem;
+}
+
+.v-list--dense .v-subheader,
+.v-list-item {
+  padding-right: 1.25rem;
+  padding-left: 1.25rem;
+}
+
+.v-list--dense .v-subheader,
+.v-list--dense .v-list-item__title,
+.v-list--dense .v-list-item__subtitle {
+  font-size: 0.875rem !important;
+}
+
+.v-subheader {
+  color: $gray9 !important;
+  font-weight: 700;
+}
+
+.menu-header {
+  display: none;
+}
+
+@media (max-width: 1263px) {
+  .v-btn.mobile-icon-only {
+    min-width: 3rem !important;
+    width: 3rem;
+
+    .v-icon + span,
+    span + .v-icon {
+      display: none;
+    }
+
+    .v-icon {
+      margin-right: 0;
+    }
+  }
+
+  .v-btn.user-account-btn {
+    min-width: auto !important;
+    font-size: 0.8rem;
+
+    .user-avatar {
+      margin-right: 0;
+    }
+
+    .user-info,
+    .v-icon {
+      display: none;
+    }
+  }
+
+  .v-btn.login-btn {
+    .v-icon + span,
+    span + .v-icon {
+      display: none;
+    }
+  }
+
+  .v-btn.whatsnew-btn {
+    .v-icon + span,
+    span + .v-icon {
+      display: none;
+    }
+  }
+  .menu-header {
+    display: block;
+  }
+}
+
+@media (min-width: 1360px) {
+  .v-menu__content {
+    max-width: 22rem;
+  }
+}
+</style>
