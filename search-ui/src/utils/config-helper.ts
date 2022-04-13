@@ -72,7 +72,7 @@ export async function fetchConfig(): Promise<any> {
 
   const ldClientId: string = response.data.PPR_LD_CLIENT_ID
   if (ldClientId) {
-    ;(<any>window).ldClientId = ldClientId
+    (<any>window).ldClientId = ldClientId
     console.info('Set Launch Darkly Client ID.')
   }
 
@@ -81,7 +81,7 @@ export async function fetchConfig(): Promise<any> {
 
   const sentryDsn = response.data.SENTRY_DSN
   if (sentryDsn) {
-    ;(<any>window).sentryDsn = sentryDsn
+    (<any>window).sentryDsn = sentryDsn
     console.log('Set Sentry DSN.')
   }
 
