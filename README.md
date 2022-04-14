@@ -1,4 +1,4 @@
-# registries-search
+# Registries Search
 BC Registry's business search service
 ## search-ui
 UI portion for registries search. Contains user facing registries searching and results components.
