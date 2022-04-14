@@ -1,0 +1,12 @@
+[
+    {
+        "vault": "search",
+        "application": [
+            "jwt",
+            "search-api",
+            "search-postgres",
+            "launchdarkly",
+            "sentry"
+        ]
+    }
+]
