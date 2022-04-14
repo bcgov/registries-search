@@ -330,16 +330,16 @@
       </v-container>
     </header>
     <div id="warning-bar">
-      <!-- <browser-version-alert /> -->
+      <browser-version-alert />
     </div>
     <div id="warning-modal">
-      <!-- <mobile-device-alert /> -->
+      <mobile-device-alert />
     </div>
     <div class="position: relative">
-      <!-- <notification-panel
+      <notification-panel
         :showNotifications="notificationPanel"
         @closeNotifications="closeNotificationPanel()"
-      /> -->
+      />
     </div>
   </div>
 </template>
@@ -369,19 +369,19 @@ import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 import {
   getAccountIdFromCurrentUrl, removeAccountIdFromUrl, appendAccountId
 } from 'sbc-common-components/src/util/common-util'
-// Local
-// import {
-//   BrowserVersionAlert, MobileDeviceAlert, NotificationPanel, SbcProductSelector
-// } from '@/sbc-common-components/components'
+// Local Components 
+import { default as BrowserVersionAlert } from './BrowserVersionAlert.vue'
+import { default as MobileDeviceAlert } from './MobileDeviceAlert.vue'
+import { default as NotificationPanel } from './NotificationPanel.vue'
 import { useNavigation } from '@/sbc-common-components/composables'
 
 export default defineComponent({
   name: 'SbcHeader',
   components: {
-    // SbcProductSelector,
-    // BrowserVersionAlert,
-    // MobileDeviceAlert,
-    // NotificationPanel
+    //SbcProductSelector,
+    BrowserVersionAlert,
+    MobileDeviceAlert,
+    NotificationPanel
   },
   props: {
     redirectOnLoginSuccess: { default: '' },
