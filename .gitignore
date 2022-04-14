@@ -102,3 +102,15 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Distribution / packaging
+.eggs/
+*.egg-info/
+
+# Virtual environment
+venv/
+
+# local test stuff
+.hypothesis/
+.pytest_cache/
+htmlcov/
