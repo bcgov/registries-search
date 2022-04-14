@@ -18,7 +18,7 @@
         <div v-if="showActions" class="app-header__actions">
 
           <!-- Product Selector -->
-          <!-- <sbc-product-selector v-if="showProductSelector" /> -->
+          <sbc-product-selector v-if="showProductSelector" />
 
           <!-- What's New -->
           <v-btn
@@ -29,16 +29,14 @@
             aria-label="whatsnew"
             attach="#appHeader"
             @click.stop="notificationPanel=true"
-            v-if="!isAuthenticated && notificationCount > 0 && isWhatsNewOpen"
-          >
+            v-if="!isAuthenticated && notificationCount > 0 && isWhatsNewOpen">
             <v-badge
               dot
               overlap
               offset-y="-5"
               offset-x="10"
               :color="notificationUnreadPriorityCount > 0 ? 'error' : 'blue'"
-              v-if="notificationUnreadCount > 0"
-            >
+              v-if="notificationUnreadCount > 0">
             </v-badge>
             What's New
           </v-btn>
@@ -51,8 +49,7 @@
             width="330"
             transition="slide-y-transition"
             attach="#appHeader"
-            v-if="!isAuthenticated && showLoginMenu"
-          >
+            v-if="!isAuthenticated && showLoginMenu">
             <template v-slot:activator="{ on }">
               <v-btn
                 large
@@ -71,16 +68,12 @@
                 <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
                 <v-divider></v-divider>
               </div>
-              <v-list
-                tile
-                dense
-              >
+              <v-list tile dense>
                 <v-list-item
                   v-for="loginOption in loginOptions"
                   :key="loginOption.idpHint"
                   @click="login(loginOption.idpHint)"
-                  class="pr-6"
-                >
+                  class="pr-6">
                   <v-list-item-icon left>
                     <v-icon>{{loginOption.icon}}</v-icon>
                   </v-list-item-icon>
@@ -97,48 +90,29 @@
             left
             transition="slide-y-transition"
             attach="#appHeader"
-            v-if="isAuthenticated"
-          >
+            v-if="isAuthenticated">
             <template v-slot:activator="{ on }">
-              <v-btn
-                text
-                dark
-                large
-                class="mobile-icon-only mx-1 px-2"
-                aria-label="notifications"
-                v-on="on"
-              >
-                <v-icon>
-                  mdi-bell-outline
-                </v-icon>
+              <v-btn text dark large class="mobile-icon-only mx-1 px-2"
+                aria-label="notifications" v-on="on">
+                <v-icon>mdi-bell-outline</v-icon>
                 <v-badge
                   dot
                   overlap
                   offset-y="-5"
                   offset-x="10"
                   color="error"
-                  v-if="pendingApprovalCount > 0"
-                >
+                  v-if="pendingApprovalCount > 0">
                 </v-badge>
-                <span>
-                  Notifications
-                </span>
-                <v-icon class="ml-1">
-                  mdi-menu-down
-                </v-icon>
+                <span>Notifications</span>
+                <v-icon class="ml-1">mdi-menu-down</v-icon>
               </v-btn>
             </template>
             <v-card>
               <div class="menu-header">
-                <v-card-title class="body-1">
-                  Notifications
-                </v-card-title>
+                <v-card-title class="body-1">Notifications</v-card-title>
                 <v-divider></v-divider>
               </div>
-              <v-list
-                tile
-                dense
-              >
+              <v-list tile dense>
                 <!-- No Items -->
                 <v-list-item v-if="pendingApprovalCount === 0">
                   <v-list-item-title class="text-center">No notifications</v-list-item-title>
@@ -164,16 +138,9 @@
             left
             transition="slide-y-transition"
             attach="#appHeader"
-            v-if="isAuthenticated"
-          >
+            v-if="isAuthenticated">
             <template v-slot:activator="{ on }">
-              <v-btn
-                large
-                text
-                class="user-account-btn"
-                aria-label="my account"
-                v-on="on"
-              >
+              <v-btn large text class="user-account-btn" aria-label="my account" v-on="on">
                 <v-avatar
                   tile
                   left
@@ -186,18 +153,13 @@
                   <div class="user-name" data-test="user-name">{{ username }}</div>
                   <div class="account-name" v-if="!isStaff" data-test="account-name">{{ accountName }}</div>
                 </div>
-                <v-icon class="ml-1">
-                  mdi-menu-down
-                </v-icon>
+                <v-icon class="ml-1">mdi-menu-down</v-icon>
               </v-btn>
             </template>
 
             <v-card>
               <!-- User Profile -->
-              <v-list
-                tile
-                dense
-              >
+              <v-list tile dense>
                 <v-list-item two-line>
                   <v-list-item-avatar
                     tile
@@ -233,11 +195,8 @@
               <v-divider></v-divider>
 
               <!-- Account Settings -->
-              <v-list
-                tile
-                dense
-                v-if="currentAccount && !isStaff"
-              >
+              <v-list tile dense
+                v-if="currentAccount && !isStaff">
                 <v-subheader>ACCOUNT SETTINGS</v-subheader>
                 <v-list-item @click="goToAccountInfo(currentAccount)">
                   <v-list-item-icon left>
@@ -270,8 +229,7 @@
                   tile
                   dense
                   v-if="switchableAccounts.length > 1"
-                  class="switch-account"
-                >
+                  class="switch-account">
 
                   <v-list-item
                     color="primary"
@@ -279,8 +237,7 @@
                     v-for="(settings, id) in switchableAccounts"
                     :key="id"
                     @click="switchAccount(settings, inAuth)"
-                    :two-line="settings.additionalLabel"
-                  >
+                    :two-line="settings.additionalLabel">
 
                     <v-list-item-icon left>
                       <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
@@ -293,7 +250,6 @@
                     v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
-
                 </v-list>
 
                 <v-divider></v-divider>
@@ -307,8 +263,7 @@
                     <v-list-item-icon left>
                       <v-icon>mdi-plus</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-title
-                    >
+                    <v-list-item-title>
                       Create account
                     </v-list-item-title>
                   </v-list-item>
@@ -322,8 +277,7 @@
             dark
             large
             @click="goToCreateAccount()"
-            v-if="!isAuthenticated"
-          >
+            v-if="!isAuthenticated">
             Create Account
           </v-btn>
         </div>
@@ -338,8 +292,7 @@
     <div class="position: relative">
       <notification-panel
         :showNotifications="notificationPanel"
-        @closeNotifications="closeNotificationPanel()"
-      />
+        @closeNotifications="closeNotificationPanel()"/>
     </div>
   </div>
 </template>
@@ -373,12 +326,13 @@ import {
 import { default as BrowserVersionAlert } from './BrowserVersionAlert.vue'
 import { default as MobileDeviceAlert } from './MobileDeviceAlert.vue'
 import { default as NotificationPanel } from './NotificationPanel.vue'
+import { default as SbcProductSelector } from './SbcProductSelector.vue'
 import { useNavigation } from '@/sbc-common-components/composables'
 
 export default defineComponent({
   name: 'SbcHeader',
   components: {
-    //SbcProductSelector,
+    SbcProductSelector,
     BrowserVersionAlert,
     MobileDeviceAlert,
     NotificationPanel
@@ -390,6 +344,7 @@ export default defineComponent({
     inAuth: { default: false },
     showLoginMenu: { default: false },
     dashboardReturnUrl: { default: '' },
+    showProductSelector: { default: false },    
   },
   setup(props, { emit }) {
     const route = useRoute()
