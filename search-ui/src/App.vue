@@ -1,10 +1,6 @@
 <template>
   <v-app id="app" class="app-container">
-    <sbc-header
-      class="sbc-header"
-      :in-auth="false"
-      :show-login-menu="false"
-    />
+    <sbc-header class="sbc-header" :in-auth="false" :show-login-menu="false" />
 
     <div class="app-body">
       <main>
@@ -28,27 +24,10 @@
       </main>
     </div>
 
-    <sbc-footer :aboutText=aboutText />
+    <sbc-footer :aboutText="aboutText" />
   </v-app>
 </template>
 
-<script lang="ts">
-// External
-import { defineComponent } from 'vue'
-// Local
-import { SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components'
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    SbcHeader,
-    SbcFooter,
-    SbcSystemBanner
-  },
-  setup() {
-    return {
-      //
-    }
-  },
-})
+<script setup lang="ts">
+import { SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components';
 </script>
