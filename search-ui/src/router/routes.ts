@@ -46,13 +46,13 @@ export const routes: RouteRecordRaw[] = [
     name: RouteNames.DASHBOARD,
     component: DashboardView,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
   },
   {
     // default/fallback route
     // must be last
-    path: '*',
+    path: '/:pathMatch(.*)*',
     redirect: '/login'
   }
 ]
