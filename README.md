@@ -6,7 +6,7 @@ UI portion for registries search. Contains user facing registries searching and 
 Makes calls to solr for search, calls to lear apps, etc. for business data, and puts payments on the queue.
 ## search-solr
 Reused the bcgov/namex solr instance and added a new 'search' core for this project.
-- To contribute to it you can update https://github.com/bcgov/namex/tree/main/solr/cores/search
+- To contribute to the search core you can update https://github.com/bcgov/namex/tree/main/solr/cores/search
 - To update the solr build or run it locally checkout https://github.com/bcgov/namex-solr.git
 ## search-solr-feeder
 Adds new businesses / updates businesses in solr when they are created/changed in bcgov/lear.
