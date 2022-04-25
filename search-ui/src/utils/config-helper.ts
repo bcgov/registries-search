@@ -10,23 +10,16 @@ const axios = Axios.create()
  */
 export async function fetchConfig(): Promise<any> {
   // get config from environment
-  const origin: string = window.location.origin
-  const processEnvBaseUrl = process.env.BASE_URL
-  const windowLocationPathname = window.location.pathname // eg, /basePath/...
-  const windowLocationOrigin = window.location.origin // eg, http://localhost:8080
+  const origin: string = window.location.origin // eg, http://localhost:8080
+  const processEnvBaseUrl = process.env.BASE_URL // /
 
-  if (
-    !origin ||
-    !processEnvBaseUrl ||
-    !windowLocationPathname ||
-    !windowLocationOrigin
-  ) {
+  if (!origin || !processEnvBaseUrl) {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
   // fetch config from API
-  // eg, http://localhost:8080/basePath/config/configuration.json
-  // eg, https://ppr-dev.pathfinder.gov.bc.ca/ppr/config/configuration.json
+  // eg, http://localhost:8080/config/configuration.json
+  // eg, https://...-dev.apps.silver.devops.gov.bc.ca/config/configuration.json
   const url = `${origin}/config/configuration.json`
   const headers = {
     Accept: 'application/json',
@@ -41,19 +34,19 @@ export async function fetchConfig(): Promise<any> {
   const searchApiUrl: string =
     response.data.SEARCH_API_URL + response.data.SEARCH_API_VERSION + '/'
   sessionStorage.setItem('SEARCH_API_URL', searchApiUrl)
-  console.log('Set Search API URL to: ' + searchApiUrl)
+  console.info('Set Search API URL to: ' + searchApiUrl)
 
   const registryUrl: string = response.data.REGISTRY_URL
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
-  console.log('Set REGISTRY URL to: ' + registryUrl)
+  console.info('Set REGISTRY URL to: ' + registryUrl)
 
   const systemMessage: string = response.data.SYSTEM_MESSAGE
   sessionStorage.setItem('SYSTEM_MESSAGE', systemMessage)
-  console.log('Set SYSTEM MESSAGE to: ' + systemMessage)
+  console.info('Set SYSTEM MESSAGE to: ' + systemMessage)
 
   const systemMessageType: string = response.data.SYSTEM_MESSAGE_TYPE
   sessionStorage.setItem('SYSTEM_MESSAGE_TYPE', systemMessageType)
-  console.log('Set SYSTEM MESSAGE TYPE to: ' + systemMessageType)
+  console.info('Set SYSTEM MESSAGE TYPE to: ' + systemMessageType)
 
   const keycloakConfigPath: string = response.data.KEYCLOAK_CONFIG_PATH
   sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
@@ -63,14 +56,14 @@ export async function fetchConfig(): Promise<any> {
   const statusApiUrl: string =
     response.data.STATUS_API_URL + response.data.STATUS_API_VERSION
   sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
-  console.log('Set Status API URL to: ' + statusApiUrl)
+  console.info('Set Status API URL to: ' + statusApiUrl)
 
   // for sbc header (sbc-common-components)
   const authWebUrl: string = response.data.AUTH_WEB_URL
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
-  console.log('Set Auth Web URL to: ' + authWebUrl)
+  console.info('Set Auth Web URL to: ' + authWebUrl)
 
-  const ldClientId: string = response.data.PPR_LD_CLIENT_ID
+  const ldClientId: string = response.data.LD_CLIENT_ID
   if (ldClientId) {
     (<any>window).ldClientId = ldClientId
     console.info('Set Launch Darkly Client ID.')
@@ -80,9 +73,15 @@ export async function fetchConfig(): Promise<any> {
   ;(<any>window).sentryEnable = sentryEnable
 
   const sentryDsn = response.data.SENTRY_DSN
-  if (sentryDsn) {
+  if (sentryDsn && sentryEnable) {
     (<any>window).sentryDsn = sentryDsn
-    console.log('Set Sentry DSN.')
+    console.info('Set Sentry DSN.')
+  }
+
+  const sentryTSR = response.data.SENTRY_TRACE_SAMPLE_RATE
+  if (sentryTSR && sentryEnable) {
+    (<any>window).sentryTSR = sentryDsn
+    console.info('Set Sentry Trace Sample Rate to', sentryTSR)
   }
 
   // set Base for Vue Router
@@ -93,11 +92,11 @@ export async function fetchConfig(): Promise<any> {
 
   // set Base URL for returning from redirects
   // eg, http://localhost:8080/basePath/xxxx/
-  const baseUrl = windowLocationOrigin + vueRouterBase
+  const baseUrl = origin + vueRouterBase
   sessionStorage.setItem('BASE_URL', baseUrl)
   console.info('Set Base URL to: ' + baseUrl)
 
   const podNamespace = response.data.POD_NAMESPACE
   sessionStorage.setItem('POD_NAMESPACE', podNamespace)
-  console.log('POD_NAMESPACE: ' + podNamespace)
+  console.info('POD_NAMESPACE: ' + podNamespace)
 }

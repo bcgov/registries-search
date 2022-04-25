@@ -46,7 +46,7 @@ export const routes: RouteRecordRaw[] = [
     name: RouteNames.DASHBOARD,
     component: DashboardView,
     meta: {
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {

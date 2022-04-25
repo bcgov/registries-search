@@ -1,6 +1,6 @@
 // External
 import Axios from 'axios'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/vue'
 // BC registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
