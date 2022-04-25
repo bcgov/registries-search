@@ -28,13 +28,22 @@
 </template>
 
 <script setup lang="ts">
+// External
+import { computed, ref } from 'vue'
+import * as Sentry from '@sentry/vue'
+// BC Registry
 import { SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components'
-import { computed } from '@vue/runtime-core'
+// Local
+import { ErrorI } from '@/interfaces'
 
 const aboutText: string = process.env.ABOUT_TEXT
-const appReady = true
-const haveData = true
-const isJestRunning = false
+const appReady = ref(true)
+const haveData = ref(true)
+
+/** True if Jest is running the code. */
+const isJestRunning = computed((): boolean => {
+  return (process.env.JEST_WORKER_ID !== undefined)
+})
 
 const systemMessage = computed((): string => {
   // if SYSTEM_MESSAGE does not exist this will return 'undefined'. Needs to be null or str
@@ -49,7 +58,9 @@ const systemMessageType = computed((): string => {
   return null
 })
 
-const handleError = (error) => {
-  console.log(error)
+const handleError = (error: ErrorI) => {
+  console.error(error)
+  // FUTURE: add account info with error information 
+  Sentry.captureException(error)
 }
 </script>
