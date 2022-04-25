@@ -19,12 +19,12 @@
                   </span>
                 </v-col>
                 <v-col>
-                  <v-list-item-content>
+                  <v-list-item>
                     <v-list-item-title class="font-weight-bold list-subtitle">{{item.title}}</v-list-item-title>
                     <v-list-item-subtitle>{{ item.date }}</v-list-item-subtitle>
                     <v-spacer></v-spacer>
-                    <v-list-item-content v-html="item.description"></v-list-item-content>
-                  </v-list-item-content>
+                    <v-list-item v-html="item.description"></v-list-item>
+                  </v-list-item>
                 </v-col>
               </v-row>
             </v-list-item>

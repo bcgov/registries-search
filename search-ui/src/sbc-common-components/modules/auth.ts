@@ -66,7 +66,6 @@ export default class AuthModule extends VuexModule {
 
   @Action({ rawError: true })
   public syncWithSessionStorage (): void {
-    console.log('here')
     this.context.commit('setKCToken', ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || '')
     this.context.commit('setIDToken', ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || '')
     this.context.commit('setRefreshToken', ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakRefreshToken) || '')
