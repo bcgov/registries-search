@@ -19,7 +19,7 @@ export default defineComponent({
   },
   setup(props) {
     const state = reactive({
-      dismissable: computed(() => { return props.setDismissible }),
+      dismissible: computed(() => { return props.setDismissible }),
       icon: computed(() => { return props.setIcon }),
       message: computed(() => { return props.setMessage }),
       show: computed(() => { return props.setShow }),

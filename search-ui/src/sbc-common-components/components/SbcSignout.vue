@@ -5,8 +5,6 @@
 <script setup lang="ts">
 import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
-import LoadingScreen from './LoadingScreen.vue'
-
 const isLoading = true
 const props = defineProps({
   redirectUrl: {

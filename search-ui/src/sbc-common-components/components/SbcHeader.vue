@@ -74,9 +74,9 @@
                   :key="loginOption.idpHint"
                   @click="login(loginOption.idpHint)"
                   class="pr-6">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>{{loginOption.icon}}</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>{{loginOption.option}}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -119,14 +119,14 @@
                 </v-list-item>
 
                 <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
-                  <v-list-item-content>
+                  <v-list-item>
                     <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
                     <v-list-item-subtitle>
                       {{ pendingApprovalCount }}
                       <span>{{pendingApprovalCount == '1' ? 'team member' : 'team members'}}</span>
                       require approval to access this account
                     </v-list-item-subtitle>
-                  </v-list-item-content>
+                  </v-list-item>
                 </v-list-item>
               </v-list>
             </v-card>
@@ -169,25 +169,25 @@
                     class="user-avatar white--text">
                     {{ username.slice(0,1) }}
                   </v-list-item-avatar>
-                  <v-list-item-content class="user-info">
+                  <v-list-item class="user-info">
                     <v-list-item-title class="user-name" data-test="menu-user-name">{{ username }}</v-list-item-title>
                     <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
                       {{ accountName }}
                     </v-list-item-subtitle>
-                  </v-list-item-content>
+                  </v-list-item>
                 </v-list-item>
                 <!-- BEGIN: Hide if authentication is IDIR -->
                 <v-list-item @click="goToUserProfile()" v-if="isBcscOrBceid">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>mdi-account-outline</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>Edit Profile</v-list-item-title>
                 </v-list-item>
                 <!-- END -->
                 <v-list-item @click="logout()">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>mdi-logout-variant</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>Log out</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -199,23 +199,23 @@
                 v-if="currentAccount && !isStaff">
                 <v-subheader>ACCOUNT SETTINGS</v-subheader>
                 <v-list-item @click="goToAccountInfo(currentAccount)">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>mdi-information-outline</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>Account Info</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="goToTeamMembers()">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>mdi-account-group-outline</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>Team Members</v-list-item-title>
                 </v-list-item>
                 <v-list-item
                   v-if="showTransactions"
                   @click="goToTransactions()">
-                  <v-list-item-icon left>
+                  <v-list-item-avatar left>
                     <v-icon>mdi-file-document-outline</v-icon>
-                  </v-list-item-icon>
+                  </v-list-item-avatar>
                   <v-list-item-title>Transactions</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -239,16 +239,16 @@
                     @click="switchAccount(settings, inAuth)"
                     :two-line="settings.additionalLabel">
 
-                    <v-list-item-icon left>
+                    <v-list-item-avatar left>
                       <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
+                    </v-list-item-avatar>
+                    <v-list-item>
                     <v-list-item-title>{{ settings.label }}</v-list-item-title>
                     <v-list-item-subtitle
                     class="font-italic"
                     :class="{'primary--text' : settings.id === currentAccount.id}"
                     v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
-                    </v-list-item-content>
+                    </v-list-item>
                   </v-list-item>
                 </v-list>
 
@@ -260,9 +260,9 @@
                   dense
                   v-if="canCreateAccount">
                   <v-list-item @click="goToCreateBCSCAccount()">
-                    <v-list-item-icon left>
+                    <v-list-item-avatar left>
                       <v-icon>mdi-plus</v-icon>
-                    </v-list-item-icon>
+                    </v-list-item-avatar>
                     <v-list-item-title>
                       Create account
                     </v-list-item-title>
@@ -342,6 +342,7 @@ export default defineComponent({
     redirectOnLoginFail: { default: '' },
     redirectOnLogout: { default: '' },
     inAuth: { default: false },
+    showActions: { default: true },
     showLoginMenu: { default: false },
     dashboardReturnUrl: { default: '' },
     showProductSelector: { default: false },    
@@ -380,7 +381,7 @@ export default defineComponent({
       await store.dispatch('notification/fetchNotificationUnreadCount') }
     const syncNotifications = async () => { await store.dispatch('notification/syncNotifications') }
     // navigation helpers
-    const { redirectToPath } = useNavigation()
+    const { getContextPath, redirectToPath } = useNavigation()
     // constants
     const loginOptions = [
       { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-account-card-details-outline' },
@@ -410,6 +411,7 @@ export default defineComponent({
         LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
       isWhatsNewOpen: computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false),
       // other
+      notificationPanel: false,
       showTransactions: computed(() => state.currentAccount?.accountType === Account.PREMIUM),
       // only for internal staff who belongs to bcreg
       isStaff: computed(() => state.currentUser?.roles?.includes(Role.Staff) as boolean || false),
@@ -541,13 +543,6 @@ export default defineComponent({
       } else {
         window.location.assign(`${getContextPath()}signin/${idpHint}`)
       }
-    }
-    const getContextPath = (): string => {
-      // [FAS] - Logout not redirecting to Login Screen#11120
-      //  adeded default as /, if no base URL precent
-      let baseUrl = (router && (router as any)['history'] && (router as any)['history'].base) || '/'
-      baseUrl += (baseUrl.length && baseUrl[baseUrl.length - 1] !== '/') ? '/' : ''
-      return baseUrl
     }
     const closeNotificationPanel = async (): Promise<void> => {
       state.notificationPanel.value = false

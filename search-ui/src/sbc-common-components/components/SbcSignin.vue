@@ -5,7 +5,6 @@
 <script setup lang="ts">
 import { Role, LoginSource, Pages } from 'sbc-common-components/src/util/constants'
 import KeyCloakService from '@/sbc-common-components/services/keycloak.services'
-import LoadingScreen from './LoadingScreen.vue'
 import { getModule } from 'vuex-module-decorators'
 import AccountModule from 'sbc-common-components/src/store/modules/account'
 import AuthModule from 'sbc-common-components/src/store/modules/auth'
@@ -64,8 +63,7 @@ kcInit
         const isRedirectToCreateAccount =
           userInfo.roles.includes(Role.PublicUser) &&
           !userInfo.roles.includes(Role.AccountHolder)
-        //CHANGE  
-        const currentUser = await getCurrentUserProfile(props.inAuth)
+        const currentUser = await getCurrentUserProfile(props.inAuth) as any
         if (
           userInfo?.loginSource !== LoginSource.IDIR &&
           !currentUser?.userTerms?.isTermsOfUseAccepted
