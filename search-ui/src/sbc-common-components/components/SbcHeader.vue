@@ -196,9 +196,9 @@
 
               <!-- Account Settings -->
               <v-list tile dense
-                v-if="currentAccount.value && !isStaff">
+                v-if="currentAccount && !isStaff">
                 <v-subheader>ACCOUNT SETTINGS</v-subheader>
-                <v-list-item @click="goToAccountInfo(currentAccount.value)">
+                <v-list-item @click="goToAccountInfo(currentAccount)">
                   <v-list-item-avatar left>
                     <v-icon>mdi-information-outline</v-icon>
                   </v-list-item-avatar>
@@ -233,20 +233,20 @@
 
                   <v-list-item
                     color="primary"
-                    :class="{'v-list-item--active' : settings.id === currentAccount?.value?.id}"
+                    :class="{'v-list-item--active' : settings.id === currentAccount.id}"
                     v-for="(settings, id) in switchableAccounts"
                     :key="id"
                     @click="switchAccount(settings, inAuth)"
                     :two-line="settings.additionalLabel">
 
                     <v-list-item-avatar left>
-                      <v-icon v-show="settings.id === currentAccount.value.id">mdi-check</v-icon>
+                      <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
                     </v-list-item-avatar>
                     <v-list-item>
                     <v-list-item-title>{{ settings.label }}</v-list-item-title>
                     <v-list-item-subtitle
                     class="font-italic"
-                    :class="{'primary--text' : settings.id === currentAccount.value.id}"
+                    :class="{'primary--text' : settings.id === currentAccount.id}"
                     v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
                     </v-list-item>
                   </v-list-item>
@@ -387,11 +387,9 @@ export default defineComponent({
     const currentLoginSource = computed(() => store.getters['auth/currentLoginSource'] as string)
     const currentAccount =computed(() => store.state.account.currentAccount as UserSettings)
     // define component state
-    const state = reactive({         
-      
+    const state = reactive({
       currentUser: computed(() => store.state.account.currentUser as any),
-      pendingApprovalCount: computed(() => store.state.account.pendingApprovalCount as number),
-       
+      pendingApprovalCount: computed(() => store.state.account.pendingApprovalCount as number),       
       // notifications module
       notificationCount: computed(() => store.state.notification.notificationCount as number),
       notificationUnreadPriorityCount: computed(() =>
