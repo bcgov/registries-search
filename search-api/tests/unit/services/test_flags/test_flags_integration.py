@@ -26,14 +26,11 @@ from tests import integration_ldarkly
 @integration_ldarkly
 @pytest.mark.parametrize('test_name,flag_name,expected', [
     # TODO: implement these flags in ld for search
-    ('search-test-boolean', 'search-test-boolean', True),
-    ('search-test-number', 'search-test-number', 10),
+    ('search-test-boolean', 'search-test-boolean', False),
+    ('search-test-num', 'search-test-num', -1),
 ])
-def test_flags_bool_value(test_name, flag_name, expected):
-    """Assert that a boolean (True) is returned, when using the local Flag.json file.
-    
-    This requires the flags.json file at the root of the project.
-    """
+def test_flags_default_value(test_name, flag_name, expected):
+    """Assert that a default boolean and a default number are returned as expected."""
     app = Flask(__name__)
     app.env = 'production'
     app.config['LD_SDK_KEY'] = os.getenv('LD_SDK_KEY')
@@ -55,7 +52,7 @@ def test_flags_bool_value(test_name, flag_name, expected):
      False, -1),
 ])
 def test_flag_unique_user(test_name, flag_user, expected_bool, expected_val):
-    """Assert that a unique user can retrieve a flag, when using the local Flag.json file."""
+    """Assert that a unique user can retrieve a flag."""
     app = Flask(__name__)
     app.env = 'production'
     app.config['LD_SDK_KEY'] = os.getenv('LD_SDK_KEY')
@@ -66,7 +63,7 @@ def test_flag_unique_user(test_name, flag_user, expected_bool, expected_val):
             flags = Flags()
             flags.init_app(app)
             # TODO: implement these flags in ld for search
-            val = flags.value('search-test-number', flag_user)
+            val = flags.value('search-test-num', flag_user)
             flag_on = flags.is_on('search-test-boolean', flag_user)
 
         assert val == expected_val
