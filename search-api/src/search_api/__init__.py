@@ -47,10 +47,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.config.from_object(config.CONFIGURATION[run_mode])
 
     # Configure Sentry
-    if app.config.get('SENTRY_DSN', None):
+    if dsn := app.config.get('SENTRY_DSN'):
         sentry_sdk.init(  # pylint: disable=E0110
-            dsn=app.config.get('SENTRY_DSN'),
-            integrations=[FlaskIntegration()]
+            dsn=dsn,
+            integrations=[FlaskIntegration()],
+            environment=app.config.get('POD_NAMESPACE'),
+            release=f'search-api@{get_run_version()}',
+            traces_sample_rate=app.config.get('SENTRY_TSR')
             )
 
     errorhandlers.init_app(app)
