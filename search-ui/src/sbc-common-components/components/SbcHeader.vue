@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="app-header" id="appHeader">
-      <v-container class="justify-space-between">
+      <v-container class="d-flex justify-space-between">
         <a @click="goToHome()" class="brand">
           <picture>
             <source media="(min-width: 601px)"
@@ -273,9 +273,8 @@
           </v-menu>
 
           <v-btn
-            text
-            dark
-            large
+            variant="text"            
+            size="large"
             @click="goToCreateAccount()"
             v-if="!isAuthenticated">
             Create Account
