@@ -63,13 +63,14 @@ kcInit
         const isRedirectToCreateAccount =
           userInfo.roles.includes(Role.PublicUser) &&
           !userInfo.roles.includes(Role.AccountHolder)
-        const currentUser = await getCurrentUserProfile(props.inAuth) as any
+        await getCurrentUserProfile(props.inAuth)
+        const currentUser =  store.state.account.currentUser as any        
         if (
           userInfo?.loginSource !== LoginSource.IDIR &&
           !currentUser?.userTerms?.isTermsOfUseAccepted
         ) {
           console.log('[SignIn.vue]Redirecting. TOS not accepted')
-          redirectToPath(props.inAuth, Pages.USER_PROFILE_TERMS)
+          //redirectToPath(props.inAuth, Pages.USER_PROFILE_TERMS)
         } else if (isRedirectToCreateAccount) {
           console.log('[SignIn.vue]Redirecting. No Valid Role')
           switch (userInfo.loginSource) {

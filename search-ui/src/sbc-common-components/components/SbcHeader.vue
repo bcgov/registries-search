@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="app-header" id="appHeader">
-      <v-container class="d-flex justify-space-between">
+      <v-container class="container justify-space-between">
         <a @click="goToHome()" class="brand">
           <picture>
             <source media="(min-width: 601px)"
@@ -50,7 +50,7 @@
             transition="slide-y-transition"
             attach="#appHeader"
             v-if="!isAuthenticated && showLoginMenu">
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 large
                 text
@@ -58,7 +58,7 @@
                 class="mx-1 pr-2 pl-3"
                 aria-label="log in"
                 id="loginBtn"
-                v-on="on">
+                v-bind="props">
                 <span>Log in</span>
                 <v-icon class="ml-1">mdi-menu-down</v-icon>
               </v-btn>
@@ -298,7 +298,7 @@
 
 <script lang="ts">
 // External
-import { computed, defineComponent, nextTick, onMounted, reactive, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -345,10 +345,12 @@ export default defineComponent({
     dashboardReturnUrl: { default: '' },
     showProductSelector: { default: false },    
   },
+
   setup(props, { emit }) {
     const route = useRoute()
     const router = useRouter()
     const store = useStore()
+    
     // set modules
     if (!store.hasModule('account')) store.registerModule('account', AccountModule)
     if (!store.hasModule('auth')) store.registerModule('auth', AuthModule)
@@ -372,57 +374,54 @@ export default defineComponent({
     const fetchNotificationUnreadCount = async () => {
       await store.dispatch('notification/fetchNotificationUnreadCount') }
     const syncNotifications = async () => { await store.dispatch('notification/syncNotifications') }
+    
     // navigation helpers
     const { getContextPath, redirectToPath } = useNavigation()
+    
     // constants
     const loginOptions = [
       { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-account-card-details-outline' },
       { idpHint: IdpHint.BCEID, option: 'BCeID', icon: 'mdi-two-factor-authentication'},
       { idpHint: IdpHint.IDIR, option: 'IDIR', icon: 'mdi-account-group-outline'}
     ]
+    const notificationPanel = ref(false)
+
+    // Calculated Value
     const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'] )
     const accountName = computed(() => store.getters['account/accountName'] ) 
     const switchableAccounts = computed(() => store.getters['account/switchableAccounts'] )
     const username = computed(() => store.getters['account/username'] )
     const currentLoginSource = computed(() => store.getters['auth/currentLoginSource'] as string)
     const currentAccount =computed(() => store.state.account.currentAccount as UserSettings)
-    // define component state
-    const state = reactive({
-      currentUser: computed(() => store.state.account.currentUser as any),
-      pendingApprovalCount: computed(() => store.state.account.pendingApprovalCount as number),       
-      // notifications module
-      notificationCount: computed(() => store.state.notification.notificationCount as number),
-      notificationUnreadPriorityCount: computed(() =>
-        store.state.notification.notificationUnreadPriorityCount as number),
-      notificationUnreadCount: computed(() => store.state.notification.notificationUnreadCount as number),
-      // launch darkly
-      disableBCEIDMultipleAccount: computed(() =>
-        LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
-      isWhatsNewOpen: computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false),
-      // other
-      notificationPanel: false,
-      showTransactions: computed(() => currentAccount?.value?.accountType === Account.PREMIUM),
-      // only for internal staff who belongs to bcreg
-      isStaff: computed(() => state.currentUser?.roles?.includes(Role.Staff) as boolean || false),
-      // only for GOVN type users
-      isGovmUser: computed(() => state.currentUser?.roles?.includes(Role.GOVMAccountUser) as boolean || false),
-      isBceid: computed(() => currentLoginSource.value === LoginSource.BCEID),
-      isBcscOrBceid: computed(
-        () => [LoginSource.BCSC.valueOf(), LoginSource.BCEID.valueOf()].indexOf(currentLoginSource.value) >= 0),
-      canCreateAccount: computed(() => {
-        const disabledLogins:any = [LoginSource.BCROS.valueOf(), LoginSource.IDIR.valueOf()]
-        if (state.disableBCEIDMultipleAccount) {
-          disabledLogins.push(LoginSource.BCEID.valueOf())
-        }
-        return disabledLogins.indexOf(currentLoginSource.value) < 0
-      })
+    const currentUser = computed(() => store.state.account.currentUser as any)
+    const pendingApprovalCount = computed(() => store.state.account.pendingApprovalCount as number)
+    const isBceid = computed(() => currentLoginSource.value === LoginSource.BCEID)
+    const notificationUnreadCount = computed(() => store.state.notification.notificationUnreadCount as number)
+    const notificationCount = computed(() => store.state.notification.notificationCount as number)
+    const notificationUnreadPriorityCount = computed(() =>
+        store.state.notification.notificationUnreadPriorityCount as number)
+    const disableBCEIDMultipleAccount = computed(() =>
+        LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false)      
+    const isWhatsNewOpen = computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false)       
+    const showTransactions = computed(() => currentAccount?.value?.accountType === Account.PREMIUM)      
+    const isStaff = computed(() => currentUser?.value?.roles?.includes(Role.Staff) as boolean || false)       
+    const isGovmUser = computed(() => currentUser?.value?.roles?.includes(Role.GOVMAccountUser) as boolean ||
+     false)      
+    const isBcscOrBceid = computed(
+        () => [LoginSource.BCSC.valueOf(), LoginSource.BCEID.valueOf()].indexOf(currentLoginSource.value) >= 0)
+    const canCreateAccount = computed(() => {
+    const disabledLogins:any = [LoginSource.BCROS.valueOf(), LoginSource.IDIR.valueOf()]
+      if (disableBCEIDMultipleAccount.value) {
+        disabledLogins.push(LoginSource.BCEID.valueOf())
+      }
+      return disabledLogins.indexOf(currentLoginSource.value) < 0
     })
+  
     // mounted lifecycle
     onMounted(async () => {
       getModule(AccountModule, store)
       getModule(AuthModule, store)
       getModule(NotificationModule, store)
-
       syncWithSessionStorage()
       if (isAuthenticated?.value) {
         await loadUserInfo()
@@ -447,7 +446,7 @@ export default defineComponent({
 
     // component functions
     const updateProfile = async (): Promise<void> => {
-      if (state.isBceid?.value) {
+      if (isBceid?.value) {
         await syncUserProfile()
       }
     }
@@ -534,8 +533,8 @@ export default defineComponent({
       }
     }
     const closeNotificationPanel = async (): Promise<void> => {
-      state.notificationPanel.value = false
-      if (state.notificationUnreadCount.value > 0) {
+      notificationPanel.value = false
+      if (notificationUnreadCount.value > 0) {
         await markAsRead()
       }
     }
@@ -548,8 +547,7 @@ export default defineComponent({
     })
 
     return {
-      ...props,
-      ...state,
+      ...props,       
       closeNotificationPanel,
       goToAccountInfo,
       goToCreateAccount,
@@ -568,7 +566,20 @@ export default defineComponent({
       switchableAccounts,
       accountName,
       username,
-      currentAccount
+      currentAccount,
+      currentUser,
+      pendingApprovalCount,
+      notificationPanel,
+      isBceid,
+      notificationUnreadCount,
+      notificationCount,
+      notificationUnreadPriorityCount,
+      isWhatsNewOpen,
+      showTransactions,
+      isStaff,
+      isGovmUser,
+      isBcscOrBceid,
+      canCreateAccount
     }
   }
 })

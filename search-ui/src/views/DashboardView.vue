@@ -1,5 +1,5 @@
 <template>
-  <v-container>this is our dashboard</v-container>
+  <v-container class="mt-4">this is our dashboard</v-container>
 </template>
 
 <script lang="ts">

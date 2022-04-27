@@ -8,12 +8,14 @@ import { router } from '@/router'
 import store from '@/store'
 import { fetchConfig, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
-import { loadFonts } from './plugins/webfontloader'
+ 
+// Styles
+import '@mdi/font/css/materialdesignicons.min.css' // ensure you are using css-loader
 import '@/assets/styles/base.scss'
 import '@/assets/styles/layout.scss'
 import '@/assets/styles/overrides.scss'
-import KeycloakService from '@/sbc-common-components/services/keycloak.services'
 
+import KeycloakService from '@/sbc-common-components/services/keycloak.services'
 
 declare const window: any
 
@@ -60,8 +62,6 @@ async function start() {
   console.info('Starting app...') // eslint-disable-line no-console
   app.use(router).use(store).use(vuetify).mount('#app')
 }
- 
-loadFonts()
 
 start().catch(error => {
   console.error(error) // eslint-disable-line no-console
