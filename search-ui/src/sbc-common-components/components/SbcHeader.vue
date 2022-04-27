@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="app-header" id="appHeader">
-      <v-container class="justify-space-between">
+      <v-container class="container justify-space-between">
         <a @click="goToHome()" class="brand">
           <picture>
             <source media="(min-width: 601px)"
@@ -50,7 +50,7 @@
             transition="slide-y-transition"
             attach="#appHeader"
             v-if="!isAuthenticated && showLoginMenu">
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-btn
                 large
                 text
@@ -58,7 +58,7 @@
                 class="mx-1 pr-2 pl-3"
                 aria-label="log in"
                 id="loginBtn"
-                v-on="on">
+                v-bind="props">
                 <span>Log in</span>
                 <v-icon class="ml-1">mdi-menu-down</v-icon>
               </v-btn>
@@ -85,15 +85,14 @@
 
           <!-- Notifications -->
           <v-menu
-            fixed
-            bottom
-            left
-            transition="slide-y-transition"
-            attach="#appHeader"
-            v-if="isAuthenticated">
-            <template v-slot:activator="{ on }">
-              <v-btn text dark large class="mobile-icon-only mx-1 px-2"
-                aria-label="notifications" v-on="on">
+            anchor="bottom"             
+            transition="slide-y-transition"            
+            v-if="isAuthenticated"
+             >
+            <template v-slot:activator="{ props }">
+              <v-btn variant="text"            
+                size="large" class="mobile-icon-only mx-1 px-2"
+                aria-label="notifications" v-bind="props">
                 <v-icon>mdi-bell-outline</v-icon>
                 <v-badge
                   dot
@@ -139,14 +138,15 @@
             transition="slide-y-transition"
             attach="#appHeader"
             v-if="isAuthenticated">
-            <template v-slot:activator="{ on }">
-              <v-btn large text class="user-account-btn" aria-label="my account" v-on="on">
+            <template v-slot:activator="{ props }">
+              <v-btn variant="text"            
+            size="large" class="user-account-btn" aria-label="my account" v-bind="props">
                 <v-avatar
                   tile
                   left
                   color="#4d7094"
                   size="32"
-                  class="user-avatar">
+                  class="user-avatar white-text">
                   {{ username.slice(0,1) }}
                 </v-avatar>
                 <div class="user-info">
@@ -166,7 +166,7 @@
                     left
                     color="#4d7094"
                     size="36"
-                    class="user-avatar white--text">
+                    class="user-avatar">
                     {{ username.slice(0,1) }}
                   </v-list-item-avatar>
                   <v-list-item class="user-info">
@@ -273,9 +273,8 @@
           </v-menu>
 
           <v-btn
-            text
-            dark
-            large
+            variant="text"            
+            size="large"
             @click="goToCreateAccount()"
             v-if="!isAuthenticated">
             Create Account
@@ -299,10 +298,9 @@
 
 <script lang="ts">
 // External
-import { computed, defineComponent, nextTick, onMounted, reactive, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { useGetters } from 'vuex-composition-helpers'
 import { getModule } from 'vuex-module-decorators'
 // BC Registry
 // sbc modules
@@ -347,21 +345,17 @@ export default defineComponent({
     dashboardReturnUrl: { default: '' },
     showProductSelector: { default: false },    
   },
+
   setup(props, { emit }) {
     const route = useRoute()
     const router = useRouter()
     const store = useStore()
+    
     // set modules
     if (!store.hasModule('account')) store.registerModule('account', AccountModule)
     if (!store.hasModule('auth')) store.registerModule('auth', AuthModule)
     if (!store.hasModule('notification')) store.registerModule('notification', NotificationModule)
-    // module getters
-    // account
-    const { accountName, switchableAccounts, username } = useGetters(
-      ['account/accountName', 'account/switchableAccounts', 'account/username'])
-    // auth
-    const { currentLoginSource, isAuthenticated } = useGetters(
-      ['auth/currentLoginSource', 'auth/isAuthenticated'])
+
     // module actions
     // account
     const loadUserInfo = async () => { await store.dispatch('account/loadUserInfo') }
@@ -380,62 +374,56 @@ export default defineComponent({
     const fetchNotificationUnreadCount = async () => {
       await store.dispatch('notification/fetchNotificationUnreadCount') }
     const syncNotifications = async () => { await store.dispatch('notification/syncNotifications') }
+    
     // navigation helpers
     const { getContextPath, redirectToPath } = useNavigation()
+    
     // constants
     const loginOptions = [
       { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-account-card-details-outline' },
       { idpHint: IdpHint.BCEID, option: 'BCeID', icon: 'mdi-two-factor-authentication'},
       { idpHint: IdpHint.IDIR, option: 'IDIR', icon: 'mdi-account-group-outline'}
     ]
+    const notificationPanel = ref(false)
 
-    // define component state
-    const state = reactive({
-      // account module
-      accountName: computed(() => accountName?.value as string || ''),
-      currentAccount: computed(() => store.state.account.currentAccount as UserSettings),
-      currentUser: computed(() => store.state.account.currentUser as any),
-      pendingApprovalCount: computed(() => store.state.account.pendingApprovalCount as number),
-      switchableAccounts: computed(() => switchableAccounts?.value as UserSettings[]),
-      username: computed(() => username?.value as string),
-      // auth module
-      currentLoginSource: computed(() => currentLoginSource?.value as string),
-      isAuthenticated: computed(() => isAuthenticated?.value as boolean),
-      // notifications module
-      notificationCount: computed(() => store.state.notification.notificationCount as number),
-      notificationUnreadPriorityCount: computed(() =>
-        store.state.notification.notificationUnreadPriorityCount as number),
-      notificationUnreadCount: computed(() => store.state.notification.notificationUnreadCount as number),
-      // launch darkly
-      disableBCEIDMultipleAccount: computed(() =>
-        LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false),
-      isWhatsNewOpen: computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false),
-      // other
-      notificationPanel: false,
-      showTransactions: computed(() => state.currentAccount?.accountType === Account.PREMIUM),
-      // only for internal staff who belongs to bcreg
-      isStaff: computed(() => state.currentUser?.roles?.includes(Role.Staff) as boolean || false),
-      // only for GOVN type users
-      isGovmUser: computed(() => state.currentUser?.roles?.includes(Role.GOVMAccountUser) as boolean || false),
-      isBceid: computed(() => state.currentLoginSource === LoginSource.BCEID),
-      isBcscOrBceid: computed(
-        () => [LoginSource.BCSC.valueOf(), LoginSource.BCEID.valueOf()].indexOf(state.currentLoginSource) >= 0),
-      canCreateAccount: computed(() => {
-        const disabledLogins:any = [LoginSource.BCROS.valueOf(), LoginSource.IDIR.valueOf()]
-        if (state.disableBCEIDMultipleAccount) {
-          disabledLogins.push(LoginSource.BCEID.valueOf())
-        }
-        return disabledLogins.indexOf(state.currentLoginSource) < 0
-      })
+    // Calculated Value
+    const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'] )
+    const accountName = computed(() => store.getters['account/accountName'] ) 
+    const switchableAccounts = computed(() => store.getters['account/switchableAccounts'] )
+    const username = computed(() => store.getters['account/username'] )
+    const currentLoginSource = computed(() => store.getters['auth/currentLoginSource'] as string)
+    const currentAccount =computed(() => store.state.account.currentAccount as UserSettings)
+    const currentUser = computed(() => store.state.account.currentUser as any)
+    const pendingApprovalCount = computed(() => store.state.account.pendingApprovalCount as number)
+    const isBceid = computed(() => currentLoginSource.value === LoginSource.BCEID)
+    const notificationUnreadCount = computed(() => store.state.notification.notificationUnreadCount as number)
+    const notificationCount = computed(() => store.state.notification.notificationCount as number)
+    const notificationUnreadPriorityCount = computed(() =>
+        store.state.notification.notificationUnreadPriorityCount as number)
+    const disableBCEIDMultipleAccount = computed(() =>
+        LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false)      
+    const isWhatsNewOpen = computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false)       
+    const showTransactions = computed(() => currentAccount?.value?.accountType === Account.PREMIUM)      
+    const isStaff = computed(() => currentUser?.value?.roles?.includes(Role.Staff) as boolean || false)       
+    const isGovmUser = computed(() => currentUser?.value?.roles?.includes(Role.GOVMAccountUser) as boolean ||
+     false)      
+    const isBcscOrBceid = computed(
+        () => [LoginSource.BCSC.valueOf(), LoginSource.BCEID.valueOf()].indexOf(currentLoginSource.value) >= 0)
+    const canCreateAccount = computed(() => {
+    const disabledLogins:any = [LoginSource.BCROS.valueOf(), LoginSource.IDIR.valueOf()]
+      if (disableBCEIDMultipleAccount.value) {
+        disabledLogins.push(LoginSource.BCEID.valueOf())
+      }
+      return disabledLogins.indexOf(currentLoginSource.value) < 0
     })
+  
     // mounted lifecycle
     onMounted(async () => {
       getModule(AccountModule, store)
       getModule(AuthModule, store)
       getModule(NotificationModule, store)
-
       syncWithSessionStorage()
-      if (state.isAuthenticated?.value) {
+      if (isAuthenticated?.value) {
         await loadUserInfo()
         await syncAccount()
         await updateProfile()
@@ -458,7 +446,7 @@ export default defineComponent({
 
     // component functions
     const updateProfile = async (): Promise<void> => {
-      if (state.isBceid?.value) {
+      if (isBceid?.value) {
         await syncUserProfile()
       }
     }
@@ -479,38 +467,38 @@ export default defineComponent({
       redirectToPath(props.inAuth, redirectUrl)
     }
     const goToAccountInfo = async (settings: UserSettings) => {
-      if (!state.currentAccount?.value || !settings) {
+      if (!currentAccount?.value || !settings) {
         return
       }
       await syncCurrentAccount(settings)
-      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/account-info`)
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${currentAccount?.value?.id}/${Pages.SETTINGS}/account-info`)
     }
     const goToTeamMembers = () => {
-      if (!state.currentAccount?.value) {
+      if (!currentAccount?.value) {
         return
       }
-      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/team-members`)
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${currentAccount?.value.id}/${Pages.SETTINGS}/team-members`)
     }
     const goToTransactions = () => {
-      if (!state.currentAccount?.value) {
+      if (!currentAccount?.value) {
         return
       }
-      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${state.currentAccount?.value.id}/${Pages.SETTINGS}/transactions`)
+      redirectToPath(props.inAuth, `${Pages.ACCOUNT}/${currentAccount?.value.id}/${Pages.SETTINGS}/transactions`)
     }
     const checkAccountStatus = async () => {
       // redirect if accoutn status is suspended
       if ([AccountStatus.NSF_SUSPENDED, AccountStatus.SUSPENDED].some(
-          status => status === state.currentAccount.value?.accountStatus)
+          status => status === currentAccount?.value?.accountStatus)
       ) {
         redirectToPath(props.inAuth, `${Pages.ACCOUNT_FREEZ}`)
-      } else if (state.currentAccount?.value?.accountStatus === AccountStatus.PENDING_STAFF_REVIEW) {
+      } else if (currentAccount?.value?.accountStatus === AccountStatus.PENDING_STAFF_REVIEW) {
         const targetPath = window.location.pathname
         const substringCheck = (element:string) => targetPath.indexOf(element) > -1
         // check if any of the url is the allowed uri
         const isAllowedUrl = ALLOWED_URIS_FOR_PENDING_ORGS.findIndex(substringCheck) > -1
         if (!isAllowedUrl) {
-          const accountName = encodeURIComponent(btoa(state.accountName?.value))
-          redirectToPath(props.inAuth, `${Pages.PENDING_APPROVAL}/${accountName}/true`)
+          const accountNme = encodeURIComponent(btoa(accountName?.value))
+          redirectToPath(props.inAuth, `${Pages.PENDING_APPROVAL}/${accountNme}/true`)
         }
       }
     }
@@ -545,22 +533,21 @@ export default defineComponent({
       }
     }
     const closeNotificationPanel = async (): Promise<void> => {
-      state.notificationPanel.value = false
-      if (state.notificationUnreadCount.value > 0) {
+      notificationPanel.value = false
+      if (notificationUnreadCount.value > 0) {
         await markAsRead()
       }
     }
 
     // component watchers
-    watch(state.isAuthenticated, async (val: boolean) => {
+    watch(isAuthenticated.value, async (val: boolean) => {
       if (val) {
         await updateProfile()
       }
     })
 
     return {
-      ...props,
-      ...state,
+      ...props,       
       closeNotificationPanel,
       goToAccountInfo,
       goToCreateAccount,
@@ -574,7 +561,25 @@ export default defineComponent({
       loginOptions,
       store,
       switchAccount,
-      syncWithSessionStorage
+      syncWithSessionStorage,
+      isAuthenticated,
+      switchableAccounts,
+      accountName,
+      username,
+      currentAccount,
+      currentUser,
+      pendingApprovalCount,
+      notificationPanel,
+      isBceid,
+      notificationUnreadCount,
+      notificationCount,
+      notificationUnreadPriorityCount,
+      isWhatsNewOpen,
+      showTransactions,
+      isStaff,
+      isGovmUser,
+      isBcscOrBceid,
+      canCreateAccount
     }
   }
 })
@@ -626,6 +631,10 @@ $app-header-font-color: #ffffff;
   border-radius: 0.15rem;
   font-size: 1.1875rem;
   font-weight: 700;
+}
+
+.white-text {
+  color: white;
 }
 .switch-account{
   height:42vh;

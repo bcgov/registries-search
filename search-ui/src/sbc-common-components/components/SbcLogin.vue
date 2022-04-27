@@ -14,14 +14,13 @@
             </v-img>
           </v-card-title>
           <v-card-text>
-            <v-menu>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  large
-                  class="white--text font-weight-bold"
+            <v-menu anchor="center">
+              <template v-slot:activator="{ props }">
+                <v-btn color="primary"
+                  size="large"
                   aria-label="log in"
                   id="loginBtn"
-                  v-on="on">
+                  v-bind="props">
                   <span>Log in to my BC Registries Account</span>
                   <v-icon class="mr-n1 ml-2">mdi-menu-down</v-icon>
                 </v-btn>
