@@ -20,7 +20,6 @@ from datetime import datetime as _datetime
 from datetime import time, timedelta, timezone
 
 import pytz
-from datedelta import datedelta
 
 
 # Local timzone

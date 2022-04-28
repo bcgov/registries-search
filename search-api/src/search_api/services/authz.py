@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This manages all of the authentication and authorization service."""
-from http import HTTPStatus
+# from http import HTTPStatus
 from typing import List
 
 from flask import current_app
@@ -20,6 +20,7 @@ from flask_jwt_oidc import JwtManager
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+
 
 # TODO: identify what roles we need for search
 SYSTEM_ROLE = 'system'
@@ -35,7 +36,7 @@ BCOL_HELP = 'helpdesk'
 
 
 #  def authorized(identifier: str, jwt: JwtManager, action: List[str]) -> bool:
-def authorized(identifier: str, jwt: JwtManager) -> bool:  # pylint: disable=too-many-return-statements
+def authorized(identifier: str, jwt: JwtManager) -> bool:  # pylint: disable=too-many-return-statements,unused-argument
     """Verify the user is authorized to submit the request by inspecting the web token.
 
     The gateway has already verified the JWT with the OIDC service.

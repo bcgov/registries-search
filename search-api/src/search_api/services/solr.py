@@ -13,11 +13,9 @@
 # limitations under the License.
 """Manages solr classes for search."""
 from enum import Enum
-from http import HTTPStatus
 from typing import List
 
 import requests
-from flask import current_app
 
 
 class SolrFields(str, Enum):
@@ -30,19 +28,20 @@ class SolrFields(str, Enum):
     TYPE = 'legal_type'
 
 
-class SolrDoc:
+class SolrDoc:  # pylint: disable=too-few-public-methods
     """Class representation for a solr search core doc."""
 
     # TODO: make enums for state and type
-    def __init__(self, identifier: str, name: str, state: str, legal_type: str, bn: str = None):
+    def __init__(self, identifier: str, name: str, state: str, legal_type: str, tax_id: str = None):
+        # pylint: disable=too-many-arguments
         """Initialize this object."""
         self.identifier = identifier
         self.name = name
         self.state = state
         self.legal_type = legal_type
-        if bn:
-            self.bn = bn
-    
+        if tax_id:
+            self.tax_id = tax_id
+
     def json(self):
         """Return the dict representation of a SolrDoc."""
         doc_json = {
@@ -51,8 +50,8 @@ class SolrDoc:
             SolrFields.STATE: self.state,
             SolrFields.TYPE: self.legal_type,
         }
-        if self.bn:
-            doc_json[SolrFields.BN] = self.bn
+        if self.tax_id:
+            doc_json[SolrFields.BN] = self.tax_id
         return doc_json
 
 
@@ -68,7 +67,8 @@ class Solr:
         self.start = 0
         self.rows = 10
         self.facets = f'&facet=on&facet.field={SolrFields.STATE}&facet.field={SolrFields.TYPE}'
-        self.fields = f'&fl={SolrFields.BN},{SolrFields.IDENTIFIER},{SolrFields.NAME},{SolrFields.STATE},{SolrFields.TYPE}'
+        self.fields = \
+            f'&fl={SolrFields.BN},{SolrFields.IDENTIFIER},{SolrFields.NAME},{SolrFields.STATE},{SolrFields.TYPE}'
         # TODO: add in facet selection stuff + sort + suggester stuff
 
         self.search_query = '{url}/{core}/select?q=*:*&wt=json{search_params}{fields}&start={start}&rows={rows}'
@@ -81,7 +81,7 @@ class Solr:
         """Initialize the Solr environment."""
         self.app = app
         self.solr_url = app.config.get('SOLR_SVC_URL')
-    
+
     def business_search(self, legal_name: str = None, identifier: str = None):
         """Return the list of businesses from Solr that match the search criteria."""
         search_params = ''
@@ -91,7 +91,7 @@ class Solr:
         if identifier:
             search_params += f'&fq={SolrFields.IDENTIFIER}:{identifier}'
         search_params += self.facets
-        
+
         # query solr
         query = self.search_query.format(
             url=self.solr_url,
@@ -103,7 +103,7 @@ class Solr:
         )
         response = requests.get(query)
         return response
-    
+
     def create_or_replace_docs(self, docs: List):
         """Create or replace solr docs in the core."""
         url = self.update_query.format(
@@ -112,7 +112,7 @@ class Solr:
         )
         response = requests.post(url=url, json=docs)
         return response
-    
+
     def delete_docs(self, identifiers: List):
         """Delete solr docs from the core."""
         payload = '<add><delete>'
@@ -127,5 +127,3 @@ class Solr:
         headers = {'Content-Type': 'application/xml'}
         response = requests.post(url=update_url, data=payload, headers=headers)
         return response
-        
-        

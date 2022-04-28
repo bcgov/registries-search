@@ -17,5 +17,6 @@ from .authz import BASIC_USER, STAFF_ROLE, SYSTEM_ROLE, authorized, is_staff
 from .flags import Flags
 from .solr import Solr
 
+
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 solr = Solr()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.

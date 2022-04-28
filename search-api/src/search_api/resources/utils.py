@@ -14,9 +14,9 @@
 """Resource helper utilities for processing requests."""
 from http import HTTPStatus
 
-from flask import jsonify, current_app, request
+from flask import jsonify, current_app
 
-from search_api.exceptions import BusinessException, DatabaseException, ResourceErrorCodes
+from search_api.exceptions import ResourceErrorCodes
 from search_api.services.authz import user_orgs, is_reg_staff_account, is_sbc_office_account, is_bcol_help
 
 
@@ -120,18 +120,18 @@ def business_exception_response(exception):
     return jsonify({'message': exception.error}), exception.status_code
 
 
-def pay_exception_response(exception: SBCPaymentException, account_id: str = None):
-    """Build pay 402 exception error response."""
-    status = exception.status_code
-    message = PAYMENT.format(code=ResourceErrorCodes.PAY_ERR, status=status, account_id=account_id)
-    if exception.json_data:
-        detail = exception.json_data.get('detail', '')
-        err_type = exception.json_data.get('type', '')
-        return jsonify({'message': message, 'status_code': status, 'type': err_type, 'detail': detail}),\
-            HTTPStatus.PAYMENT_REQUIRED
+# def pay_exception_response(exception: SBCPaymentException, account_id: str = None):
+#     """Build pay 402 exception error response."""
+#     status = exception.status_code
+#     message = PAYMENT.format(code=ResourceErrorCodes.PAY_ERR, status=status, account_id=account_id)
+#     if exception.json_data:
+#         detail = exception.json_data.get('detail', '')
+#         err_type = exception.json_data.get('type', '')
+#         return jsonify({'message': message, 'status_code': status, 'type': err_type, 'detail': detail}),\
+#             HTTPStatus.PAYMENT_REQUIRED
 
-    current_app.logger.error(str(exception))
-    return jsonify({'message': message, 'detail': str(exception)}), HTTPStatus.PAYMENT_REQUIRED
+#     current_app.logger.error(str(exception))
+#     return jsonify({'message': message, 'detail': str(exception)}), HTTPStatus.PAYMENT_REQUIRED
 
 
 def default_exception_response(exception):
