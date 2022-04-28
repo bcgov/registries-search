@@ -132,7 +132,7 @@ class Flags():
 
         try:
             return bool(client.variation(flag, flag_user, None))
-        except Exception as err:
+        except Exception as err:  # noqa: B902
             current_app.logger.error('Unable to read flags: %s' % repr(err), exc_info=True)
             return False
 
@@ -147,6 +147,6 @@ class Flags():
 
         try:
             return client.variation(flag, flag_user, None)
-        except Exception as err:
+        except Exception as err:  # noqa: B902
             current_app.logger.error('Unable to read flags: %s' % repr(err), exc_info=True)
             return False

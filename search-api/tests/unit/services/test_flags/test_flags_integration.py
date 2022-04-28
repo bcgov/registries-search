@@ -25,7 +25,6 @@ from tests import integration_ldarkly
 
 @integration_ldarkly
 @pytest.mark.parametrize('test_name,flag_name,expected', [
-    # TODO: implement these flags in ld for search
     ('search-test-boolean', 'search-test-boolean', False),
     ('search-test-num', 'search-test-num', -1),
 ])

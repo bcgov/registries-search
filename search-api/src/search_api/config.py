@@ -63,6 +63,7 @@ class _Config():  # pylint: disable=too-few-public-methods
 
     PAYMENT_SVC_URL = os.getenv('PAYMENT_SVC_URL', 'http://')
     AUTH_SVC_URL = os.getenv('AUTH_SVC_URL', 'http://')
+    SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
@@ -155,6 +156,8 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
 
     DEBUG = True
     TESTING = True
+    # SOLR
+    SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_TEST_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_TEST_PASSWORD', '')

@@ -31,7 +31,8 @@ from search_api import config, errorhandlers, models
 from search_api.models import db
 from search_api.resources import API_BLUEPRINT, OPS_BLUEPRINT
 from search_api.schemas import rsbc_schemas
-from search_api.services import flags
+from search_api.services import flags, solr
+from search_api.services.solr import SolrDoc
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.logging import setup_logging
@@ -60,6 +61,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     db.init_app(app)
     rsbc_schemas.init_app(app)
     flags.init_app(app)
+    solr.init_app(app)
     babel.init_app(app)
 
     app.register_blueprint(API_BLUEPRINT)

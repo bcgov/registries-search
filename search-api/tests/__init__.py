@@ -20,7 +20,7 @@ from .pytest_marks import (
     integration_ldarkly,
     integration_nats,
     integration_payment,
-    integration_sentry,
+    integration_solr,
     not_github_ci,
 )
 
