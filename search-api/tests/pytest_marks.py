@@ -31,20 +31,20 @@ load_dotenv(find_dotenv())
 
 
 integration_authorization = pytest.mark.skipif(
-    (os.getenv('RUN_AUTHORIZATION_TESTS', 'False') is 'False'),
-    reason='Test requiring authorization service run when RUN_AUTHORIZATION_TESTS is set.')
+    (os.getenv('RUN_AUTHORIZATION_TESTS', 'False') == 'False'),
+    reason='Test requiring authorization service are skipped when RUN_AUTHORIZATION_TESTS is False.')
 
-integration_nats = pytest.mark.skipif((os.getenv('RUN_NATS_TESTS', 'False') is 'False'),
-                                      reason='NATS tests are only run when requested.')
+integration_nats = pytest.mark.skipif((os.getenv('RUN_NATS_TESTS', 'False') == 'False'),
+                                      reason='NATS tests are skipped when RUN_NATS_TESTS is False.')
 
-integration_payment = pytest.mark.skipif((os.getenv('RUN_PAYMENT_TESTS', 'False') is 'False'),
-                                         reason='Test requiring payment service run when RUN_PAYMENT_TESTS is set.')
+integration_payment = pytest.mark.skipif((os.getenv('RUN_PAYMENT_TESTS', 'False') == 'False'),
+                                         reason='Test requiring payment service are skipped when RUN_PAYMENT_TESTS is False.')
 
-integration_sentry = pytest.mark.skipif((os.getenv('SENTRY_DSN', 'False') is 'False'),
-                                        reason='SENTRY tests run when SENTRY_DSN is set.')
+integration_ldarkly = pytest.mark.skipif((os.getenv('RUN_LD_TESTS', 'False') == 'False'),
+                                        reason='Launch Darkly integration tests are skipped when RUN_LD_TESTS is False.')
 
-integration_ldarkly = pytest.mark.skipif((os.getenv('LD_SDK_KEY', 'False') == 'False'),
-                                        reason='Launch Darkly integration tests run when LD_SDK_KEY is set.')
+integration_solr = pytest.mark.skipif((os.getenv('RUN_SOLR_TESTS', 'False') == 'False'),
+                                        reason='SOLR integration tests are skipped when RUN_SOLR_TESTS is False.')
 
-not_github_ci = pytest.mark.skipif((os.getenv('NOT_GITHUB_CI', 'False') is 'False'),
+not_github_ci = pytest.mark.skipif((os.getenv('NOT_GITHUB_CI', 'False') == 'False'),
                                    reason='Does not pass on github ci.')
