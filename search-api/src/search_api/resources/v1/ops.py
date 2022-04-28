@@ -18,7 +18,7 @@ from sqlalchemy import text, exc
 from search_api.models import db
 
 
-bp = Blueprint('OPS', __name__, url_prefix='/ops')
+bp = Blueprint('OPS', __name__, url_prefix='/ops')  # pylint: disable=invalid-name
 
 SQL = text('select 1')
 

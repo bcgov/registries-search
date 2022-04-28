@@ -15,4 +15,4 @@
 from flask import Blueprint
 
 
-bp = Blueprint('SEARCH', __name__, url_prefix='/search')
+bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=invalid-name

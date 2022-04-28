@@ -21,7 +21,7 @@ from registry_schemas import __version__ as registry_schemas_version
 from search_api.utils.run_version import get_run_version
 
 
-bp = Blueprint('META', __name__, url_prefix='/meta')
+bp = Blueprint('META', __name__, url_prefix='/meta')  # pylint: disable=invalid-name
 
 
 @bp.get('/info')
