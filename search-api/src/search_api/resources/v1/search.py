@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Registry Search."""
-from flask_restx import Namespace
+from flask import Blueprint
 
 
-API = Namespace('registry-search', description='Endpoints for searching across all BC businesses.')
+bp = Blueprint('SEARCH', __name__, url_prefix='/search')

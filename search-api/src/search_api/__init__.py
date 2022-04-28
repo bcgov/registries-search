@@ -23,13 +23,13 @@ from http import HTTPStatus
 
 import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
-from flask import redirect, Flask  # noqa: I001
+from flask import redirect, url_for, Flask  # noqa: I001
 from registry_schemas import __version__ as registry_schemas_version
 from registry_schemas.flask import SchemaServices  # noqa: I001
 
 from search_api import config, errorhandlers, models
 from search_api.models import db
-from search_api.resources import API_BLUEPRINT, OPS_BLUEPRINT
+from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
 from search_api.services import flags, solr
 from search_api.services.solr import SolrDoc
@@ -64,8 +64,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     solr.init_app(app)
     babel.init_app(app)
 
-    app.register_blueprint(API_BLUEPRINT)
-    app.register_blueprint(OPS_BLUEPRINT)
+    v1_endpoint.init_app(app)
     setup_jwt_manager(app, jwt)
 
     @app.route('/')

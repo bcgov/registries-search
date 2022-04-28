@@ -11,9 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes the versioned endpoints."""
-from .constants import EndpointVersionPath
-from .version_endpoint import VersionEndpoint
-from .v1 import meta_bp, ops_bp, search_bp
+"""Constants used in managing the end-points."""
+from __future__ import annotations
 
-v1_endpoint = VersionEndpoint('API_V1', EndpointVersionPath.API_V1, [meta_bp, ops_bp, search_bp])
+from enum import Enum
+
+
+class EndpointVersionPath(str, Enum):
+    """Enumerate the endpoint mounts used in the system."""
+
+    API_V1 = '/api/v1'
