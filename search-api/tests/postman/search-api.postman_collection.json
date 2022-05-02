@@ -20,11 +20,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/ops/readyz",
+							"raw": "{{base_url}}/{{version}}/ops/readyz",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"{{version}}",
 								"ops",
 								"readyz"
 							]
@@ -45,11 +46,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/ops/healthz",
+							"raw": "{{base_url}}/{{version}}/ops/healthz",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"{{version}}",
 								"ops",
 								"healthz"
 							]
@@ -75,13 +77,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/meta/info",
+							"raw": "{{base_url}}/{{version}}/meta/info",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"v1",
+								"{{version}}",
 								"meta",
 								"info"
 							]
@@ -91,6 +92,10 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "search",
+			"item": []
 		}
 	]
 }

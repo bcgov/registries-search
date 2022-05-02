@@ -1,8 +1,7 @@
-Flask<2
+Flask
 Flask-Babel
 Flask-Migrate==2.6.0
 Flask-Moment
-flask_restx
 Flask-Script
 Flask-SQLAlchemy
 attrs<=19.1.0

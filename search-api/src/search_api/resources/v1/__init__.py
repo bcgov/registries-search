@@ -11,13 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes the versioned endpoints."""
-from .constants import EndpointVersionPath
-from .v1 import meta_bp, ops_bp, search_bp
-from .version_endpoint import VersionEndpoint
-
-
-v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
-    name='API_V1',
-    path=EndpointVersionPath.API_V1,
-    bps=[meta_bp, ops_bp, search_bp])
+"""Exposes all of the resource endpoints in Flask-Blueprint style."""
+from .meta import bp as meta_bp
+from .ops import bp as ops_bp
+from .search import bp as search_bp
