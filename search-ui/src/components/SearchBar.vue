@@ -25,8 +25,7 @@
           :setAutoCompleteIsActive="autoCompleteIsActive"
           v-click-outside="setCloseAutoComplete"
           @search-value="setSearchValue"
-          @hide-details="setHideDetails"
-        />
+          @hide-details="setHideDetails"/>
       </v-col>
       <v-col class="pl-3 pt-2">
         <v-row no-gutters>
@@ -40,8 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import _ from 'lodash'
+import { ref, watch } from 'vue'
 
 import AutoComplete from './AutoComplete.vue'
 
@@ -92,46 +90,5 @@ watch(
 #search-btn-info {
   color: $gray8;
   font-size: 0.725rem;
-}
-.search-info {
-  color: $gray8;
-  font-size: 1rem;
-}
-.search-title {
-  color: $gray9;
-  font-size: 1rem;
-}
-.fee-info {
-  border-bottom: 1px dotted $gray9;
-}
-.folio-btn {
-  background-color: transparent !important;
-  color: $primary-blue !important;
-  font-size: 0.825rem !important;
-}
-.folio-btn::before {
-  background-color: transparent !important;
-  color: $primary-blue !important;
-}
-.folio-close-btn {
-  background-color: transparent !important;
-  color: $primary-blue !important;
-  position: absolute;
-}
-.folio-close-btn::before {
-  background-color: transparent !important;
-  color: $primary-blue !important;
-}
-.folio-edit-card {
-  width: 15rem;
-  position: absolute;
-  z-index: 3;
-}
-.folio-header {
-  color: $gray9;
-}
-.folio-info {
-  color: $gray7;
-  font-size: 0.875rem;
 }
 </style>

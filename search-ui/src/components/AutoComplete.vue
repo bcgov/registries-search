@@ -1,6 +1,6 @@
 <template>
   <v-card v-if="showAutoComplete" class="auto-complete-card" elevation="5">
-    <v-row no-gutters justify="center">
+    <v-row no-gutters justify="center pt-2 pb-2">
       <v-col no-gutters cols="11">
         <v-item-group v-model="autoCompleteSelected">
           <v-row
@@ -8,7 +8,9 @@
             :key="i" class="pt-0 pb-0 pl-3">
             <v-col class="title-size">
               <v-item>
-                <v-label @click="autoCompleteSelected = i">{{result.value}}</v-label>
+                <v-label class="auto-complete-item" @click="autoCompleteSelected = i">
+                  {{result.value}}
+                </v-label>
               </v-item>
             </v-col>
           </v-row>
@@ -18,81 +20,63 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, toRefs, watch } from 'vue';
-import { getAutoComplete } from '@/utils';
-import { AutoCompleteResponseIF } from '@/interfaces'; // eslint-disable-line no-unused-vars
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { getAutoComplete } from '@/utils'
+import { AutoCompleteResponseIF } from '@/interfaces' // eslint-disable-line no-unused-vars
 
-export default defineComponent({
-  name: 'AutoComplete',
-  props: {
-    setAutoCompleteIsActive: {
-      type: Boolean,
-    },
-    searchValue: {
-      type: String,
-      default: '',
-    },
-  },
-  setup(props, { emit }) {
-    const localState = reactive({
-      autoCompleteIsActive: props.setAutoCompleteIsActive,
-      autoCompleteResults: [],
-      autoCompleteSelected: -1,
-      showAutoComplete: computed((): boolean => {
-        const value =
-          localState.autoCompleteResults?.length > 0 &&
-          localState.autoCompleteIsActive;
-        emit('hide-details', value);
-        return value;
-      }),
-    });
-    const updateAutoCompleteResults = async (searchValue: string) => {
-      const response: AutoCompleteResponseIF = await getAutoComplete(
-        searchValue
-      );
-      // check if results are still relevant before updating list
-      if (searchValue === props.searchValue && response?.results) {
-        // will take up to 5 results
-        localState.autoCompleteResults = response?.results.slice(0, 5);
-      }
-    };
-    watch(
-      () => localState.autoCompleteSelected,
-      (val: number) => {
-        if (val >= 0) {
-          const searchValue = localState.autoCompleteResults[val]?.value;
-          localState.autoCompleteIsActive = false;
-          emit('search-value', searchValue);
-        }
-      }
-    );
-    watch(
-      () => localState.autoCompleteIsActive,
-      (val: boolean) => {
-        if (!val) localState.autoCompleteResults = [];
-      }
-    );
-    watch(
-      () => props.setAutoCompleteIsActive,
-      (val: boolean) => {
-        localState.autoCompleteIsActive = val;
-      }
-    );
-    watch(
-      () => props.searchValue,
-      (val: string) => {
-        if (localState.autoCompleteIsActive) {
-          updateAutoCompleteResults(val);
-        }
-      }
-    );
+const props = defineProps({
+  setAutoCompleteIsActive: { default: false },   
+  searchValue: { default: '' }
+})
 
-    return {
-      ...toRefs(localState),
-    };
-  },
-});
+const emit = defineEmits(['hide-details', 'search-value'])
+
+const autoCompleteIsActive = ref(props.setAutoCompleteIsActive)
+const  autoCompleteResults = ref([])
+const autoCompleteSelected = ref(-1)
+const showAutoComplete =  computed((): boolean => {
+  const value = autoCompleteResults.value?.length > 0 && autoCompleteIsActive.value
+  emit('hide-details', value)
+  return value
+})
+
+
+const updateAutoCompleteResults = async (searchValue: string) => {
+  const response: AutoCompleteResponseIF = await getAutoComplete(searchValue);
+  // check if results are still relevant before updating list
+  if (searchValue === props.searchValue && response?.results) {
+    // will take up to 10 results
+    autoCompleteResults.value = response?.results.slice(0, 10)
+  }
+}
+
+watch(autoCompleteSelected, (val: number) => {
+   if (val >= 0) {
+    const searchValue = autoCompleteResults.value[val]?.value
+    autoCompleteIsActive.value = false
+    emit('search-value', searchValue)
+  }
+})
+
+watch(autoCompleteIsActive, (val: boolean) => {
+  if (!val) autoCompleteResults.value = []
+})
+ 
+
+watch(
+  () => props.setAutoCompleteIsActive,
+  (val: boolean) => {autoCompleteIsActive.value = val}
+)
+    
+watch(
+  () => props.searchValue,
+  (val: string) => {
+    if (autoCompleteIsActive.value && val.trim().length >= 3) {
+      updateAutoCompleteResults(val)
+    }
+  }
+) 
 </script>
 
 <style lang="scss" scoped>
@@ -104,6 +88,7 @@ export default defineComponent({
 }
 .auto-complete-item {
   min-height: 0;
+  width: 100%;
 }
 
 .auto-complete-card {
