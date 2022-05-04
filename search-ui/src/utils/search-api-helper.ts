@@ -9,7 +9,7 @@ import { AutoCompleteResponseIF } from '@/interfaces'
 
 export async function getAutoComplete (searchValue: string): Promise<any> {
   if (!searchValue) return
-  return mockResponse 
+  return mockAutoCompleteResponse 
   /*const url = sessionStorage.getItem('SEARCH_API_URL')
   const config = { baseURL: url }
   return axios.get<AutoCompleteResponseIF>(`search/autocomplete?q=${searchValue}`, config)
@@ -24,7 +24,44 @@ export async function getAutoComplete (searchValue: string): Promise<any> {
     })*/
 }
 
-const mockResponse = {
+export async function searchBusiness (searchValue: string): Promise<any> {
+   if (!searchValue) return
+   return mockSearchResponse 
+   /*const url = sessionStorage.getItem('SEARCH_API_URL')
+   const config = { baseURL: url }
+   return axios.get<AutoCompleteResponseIF>(`search/autocomplete?q=${searchValue}`, config)
+     .then(response => {
+       const data = response?.data
+       if (!data) {
+         throw new Error('Invalid API response')
+       }
+       return data
+     }).catch(error => {
+       return error
+     })*/
+ }
+
+const mockSearchResponse = {
+    "results" : [
+       
+    {'name':'LA-LA CREATIONS', 'identifier': 'CP7654321', 
+    'bn': '1234567895', 'type': 'CP', 'status': 'Active'},
+
+    
+    {'name':'LA LA CONSTRUCTION', 'identifier': 'BC1218846', 
+    'bn': '1234567895', 'type': 'BC', 'status': 'Active'},
+
+    
+    {'name':'BREW-LA-LA', 'identifier': 'CP1252646', 
+    'bn': '1234567895', 'type': 'CP', 'status': 'Historical'},
+
+    
+    {'name':'SHOE LA LA', 'identifier': 'FM1218846', 
+    'bn': '1234567895', 'type': 'SP', 'status': 'Active'}
+
+]}
+
+const mockAutoCompleteResponse = {
     "total":10,
     "first_index":1,
     "last_index":10,
