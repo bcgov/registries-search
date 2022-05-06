@@ -1,5 +1,5 @@
 import { ActionI } from '@/interfaces'
-import {searchBusiness} from '@/utils/search-api-helper'
+import {searchBusiness} from '@/requests'
 
 export const setAuthRoles: ActionI = ({ commit },authRoles: string[]): void => {
   commit('mutateAuthRoles', authRoles)

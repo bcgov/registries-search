@@ -9,7 +9,7 @@
             <v-col class="title-size">
               <v-item>
                 <v-label class="auto-complete-item" @click="autoCompleteSelected = i">
-                  {{result.value}}
+                  <span v-html="result.value"/> 
                 </v-label>
               </v-item>
             </v-col>
@@ -22,8 +22,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { getAutoComplete } from '@/utils'
-import { AutoCompleteResponseIF } from '@/interfaces' // eslint-disable-line no-unused-vars
+import { getAutoComplete } from '@/requests'
+import { SuggestionResponseI } from '@/interfaces' // eslint-disable-line no-unused-vars
+
+const regex = /(<([^>]+)>)/ig 
 
 const props = defineProps({
   setAutoCompleteIsActive: { default: false },   
@@ -43,7 +45,7 @@ const showAutoComplete =  computed((): boolean => {
 
 
 const updateAutoCompleteResults = async (searchValue: string) => {
-  const response: AutoCompleteResponseIF = await getAutoComplete(searchValue);
+  const response: SuggestionResponseI = await getAutoComplete(searchValue);
   // check if results are still relevant before updating list
   if (searchValue === props.searchValue && response?.results) {
     // will take up to 10 results
@@ -52,10 +54,10 @@ const updateAutoCompleteResults = async (searchValue: string) => {
 }
 
 watch(autoCompleteSelected, (val: number) => {
-   if (val >= 0) {
+   if (val >= 0) {    
     const searchValue = autoCompleteResults.value[val]?.value
     autoCompleteIsActive.value = false
-    emit('search-value', searchValue)
+    emit('search-value', searchValue.replace(regex,""))
   }
 })
 
