@@ -55,7 +55,6 @@
     }
   }
 }
-
 // Form Layout
 .form__row + .form__row {
   margin-top: 0.25rem;
@@ -75,4 +74,16 @@
       margin-left: auto;
     }
   }
+}
+
+.soft-corners {
+  border-radius: 5px 5px 5px 5px;
+}
+
+.soft-corners-top {
+  border-radius: 5px 5px 0 0;
+}
+
+.soft-corners-bottom {
+  border-radius: 0 0 5px 5px;
 }

@@ -1,16 +1,55 @@
 <template>
-  <v-container class="mt-4">this is our dashboard</v-container>
+  <v-container id="dashboard" class="view-container px-15 py-10 ma-0" fluid>
+    <v-overlay v-model="isLoading">
+      <v-progress-circular color="primary" size="50" indeterminate />
+    </v-overlay>
+    <div>
+      <v-row class="mt-4">
+        <v-col>
+          <h1>Business Search Results</h1>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="pt-4">
+        <v-col class="search-info select-search-text">
+          <span>
+            Search for businesses registered in B.C. and access business documents
+            (for a fee).
+          </span>
+        </v-col>
+      </v-row>
+    </div>
+    <div class="container pa-0">               
+      <v-row no-gutters>
+        <search-bar @is-loading="setLoading"/>
+      </v-row>         
+    </div>
+    <div class="container pa-0 mt-10">               
+      <v-row no-gutters>
+        <search-results/>
+      </v-row>         
+    </div>
+  </v-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue';
+import SearchBar from '@/components/SearchBar.vue'
+import SearchResults from '@/components/SearchResults.vue'
 
-export default defineComponent({
-  name: 'DashboardView',
-  setup() {
-    return {
-      //
-    }
-  },
-})
+
+const isLoading = ref(false)
+
+const setLoading = (loading: boolean) => {
+  isLoading.value = loading
+}
 </script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+
+.dashboard-title {
+  background-color: $BCgovBlue0;
+  color: $gray9;
+  font-size: 1rem;
+}
+</style>

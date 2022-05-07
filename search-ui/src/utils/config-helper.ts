@@ -63,6 +63,10 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
   console.info('Set Auth Web URL to: ' + authWebUrl)
 
+  const entityWebUrl: string = response.data.ENTITY_WEB_URL
+  sessionStorage.setItem('ENTITY_WEB_URL', entityWebUrl)
+  console.info('Set Entity Web URL to: ' + entityWebUrl)
+
   const authApiUrl: string = response.data['AUTH_API_URL'] + response.data['AUTH_API_VERSION'] + '/'
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
   console.log('Set Auth API URL to: ' + authApiUrl)

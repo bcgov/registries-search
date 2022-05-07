@@ -88,7 +88,7 @@ p {
   font-family: 'BCSans', Verdana, Arial, sans-serif; // BC Government Font
 }
 
-.theme--light.v-application {
+.v-theme--light.v-application {
   background-color: $gray1;
   color: $gray7;
 }
@@ -380,8 +380,12 @@ span.invalid-color {
   color: $primary-blue !important;
   justify-content: start;
 }
+
 .pdf-btn::before, .pdf-btn::after, .pdf-btn:hover {
   background-color: transparent !important;
   color: $primary-blue !important;
   text-decoration: underline;
+}
+.white-background {
+  background-color: white !important;
 }
