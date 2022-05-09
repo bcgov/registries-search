@@ -32,7 +32,67 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "readyz",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/ops/readyz",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"ops",
+										"readyz"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:03:58 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "27"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"api is ready\"\n}"
+						}
+					]
 				},
 				{
 					"name": "healthz",
@@ -58,7 +118,67 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "healthz",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/ops/healthz",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"ops",
+										"healthz"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:04:31 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"api is healthy\"\n}"
+						}
+					]
 				}
 			]
 		},
@@ -89,13 +209,184 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "info",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/meta/info",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"meta",
+										"info"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:03:46 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"API\": \"search_api/0.0.1\",\n    \"SCHEMAS\": \"registry_schemas/1.1.0\"\n}"
+						}
+					]
 				}
 			]
 		},
 		{
 			"name": "search",
-			"item": []
+			"item": [
+				{
+					"name": "suggest",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/search/suggest?query=001&max_results=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"search",
+								"suggest"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "001"
+								},
+								{
+									"key": "max_results",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "suggest",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/suggest?query=001&max_results=20",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"suggest"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "001"
+										},
+										{
+											"key": "max_results",
+											"value": "20"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:03:17 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1013"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"results\": [\n        {\n            \"type\": \"name\",\n            \"value\": \"AC BENEFITS 111000<b>001</b> INC.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>2 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>6 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>9 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"BC123<b>001</b>0\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>3 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>7 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>8 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>4 B.C. LTD.\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM1000<b>001</b>\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>0\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>7\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>8\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>9\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>1\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>2\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>3\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>5\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>6\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>4\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
 		}
 	]
 }

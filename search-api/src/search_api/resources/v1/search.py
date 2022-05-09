@@ -12,7 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Registry Search."""
-from flask import Blueprint
+from contextlib import suppress
+from http import HTTPStatus
+
+from flask import jsonify, request, Blueprint
+from flask_cors import cross_origin
+
+from search_api.exceptions import SolrException
+import search_api.resources.utils as resource_utils
+from search_api.services import solr
 
 
 bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=invalid-name
+
+
+@bp.get('/suggest')
+@cross_origin(origin='*')
+def suggest():
+    """Return a list of suggestions from solr based from the given value."""
+    try:
+        query = request.args.get('query', None)
+        if not query:
+            return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
+
+        rows = None
+        with suppress(Exception):
+            rows = int(request.args.get('max_results', None))
+
+        suggestions = solr.business_suggest(query, rows)
+        return jsonify({'results': suggestions}), HTTPStatus.OK
+
+    except SolrException as solr_exception:
+        return resource_utils.solr_exception_response(solr_exception)
+    except Exception as default_exception:  # noqa: B902
+        return resource_utils.default_exception_response(default_exception)
