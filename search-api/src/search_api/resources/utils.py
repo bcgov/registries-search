@@ -34,7 +34,7 @@ PATH_PARAM = '{code}: a {param_name} path parameter is required.'
 PATH_MISMATCH = '{code}: the path value ({path_value}) does not match the data {description} value ({data_value}).'
 DEFAULT = '{code}: error processing request.'
 PAYMENT = '{code}:{status} payment error for account {account_id}.'
-SOLR = '{code}: error processing solr request.'
+SOLR = '{code}: {status} solr error while processing request.'
 
 CERTIFIED_PARAM = 'certified'
 ROUTING_SLIP_PARAM = 'routingSlipNumber'
@@ -124,8 +124,8 @@ def business_exception_response(exception):
 def solr_exception_response(exception):
     """Build solr exception error response."""
     current_app.logger.error(str(exception))
-    message = SOLR.format(code=ResourceErrorCodes.SOLR_ERR)
-    return jsonify({'message': message, 'detail': exception.error}), exception.status_code
+    message = SOLR.format(code=ResourceErrorCodes.SOLR_ERR, status=exception.status_code)
+    return jsonify({'message': message, 'detail': exception.error}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 # def pay_exception_response(exception: SBCPaymentException, account_id: str = None):
