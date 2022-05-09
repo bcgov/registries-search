@@ -21,6 +21,7 @@ status_code - where possible use HTTP Error Codes
 """
 import functools
 from enum import Enum
+from http import HTTPStatus
 
 
 class ResourceErrorCodes(str, Enum):
@@ -36,12 +37,13 @@ class ResourceErrorCodes(str, Enum):
     PATH_PARAM_ERR = '008'
     DATA_MISMATCH_ERR = '009'
     DEFAULT_ERR = '010'
+    SOLR_ERR = '011'
 
 
 class BusinessException(Exception):
     """Exception that adds error code and error name, that can be used for i18n support."""
 
-    def __init__(self, error, status_code, *args, **kwargs):
+    def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
         """Return a valid BusinessException."""
         super(BusinessException, self).__init__(*args, **kwargs)
         self.error = error
@@ -50,3 +52,13 @@ class BusinessException(Exception):
 
 class DatabaseException(Exception):
     """Database insert/update exception."""
+
+
+class SolrException(Exception):
+    """Solr search/update/delete exception."""
+
+    def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
+        """Return a valid SolrException."""
+        super(SolrException, self).__init__(*args, **kwargs)
+        self.error = error
+        self.status_code = status_code

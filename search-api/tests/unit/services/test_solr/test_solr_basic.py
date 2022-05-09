@@ -24,24 +24,36 @@ from search_api.services.solr import SolrDoc, SolrFields
 from tests import integration_solr
 
 
+@pytest.mark.parametrize('test_name,identifier,state,name,legal_type,bn', [
+    ('test-1', 'CP1', 'ACTIVE', 'BASIC TEST 1', 'CP', '12345'),
+])
+def test_solr_doc(test_name, identifier, state, name, legal_type, bn):
+    """Assert that solr doc class works as expected."""
+    new_doc = SolrDoc(identifier=identifier, name=name, state=state, legal_type=legal_type, tax_id=bn)
+    assert new_doc
+    json = new_doc.json()
+    assert json
+    assert json.get('identifier') == identifier
+    assert json.get('state') == state
+    assert json.get('legal_name') == name
+    assert json.get('legal_type') == legal_type
+    assert json.get('tax_id') == bn
+
+
 @integration_solr
 @pytest.mark.parametrize('test_name,identifier,state,name,legal_type,bn', [
-    ('solr-test-delete', 'CP1', 'ACTIVE', 'BASIC TEST 1', 'CP', '12345'),
+    ('test-1', 'CP1234577', 'ACTIVE', 'BASIC TEST 1', 'CP', '12345'),
 ])
-def test_solr_docs(test_name, identifier, state, name, legal_type, bn):
+def test_solr_create_delete(test_name, identifier, state, name, legal_type, bn):
     """Assert that solr docs can be updates/searched/deleted."""
+    solr.delete_all_docs()
     # add new doc
-    new_doc = SolrDoc(identifier=identifier, name=name, state=state, legal_type=legal_type, bn=bn)
+    new_doc = SolrDoc(identifier=identifier, name=name, state=state, legal_type=legal_type, tax_id=bn)
     added = solr.create_or_replace_docs([new_doc.json()])
     assert added.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # search new doc
-    search1 = solr.business_search(identifier=identifier)
-    assert search1.status_code == HTTPStatus.OK
-    json = search1.json()
-    num_found = json['response']['numFound']
-    docs = json['response']['docs']
-    assert num_found == 1
+    docs = solr.select(f'q={SolrFields.IDENTIFIER_SELECT}:{identifier}', 1)
     assert docs[0][SolrFields.IDENTIFIER] == identifier
     assert docs[0][SolrFields.BN] == bn
     assert docs[0][SolrFields.NAME] == name
@@ -52,10 +64,5 @@ def test_solr_docs(test_name, identifier, state, name, legal_type, bn):
     assert deleted.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # test search returns nothing
-    search2 = solr.business_search(identifier=identifier)
-    assert search2.status_code == HTTPStatus.OK
-    json = search2.json()
-    num_found = json['response']['numFound']
-    docs = json['response']['docs']
-    assert num_found == 0
+    docs = solr.select(f'q={SolrFields.IDENTIFIER_SELECT}:{identifier}', 1)
     assert len(docs) == 0
