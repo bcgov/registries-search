@@ -1,25 +1,32 @@
 import { axios } from '@/utils'
+import { StatusCodes } from 'http-status-codes'
 
-// Interfaces
 import { SearchResponseI, SuggestionResponseI } from '@/interfaces'
-import { BusinessStatuses, BusinessTypes } from '@/enums'
+import { BusinessStatuses, BusinessTypes, ErrorCategories } from '@/enums'
 
 const AUTO_SUGGEST_RESULT_SIZE = 20
 
-export async function getAutoComplete(searchValue: string): Promise<any> {
+export async function getAutoComplete(searchValue: string): Promise<SuggestionResponseI> {
+  const suggestionResponse = {} as SuggestionResponseI
   if (!searchValue) return   
   const url = sessionStorage.getItem('SEARCH_API_URL')
   const config = { baseURL: url }
   return axios.get<SuggestionResponseI>(`/search/suggest?query=${searchValue}&max_results=${AUTO_SUGGEST_RESULT_SIZE}`,
    config)
     .then(response => {
-      const data = response?.data
+      const data: SuggestionResponseI = response?.data
       if (!data) {
         throw new Error('Invalid API response')
       }
       return data
-    }).catch(error => {
-      return error
+    }).catch(error => {       
+      suggestionResponse.error = {
+        statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
+        message: error?.response?.data?.message,
+        category: ErrorCategories.SEARCH,
+        type: error?.parsed?.rootCause?.type
+      }
+      return suggestionResponse
     })
 }
 

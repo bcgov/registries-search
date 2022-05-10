@@ -1,3 +1,5 @@
+export * from './corp-type'
+export * from './corp-class'
 export * from './errorCategories'
 export * from './errorCodes'
 export * from './route-names'

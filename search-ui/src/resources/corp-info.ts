@@ -1,80 +1,9 @@
-/**
- * Corp type codes, used as keys to get corp info.
- * (sorted by code)
- */
- export enum CorpTypeCd {
-    EXTRA_PRO_A = 'A',
-    EXTRA_PRO_B = 'B',
-    BC_COMPANY = 'BC',
-    BENEFIT_COMPANY = 'BEN',
-    CONTINUE_IN = 'C',
-    BC_CCC = 'CC',
-    CCC_CONTINUE_IN = 'CCC',
-    CEMETARY = 'CEM',
-    COOP = 'CP',
-    BC_CORPORATION = 'CR', // SPECIAL NAMEREQUEST-ONLY ENTITY TYPE
-    CONT_IN_SOCIETY = 'CS',
-    ULC_CONTINUE_IN = 'CUL',
-    EXTRA_PRO_REG = 'EPR',
-    FINANCIAL = 'FI',
-    FOREIGN = 'FOR',
-    NR_SOLE_PROP = 'FR', // SPECIAL NAMEREQUEST-ONLY ENTITY TYPE
-    PARTNERSHIP = 'GP',
-    LIBRARY = 'LIB',
-    LICENSED = 'LIC',
-    LL_PARTNERSHIP = 'LL',
-    LIMITED_CO = 'LLC',
-    LIM_PARTNERSHIP = 'LP',
-    MISC_FIRM = 'MF',
-    PRIVATE_ACT = 'PA',
-    PARISHES = 'PAR',
-    PENSION_FUND_SOCIETY = 'PFS',
-    CO_1860 = 'QA',
-    CO_1862 = 'QB',
-    CO_1878 = 'QC',
-    CO_1890 = 'QD',
-    CO_1897 = 'QE',
-    REGISTRATION = 'REG',
-    RAILWAYS = 'RLY',
-    SOCIETY = 'S',
-    SOCIETY_BRANCH = 'SB',
-    SOLE_PROP = 'SP',
-    TRUST = 'T',
-    TRAMWAYS = 'TMY',
-    BC_UNLIMITED = 'UL', // SPECIAL NAMEREQUEST-ONLY ENTITY TYPE
-    BC_ULC_COMPANY = 'ULC',
-    ULC_CO_1860 = 'UQA',
-    ULC_CO_1862 = 'UQB',
-    ULC_CO_1878 = 'UQC',
-    ULC_CO_1890 = 'UQD',
-    ULC_CO_1897 = 'UQE',
-    XPRO_COOP= 'XCP',
-    XPRO_LL_PARTNR = 'XL',
-    XPRO_LIM_PARTNR = 'XP',
-    XPRO_SOCIETY = 'XS'
-  }
-  
-  /** Corp classes. */
-  export enum CorpClass {
-    BC = 'BC',
-    OT = 'OT',
-    SOC = 'SOC',
-    XPRO = 'XPRO',
-    FIRM = 'FIRM'
-  }
-  
-  /** Interface for corp info object. */
-  export interface CorpInfoIF {
-    corpTypeCd: CorpTypeCd
-    colinInd: boolean
-    corpClass: CorpClass
-    shortDesc: string
-    fullDesc: string
-    numberedDesc?: string
-  }
-  
-  /** Array of corp info objects. */
-  export const CorpInfoArray: Array<CorpInfoIF> = [
+import { CorpInfo } from '@/types'
+import { CorpClass, CorpTypeCd } from '@/enums'
+
+
+/** Array of corp info objects. */
+ export const CorpInfoArray: Array<CorpInfo> = [
     {
       corpTypeCd: CorpTypeCd.EXTRA_PRO_A,
       colinInd: true,
@@ -371,33 +300,4 @@
       fullDesc: 'Extraprovincial Society'
     }
   ]
-  
-  /**
-   * Given corp type code, returns the corp info object.
-   * @param cd the corp type code to get
-   * @returns the corp info object (or undefined if not found)
-   */
-  export function GetCorpInfoObject (cd: CorpTypeCd): CorpInfoIF {
-    return CorpInfoArray.find(obj => (cd === obj.corpTypeCd))
-  }
-  
-  /**
-   * Given corp type code, returns corp full description.
-   * @param cd the corp type code to get
-   * @returns the description (or '' if not found)
-   */
-  export function GetCorpFullDescription (cd: CorpTypeCd): string {
-    const item = CorpInfoArray.find(obj => (cd === obj.corpTypeCd))
-    return (item && item.fullDesc) || ''
-  }
-  
-  /**
-   * Given corp type code, returns corp "numbered" description.
-   * @param cd the corp type code to get
-   * @returns the description (or '' if not found)
-   */
-  export function GetCorpNumberedDescription (cd: CorpTypeCd): string {
-    const item = CorpInfoArray.find(obj => (cd === obj.corpTypeCd))
-    return (item && item.numberedDesc) || ''
-  }
   

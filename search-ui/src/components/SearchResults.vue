@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
-import {CorpInfoArray} from '@/interfaces/corp-type'
+import { CorpInfoArray } from '@/resources'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
