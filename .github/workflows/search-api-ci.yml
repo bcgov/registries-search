@@ -1,4 +1,4 @@
-name: REGISTRY SEARCH API CI
+name: REGISTRIES SEARCH API CI
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
   setup-job:
     runs-on: ubuntu-20.04
 
-    if: github.repository == 'bcgov/registry-search'
+    if: github.repository == 'bcgov/registries-search'
 
     steps:
       - uses: actions/checkout@v2
@@ -50,7 +50,7 @@ jobs:
   testing:
     needs: setup-job
     env:
-      IMAGE_NAME: registry-search-api
+      IMAGE_NAME: registries-search-api
       DATABASE_TEST_USERNAME: postgres
       DATABASE_TEST_PASSWORD: postgres
       DATABASE_TEST_NAME: postgres

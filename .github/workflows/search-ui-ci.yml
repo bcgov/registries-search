@@ -1,4 +1,4 @@
-name: REGISTRY SEARCH UI CI
+name: REGISTRIES SEARCH UI CI
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
   setup-job:
     runs-on: ubuntu-20.04
 
-    if: github.repository == 'bcgov/registry-search'
+    if: github.repository == 'bcgov/registries-search'
 
     steps:
       - uses: actions/checkout@v2
