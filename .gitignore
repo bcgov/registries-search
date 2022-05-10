@@ -115,3 +115,8 @@ venv/
 .hypothesis/
 .pytest_cache/
 htmlcov/
+search-api/tests/.DS_Store
+search-api/tests/postman/.DS_Store
+
+# local config
+search-ui/public/config/configuration.json

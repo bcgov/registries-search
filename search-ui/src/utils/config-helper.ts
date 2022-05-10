@@ -32,9 +32,9 @@ export async function fetchConfig(): Promise<any> {
   })
 
   const searchApiUrl: string =
-    response.data.SEARCH_API_URL + response.data.SEARCH_API_VERSION + '/'
-  sessionStorage.setItem('SEARCH_API_URL', searchApiUrl)
-  console.info('Set Search API URL to: ' + searchApiUrl)
+    response.data.REGISTRY_SEARCH_API_URL + response.data.REGISTRY_SEARCH_API_VERSION + '/'
+  sessionStorage.setItem('REGISTRY_SEARCH_API_URL', searchApiUrl)
+  console.info('Set Registry Search API URL to: ' + searchApiUrl)
 
   const registryUrl: string = response.data.REGISTRY_URL
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
@@ -63,9 +63,9 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
   console.info('Set Auth Web URL to: ' + authWebUrl)
 
-  const entityWebUrl: string = response.data.ENTITY_WEB_URL
-  sessionStorage.setItem('ENTITY_WEB_URL', entityWebUrl)
-  console.info('Set Entity Web URL to: ' + entityWebUrl)
+  const entityWebUrl: string = response.data.DASHBOARD_URL
+  sessionStorage.setItem('DASHBOARD_URL', entityWebUrl)
+  console.info('Set Entity Dashboard URL to: ' + entityWebUrl)
 
   const authApiUrl: string = response.data['AUTH_API_URL'] + response.data['AUTH_API_VERSION'] + '/'
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)

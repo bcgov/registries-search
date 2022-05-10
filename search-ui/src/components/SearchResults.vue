@@ -77,7 +77,7 @@ const businesses = computed(() => store.getters['getSearchResults'])
 const totalResultsLength = computed(() => businesses.value.length ) 
 
 const goToDashboard  = (identifier: string )  => {  
-   window.location.assign(`${ConfigHelper.getFromSession('ENTITY_WEB_URL')}/${identifier}`)
+   window.location.assign(`${ConfigHelper.getFromSession('DASHBOARD_URL')}${identifier}`)
 }
 
 const isActiveBusiness  = (status: string)  => {

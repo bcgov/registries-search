@@ -1,0 +1,45 @@
+[
+    {
+        "vault": "keycloak",
+        "application": [
+            "base",
+            "web-base",
+            "entity-web"
+        ]
+    },
+    {
+        "vault": "sentry",
+        "application": [
+            "registry-search-web"
+        ]
+    },
+    {
+        "vault": "launchdarkly",
+        "application": [
+            "registry-search"
+        ]
+    },
+    {
+        "vault": "API",
+        "application": [
+            "auth-api",
+            "status-api",
+            "registry-search-api"
+        ]
+    },
+    {
+        "vault": "web-url",
+        "application": [
+            "auth-web",
+            "business",
+            "registry"
+        ]
+    },
+    {
+        "vault": "registry-search",
+        "application": [
+            "shared",
+            "registry-search-ui"
+        ]
+    }
+]

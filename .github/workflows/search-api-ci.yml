@@ -1,0 +1,116 @@
+name: REGISTRY SEARCH API CI
+
+on:
+  pull_request:
+    types: [assigned, synchronize]
+    paths:
+      - "search-api/**"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./search-api
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-20.04
+
+    if: github.repository == 'bcgov/registry-search'
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: "true"
+
+  linting:
+    needs: setup-job
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          make setup
+      - name: Lint with pylint
+        id: pylint
+        run: |
+          make pylint
+      - name: Lint with flake8
+        id: flake8
+        run: |
+          make flake8
+
+  testing:
+    needs: setup-job
+    env:
+      IMAGE_NAME: registry-search-api
+      DATABASE_TEST_USERNAME: postgres
+      DATABASE_TEST_PASSWORD: postgres
+      DATABASE_TEST_NAME: postgres
+      DATABASE_TEST_HOST: localhost
+      DATABASE_TEST_PORT: 5432
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_PASSWORD: postgres
+      JWT_OIDC_JWKS_CACHE_TIMEOUT: 300
+      RUN_LD_TESTS: False
+      RUN_SOLR_TESTS: False
+
+    runs-on: ubuntu-20.04
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          make setup
+      - name: Upgrade db
+        run: |
+          . venv/bin/activate && python manage.py db upgrade
+      - name: Create Test Data
+        run: |
+          . venv/bin/activate && python manage.py create_test_data
+      - name: Test with pytest
+        id: test
+        run: |
+          make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./search-api/coverage.xml
+          flags: search-api
+          name: codecov-search-api
+          fail_ci_if_error: true
+
+  build-check:
+    needs: setup-job
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: build to check strictness
+        id: build
+        run: |
+          make build-nc
