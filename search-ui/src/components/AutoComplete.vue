@@ -51,6 +51,9 @@ const updateAutoCompleteResults = async (searchValue: string) => {
     // will take up to 10 results
     autoCompleteResults.value = response?.results.slice(0, 10)
   }
+  else if (response.error) {
+    console.error('getDraft failed: ' + response.error.statusCode + ': ' + response.error.message)     
+  }
 }
 
 watch(autoCompleteSelected, (val: number) => {

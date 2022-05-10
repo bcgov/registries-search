@@ -36,6 +36,7 @@ import { ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 
 import AutoComplete from './AutoComplete.vue'
+import _ from 'lodash'
 
 // Store
 const store = useStore()
@@ -74,13 +75,13 @@ const search = async () => {
    emit('isLoading', false)
 }
 
-watch(() => searchValue.value,(val: string) => {
+watch(() => searchValue.value, _.debounce((val: string) => {
     if (autoCompleteIsActive.value) {
         autoCompleteSearchValue.value = val
       }
       // show autocomplete results when there is a searchValue and if no error messages
       autoCompleteIsActive.value = val !== ''
-  })
+  }, 300))
 
 watch(() => currentBusinessName.value, (val: string) => {
     search()

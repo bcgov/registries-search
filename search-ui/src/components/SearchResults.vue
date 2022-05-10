@@ -10,10 +10,10 @@
           <v-table>
             <thead>
             <tr>
-                <th width="30%">Business Name</th>
-                <th width="10%">Number</th>
+                <th width="25%">Business Name</th>
+                <th width="15%">Registration Number</th>
                 <th width="15%">Business Number</th>
-                <th width="15%">Business Type</th>
+                <th width="25%">Business Type</th>
                 <th width="10%">Status</th>
                 <th width="10%"></th>
             </tr>
@@ -23,7 +23,7 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.identifier }}</td>
                     <td>{{ item.bn }}</td>
-                    <td>{{ item.type }}</td>
+                    <td>{{ getEntityDescription(item.type) }}</td>
                     <td>{{ item.status }}</td>
                     <td>
                         <v-btn
@@ -66,7 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import ConfigHelper from 'sbc-common-components/src/util/config-helper';
+import ConfigHelper from 'sbc-common-components/src/util/config-helper'
+import { CorpInfoArray } from '@/resources'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
@@ -82,6 +83,11 @@ const goToDashboard  = (identifier: string )  => {
 
 const isActiveBusiness  = (status: string)  => {
    return status == 'Active'? true: false
+}
+
+const getEntityDescription  = (entityType: string)  => {
+   const item = CorpInfoArray.find(obj => (entityType === obj.corpTypeCd))
+  return (item && item.fullDesc) || ''
 }
 </script>
 
@@ -99,7 +105,7 @@ td {
 
 th {
   font-size: 0.875rem !important;
-  color: $gray9 !important;
+  color: $gray9 !important; 
 }
  
 .main-results-div {
