@@ -1,4 +1,4 @@
-name: REGISTRY SEARCH UI CI
+name: REGISTRIES SEARCH UI CI
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
   setup-job:
     runs-on: ubuntu-20.04
 
-    if: github.repository == 'bcgov/registry-search'
+    if: github.repository == 'bcgov/registries-search'
 
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.16.1]
+        node-version: [16.14.2]
 
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +49,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.15.1]
+        node-version: [16.14.2]
 
     steps:
       - uses: actions/checkout@v2
@@ -64,11 +64,11 @@ jobs:
         id: test
         run: |
           make test
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          name: codecov-search-ui
-          fail_ci_if_error: true
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v1
+      #   with:
+      #     name: codecov-search-ui
+      #     fail_ci_if_error: true
 
   build-check:
     needs: setup-job

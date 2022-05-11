@@ -1,4 +1,4 @@
-name: REGISTRY SEARCH UI CD
+name: REGISTRIES SEARCH UI CD
 
 on:
   push:
@@ -20,14 +20,14 @@ defaults:
     working-directory: ./search-ui
 
 env:
-  APP_NAME: "registry-search-ui"
+  APP_NAME: "registries-search-ui"
   TAG_NAME: "dev"
 
 jobs:
   search-ui-cd-by-push:
     runs-on: ubuntu-20.04
 
-    if: github.event_name == 'push' && github.repository == 'bcgov/registry-search'
+    if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
     environment:
       name: "dev"
 
@@ -61,7 +61,7 @@ jobs:
         if: failure()
         with:
           type: ${{ job.status }}
-          job_name: "*REGISTRY SEARCH UI Built and Deployed to ${{env.TAG_NAME}}*"
+          job_name: "*REGISTRIES SEARCH UI Built and Deployed to ${{env.TAG_NAME}}*"
           channel: "#registries-bot"
           url: ${{ secrets.ROCKETCHAT_WEBHOOK }}
           commit: true
@@ -70,7 +70,7 @@ jobs:
   search-ui-cd-by-dispatch:
     runs-on: ubuntu-20.04
 
-    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registry-search'
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
     environment:
       name: "${{ github.event.inputs.environment }}"
 
@@ -107,7 +107,7 @@ jobs:
         if: failure()
         with:
           type: ${{ job.status }}
-          job_name: "*REGISTRY SEARCH UI Built and Deployed to ${{env.TAG_NAME}}*"
+          job_name: "*REGISTRIES SEARCH UI Built and Deployed to ${{env.TAG_NAME}}*"
           channel: "#registries-bot"
           url: ${{ secrets.ROCKETCHAT_WEBHOOK }}
           commit: true

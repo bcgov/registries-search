@@ -32,7 +32,7 @@ export async function fetchConfig(): Promise<any> {
   })
 
   const searchApiUrl: string =
-    response.data.REGISTRY_SEARCH_API_URL + response.data.REGISTRY_SEARCH_API_VERSION + '/'
+    response.data.REGISTRIES_SEARCH_API_URL + response.data.REGISTRIES_SEARCH_API_VERSION + '/'
   sessionStorage.setItem('REGISTRY_SEARCH_API_URL', searchApiUrl)
   console.info('Set Registry Search API URL to: ' + searchApiUrl)
 
