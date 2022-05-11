@@ -4,7 +4,7 @@ import { BrowserTracing } from '@sentry/tracing'
 import { createApp } from 'vue'
 // Local
 import App from '@/App.vue'
-import { router } from '@/router'
+import { createVueRouter } from '@/router'
 import store from '@/store'
 import { fetchConfig, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
@@ -25,6 +25,7 @@ async function start() {
   // must come first as inits below depend on config
   await fetchConfig()
 
+  const router = createVueRouter()
   const app = createApp(App)
 
   // configure Keycloak Service
