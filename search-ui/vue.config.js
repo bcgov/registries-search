@@ -7,6 +7,7 @@ module.exports = defineConfig({
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
     },
   },
+  publicPath: `/${process.env.VUE_APP_PATH}`,
   devServer: {
     proxy: {
       // this is needed to prevent a CORS error when running locally
