@@ -73,7 +73,7 @@ const { getContextPath, redirectToPath } = useNavigation()
 
 // constants
 const loginOptions = [
-  { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-account-card-details-outline' },
+  { idpHint: IdpHint.BCSC, option: 'BC Services Card', icon: 'mdi-card-account-details-outline' },
   { idpHint: IdpHint.BCEID, option: 'BCeID', icon: 'mdi-two-factor-authentication'},
   { idpHint: IdpHint.IDIR, option: 'IDIR', icon: 'mdi-account-group-outline'}
 ]
@@ -86,7 +86,7 @@ onMounted( async () => {
   getModule(AccountModule, store)
   getModule(AuthModule, store)
   syncWithSessionStorage()
-  if (isAuthenticated.value) {
+  if (isAuthenticated?.value) {
     await loadUserInfo()
     await syncAccount()
     await updateProfile()
@@ -180,13 +180,28 @@ const login = (idpHint: string) => {
 
 .v-list--dense .v-subheader,
 .v-list-item {
-  padding-right: 1.25rem;
-  padding-left: 1.25rem;
+  height: 40px !important;
+  min-height: 0px !important;
+  padding: 0 1.25rem !important;
 }
 
-.v-list--dense .v-subheader,
-.v-list--dense .v-list-item__title,
-.v-list--dense .v-list-item__subtitle {
+.v-list-item-title {
+  font-size: .875rem!important;
+  font-weight: 500;
+  line-height: 1rem;
+  align-self: center;
+}
+
+.v-list-item-avatar {
+  margin:8px 32px 8px 0px;
+}
+
+.v-card-title.body-2 {
   font-size: 0.875rem !important;
+  font-family: "BCSans"!important;
+  font-size: .875rem!important;
+  letter-spacing: .0178571429em!important;
+  line-height: 1.25rem;
+  padding: 16px;
 }
 </style>
