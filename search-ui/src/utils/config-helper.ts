@@ -11,16 +11,17 @@ const axios = Axios.create()
 export async function fetchConfig(): Promise<any> {
   // get config from environment
   const origin: string = window.location.origin // eg, http://localhost:8080
-  const processEnvBaseUrl = process.env.BASE_URL // /
+  const processEnvVueAppPath: string = process.env.VUE_APP_PATH
+  const processEnvBaseUrl: string = process.env.BASE_URL // /
 
-  if (!origin || !processEnvBaseUrl) {
+  if (!origin || !processEnvVueAppPath || !processEnvBaseUrl) {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
   // fetch config from API
-  // eg, http://localhost:8080/config/configuration.json
-  // eg, https://...-dev.apps.silver.devops.gov.bc.ca/config/configuration.json
-  const url = `${origin}/config/configuration.json`
+  // eg, http://localhost:8080/business/search/config/configuration.json
+  // eg, https://dev.bcregistry.ca/business/search/config/configuration.json
+  const url = `${origin}/${processEnvVueAppPath}/config/configuration.json`
   const headers = {
     Accept: 'application/json',
     ResponseType: 'application/json',
