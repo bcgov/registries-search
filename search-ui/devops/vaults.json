@@ -10,13 +10,13 @@
     {
         "vault": "sentry",
         "application": [
-            "registry-search-web"
+            "registries-search-web"
         ]
     },
     {
         "vault": "launchdarkly",
         "application": [
-            "registry-search"
+            "registries-search"
         ]
     },
     {
@@ -24,7 +24,7 @@
         "application": [
             "auth-api",
             "status-api",
-            "registry-search-api"
+            "registries-search-api"
         ]
     },
     {
@@ -36,10 +36,10 @@
         ]
     },
     {
-        "vault": "registry-search",
+        "vault": "registries-search",
         "application": [
             "shared",
-            "registry-search-ui"
+            "registries-search-ui"
         ]
     }
 ]
