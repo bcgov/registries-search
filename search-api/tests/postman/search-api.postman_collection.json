@@ -288,12 +288,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/search/suggest?query=001&max_results=20",
+							"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=001&max_results=20",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{version}}",
+								"businesses",
 								"search",
 								"suggest"
 							],
@@ -323,12 +324,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/search/suggest?query=001&max_results=20",
+									"raw": "{{base_url}}/{{version}}/business/search/suggest?query=001&max_results=20",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"{{version}}",
+										"business",
 										"search",
 										"suggest"
 									],
@@ -383,6 +385,142 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"results\": [\n        {\n            \"type\": \"name\",\n            \"value\": \"AC BENEFITS 111000<b>001</b> INC.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>2 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>6 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>9 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"BC123<b>001</b>0\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>3 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>7 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>8 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>4 B.C. LTD.\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM1000<b>001</b>\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>0\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>7\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>8\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>9\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>1\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>2\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>3\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>5\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>6\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>4\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "facets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=15&num_of_rows=15&legal_type=CP&state=ACTIVE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"search",
+								"facets"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "test coop"
+								},
+								{
+									"key": "start_row",
+									"value": "15"
+								},
+								{
+									"key": "num_of_rows",
+									"value": "15"
+								},
+								{
+									"key": "legal_type",
+									"value": "CP"
+								},
+								{
+									"key": "state",
+									"value": "ACTIVE"
+								}
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "facets",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=15&num_of_rows=15&legal_type=CP&state=ACTIVE",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"businesses",
+										"search",
+										"facets"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "test coop"
+										},
+										{
+											"key": "start_row",
+											"value": "15"
+										},
+										{
+											"key": "num_of_rows",
+											"value": "15"
+										},
+										{
+											"key": "legal_type",
+											"value": "CP"
+										},
+										{
+											"key": "state",
+											"value": "ACTIVE"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 May 2022 16:32:56 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2289"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legal_type\": [\n                {\n                    \"count\": 41,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                }\n            ],\n            \"state\": [\n                {\n                    \"count\": 33,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 9,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"results\": [\n        {\n            \"identifier\": \"CP1002508\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 18.50.26 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002499\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.20 7.46 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002501\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.20 3.15 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002504\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 1.21 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002502\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 7.00 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002506\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 15.42.41 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002505\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 2.20 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002507\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 18.03.39 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002509\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 19.29.25 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002510\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 21.16.09 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002511\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 21.49.59 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002520\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.50.20 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002521\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.53.34 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"BC0870916\",\n            \"legal_name\": \"AC COOP 2022.01.27 22.27.31 TEST\",\n            \"legal_type\": \"BEN\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002519\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.36.10 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        }\n    ],\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"num_of_rows\": 15,\n            \"query\": \"test coop\",\n            \"start_row\": 15,\n            \"total_rows\": 42\n        }\n    }\n}"
 						}
 					]
 				}

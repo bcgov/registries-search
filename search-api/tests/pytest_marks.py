@@ -29,22 +29,24 @@ from dotenv import find_dotenv, load_dotenv
 # this will load all the envars from a .env file located in the project root (api)
 load_dotenv(find_dotenv())
 
+def get_skip_value(env_skip_val):
+    return (os.getenv(env_skip_val, False) is False) or (os.getenv(env_skip_val, 'False') == 'False')
 
 integration_authorization = pytest.mark.skipif(
-    (os.getenv('RUN_AUTHORIZATION_TESTS', 'False') == 'False'),
+    get_skip_value('RUN_AUTHORIZATION_TESTS'),
     reason='Test requiring authorization service are skipped when RUN_AUTHORIZATION_TESTS is False.')
 
-integration_nats = pytest.mark.skipif((os.getenv('RUN_NATS_TESTS', 'False') == 'False'),
+integration_nats = pytest.mark.skipif(get_skip_value('RUN_NATS_TESTS'),
                                       reason='NATS tests are skipped when RUN_NATS_TESTS is False.')
 
-integration_payment = pytest.mark.skipif((os.getenv('RUN_PAYMENT_TESTS', 'False') == 'False'),
+integration_payment = pytest.mark.skipif(get_skip_value('RUN_PAYMENT_TESTS'),
                                          reason='Test requiring payment service are skipped when RUN_PAYMENT_TESTS is False.')
 
-integration_ldarkly = pytest.mark.skipif((os.getenv('RUN_LD_TESTS', 'False') == 'False'),
+integration_ldarkly = pytest.mark.skipif(get_skip_value('RUN_LD_TESTS'),
                                         reason='Launch Darkly integration tests are skipped when RUN_LD_TESTS is False.')
 
-integration_solr = pytest.mark.skipif((os.getenv('RUN_SOLR_TESTS', 'False') == 'False'),
+integration_solr = pytest.mark.skipif(get_skip_value('RUN_SOLR_TESTS'),
                                         reason='SOLR integration tests are skipped when RUN_SOLR_TESTS is False.')
 
-not_github_ci = pytest.mark.skipif((os.getenv('NOT_GITHUB_CI', 'False') == 'False'),
+not_github_ci = pytest.mark.skipif(get_skip_value('NOT_GITHUB_CI'),
                                    reason='Does not pass on github ci.')
