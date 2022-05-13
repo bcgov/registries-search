@@ -58,6 +58,7 @@ jobs:
       DATABASE_TEST_PORT: 5432
       DATABASE_HOST: localhost
       DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: postgres
       JWT_OIDC_JWKS_CACHE_TIMEOUT: 300
       RUN_LD_TESTS: False
