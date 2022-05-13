@@ -11,7 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all of the resource endpoints in Flask-Blueprint style."""
-from .businesses import bp as bus_bp
-from .meta import bp as meta_bp
-from .ops import bp as ops_bp
+"""Exposes all of the businesses endpoints in Flask-Blueprint style."""
+from flask import Blueprint
+from flask_cors import cross_origin
+
+from .search import bp as search_bp
+
+
+bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')
+bp.register_blueprint(search_bp)

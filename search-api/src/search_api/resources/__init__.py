@@ -13,11 +13,11 @@
 # limitations under the License.
 """Exposes the versioned endpoints."""
 from .constants import EndpointVersionPath
-from .v1 import meta_bp, ops_bp, search_bp
+from .v1 import bus_bp, meta_bp, ops_bp
 from .version_endpoint import VersionEndpoint
 
 
 v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
     name='API_V1',
     path=EndpointVersionPath.API_V1,
-    bps=[meta_bp, ops_bp, search_bp])
+    bps=[bus_bp, meta_bp, ops_bp])

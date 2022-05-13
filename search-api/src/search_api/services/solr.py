@@ -15,14 +15,15 @@
 from contextlib import suppress
 from enum import Enum
 from http import HTTPStatus
-from typing import List
+from typing import Dict, List
 
 import requests
+from flask import current_app
 
 from search_api.exceptions import SolrException
 
 
-class SolrFields(str, Enum):
+class SolrField(str, Enum):
     """Enum of the fields available in the solr search core."""
 
     BN = 'tax_id'
@@ -32,6 +33,9 @@ class SolrFields(str, Enum):
     NAME = 'legal_name'
     NAME_SELECT = 'name_select'
     NAME_SINGLE = 'name_single_term'
+    NAME_STEM_AGRO = 'name_stem_agro'
+    NAME_SYNONYM = 'name_synonym'
+    SCORE = 'score'
     STATE = 'state'
     TYPE = 'legal_type'
 
@@ -53,14 +57,14 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
     def json(self):
         """Return the dict representation of a SolrDoc."""
         doc_json = {
-            SolrFields.IDENTIFIER: self.identifier,
-            SolrFields.NAME: self.name,
-            SolrFields.STATE: self.state,
-            SolrFields.TYPE: self.legal_type,
+            SolrField.IDENTIFIER: self.identifier,
+            SolrField.NAME: self.name,
+            SolrField.STATE: self.state,
+            SolrField.TYPE: self.legal_type,
         }
         with suppress(AttributeError):
             if self.tax_id:
-                doc_json[SolrFields.BN] = self.tax_id
+                doc_json[SolrField.BN] = self.tax_id
         return doc_json
 
 
@@ -75,10 +79,10 @@ class Solr:
         self.core = 'search'
         self.default_start = 0
         self.default_rows = 10
-        self.facets = f'&facet=on&facet.field={SolrFields.STATE}&facet.field={SolrFields.TYPE}'
+        self.facets = f'&facet=on&facet.field={SolrField.STATE}&facet.field={SolrField.TYPE}'
         self.fields = \
-            f'&fl={SolrFields.BN},{SolrFields.IDENTIFIER},{SolrFields.NAME},{SolrFields.STATE},{SolrFields.TYPE}'
-        # TODO: add in facet selection stuff + sort + suggester stuff
+            f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},{SolrField.TYPE},{SolrField.SCORE}'
+        self.bq = '{boost_params}&defType=edismax'
 
         self.search_query = '{url}/{core}/select?{search_params}{fields}&start={start}&rows={rows}'
         self.suggest_query = '{url}/{core}/suggest?{suggest_params}&suggest.count={rows}&suggest.build={build}'
@@ -91,67 +95,6 @@ class Solr:
         """Initialize the Solr environment."""
         self.app = app
         self.solr_url = app.config.get('SOLR_SVC_URL')
-
-    def business_search(self, query: str):
-        """Return the list of businesses from Solr that match the search criteria."""
-        if not query:
-            # TODO: raise error or something here
-            return None
-        name_query = f'{SolrFields.NAME_SELECT}:"{query}"~{len(query.split())}'
-        identifier_query = f'{SolrFields.IDENTIFIER_SELECT}:{query}'
-        bn_query = f'{SolrFields.BN_SELECT}:{query}'
-        search_params = f'q={name_query} OR {identifier_query} OR {bn_query}'
-
-        # query solr
-        query = self.search_query.format(
-            url=self.solr_url,
-            core=self.core,
-            search_params=search_params,
-            fields=self.fields,
-            start=self.default_start,
-            rows=self.default_rows)
-        response = requests.get(query)
-        # TODO: check error, format response, etc.
-        return response
-
-    def business_suggest(self, query: str, rows: int = None) -> List:
-        """Return the list of business suggestions from Solr from given text."""
-        if not rows:
-            rows = self.default_rows
-        # 1st solr query (names)
-        name_suggestions = self.suggest(query, rows)
-
-        # 2nd solr query (extra names)
-        extra_name_suggestions = []
-        if len(name_suggestions) < rows:
-            name_select_params = Solr.build_split_query(query, SolrFields.NAME_SINGLE)
-            name_docs = self.select(name_select_params, rows)
-            extra_name_suggestions = [x.get(SolrFields.NAME, '').upper() for x in name_docs]
-        # remove dups
-        name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
-        # highlight
-        name_suggestions = Solr.highlight_names(query.upper(), name_suggestions)
-
-        # 3rd solr query (bns + identifiers)
-        identifier_suggestions = []
-        bn_suggestions = []
-        if len(name_suggestions) < rows:
-            bn_id_params = f'q={SolrFields.IDENTIFIER_SELECT}:{query} OR {SolrFields.BN_SELECT}:{query}'
-            bn_id_docs = self.select(bn_id_params, rows)
-            # return list of identifier strings with highlighted query
-            identifier_suggestions = [
-                x.get(SolrFields.IDENTIFIER).replace(query, f'<b>{query}</b>')
-                for x in bn_id_docs if query in x.get(SolrFields.IDENTIFIER)]
-            # return list of bn strings with highlighted query
-            bn_suggestions = [
-                x.get(SolrFields.BN).replace(query, f'<b>{query}</b>')
-                for x in bn_id_docs if query in x.get(SolrFields.BN, '')]
-
-        # format/combine response
-        suggestions = [{'type': 'name', 'value': x} for x in name_suggestions]
-        suggestions += [{'type': 'identifier', 'value': x} for x in identifier_suggestions]
-        suggestions += [{'type': 'bn', 'value': x} for x in bn_suggestions]
-        return suggestions[:rows]
 
     def create_or_replace_docs(self, docs: List):
         """Create or replace solr docs in the core."""
@@ -179,22 +122,31 @@ class Solr:
         response = requests.post(url=delete_url, data=payload, headers=headers)
         return response
 
-    def select(self, params: str, rows: int) -> List:
+    def select(self, params: str, start: int, rows: int) -> List:
         """Return a list of solr docs from the solr select handler for the given params."""
         select_query = self.search_query.format(
             url=self.solr_url,
             core=self.core,
             search_params=params,
             fields=self.fields,
-            start=self.default_start,
+            start=start,
             rows=rows)
-        response = requests.get(select_query)
-        if response.status_code != HTTPStatus.OK:
+        try:
+            response = requests.get(select_query)
+            if response.status_code != HTTPStatus.OK:
+                raise SolrException('Error handling Solr request.', response.status_code)
+        except Exception as err:
+            current_app.logger.error(err.with_traceback(None))
+            msg = 'Error handling Solr request.'
+            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+            with suppress (Exception):
+                status_code = response.status_code
+                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
             raise SolrException(
-                error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
-                status_code=response.status_code)
+                error=msg,
+                status_code=status_code)
 
-        return response.json().get('response', {}).get('docs')
+        return response.json()
 
     def suggest(self, query: str, rows: int, build: bool = False) -> List:
         """Return a list of suggestions from the solr suggest handler for the given query."""
@@ -207,29 +159,52 @@ class Solr:
             rows=rows,
             build=str(build).lower())
         # call solr
-        response = requests.get(suggest_query)
-        # check for error
-        if response.status_code != HTTPStatus.OK:
+        try:
+            response = requests.get(suggest_query)
+            # check for error
+            if response.status_code != HTTPStatus.OK:
+                raise SolrException(
+                    error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
+                    status_code=response.status_code)
+        except Exception as err:
+            current_app.logger.error(err.with_traceback(None))
+            msg = 'Error handling Solr request.'
+            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+            with suppress (Exception):
+                status_code = response.status_code
+                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
             raise SolrException(
-                error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
-                status_code=response.status_code)
+                error=msg,
+                status_code=status_code)
         # parse response
         suggestions = response.json() \
             .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions')
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
 
     @staticmethod
-    def build_split_query(query: str, field: SolrFields) -> str:
+    def build_split_query(query: str, fields: List, wild_card_fields: List) -> str:
         """Return a solr query with fqs for each subsequent term."""
         terms = query.split()
-        params = f'q={field}:{terms[0]}'
+        params = f'q={fields[0]}:{terms[0]}'
+        if fields[0] in wild_card_fields:
+            params += '*'
+        for field in fields[1:]:
+            params += f' OR {field}:{terms[0]}'
+            if field in wild_card_fields:
+                params += '*'
         # add filter query for each subsequent term
         for term in terms[1:]:
-            params += f'&fq={field}:{term}'
+            params += f'&fq={fields[0]}:{term}'
+            if fields[0] in wild_card_fields:
+                params += '*'
+            for field in fields[1:]:
+                params += f' OR {field}:{term}'
+                if field in wild_card_fields:
+                    params += '*'
         return params
 
     @staticmethod
-    def highlight_names(query: str, names: List):
+    def highlight_names(query: str, names: List) -> List:
         """Highlight terms within names."""
         highlighted_names = []
         # TODO: add stuff in here to catch special chars / stems etc.
@@ -237,3 +212,20 @@ class Solr:
             name = name.replace(query, f'<b>{query}</b>')
             highlighted_names.append(name)
         return highlighted_names
+    
+    @staticmethod
+    def parse_facets(facet_data: Dict) -> Dict:
+        """Return formatted solr facet response data."""
+        facet_info = facet_data.get('facet_counts', {}).get('facet_fields')
+        facets = {}
+        for category in facet_info:
+            facets[category] = []
+            for i in range(len(facet_info[category])):
+                # even indexes are values, odd indexes are counts - i.e. category = ['BEN',12,'CP',100]
+                if i % 2 == 0:
+                    facets[category].append({
+                        'value': facet_info[category][i],
+                        'count': facet_info[category][i+1]})
+
+        return {'fields': facets}
+                    

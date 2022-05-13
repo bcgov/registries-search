@@ -19,7 +19,7 @@ import pytest
 from flask import Flask
 
 from search_api.services import solr
-from search_api.services.solr import Solr, SolrDoc, SolrFields
+from search_api.services.solr import Solr, SolrDoc, SolrField
 
 from tests import integration_solr
 from . import SOLR_TEST_DOCS
@@ -53,16 +53,16 @@ def test_solr_suggest_name(test_name, query, expected):
 
 @integration_solr
 @pytest.mark.parametrize('test_name,query,query_field,expected_field,expected', [
-    ('test-identifier', 'CP00', SolrFields.IDENTIFIER_SELECT, SolrFields.IDENTIFIER, ['CP0034567']),
-    ('test-bn', '0012334', SolrFields.BN_SELECT, SolrFields.BN, ['BN00012334']),
-    ('test-name-exact', 'tests 2222', SolrFields.NAME_SINGLE, SolrFields.NAME, ['tests 2222']),
-    ('test-case', 'not case sensitive', SolrFields.NAME_SINGLE, SolrFields.NAME, ['NOt Case SENSitive']),
-    ('test-partial-1', 'tester', SolrFields.NAME_SINGLE, SolrFields.NAME, ['tester 1111']),
-    ('test-partial-2', 'tester 11', SolrFields.NAME_SINGLE, SolrFields.NAME, ['tester 1111']),
-    ('test-partial-3', 'lots of wor', SolrFields.NAME_SINGLE, SolrFields.NAME, ['lots of words in here']),
-    ('test-partial-4', 'ots of ords', SolrFields.NAME_SINGLE, SolrFields.NAME, ['lots of words in here']),
-    ('test-all-words-match', 'tests oops 2222', SolrFields.NAME_SINGLE, SolrFields.NAME, []),
-    ('test-multiple-matches', 'test 1', SolrFields.NAME_SINGLE, SolrFields.NAME, ['test 1234', 'tester 1111']),
+    ('test-identifier', 'CP00', SolrField.IDENTIFIER_SELECT, SolrField.IDENTIFIER, ['CP0034567']),
+    ('test-bn', '0012334', SolrField.BN_SELECT, SolrField.BN, ['BN00012334']),
+    ('test-name-exact', 'tests 2222', SolrField.NAME_SINGLE, SolrField.NAME, ['tests 2222']),
+    ('test-case', 'not case sensitive', SolrField.NAME_SINGLE, SolrField.NAME, ['NOt Case SENSitive']),
+    ('test-partial-1', 'tester', SolrField.NAME_SINGLE, SolrField.NAME, ['tester 1111']),
+    ('test-partial-2', 'tester 11', SolrField.NAME_SINGLE, SolrField.NAME, ['tester 1111']),
+    ('test-partial-3', 'lots of wor', SolrField.NAME_SINGLE, SolrField.NAME, ['lots of words in here']),
+    ('test-partial-4', 'ots of ords', SolrField.NAME_SINGLE, SolrField.NAME, ['lots of words in here']),
+    ('test-all-words-match', 'tests oops 2222', SolrField.NAME_SINGLE, SolrField.NAME, []),
+    ('test-multiple-matches', 'test 1', SolrField.NAME_SINGLE, SolrField.NAME, ['test 1234', 'tester 1111']),
 ])
 def test_solr_select(test_name, query, query_field, expected_field, expected):
     """Assert that solr select call works as expected."""
