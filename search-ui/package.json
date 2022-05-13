@@ -9,11 +9,13 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@bcrs-shared-components/breadcrumb": "^2.0.1",
     "@mdi/font": "^6.1.95",
     "@sentry/tracing": "^6.19.6",
     "@sentry/vue": "^6.19.6",
     "axios": "^0.26.1",
     "core-js": "^3.8.3",
+    "http-status-codes": "^2.1.4",
     "roboto-fontface": "*",
     "sbc-common-components": "^2.4.43",
     "vue": "^3.2.13",
@@ -22,8 +24,7 @@
     "vuex": "^4.0.0",
     "vuex-composition-helpers": "^2.0.3",
     "vuex-module-decorators": "^2.0.0",
-    "webfontloader": "^1.0.0",
-    "http-status-codes": "^2.1.4"
+    "webfontloader": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",

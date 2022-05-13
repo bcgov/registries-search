@@ -1,6 +1,7 @@
 <template>
   <v-app id="app" class="app-container">
     <sbc-header class="sbc-header" :in-auth="false" :show-login-menu="false" />
+    <bcrs-breadcrumb :breadcrumbs=breadcrumbs() v-if="breadcrumbs().length > 0" />
 
     <div class="app-body">
       <main>
@@ -31,14 +32,20 @@
 // External
 import { computed, ref } from 'vue'
 import * as Sentry from '@sentry/vue'
+import { useRoute } from 'vue-router'
+
 // BC Registry
 import { SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components'
+// Bcrs shared components
+import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
 import { ErrorI } from '@/interfaces'
+import { BcrsBreadcrumb } from '@/bcrs-common-components'
 
 const aboutText: string = process.env.ABOUT_TEXT
 const appReady = ref(true)
 const haveData = ref(true)
+const route = useRoute()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -62,5 +69,11 @@ const handleError = (error: ErrorI) => {
   console.error(error)
   // FUTURE: add account info with error information 
   Sentry.captureException(error)
+}
+
+const breadcrumbs = (): Array<BreadcrumbIF> => {
+  const breadcrumbs = route?.meta?.breadcrumb as BreadcrumbIF[] || []
+  console.log(breadcrumbs)
+  return breadcrumbs
 }
 </script>
