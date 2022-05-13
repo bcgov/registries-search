@@ -18,5 +18,5 @@ from flask_cors import cross_origin
 from .search import bp as search_bp
 
 
-bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')
+bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')  # pylint: disable=invalid-name
 bp.register_blueprint(search_bp)

@@ -41,7 +41,7 @@ from search_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
-migrate = Migrate()
+migrate = Migrate()  # pylint: disable=invalid-name
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):

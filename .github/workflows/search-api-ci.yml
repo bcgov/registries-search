@@ -88,10 +88,7 @@ jobs:
           make setup
       - name: Upgrade db
         run: |
-          . venv/bin/activate && python manage.py db upgrade
-      - name: Create Test Data
-        run: |
-          . venv/bin/activate && python manage.py create_test_data
+          . venv/bin/activate && flask db upgrade
       - name: Test with pytest
         id: test
         run: |

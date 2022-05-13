@@ -24,6 +24,7 @@ from search_api.services import solr
 from search_api.services.solr import Solr, SolrField
 import search_api.resources.utils as resource_utils
 
+
 bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=invalid-name
 
 
@@ -35,7 +36,7 @@ def facets():
         query = request.args.get('query', None)
         if not query:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
-        
+
         # TODO: validate legal_type + state
         legal_type = request.args.get('legal_type', None)
         state = request.args.get('state', None)
@@ -50,12 +51,11 @@ def facets():
         results = _business_search(query, legal_type, state, start, rows)
         response = {
             'facets': Solr.parse_facets(results),
-            'searchResults': {'queryInfo':{
+            'searchResults': {'queryInfo': {
                 'num_of_rows': rows or solr.default_rows,
                 'query': query,
                 'start_row': results.get('response', {}).get('start'),
-                'total_rows': results.get('response', {}).get('numFound')}
-            },
+                'total_rows': results.get('response', {}).get('numFound')}},
             'results': results.get('response', {}).get('docs')}
 
         return jsonify(response), HTTPStatus.OK
@@ -94,7 +94,7 @@ def _business_search(query: str, legal_type: str, state: str, start: int, rows: 
         start = solr.default_start
     if not rows:
         rows = solr.default_rows
-    
+
     # base query
     solr_query = Solr.build_split_query(
         query,
@@ -107,20 +107,20 @@ def _business_search(query: str, legal_type: str, state: str, start: int, rows: 
         ],
         [SolrField.NAME_SELECT]
     )
-    
+
     # facets
     solr_query += solr.facets
     if legal_type:
         solr_query += f'&{SolrField.TYPE}:{legal_type.upper()}'
     if state:
         solr_query += f'&{SolrField.STATE}:{state.upper()}'
-    
+
     # boosts for result ordering
     solr_bq_params = f'&bq={SolrField.NAME_SELECT}:("{query}"~10)^30.0' + \
         f'&bq={SolrField.NAME_STEM_AGRO}:("{query}"~10)^20.0' + \
         f'&bq={SolrField.NAME_SELECT}:({query.split()[0]}*)^10.0'
-    solr_query += solr.bq.format(boost_params=solr_bq_params)
-    
+    solr_query += solr.boost_params.format(boost_params=solr_bq_params)
+
     try:
         results = solr.select(solr_query, start, rows)
     except SolrException as err:
@@ -130,9 +130,8 @@ def _business_search(query: str, legal_type: str, state: str, start: int, rows: 
             solr_query.replace(f' OR {SolrField.NAME_SYNONYM}:{term}', '')
         current_app.logger.debug('Trying again without synonym clause...')
         results = solr.select(solr_query, start, rows)
-    
+
     return results
-    
 
 
 def _business_suggest(query: str, rows: int = None) -> List:
@@ -145,7 +144,7 @@ def _business_suggest(query: str, rows: int = None) -> List:
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
-        name_select_params = Solr.build_split_query(query, SolrField.NAME_SINGLE)
+        name_select_params = Solr.build_split_query(query, SolrField.NAME_SINGLE, [])
         name_docs = solr.select(name_select_params, 0, rows).get('response', {}).get('docs')
         extra_name_suggestions = [x.get(SolrField.NAME, '').upper() for x in name_docs]
     # remove dups

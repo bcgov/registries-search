@@ -80,9 +80,9 @@ class Solr:
         self.default_start = 0
         self.default_rows = 10
         self.facets = f'&facet=on&facet.field={SolrField.STATE}&facet.field={SolrField.TYPE}'
-        self.fields = \
-            f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},{SolrField.TYPE},{SolrField.SCORE}'
-        self.bq = '{boost_params}&defType=edismax'
+        self.fields = f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
+            f'{SolrField.TYPE},{SolrField.SCORE}'
+        self.boost_params = '{boost_params}&defType=edismax'
 
         self.search_query = '{url}/{core}/select?{search_params}{fields}&start={start}&rows={rows}'
         self.suggest_query = '{url}/{core}/suggest?{suggest_params}&suggest.count={rows}&suggest.build={build}'
@@ -135,11 +135,11 @@ class Solr:
             response = requests.get(select_query)
             if response.status_code != HTTPStatus.OK:
                 raise SolrException('Error handling Solr request.', response.status_code)
-        except Exception as err:
+        except Exception as err:  # noqa B902
             current_app.logger.error(err.with_traceback(None))
             msg = 'Error handling Solr request.'
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-            with suppress (Exception):
+            with suppress(Exception):
                 status_code = response.status_code
                 msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
             raise SolrException(
@@ -166,11 +166,11 @@ class Solr:
                 raise SolrException(
                     error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
                     status_code=response.status_code)
-        except Exception as err:
+        except Exception as err:  # noqa B902
             current_app.logger.error(err.with_traceback(None))
             msg = 'Error handling Solr request.'
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-            with suppress (Exception):
+            with suppress(Exception):
                 status_code = response.status_code
                 msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
             raise SolrException(
@@ -212,7 +212,7 @@ class Solr:
             name = name.replace(query, f'<b>{query}</b>')
             highlighted_names.append(name)
         return highlighted_names
-    
+
     @staticmethod
     def parse_facets(facet_data: Dict) -> Dict:
         """Return formatted solr facet response data."""
@@ -228,4 +228,3 @@ class Solr:
                         'count': facet_info[category][i+1]})
 
         return {'fields': facets}
-                    
