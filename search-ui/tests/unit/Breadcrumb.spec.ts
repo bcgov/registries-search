@@ -9,7 +9,6 @@ import store from '@/store'
 
 describe('Breadcrumb.vue', () => {
 
-  let wrapper;
   const breadcrumbs : BreadcrumbIF[] = [
     {
       text: SearchSIGNINBreadcrumb.text,
@@ -21,7 +20,7 @@ describe('Breadcrumb.vue', () => {
     }
   ]
 
-  wrapper = mount(BcrsBreadcrumb, {
+  const wrapper = mount(BcrsBreadcrumb, {
     props: { breadcrumbs },
     global: {
       provide: {
