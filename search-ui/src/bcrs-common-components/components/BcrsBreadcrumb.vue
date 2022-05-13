@@ -59,18 +59,6 @@ export default defineComponent({
     isActiveCrumb (item: BreadcrumbIF) {
       return this.$route?.name !== item?.to?.name
     }
-  },
-  setup(props) {
-    const state = reactive({
-      
-    })
-    const isJestRunning = (): boolean => {
-      return (process.env.JEST_WORKER_ID !== undefined)
-    }
-    return {
-     ...state,
-     isJestRunning
-    }
   }
 })
 </script>
