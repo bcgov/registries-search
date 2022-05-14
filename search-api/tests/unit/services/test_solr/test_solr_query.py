@@ -77,32 +77,3 @@ def test_solr_select(test_name, query, query_field, expected_field, expected):
     assert len(docs) == len(expected)
     for doc in docs:
         assert doc[expected_field] in expected
-
-@integration_solr
-@pytest.mark.parametrize('test_name,query,expected', [
-    ('test-identifier', 'CP00', ['<b>CP00</b>34567']),
-    ('test-bn', '0012334', ['BN0<b>0012334</b>']),
-    ('test-name-exact', 'tests 2222', ['<b>TESTS 2222</b>']),
-    ('test-case', 'not case sensitive', ['<b>NOT CASE SENSITIVE</b>']),
-    ('test-partial-1', 'tester', ['<b>TESTER</b> 1111']),
-    ('test-partial-2', 'tester 11', ['<b>TESTER 11</b>11']),
-    ('test-partial-3', 'ots of ords', ['LOTS OF WORDS IN HERE']),
-    ('test-all-words-match', 'tests oops 2222', []),
-    ('test-multiple-matches', 'test 1', ['<b>TEST 1</b>234','TESTER 1111',]),
-    ('test-bn-identifier-name', '123', [
-        'TEST <b>123</b>4',
-        'CP<b>123</b>4567',
-        'BN000<b>123</b>34']),
-])
-def test_solr_business_suggest(test_name, query, expected):
-    """Assert that solr business suggest call works as expected."""
-    # setup
-    solr.delete_all_docs()
-    solr.create_or_replace_docs(SOLR_TEST_DOCS)
-    time.sleep(0.5) # wait for solr to register update
-    # call select
-    suggestions = solr.business_suggest(query)
-    # test
-    assert len(suggestions) == len(expected)
-    for suggestion in suggestions:
-        assert suggestion['value'] in expected

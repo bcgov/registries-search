@@ -144,8 +144,8 @@ def _business_suggest(query: str, rows: int = None) -> List:
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
-        name_select_params = Solr.build_split_query(query, SolrField.NAME_SINGLE, [])
-        name_docs = solr.select(name_select_params, 0, rows).get('response', {}).get('docs')
+        name_select_params = Solr.build_split_query(query, [SolrField.NAME_SINGLE], [])
+        name_docs = solr.select(name_select_params, 0, rows).get('response', {}).get('docs', [])
         extra_name_suggestions = [x.get(SolrField.NAME, '').upper() for x in name_docs]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
@@ -157,7 +157,7 @@ def _business_suggest(query: str, rows: int = None) -> List:
     bn_suggestions = []
     if len(name_suggestions) < rows:
         bn_id_params = f'q={SolrField.IDENTIFIER_SELECT}:{query} OR {SolrField.BN_SELECT}:{query}'
-        bn_id_docs = solr.select(bn_id_params, 0, rows).get('response', {}).get('docs')
+        bn_id_docs = solr.select(bn_id_params, 0, rows).get('response', {}).get('docs', [])
         # return list of identifier strings with highlighted query
         identifier_suggestions = [
             x.get(SolrField.IDENTIFIER).replace(query, f'<b>{query}</b>')

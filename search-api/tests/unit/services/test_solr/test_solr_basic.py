@@ -66,3 +66,5 @@ def test_solr_create_delete(test_name, identifier, state, name, legal_type, bn):
     # test search returns nothing
     docs = solr.select(f'q={SolrField.IDENTIFIER_SELECT}:{identifier}', 1)
     assert len(docs) == 0
+
+# TODO: test build_split_query, highlight_names, parse_facets

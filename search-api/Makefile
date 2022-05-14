@@ -72,6 +72,7 @@ flake8: ## Linting with flake8 ## tests
 lint: pylint flake8 ## run all lint type scripts
 
 test: ## Unit testing
+	@echo "RUN_SOLR_TESTS $(RUN_SOLR_TESTS) RUN_LD_TESTS $(RUN_LD_TESTS)";\
 	. venv/bin/activate && pytest
 
 mac-cov: test ## Run the coverage report and display in a browser window (mac)

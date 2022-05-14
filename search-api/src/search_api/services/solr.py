@@ -178,7 +178,7 @@ class Solr:
                 status_code=status_code)
         # parse response
         suggestions = response.json() \
-            .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions')
+            .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions', [])
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
 
     @staticmethod
