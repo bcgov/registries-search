@@ -24,6 +24,7 @@ from http import HTTPStatus
 import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
 from flask import redirect, url_for, Flask  # noqa: I001
+from flask_migrate import Migrate
 from registry_schemas import __version__ as registry_schemas_version
 from registry_schemas.flask import SchemaServices  # noqa: I001
 
@@ -40,6 +41,7 @@ from search_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
+migrate = Migrate()  # pylint: disable=invalid-name
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
@@ -63,6 +65,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     flags.init_app(app)
     solr.init_app(app)
     babel.init_app(app)
+    migrate.init_app(app, db)
 
     v1_endpoint.init_app(app)
     setup_jwt_manager(app, jwt)

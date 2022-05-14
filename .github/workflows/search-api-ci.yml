@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.9, 3.10]
+        python-version: [3.8,3.9]
 
     steps:
       - uses: actions/checkout@v2
@@ -58,8 +58,10 @@ jobs:
       DATABASE_TEST_PORT: 5432
       DATABASE_HOST: localhost
       DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: postgres
       JWT_OIDC_JWKS_CACHE_TIMEOUT: 300
+      SOLR_SVC_TEST_URL: http://test-solr
       RUN_LD_TESTS: False
       RUN_SOLR_TESTS: False
 
@@ -88,10 +90,7 @@ jobs:
           make setup
       - name: Upgrade db
         run: |
-          . venv/bin/activate && python manage.py db upgrade
-      - name: Create Test Data
-        run: |
-          . venv/bin/activate && python manage.py create_test_data
+          . venv/bin/activate && flask db upgrade
       - name: Test with pytest
         id: test
         run: |

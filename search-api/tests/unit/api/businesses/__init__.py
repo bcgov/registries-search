@@ -11,19 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Manage the database and some other items required to run the API
-"""
-import logging
-
-from flask.cli import FlaskGroup
-
-from search_api import create_app
-
-
-app = create_app()
-cli = FlaskGroup(app)
-
-if __name__ == '__main__':
-    logging.log(logging.INFO, 'Running the Manager')
-    cli()
+"""Test-Suite for the businesses endpoints."""

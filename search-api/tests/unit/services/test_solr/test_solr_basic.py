@@ -19,7 +19,7 @@ import pytest
 from flask import Flask
 
 from search_api.services import solr
-from search_api.services.solr import SolrDoc, SolrFields
+from search_api.services.solr import SolrDoc, SolrField
 
 from tests import integration_solr
 
@@ -53,16 +53,18 @@ def test_solr_create_delete(test_name, identifier, state, name, legal_type, bn):
     assert added.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # search new doc
-    docs = solr.select(f'q={SolrFields.IDENTIFIER_SELECT}:{identifier}', 1)
-    assert docs[0][SolrFields.IDENTIFIER] == identifier
-    assert docs[0][SolrFields.BN] == bn
-    assert docs[0][SolrFields.NAME] == name
-    assert docs[0][SolrFields.STATE] == state
-    assert docs[0][SolrFields.TYPE] == legal_type
+    docs = solr.select(f'q={SolrField.IDENTIFIER_SELECT}:{identifier}', 1)
+    assert docs[0][SolrField.IDENTIFIER] == identifier
+    assert docs[0][SolrField.BN] == bn
+    assert docs[0][SolrField.NAME] == name
+    assert docs[0][SolrField.STATE] == state
+    assert docs[0][SolrField.TYPE] == legal_type
     # delete doc
     deleted = solr.delete_docs([identifier])
     assert deleted.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # test search returns nothing
-    docs = solr.select(f'q={SolrFields.IDENTIFIER_SELECT}:{identifier}', 1)
+    docs = solr.select(f'q={SolrField.IDENTIFIER_SELECT}:{identifier}', 1)
     assert len(docs) == 0
+
+# TODO: test build_split_query, highlight_names, parse_facets

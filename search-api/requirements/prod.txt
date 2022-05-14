@@ -3,7 +3,6 @@ Flask-Babel
 Flask-Cors
 Flask-Migrate
 Flask-Moment
-Flask-Script
 Flask-SQLAlchemy
 attrs
 flask-jwt-oidc

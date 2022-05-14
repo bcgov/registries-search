@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Exposes all of the resource endpoints in Flask-Blueprint style."""
+from .businesses import bp as bus_bp
 from .meta import bp as meta_bp
 from .ops import bp as ops_bp
-from .search import bp as search_bp

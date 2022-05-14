@@ -37,8 +37,7 @@ to setup your local development environment.
 1. Update the .env file to add your local environment variables including the database configuration. A sample .env file is provided.
 1. Run a local instance of the Postgres PPR database.
     1. From your project root run: `docker-compose up -d`
-    1. In your `venv` environment run: `python manage.py db upgrade`
-    1. In your `venv` environment load/reload unit test data. Run: `python manage.py create_test_data`
+    1. In your `venv` environment run: `flask db upgrade`
 
 
 ### Running the SEARCH-API
