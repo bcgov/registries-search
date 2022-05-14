@@ -30,7 +30,7 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 
 def get_skip_value(env_skip_val):
-    return (os.getenv(env_skip_val, False) is False) or (os.getenv(env_skip_val, 'False') == 'False')
+    return (os.getenv(env_skip_val, 'false') == 'false') or (os.getenv(env_skip_val, 'False') == 'False')
 
 integration_authorization = pytest.mark.skipif(
     get_skip_value('RUN_AUTHORIZATION_TESTS'),
