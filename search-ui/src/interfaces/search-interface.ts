@@ -7,9 +7,9 @@ export interface SearchResponseI {
 }
  
 export interface SearchResultI {
-    name: string
+    legal_name: string
     identifier: string
     bn: string
-    status:BusinessStatuses
-    type: BusinessTypes
+    state:BusinessStatuses
+    legal_type: BusinessTypes
 }

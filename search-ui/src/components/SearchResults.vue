@@ -7,34 +7,35 @@
     </v-row>
     <v-row class="pt-3 pl-4" no-gutters>
       <v-col cols="12">
-          <v-table>
+          <v-table
+          fixed-header
+          class="table">
             <thead>
             <tr>
-                <th width="25%">Business Name</th>
-                <th width="15%">Registration Number</th>
-                <th width="15%">Business Number</th>
-                <th width="25%">Business Type</th>
-                <th width="10%">Status</th>
-                <th width="10%"></th>
+                <th width="25%" class="bg-grey-lighten-4">Business Name</th>
+                <th width="15%" class="bg-grey-lighten-4">Registration Number</th>
+                <th width="15%" class="bg-grey-lighten-4">Business Number</th>
+                <th width="25%" class="bg-grey-lighten-4">Business Type</th>
+                <th width="10%" class="bg-grey-lighten-4">Status</th>
+                <th width="10%" class="bg-grey-lighten-4 opaque-header"></th>
             </tr>
             </thead>
             <tbody v-if="totalResultsLength>0">
                 <tr v-for="item in businesses" :key="item.name">
-                    <td>{{ item.name }}</td>
+                    <td>{{ item.legal_name }}</td>
                     <td>{{ item.identifier }}</td>
                     <td>{{ item.bn }}</td>
-                    <td>{{ getEntityDescription(item.type) }}</td>
-                    <td>{{ item.status }}</td>
+                    <td>{{ getEntityDescription(item.legal_type) }}</td>
+                    <td>{{ item.state }}</td>
                     <td>
-                        <v-btn
-                        v-if="isActiveBusiness(item.status)"
+                        <v-btn                         
                         large
                         id="open-business-btn"                     
                         class="search-bar-btn primary mr-2"
                         @click="goToDashboard(item.identifier)">
                             Open
                         </v-btn>
-                        <v-tooltip
+                       <!-- <v-tooltip
                         v-else
                         class="pa-2"
                         content-class="top-tooltip"
@@ -48,7 +49,7 @@
                             <div class="pt-2 pb-2">
                              Historical Business
                             </div>
-                        </v-tooltip>
+                        </v-tooltip> -->
                     </td>
                 </tr>
             </tbody>
@@ -79,11 +80,7 @@ const totalResultsLength = computed(() => businesses.value.length )
 
 const goToDashboard  = (identifier: string )  => {  
    window.location.assign(`${ConfigHelper.getFromSession('DASHBOARD_URL')}${identifier}`)
-}
-
-const isActiveBusiness  = (status: string)  => {
-   return status == 'Active'? true: false
-}
+} 
 
 const getEntityDescription  = (entityType: string)  => {
    const item = CorpInfoArray.find(obj => (entityType === obj.corpTypeCd))
@@ -118,5 +115,20 @@ th {
 
 .primary-icon{
   color: $app-dk-blue !important;
+}
+
+.table{
+	max-width: calc(100% - 48px);
+	max-height: calc(100vh - 170px);
+}
+.v-table {
+	overflow: auto;
+}
+.v-table ::v-deep .v-table__wrapper {
+	overflow: unset;
+}
+
+.opaque-header {
+  z-index: 1;
 }
 </style>
