@@ -90,6 +90,9 @@ const isLast = (index): boolean =>  {
 .inactive-crumb {
   cursor: default !important; // To override default or local link styling
 }
+.text-primary{
+  color: #1669bb!important;
+}
 ::v-deep {
   .v-breadcrumbs .v-breadcrumbs__divider {
     color: white !important;
