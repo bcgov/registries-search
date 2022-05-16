@@ -3,12 +3,12 @@ import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 
 export const SearchHomeBreadCrumb: BreadcrumbIF = {
     text: 'BC Search and Online Services',
-    href: ''
+    href: sessionStorage.getItem('REGISTRY_URL')
 }
 
 export const SearchDashboardBreadcrumb: BreadcrumbIF = {
     text: 'BC Search Dashboard',
-    href: ''
+    href: '/dashboard'
 }
 
 export const SearchSIGNINBreadcrumb: BreadcrumbIF = {

@@ -73,7 +73,6 @@ const handleError = (error: ErrorI) => {
 
 const breadcrumbs = (): Array<BreadcrumbIF> => {
   const breadcrumbs = route?.meta?.breadcrumb as BreadcrumbIF[] || []
-  console.log(breadcrumbs)
   return breadcrumbs
 }
 </script>

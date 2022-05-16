@@ -8,7 +8,7 @@ import {
   Signout
  } from '@/views'
 import { RouteNames } from '@/enums'
-import { SearchDashboardBreadcrumb } from '@/bcrs-common-components/resources'
+import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/bcrs-common-components/resources'
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -49,6 +49,10 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       breadcrumb: [
+        {
+          text: SearchHomeBreadCrumb.text,
+          href: SearchHomeBreadCrumb.href
+        },
         {
           text: SearchDashboardBreadcrumb.text,
           to: { name: RouteNames.DASHBOARD }

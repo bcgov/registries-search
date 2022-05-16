@@ -7,7 +7,7 @@
             id="breadcrumb-back-btn"
             class="back-btn"
             exact
-            :href="backUrl"
+            :href="backUrl()"
             icon small
             :disabled="breadcrumbs?.length <= 1"
           >
@@ -21,10 +21,11 @@
           <ul class="v-breadcrumbs pa-0 ma-0 theme--light">
             <li v-for="(crumb, ci) in breadcrumbs" :key="ci">
               <div class="v-breadcrumb-item">
-                <span class="breadcrumb-text" :class="isActiveCrumb(crumb) ? 'active-crumb': 'inactive-crumb'">
+                <span class="breadcrumb-text" :class="isLast(ci) ? 'inactive-crumb' : 'active-crumb'">
                    {{ crumb.text }}
                 </span>
               </div>
+              <v-icon icon="mdi-chevron-right" v-if="breadcrumbs?.length > 1 && isLast(ci) == false"></v-icon>
             </li>
           </ul>
         </div>
@@ -33,34 +34,24 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // External
-import { defineComponent, reactive, PropType } from 'vue'
+import { computed, ref, PropType } from 'vue'
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
-import { useRoute } from 'vue-router'
 
-
-
-export default defineComponent({
-  name: 'BcrsBreadcrumb',
-   props: {
-    breadcrumbs: {
-      type: Array as PropType<BreadcrumbIF[]>
-    }
-  },
-  methods: {
-    backUrl  () {
-      console.log(this.$route)
-      console.log(this.breadcrumbs)
-      const routeIndex = this.breadcrumbs.findIndex(item => item.to?.name === this.$route?.name)
-      const backRoute = this.breadcrumbs[routeIndex - 1]?.href || this.breadcrumbs[routeIndex - 1]?.to?.name
-      return backRoute || ''
-    },
-    isActiveCrumb (item: BreadcrumbIF) {
-      return this.$route?.name !== item?.to?.name
-    }
-  }
+const props = defineProps({
+  breadcrumbs: { type: Array as PropType<BreadcrumbIF[]> }
 })
+
+const backUrl = (): string =>  {
+  const crumbsLength = props.breadcrumbs.length
+  return props.breadcrumbs[crumbsLength - 2]?.href || ''
+}
+
+const isLast = (index): boolean =>  {
+  return index === props.breadcrumbs.length - 1;
+}
+
 </script>
 
 <style lang="scss" scoped>
