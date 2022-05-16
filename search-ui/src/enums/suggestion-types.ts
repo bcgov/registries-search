@@ -1,5 +1,5 @@
 export enum SuggestionTypes {
     NAME = 'name',
     IDENTIFIER = 'identifier',
-    TAX_ID = 'taxId'
+    TAX_ID = 'bn'
 }

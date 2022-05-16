@@ -400,7 +400,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=15&num_of_rows=15&legal_type=CP&state=ACTIVE",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=0&num_of_rows=15&legalType=CP&status=ACTIVE",
 							"host": [
 								"{{base_url}}"
 							],
@@ -417,18 +417,18 @@
 								},
 								{
 									"key": "start_row",
-									"value": "15"
+									"value": "0"
 								},
 								{
 									"key": "num_of_rows",
 									"value": "15"
 								},
 								{
-									"key": "legal_type",
+									"key": "legalType",
 									"value": "CP"
 								},
 								{
-									"key": "state",
+									"key": "status",
 									"value": "ACTIVE"
 								}
 							]
@@ -448,7 +448,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=15&num_of_rows=15&legal_type=CP&state=ACTIVE",
+									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&start_row=30&num_of_rows=15&legalType=CP&status=ACTIVE",
 									"host": [
 										"{{base_url}}"
 									],
@@ -465,18 +465,18 @@
 										},
 										{
 											"key": "start_row",
-											"value": "15"
+											"value": "30"
 										},
 										{
 											"key": "num_of_rows",
 											"value": "15"
 										},
 										{
-											"key": "legal_type",
+											"key": "legalType",
 											"value": "CP"
 										},
 										{
-											"key": "state",
+											"key": "status",
 											"value": "ACTIVE"
 										}
 									]
@@ -492,7 +492,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 13 May 2022 16:32:56 GMT"
+									"value": "Mon, 16 May 2022 16:51:21 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -500,7 +500,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "2289"
+									"value": "1866"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -520,7 +520,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legal_type\": [\n                {\n                    \"count\": 41,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                }\n            ],\n            \"state\": [\n                {\n                    \"count\": 33,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 9,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"results\": [\n        {\n            \"identifier\": \"CP1002508\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 18.50.26 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002499\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.20 7.46 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002501\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.20 3.15 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002504\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 1.21 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002502\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 7.00 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002506\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 15.42.41 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002505\",\n            \"legal_name\": \"XYZ COOP 2022.JAN.21 2.20 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002507\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 18.03.39 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002509\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 19.29.25 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002510\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 21.16.09 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002511\",\n            \"legal_name\": \"XYZ COOP 2022.01.23 21.49.59 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002520\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.50.20 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002521\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.53.34 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"BC0870916\",\n            \"legal_name\": \"AC COOP 2022.01.27 22.27.31 TEST\",\n            \"legal_type\": \"BEN\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002519\",\n            \"legal_name\": \"AC COOP 2022.01.27 15.36.10 TEST\",\n            \"legal_type\": \"CP\",\n            \"score\": 84.4261,\n            \"state\": \"ACTIVE\"\n        }\n    ],\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"num_of_rows\": 15,\n            \"query\": \"test coop\",\n            \"start_row\": 15,\n            \"total_rows\": 42\n        }\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 41,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 33,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 9,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"results\": [\n        {\n            \"identifier\": \"CP1002490\",\n            \"legalType\": \"CP\",\n            \"name\": \"ARGUS COOP 2021.DEC.17 06.21 TEST\",\n            \"score\": 84.49511,\n            \"status\": \"HISTORICAL\"\n        },\n        {\n            \"identifier\": \"CP9002491\",\n            \"legalType\": \"CP\",\n            \"name\": \"ARGUS COOP 2021.DEC.17 7.10 TEST\",\n            \"score\": 84.49511,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002492\",\n            \"legalType\": \"CP\",\n            \"name\": \"ARGUS COOP 2021.DEC.17 16.36 TEST\",\n            \"score\": 84.49511,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002485\",\n            \"legalType\": \"CP\",\n            \"name\": \"SEVERIN TESTING COD COOP\",\n            \"score\": 84.13842,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002394\",\n            \"legalType\": \"CP\",\n            \"name\": \"EVE TEST 9271 IN 11 COOP\",\n            \"score\": 81.88937,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002483\",\n            \"legalType\": \"CP\",\n            \"name\": \"TESTING COD DATE COOP\",\n            \"score\": 66.088196,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002524\",\n            \"legalType\": \"CP\",\n            \"name\": \"AC COOP CONSR 2022.03.24 20.11.24 TEST\",\n            \"score\": 61.15199,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP3490283\",\n            \"legalType\": \"CP\",\n            \"name\": \"TEST AGAIN FOR TRANSLATION REMOVE FROM COOP\",\n            \"score\": 61.15199,\n            \"status\": \"ACTIVE\"\n        },\n        {\n            \"identifier\": \"CP1002495\",\n            \"legalType\": \"CP\",\n            \"name\": \"CAMERONS COOPERATIVE TEST\",\n            \"score\": 15.681053,\n            \"status\": \"HISTORICAL\"\n        },\n        {\n            \"identifier\": \"CP1002469\",\n            \"legalType\": \"CP\",\n            \"name\": \"TEST DISSOLUTIONS COOPERATIVE ASSOCIATION\",\n            \"score\": 15.681053,\n            \"status\": \"HISTORICAL\"\n        },\n        {\n            \"identifier\": \"CP1002482\",\n            \"legalType\": \"CP\",\n            \"name\": \"REGRESSION TEST COOPERATIVE\",\n            \"score\": 15.681053,\n            \"status\": \"HISTORICAL\"\n        },\n        {\n            \"identifier\": \"CP1002488\",\n            \"legalType\": \"CP\",\n            \"name\": \"SB FAS PAYMENT TESTING COOPERATIVE\",\n            \"score\": 15.141925,\n            \"status\": \"ACTIVE\"\n        }\n    ],\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"num_of_rows\": 15,\n            \"query\": \"test coop\",\n            \"start_row\": 30,\n            \"total_rows\": 42\n        }\n    }\n}"
 						}
 					]
 				}
