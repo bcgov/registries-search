@@ -33,11 +33,11 @@ def test_solr_doc(test_name, identifier, state, name, legal_type, bn):
     assert new_doc
     json = new_doc.json()
     assert json
-    assert json.get('identifier') == identifier
-    assert json.get('state') == state
-    assert json.get('legal_name') == name
-    assert json.get('legal_type') == legal_type
-    assert json.get('tax_id') == bn
+    assert json.get(SolrField.IDENTIFIER) == identifier
+    assert json.get(SolrField.STATE) == state
+    assert json.get(SolrField.NAME) == name
+    assert json.get(SolrField.TYPE) == legal_type
+    assert json.get(SolrField.BN) == bn
 
 
 @integration_solr
