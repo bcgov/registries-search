@@ -1,6 +1,6 @@
 <template>
   <v-card v-if="showAutoComplete" class="auto-complete-card" elevation="5">
-    <v-row no-gutters justify="center pt-2 pb-2">
+    <v-row class="pt-2 pb-2" no-gutters justify="center">
       <v-col no-gutters cols="11">
         <v-item-group v-model="autoCompleteSelected">
           <v-row

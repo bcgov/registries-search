@@ -21,12 +21,12 @@
             </tr>
             </thead>
             <tbody v-if="totalResultsLength>0">
-                <tr v-for="item in businesses" :key="item.name">
-                    <td>{{ item.legal_name }}</td>
+                <tr v-for="item in businesses" :key="item.identifier">
+                    <td>{{ item.name }}</td>
                     <td>{{ item.identifier }}</td>
                     <td>{{ item.bn }}</td>
-                    <td>{{ getEntityDescription(item.legal_type) }}</td>
-                    <td>{{ item.state }}</td>
+                    <td>{{ getEntityDescription(item.legalType) }}</td>
+                    <td>{{ item.status }}</td>
                     <td>
                         <v-btn                         
                         large
@@ -68,14 +68,16 @@
 
 <script setup lang="ts">
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
-import { CorpInfoArray } from '@/resources'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+// local
+import { SearchResultI } from '@/interfaces'
+import { CorpInfoArray } from '@/resources'
 
 // Store
 const store = useStore()
 
-const businesses = computed(() => store.getters['getSearchResults']) 
+const businesses = computed(() => store.getters['getSearchResults'] as SearchResultI[])
 const totalResultsLength = computed(() => businesses.value.length ) 
 
 const goToDashboard  = (identifier: string )  => {  

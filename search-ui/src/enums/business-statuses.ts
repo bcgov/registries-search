@@ -1,4 +1,4 @@
 export enum BusinessStatuses {
-    ACTIVE = 'Active',
-    HISTORICAL = 'Historical'
+    ACTIVE = 'ACTIVE',
+    HISTORICAL = 'HISTORICAL'
 }

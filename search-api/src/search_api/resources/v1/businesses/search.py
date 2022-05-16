@@ -38,8 +38,8 @@ def facets():
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
 
         # TODO: validate legal_type + state
-        legal_type = request.args.get('legal_type', None)
-        state = request.args.get('state', None)
+        legal_type = request.args.get(SolrField.TYPE, None)
+        state = request.args.get(SolrField.STATE, None)
 
         start = None
         with suppress(Exception):
@@ -168,7 +168,7 @@ def _business_suggest(query: str, rows: int = None) -> List:
             for x in bn_id_docs if query in x.get(SolrField.BN, '')]
 
     # format/combine response
-    suggestions = [{'type': 'name', 'value': x} for x in name_suggestions]
-    suggestions += [{'type': 'identifier', 'value': x} for x in identifier_suggestions]
-    suggestions += [{'type': 'bn', 'value': x} for x in bn_suggestions]
+    suggestions = [{'type': SolrField.NAME, 'value': x} for x in name_suggestions]
+    suggestions += [{'type': SolrField.IDENTIFIER, 'value': x} for x in identifier_suggestions]
+    suggestions += [{'type': SolrField.BN, 'value': x} for x in bn_suggestions]
     return suggestions[:rows]

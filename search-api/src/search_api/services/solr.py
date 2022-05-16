@@ -26,18 +26,18 @@ from search_api.exceptions import SolrException
 class SolrField(str, Enum):
     """Enum of the fields available in the solr search core."""
 
-    BN = 'tax_id'
-    BN_SELECT = 'tax_id_select'
+    BN = 'bn'
+    BN_SELECT = 'bn_select'
     IDENTIFIER = 'identifier'
     IDENTIFIER_SELECT = 'identifier_select'
-    NAME = 'legal_name'
+    NAME = 'name'
     NAME_SELECT = 'name_select'
     NAME_SINGLE = 'name_single_term'
     NAME_STEM_AGRO = 'name_stem_agro'
     NAME_SYNONYM = 'name_synonym'
     SCORE = 'score'
-    STATE = 'state'
-    TYPE = 'legal_type'
+    STATE = 'status'
+    TYPE = 'legalType'
 
 
 class SolrDoc:  # pylint: disable=too-few-public-methods
