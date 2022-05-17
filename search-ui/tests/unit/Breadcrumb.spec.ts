@@ -41,7 +41,7 @@ describe('Breadcrumb.vue', () => {
   })
 
   it('dashboard back should be redirect to search online service page', () => {
-    expect(wrapper.vm.backUrl()).toBe("https://yfthig-dev.web.app/dashboard")
+    expect(wrapper.vm.backUrl()).toBe(breadcrumbs[0].href)
   })
 
   it('present page is dashboard so should inactive its tab', () => {

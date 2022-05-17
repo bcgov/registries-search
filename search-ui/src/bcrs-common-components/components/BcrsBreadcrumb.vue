@@ -1,6 +1,6 @@
 <template>
   <div id="breadcrumb">
-    <v-container>
+    <div class="container">
       <v-row no-gutters>
         <v-col cols="auto">
           <v-btn
@@ -30,13 +30,13 @@
           </ul>
         </div>
       </v-row>
-    </v-container>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 // External
-import { computed, ref, PropType } from 'vue'
+import { PropType } from 'vue'
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 
 const props = defineProps({
@@ -93,6 +93,36 @@ const isLast = (index): boolean =>  {
 .text-primary{
   color: #1669bb!important;
 }
+
+.container {
+	width: 100%;
+	padding: 12px;
+	margin-right: auto;
+	margin-left: auto
+}
+
+@media(min-width:960px) {
+	.container {
+		max-width: 900px
+	}
+}
+
+@media(min-width:1264px) {
+	.container {
+		max-width: 1185px
+	}
+}
+
+@media(min-width:1904px) {
+	.container {
+		max-width: 1785px
+	}
+}
+
+.container {
+    max-width: 1360px;
+}
+
 ::v-deep {
   .v-breadcrumbs .v-breadcrumbs__divider {
     color: white !important;

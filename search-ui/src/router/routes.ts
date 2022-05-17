@@ -48,16 +48,7 @@ export const routes: RouteRecordRaw[] = [
     component: DashboardView,
     meta: {
       requiresAuth: true,
-      breadcrumb: [
-        {
-          text: SearchHomeBreadCrumb.text,
-          href: SearchHomeBreadCrumb.href
-        },
-        {
-          text: SearchDashboardBreadcrumb.text,
-          to: { name: RouteNames.DASHBOARD }
-        }
-      ],
+      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     },
   },
   {
