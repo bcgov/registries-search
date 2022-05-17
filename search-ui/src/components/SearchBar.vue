@@ -48,6 +48,7 @@ const emit = defineEmits(['isLoading'])
 const autoCompleteIsActive = ref(true)
 const autoCompleteSearchValue = ref('')
 const searchValue = ref('')
+const searching = ref(false)
 const hideDetails = ref(false)
 const currentBusinessName = ref('')
 
@@ -70,23 +71,24 @@ const setSearchValue = (selectedAutoCompleteValue: string) => {
 const isSearchBtnActive = computed(() => searchValue.value.trim().length > 0 )
 
 const search = async () => {
-   emit('isLoading', true)
+   searching.value = true
    await store.dispatch('search', searchValue.value.trim() )
-   emit('isLoading', false)
+   searching.value = false
 }
 
 watch(() => searchValue.value, _.debounce((val: string) => {
-    if (autoCompleteIsActive.value) {
-        autoCompleteSearchValue.value = val
-      }
-      // show autocomplete results when there is a searchValue and if no error messages
-      autoCompleteIsActive.value = val !== ''
-  }, 300))
+  autoCompleteIsActive.value = val?.length > 2 && !searching.value
+  autoCompleteSearchValue.value = val
+}, 100))
 
-watch(() => currentBusinessName.value, (val: string) => {
+watch(() => currentBusinessName.value, () => {
     search()
   }
 )
+
+watch(() => searching.value, (val) => {
+  emit('isLoading', val)
+})
 </script>
 
 <style lang="scss" module>
