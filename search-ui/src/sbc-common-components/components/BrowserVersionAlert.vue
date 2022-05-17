@@ -108,10 +108,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .v-alert__wrapper {
-    margin: 0 auto;
-    max-width: 1382px;
-  }
+:deep(.v-alert__wrapper) {
+  margin: 0 auto;
+  max-width: 1382px;
 }
 </style>

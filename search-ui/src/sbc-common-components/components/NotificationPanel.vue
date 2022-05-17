@@ -10,7 +10,7 @@
         </v-btn>
       </v-app-bar>
       <v-list flat>
-        <v-list-item-group color="primary">
+        <v-list-group color="primary">
           <template v-for="(item, i) in notifications"  :key="i">
             <v-list-item>
               <v-row dense>
@@ -30,7 +30,7 @@
             </v-list-item>
             <v-divider v-if="i < notifications.length - 1" :key="`${i}-divider`"></v-divider>
           </template>
-        </v-list-item-group>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -79,16 +79,16 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "~sbc-common-components/src/assets/scss/theme.scss";
 
-::v-deep ::-webkit-scrollbar {
+:deep(::-webkit-scrollbar) {
   width: 2px;
 }
 
-::v-deep ::-webkit-scrollbar-thumb {
+:deep(::-webkit-scrollbar-thumb) {
   background: black;
   border-radius: 20px;
 }
 
-::v-deep .v-navigation-drawer--right {
+:deep(.v-navigation-drawer--right) {
   transform: translatey($app-header-height) !important;
   height: 100vh;
 }
@@ -106,11 +106,11 @@ export default defineComponent({
   font-weight: bold;
 }
 
-::v-deep .v-btn:not(.dialog-close) .v-icon.v-icon {
+:deep(.v-btn:not(.dialog-close) .v-icon.v-icon) {
   font-size: $px-18 !important;
 }
 
-::v-deep .v-btn__content {
+:deep(.v-btn__content) {
   line-height: inherit;
 }
 

@@ -161,19 +161,21 @@
               <!-- User Profile -->
               <v-list tile dense>
                 <v-list-item two-line>
-                  <v-list-item-avatar
+                  <v-avatar
                     tile
                     left
                     color="#4d7094"
                     size="36"
-                    class="user-avatar">
+                    class="user-avatar white-text">
                     {{ username.slice(0,1) }}
-                  </v-list-item-avatar>
+                  </v-avatar>
                   <v-list-item class="user-info">
-                    <v-list-item-title class="user-name" data-test="menu-user-name">{{ username }}</v-list-item-title>
-                    <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
-                      {{ accountName }}
-                    </v-list-item-subtitle>
+                    <v-list-item-title class="user-name" data-test="menu-user-name">
+                      {{ username }}
+                      <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
+                        {{ accountName }}
+                      </v-list-item-subtitle>
+                    </v-list-item-title>
                   </v-list-item>
                 </v-list-item>
                 <!-- BEGIN: Hide if authentication is IDIR -->
@@ -195,9 +197,8 @@
               <v-divider></v-divider>
 
               <!-- Account Settings -->
-              <v-list tile dense
-                v-if="currentAccount && !isStaff">
-                <v-subheader>ACCOUNT SETTINGS</v-subheader>
+              <v-list tile dense v-if="currentAccount && !isStaff">
+                <v-list-subheader>ACCOUNT SETTINGS</v-list-subheader>
                 <v-list-item @click="goToAccountInfo(currentAccount)">
                   <v-list-item-avatar left>
                     <v-icon>mdi-information-outline</v-icon>
@@ -224,13 +225,12 @@
 
               <!-- Switch Account -->
               <div v-if="!isStaff ">
-                <v-subheader v-if="switchableAccounts.length > 1">SWITCH ACCOUNT</v-subheader>
                 <v-list
                   tile
                   dense
                   v-if="switchableAccounts.length > 1"
                   class="switch-account">
-
+                  <v-list-subheader>SWITCH ACCOUNT</v-list-subheader>
                   <v-list-item
                     color="primary"
                     :class="{'v-list-item--active' : settings.id === currentAccount.id}"
@@ -387,8 +387,8 @@ export default defineComponent({
     const notificationPanel = ref(false)
 
     // Calculated Value
-    const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'] )
-    const accountName = computed(() => store.getters['account/accountName'] ) 
+    const isAuthenticated = computed(() => { return store.getters['auth/isAuthenticated'] as boolean })
+    const accountName = computed(() => store.getters['account/accountName'] )
     const switchableAccounts = computed(() => store.getters['account/switchableAccounts'] )
     const username = computed(() => store.getters['account/username'] )
     const currentLoginSource = computed(() => store.getters['auth/currentLoginSource'] as string)
@@ -540,7 +540,7 @@ export default defineComponent({
     }
 
     // component watchers
-    watch(isAuthenticated.value, async (val: boolean) => {
+    watch(isAuthenticated, async (val) => {
       if (val) {
         await updateProfile()
       }
@@ -714,21 +714,25 @@ $app-header-font-color: #ffffff;
   font-size: 0.75rem;
 }
 
-.v-list--dense .v-subheader,
+.v-list--dense .v-list-subheader,
 .v-list-item {
   padding-right: 1.25rem;
   padding-left: 1.25rem;
 }
 
-.v-list--dense .v-subheader,
-.v-list--dense .v-list-item__title,
-.v-list--dense .v-list-item__subtitle {
+.v-list-subheader,
+.v-list-item-title,
+.v-list-item-subtitle {
   font-size: 0.875rem !important;
 }
 
-.v-subheader {
+.v-list-subheader {
   color: $gray9 !important;
   font-weight: 700;
+}
+
+:deep(.v-list-subheader__text) {
+  opacity: 1 !important;
 }
 
 .menu-header {

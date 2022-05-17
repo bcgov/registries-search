@@ -126,7 +126,7 @@ th {
 .v-table {
 	overflow: auto;
 }
-.v-table ::v-deep .v-table__wrapper {
+.v-table :deep(.v-table__wrapper) {
 	overflow: unset;
 }
 

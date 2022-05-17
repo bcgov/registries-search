@@ -28,7 +28,6 @@
 // External
 import { computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useGetters } from 'vuex-composition-helpers'
 import { getModule } from 'vuex-module-decorators'
 // BC Registries
 import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
@@ -53,9 +52,9 @@ const store = useStore()
 if (!store.hasModule('account')) store.registerModule('account', AccountModule)
 if (!store.hasModule('auth')) store.registerModule('auth', AuthModule)
 // module getters
-const { currentLoginSource, isAuthenticated } = useGetters(
-  ['auth/currentLoginSource', 'auth/isAuthenticated'])
-const { accountName } = useGetters(['account/accountName'])
+const isAuthenticated = computed(() => { return store.getters['auth/isAuthenticated'] as boolean })
+const currentLoginSource = computed(() => { return store.getters['auth/currentLoginSource'] })
+const accountName = computed(() => { return store.getters['auth/accountName'] })
 // module actions
 // account
 const getCurrentUserProfile = async (inAuth: boolean): Promise<any> => { 
