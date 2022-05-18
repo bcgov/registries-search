@@ -1,7 +1,8 @@
 // External
 import { RouteRecordRaw } from 'vue-router'
 // Local
-import { 
+import {
+  BusinessInfoView,
   DashboardView,
   Login,
   Signin,
@@ -48,6 +49,17 @@ export const routes: RouteRecordRaw[] = [
     component: DashboardView,
     meta: {
       requiresAuth: true,
+      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+    },
+  },
+  {
+    path: '/businessinfo/:identifier',
+    name: RouteNames.BUSINESS_INFO,
+    component: BusinessInfoView,
+    props: true,
+    meta: {
+      requiresAuth: true,
+      // FUTURE: add breadcrumb for business info to the end of this list
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     },
   },

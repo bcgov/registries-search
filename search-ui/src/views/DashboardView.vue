@@ -1,5 +1,5 @@
 <template>
-  <v-container id="dashboard" class="view-container px-15 py-10 ma-0" fluid>
+  <v-container id="dashboard" class="container" fluid>
     <v-overlay v-model="isLoading">
       <v-progress-circular color="primary" size="50" indeterminate />
     </v-overlay>

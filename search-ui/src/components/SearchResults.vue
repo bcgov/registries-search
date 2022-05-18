@@ -32,7 +32,7 @@
                         large
                         id="open-business-btn"                     
                         class="search-bar-btn primary mr-2"
-                        @click="goToDashboard(item.identifier)">
+                        @click="goToBusinessInfo(item.identifier)">
                             Open
                         </v-btn>
                        <!-- <v-tooltip
@@ -67,21 +67,24 @@
 </template>
 
 <script setup lang="ts">
-import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 // local
+import { RouteNames } from '@/enums'
 import { SearchResultI } from '@/interfaces'
 import { CorpInfoArray } from '@/resources'
 
 // Store
 const store = useStore()
 
+const router = useRouter()
+
 const businesses = computed(() => store.getters['getSearchResults'] as SearchResultI[])
 const totalResultsLength = computed(() => businesses.value.length ) 
 
-const goToDashboard  = (identifier: string )  => {  
-   window.location.assign(`${ConfigHelper.getFromSession('DASHBOARD_URL')}${identifier}`)
+const goToBusinessInfo  = (identifier: string )  => {  
+  router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
 } 
 
 const getEntityDescription  = (entityType: string)  => {
