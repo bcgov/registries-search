@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center v-overlay">
+  <v-row justify="center" no-gutters>
     <v-dialog v-model="mobileDevice" width="350px">
       <v-card>
         <v-btn

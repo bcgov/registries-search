@@ -123,21 +123,18 @@ const isLast = (index): boolean =>  {
     max-width: 1360px;
 }
 
-::v-deep {
-  .v-breadcrumbs .v-breadcrumbs__divider {
-    color: white !important;
-    margin-bottom: 0;
+:deep(.v-breadcrumbs .v-breadcrumbs__divider) {
+  color: white !important;
+  margin-bottom: 0;
+}
+:deep(.theme--light.v-btn.v-btn--disabled) {
+  opacity: .4;
+  .v-icon {
+    color: $app-blue !important;
   }
-  .theme--light.v-btn.v-btn--disabled {
-    opacity: .4;
-    .v-icon {
-      color: $app-blue !important;
-    }
-  }
-  .v-btn--icon.v-btn--density-default {
-    height: 28px;
-    width: 28px;
-  }
-
+}
+:deep(.v-btn--icon.v-btn--density-default) {
+  height: 28px;
+  width: 28px;
 }
 </style>

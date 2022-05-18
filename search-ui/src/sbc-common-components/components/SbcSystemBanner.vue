@@ -38,7 +38,7 @@ export default defineComponent({
   padding: 0;
 }
 
-.v-alert ::v-deep .v-alert__wrapper {
+.v-alert :deep(.v-alert__wrapper) {
   margin: 0 auto;
   padding: 1.25rem 0.75rem;
   overflow: hidden;
