@@ -3,15 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { Role, LoginSource, Pages } from 'sbc-common-components/src/util/constants'
-import KeyCloakService from '@/sbc-common-components/services/keycloak.services'
-import { getModule } from 'vuex-module-decorators'
-import AccountModule from 'sbc-common-components/src/store/modules/account'
-import AuthModule from 'sbc-common-components/src/store/modules/auth'
-import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
-import { useNavigation } from '@/sbc-common-components/composables'
+// external
 import {  useStore } from 'vuex'
 import { ref } from 'vue'
+import { getModule } from 'vuex-module-decorators'
+import { Role, LoginSource, Pages } from 'sbc-common-components/src/util/constants'
+import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
+// local
+import AccountModule from '@/sbc-common-components/modules/account'
+import AuthModule from '@/sbc-common-components/modules/auth'
+import KeyCloakService from '@/sbc-common-components/services/keycloak.services'
+import { useNavigation } from '@/sbc-common-components/composables'
 
 const isLoading = ref(true)
 

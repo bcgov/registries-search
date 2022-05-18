@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
+import KeyCloakService from '@/sbc-common-components/services/keycloak.services'
 
 const isLoading = true
 const props = defineProps({
