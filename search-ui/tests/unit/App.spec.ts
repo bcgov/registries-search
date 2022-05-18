@@ -2,6 +2,8 @@
 import { mount } from '@vue/test-utils'
 // Local
 import App from '@/App.vue'
+import { BcrsBreadcrumb } from '@/bcrs-common-components'
+import { SbcHeader, SbcFooter } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
 import store from '@/store'
 
@@ -17,8 +19,12 @@ describe('App tests', () => {
     },
     shallow: true  // stubs out children components
   })
-  it('runs', () => {
+  it('mounts App with expected child components', () => {
+    expect(wrapper.findComponent(BcrsBreadcrumb).exists()).toBe(true)
+    expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
+    expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
+  })
+  it('registers jest running', () => {
     expect(wrapper.vm.isJestRunning).toBe(true)
-    expect(1).toBe(1)
   })
 })
