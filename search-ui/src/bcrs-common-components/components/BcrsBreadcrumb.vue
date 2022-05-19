@@ -7,9 +7,9 @@
             id="breadcrumb-back-btn"
             class="back-btn"
             exact
-            :href="backUrl()"
             icon small
             :disabled="breadcrumbs?.length <= 1"
+            @click="back()"
           >
             <v-icon color="primary">mdi-arrow-left</v-icon>
           </v-btn>
@@ -17,18 +17,18 @@
 
         <v-divider class="mx-3" color="white" vertical />
 
-        <div class="breadcrumb-col col col-auto">
-          <ul class="v-breadcrumbs pa-0 ma-0 theme--light">
-            <li v-for="(crumb, ci) in breadcrumbs" :key="ci">
-              <div class="v-breadcrumb-item">
-                <span class="breadcrumb-text" :class="isLast(ci) ? 'inactive-crumb' : 'active-crumb'">
-                   {{ crumb.text }}
-                </span>
-              </div>
-              <v-icon icon="mdi-chevron-right" v-if="breadcrumbs?.length > 1 && isLast(ci) == false"></v-icon>
-            </li>
-          </ul>
-        </div>
+        <v-col class="breadcrumb-col col col-auto">
+          <div v-for="crumb, index in breadcrumbs" :key="crumb.text" class="v-breadcrumb-item">
+            <span
+              class="breadcrumb-text"
+              :class="isLast(index) ? 'inactive-crumb' : 'active-crumb'"
+              @click="navigate(crumb)"
+            >
+                {{ crumb.text }}
+            </span>
+            <v-icon icon="mdi-chevron-right" v-if="breadcrumbs?.length > 1 && isLast(index) == false" />
+          </div>
+        </v-col>
       </v-row>
     </div>
   </div>
@@ -37,19 +37,31 @@
 <script setup lang="ts">
 // External
 import { PropType } from 'vue'
+import { useRouter } from 'vue-router'
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 
 const props = defineProps({
   breadcrumbs: { type: Array as PropType<BreadcrumbIF[]> }
 })
 
-const backUrl = (): string =>  {
+const router = useRouter()
+
+const back = () => {
   const crumbsLength = props.breadcrumbs.length
-  return props.breadcrumbs[crumbsLength - 2]?.href || ''
+  const backCrumb = props.breadcrumbs[crumbsLength - 2]
+  navigate(backCrumb)
 }
 
-const isLast = (index): boolean =>  {
+const isLast = (index: number): boolean =>  {
   return index === props.breadcrumbs.length - 1;
+}
+
+const navigate = (breadcrumb: BreadcrumbIF): void => {
+  if (breadcrumb.to) {
+    router.push(breadcrumb.to)
+  } else if (breadcrumb.href) {
+    window.location.assign(breadcrumb.href)
+  }
 }
 
 </script>

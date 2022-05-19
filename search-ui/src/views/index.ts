@@ -1,3 +1,3 @@
 export { default as BusinessInfoView } from './BusinessInfoView.vue'
-export { default as DashboardView } from './DashboardView.vue'
+export { default as SearchView } from './SearchView.vue'
 export * from './auth'

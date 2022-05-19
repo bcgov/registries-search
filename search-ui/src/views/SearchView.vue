@@ -6,7 +6,7 @@
     <div>
       <v-row class="mt-4">
         <v-col>
-          <h1>Business Search Results</h1>
+          <h1>Business Search</h1>
         </v-col>
       </v-row>
       <v-row no-gutters class="pt-4">

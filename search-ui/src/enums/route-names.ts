@@ -1,7 +1,7 @@
 export enum RouteNames {
   SIGN_IN = 'signin',
   SIGN_OUT = 'signout',
-  DASHBOARD = 'dashboard',
+  SEARCH = 'search',
   LOGIN = 'login',
   BUSINESS_INFO = 'businessinfo'
 }
