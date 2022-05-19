@@ -37,7 +37,10 @@ const emit = defineEmits(['downloadOne', 'downloadAll'])
 
 /** Emits an event to download the subject document. */
 const downloadOne = (document: Document, index: number): void => {
-    emit('downloadOne', document, index)
+    emit('downloadOne', {
+        'document': document,
+        'index': index
+    })
 }
 
 /** Emits an event to download all. */
