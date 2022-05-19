@@ -18,7 +18,7 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 
 import { DateTooltip } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
