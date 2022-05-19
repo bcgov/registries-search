@@ -17,10 +17,6 @@ For BC Registries Gateway API configuration see [Gateway Search Proxy](https://g
 
 ## Project Status
 
-## Documnentation
-
-GitHub Pages (https://guides.github.com/features/pages/) are a neat way to document you application/project.
-
 ## Security
 
 
