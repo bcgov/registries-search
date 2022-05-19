@@ -1,6 +1,6 @@
 <template>
   <div id="breadcrumb">
-    <div class="container">
+    <v-container class="container py-0">
       <v-row no-gutters>
         <v-col cols="auto">
           <v-btn
@@ -30,7 +30,7 @@
           </div>
         </v-col>
       </v-row>
-    </div>
+    </v-container>
   </div>
 </template>
 
@@ -69,7 +69,7 @@ const navigate = (breadcrumb: BreadcrumbIF): void => {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 #breadcrumb {
-  max-height: 45px;
+  height: 45px;
   background-color: $app-dk-blue;
   color: white;
   display: flex;
@@ -104,13 +104,6 @@ const navigate = (breadcrumb: BreadcrumbIF): void => {
 }
 .text-primary{
   color: #1669bb!important;
-}
-
-.container {
-	width: 100%;
-	padding: 12px;
-	margin-right: auto;
-	margin-left: auto
 }
 
 @media(min-width:960px) {
