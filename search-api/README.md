@@ -9,6 +9,9 @@ For BC Registries Gateway API configuration see [Gateway Search Proxy](https://g
 ## Technology Stack Used
 * Python, Flask
 * Postgres -  SQLAlchemy, psycopg2-binary & alembic
+* SOLR
+* CloudBuild
+* CloudRun
 
 ## Third-Party Products/Libraries used and the the License they are covert by
 
