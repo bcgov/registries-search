@@ -10,6 +10,7 @@ import { getModule } from 'vuex-module-decorators'
 import { Role, LoginSource, Pages } from 'sbc-common-components/src/util/constants'
 import { KCUserProfile } from 'sbc-common-components/src/models/KCUserProfile'
 // local
+import LoadingScreen from '@/sbc-common-components/components/LoadingScreen.vue'
 import AccountModule from '@/sbc-common-components/modules/account'
 import AuthModule from '@/sbc-common-components/modules/auth'
 import KeyCloakService from '@/sbc-common-components/services/keycloak.services'

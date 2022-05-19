@@ -1,14 +1,14 @@
 // External
 import { mount, VueWrapper } from '@vue/test-utils'
-import { Router, useRoute } from 'vue-router'
+import { Router } from 'vue-router'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import App from '@/App.vue'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
-import { BusinessInfoView, DashboardView } from '@/views'
 // import vuetify from '@/plugins/vuetify'
 import { RouteNames } from '@/enums'
+import { SearchBusinessInfoBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 
@@ -22,8 +22,7 @@ describe('App tests', () => {
     // set keycloak token so it doesn't redirect
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
     router = createVueRouter()
-    router.push(RouteNames.DASHBOARD)
-    await router.isReady()
+    await router.push(RouteNames.SEARCH)
 
     wrapper = mount(App, {
       global: {
@@ -45,6 +44,19 @@ describe('App tests', () => {
     expect(wrapper.vm.systemMessage).toBe(null)
     expect(wrapper.findComponent(SbcSystemBanner).exists()).toBe(false)
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
+  })
+  it('passes correct breadcrumbs depending on route', async () => {
+    const expectedSearchBreadcrumbs = [SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+    const identifier = 'BC1234567'
+    const businessInfoCrumb = { text: identifier, to: SearchBusinessInfoBreadcrumb.to }
+    const expectedBusinessInfoBreadcrumbs = [SearchHomeBreadCrumb, SearchDashboardBreadcrumb, businessInfoCrumb]
+    // currently on search route
+    expect(router.currentRoute.value.name).toBe(RouteNames.SEARCH)
+    expect(wrapper.findComponent(BcrsBreadcrumb).props().breadcrumbs).toEqual(expectedSearchBreadcrumbs)
+    // test breadcrumbs after pushing to business info
+    await router.push({name: RouteNames.BUSINESS_INFO, params: { identifier: identifier }})
+    expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
+    expect(wrapper.findComponent(BcrsBreadcrumb).props().breadcrumbs).toEqual(expectedBusinessInfoBreadcrumbs)
   })
   it('registers jest running', () => {
     expect(wrapper.vm.isJestRunning).toBe(true)

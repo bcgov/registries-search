@@ -3,13 +3,13 @@ import { RouteRecordRaw } from 'vue-router'
 // Local
 import {
   BusinessInfoView,
-  DashboardView,
+  SearchView,
   Login,
   Signin,
   Signout
  } from '@/views'
 import { RouteNames } from '@/enums'
-import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/bcrs-common-components/resources'
+import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -44,9 +44,9 @@ export const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/dashboard',
-    name: RouteNames.DASHBOARD,
-    component: DashboardView,
+    path: '/',
+    name: RouteNames.SEARCH,
+    component: SearchView,
     meta: {
       requiresAuth: true,
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
@@ -59,7 +59,6 @@ export const routes: RouteRecordRaw[] = [
     props: true,
     meta: {
       requiresAuth: true,
-      // FUTURE: add breadcrumb for business info to the end of this list
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     },
   },
@@ -67,6 +66,6 @@ export const routes: RouteRecordRaw[] = [
     // default/fallback route
     // must be last
     path: '/:pathMatch(.*)*',
-    redirect: '/dashboard'
+    redirect: '/'
   }
 ]

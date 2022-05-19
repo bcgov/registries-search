@@ -1,7 +1,7 @@
 <template>
   <v-app id="app" class="app-container">
     <sbc-header class="sbc-header" :in-auth="false" :show-login-menu="false" />
-    <bcrs-breadcrumb :breadcrumbs=breadcrumbs() v-if="breadcrumbs().length > 0" />
+    <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
 
     <div class="app-body">
       <main>
@@ -65,14 +65,13 @@ const systemMessageType = computed((): string => {
   return null
 })
 
+const breadcrumbs = computed((): Array<BreadcrumbIF> => {
+  return route?.meta?.breadcrumb as BreadcrumbIF[] || []
+})
+
 const handleError = (error: ErrorI) => {
   console.error(error)
   // FUTURE: add account info with error information 
   Sentry.captureException(error)
-}
-
-const breadcrumbs = (): Array<BreadcrumbIF> => {
-  const breadcrumbs = route?.meta?.breadcrumb as BreadcrumbIF[] || []
-  return breadcrumbs
 }
 </script>
