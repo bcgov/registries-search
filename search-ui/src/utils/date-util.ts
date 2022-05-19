@@ -67,3 +67,32 @@ import { isDate } from 'lodash'
     return timeStr
   }
 
+  /**
+   * Converts an API datetime string (in UTC) to a date and time string (Month Day, Year at HH:MM am/pm
+   * Pacific time).
+   * @example "2021-01-01T00:00:00.000000+00:00" -> "Dec 31, 2020 at 04:00 pm Pacific time" (PST example)
+   * @example "2021-07-01T00:00:00.000000+00:00" -> "Jun 30, 2021 at 05:00 pm Pacific time" (PDT example)
+   */
+   export function apiToPacificDateTime (dateTimeString: string, longMonth = false): string {
+    if (!dateTimeString) return null // safety check
+
+    const date = apiToDate(dateTimeString)
+    const dateStr = dateToPacificDate(date, longMonth)
+    const timeStr = dateToPacificTime(date)
+
+    return `${dateStr} at ${timeStr} Pacific time`
+  }
+
+  
+  /**
+   * Converts an API datetime string (in UTC) to a Date object.
+   * @example 2021-08-05T16:56:50.783101+00:00 -> 2021-08-05T16:56:50Z
+   */
+   export function apiToDate (dateTimeString: string): Date {
+    if (!dateTimeString) return null // safety check
+
+    // chop off the milliseconds and UTC offset and append "Zulu" timezone abbreviation
+    dateTimeString = dateTimeString.slice(0, 19) + 'Z'
+
+    return new Date(dateTimeString)
+  }
