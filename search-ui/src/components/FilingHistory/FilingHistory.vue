@@ -583,9 +583,11 @@ watch(() => filings.value, () => {
 
 .item-header {
   line-height: 1.25rem;
+  width:100%;
 
   &__label {
     flex: 1 1 auto;
+    text-align: left;
   }
 
   &__actions {
