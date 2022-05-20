@@ -3,7 +3,7 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
     args:
-      ["-c", "docker pull ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_SERVICE_NAME}:latest || exit 0"]
+      ["-c", "docker pull ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:latest || exit 0"]
 
   - id: "build new image"
     name: "gcr.io/cloud-builders/docker"
@@ -11,15 +11,15 @@ steps:
       [
         "build",
         "-t",
-        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}",
+        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}",
         "--cache-from",
-        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}",
+        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}",
         "${_PATH}",
       ]
 
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}/${_SERVICE_NAME}"]
+    args: ["push", "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}"]
 
   - id: "deploy prod service"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -35,7 +35,7 @@ steps:
         "${_REGION}",
         "--allow-unauthenticated",
         "--image",
-        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}/${_SERVICE_NAME}",
+        "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}",
       ]
 
   # Force the new revision to serve 100% of traffic.
@@ -59,7 +59,8 @@ substitutions:
   _LOCATION: .
   _PATH: .
   _REGION: northamerica-northeast1
+  _REPOSITORY: registry-search
   _SERVICE_NAME: search-api
 
 images:
-  - "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_SERVICE_NAME}/${_SERVICE_NAME}"
+  - "${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}"
