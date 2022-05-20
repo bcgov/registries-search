@@ -1,10 +1,10 @@
 <template>
-  <v-container id="dashboard" class="container" fluid>
+  <v-container id="search" class="container" fluid>
     <v-overlay v-model="isLoading">
       <v-progress-circular color="primary" size="50" indeterminate />
     </v-overlay>
     <div>
-      <v-row class="mt-4">
+      <v-row no-gutters>
         <v-col>
           <h1>Business Search</h1>
         </v-col>
@@ -46,10 +46,4 @@ const setLoading = (loading: boolean) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-
-.dashboard-title {
-  background-color: $BCgovBlue0;
-  color: $gray9;
-  font-size: 1rem;
-}
 </style>

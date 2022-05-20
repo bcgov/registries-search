@@ -134,6 +134,10 @@ tbody {
   }
 }
 
+// loaders
+.v-loader {
+  color: $primary-blue;
+}
 // tooltips
 .v-tooltip__content {
   width: 270px !important;

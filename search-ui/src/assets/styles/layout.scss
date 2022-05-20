@@ -19,17 +19,6 @@
   position: relative;
 }
 
-.app-container > .container:first-child {
-  padding: 2rem;
-}
-
-@media (min-width: 960px) {
-  main > .container:first-child {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-}
-
 .app-footer {
   flex: 0 0 auto;
 }
@@ -86,4 +75,9 @@
 
 .soft-corners-bottom {
   border-radius: 0 0 5px 5px;
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
 }

@@ -72,6 +72,10 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
   console.log('Set Auth API URL to: ' + authApiUrl)
 
+  const legalApiUrl: string = response.data['LEGAL_API_URL'] + response.data['LEGAL_API_VERSION_2'] + '/'
+  sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
+  console.log('Set Legal API URL to: ' + legalApiUrl)
+
   const ldClientId: string = response.data.LD_CLIENT_ID
   if (ldClientId) {
     (<any>window).ldClientId = ldClientId
