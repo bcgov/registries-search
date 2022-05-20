@@ -10,6 +10,7 @@ For BC Registries Gateway API configuration see [Gateway Search Proxy](https://g
 * Python, Flask
 * Postgres -  SQLAlchemy, psycopg2-binary & alembic
 * SOLR
+* Artifact Registry
 * CloudBuild
 * CloudRun
 
