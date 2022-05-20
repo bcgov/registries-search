@@ -21,7 +21,7 @@
  import { FilingHistoryItem } from '@/types'
  import { dateToPacificDateTime } from '@/utils'
   
-  const props = defineProps<{ filing?: {} & FilingHistoryItem, entityName: String, entityType: String }>()
+  const props = defineProps<{ filing:FilingHistoryItem, entityName: '', entityType: '' }>()
 
   /** The entity title to display. */
   const entityTitle = (): string => {

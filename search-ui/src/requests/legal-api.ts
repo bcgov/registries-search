@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 // local
 import { ErrorCategories, ErrorCodes } from '@/enums'
 import { EntityRespI } from '@/interfaces/legal-api-responses'
-import { CommentIF, ApiDocuments, Document } from '@/types'
+import { CommentIF, ApiDocuments, Document, ApiFiling } from '@/types'
 import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
@@ -14,6 +14,28 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
       if (!data) throw new Error('Invalid API response')
       if (!data.business) throw new Error('Expecting `business` in API response.')
       return data
+    }).catch(error => {
+      return {
+        error: {
+          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+          message: error?.response?.data?.message,
+          category: ErrorCategories.ENTITY_BASIC,
+          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+        }
+      }
+    })
+}
+
+export async function getFilings(identifier: string): Promise<ApiFiling[]> {
+  const url = sessionStorage.getItem('LEGAL_API_URL')
+  const config = { baseURL: url }
+  return axios.get<any>(`businesses/${identifier}/filings`, config)
+    .then(response => {
+      const data = response?.data
+      if (!data) {
+        throw new Error('Invalid API response')
+      }
+      return data?.filings || []
     }).catch(error => {
       return {
         error: {
@@ -79,8 +101,6 @@ export const fetchDocument = (document: Document): Promise<any> => {
   return axios.get(document.link, config).then(response => {
     if (!response) throw new Error('Null response')
 
-    if (this.isJestRunning) return response
-
     /* solution from https://github.com/axios/axios/issues/1392 */
 
     // it is necessary to create a new blob object with mime-type explicitly set
@@ -112,7 +132,7 @@ export const fetchDocument = (document: Document): Promise<any> => {
  * @param url the full URL to fetch the comments
  * @returns a promise to return the comments array from the response
  */
-export const fetchComments = async (url: string): Promise<CommentIF[]> {
+export const fetchComments = async (url: string): Promise<CommentIF[]> => {
   return axios.get(url)
     .then(response => {
       const comments = response?.data?.comments

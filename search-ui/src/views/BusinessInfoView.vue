@@ -7,7 +7,7 @@
         <p class="pt-1">2. Pay the appropriate fee.</p>
         <p class="pt-1">3. Download the individual files you require.</p>
         <p class="pt-3">
-          Note: some documents are available on paper only and not available 
+          Note: some documents are available on paper only and not available
           to download. To request copies of paper documents, contact BC Registries Staff.
         </p>
         <v-divider class="my-10" />
@@ -18,21 +18,35 @@
         <!-- pay summary to go here -->
       </v-col>
     </v-row>
+    <v-row no-gutters>
+      <v-col cols="9">
+        <filing-history/>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useEntity } from '@/composables'
+import { useStore } from 'vuex'
+import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
+
+const store = useStore()
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
 const { entity, clearEntity, loadEntity } = useEntity()
 
+const getFilings = async (identifier: string) => {
+  await store.dispatch('fetchFilings', identifier)
+}
+
 onMounted(() => {
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
+  getFilings(props.identifier)
 })
 </script>
 

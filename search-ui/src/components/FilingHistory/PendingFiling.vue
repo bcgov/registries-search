@@ -20,10 +20,10 @@ import { ContactInfo } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 import { FilingNames, FilingTypes } from '@/enums'
 
-const props = defineProps<{ filing?: {} & FilingHistoryItem }>()
+const props = defineProps<{ filing: FilingHistoryItem }>()
 
 /** The title of the subject filing. */
-const title = (): string {
+const title = (): string => {
     if (isTypeAlteration(props.filing)) return FilingNames.ALTERATION
     if (props.filing.displayName) return props.filing.displayName
     return 'Filing'
@@ -32,7 +32,6 @@ const title = (): string {
 /** Returns True if filing is an Alteration. */
 const isTypeAlteration = (item: FilingHistoryItem): boolean => {
     return (item.name === FilingTypes.ALTERATION)
-}
 }
 </script>
 

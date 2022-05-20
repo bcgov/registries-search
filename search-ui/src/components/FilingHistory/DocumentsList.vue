@@ -26,10 +26,10 @@ import { Document } from '@/types'
 import { FilingHistoryItem } from '@/types'
 
 const props = defineProps<{
-    filing?: {} & FilingHistoryItem,
-    loadingOne: boolean,
-    loadingAll: boolean,
-    loadingOneIndex: Number
+    filing: FilingHistoryItem,
+    loadingOne: false,
+    loadingAll: false,
+    loadingOneIndex: number
 }>()
 
 const emit = defineEmits(['downloadOne', 'downloadAll'])

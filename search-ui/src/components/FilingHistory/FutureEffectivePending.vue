@@ -25,7 +25,7 @@ import { ContactInfo } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 import { dateToPacificDateTime } from '@/utils'
 
-const props = defineProps<{ filing?: {} & FilingHistoryItem, entityName: String }>()
+const props = defineProps<{ filing: FilingHistoryItem, entityName: '' }>()
 
 /** Data for the subject filing. */
 const _ = (): any => {
@@ -48,7 +48,7 @@ const _ = (): any => {
 }
 
 /** The future effective datetime of the subject filing. */
-const effectiveDateTime = (): string {
+const effectiveDateTime = (): string => {
     return (dateToPacificDateTime(props.filing.effectiveDate) || 'Unknown')
 }
 

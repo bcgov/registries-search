@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { FilingHistoryItem } from '@/types'
 
-const props = defineProps<{ filing?: {} & FilingHistoryItem }>()
+const props = defineProps<{ filing:FilingHistoryItem }>()
 </script>
 
 <style lang="scss" scoped>

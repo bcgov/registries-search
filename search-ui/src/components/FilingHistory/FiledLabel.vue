@@ -23,5 +23,5 @@
 import { DateTooltip } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 
-const props = defineProps<{ filing?: {} & FilingHistoryItem, entityName: String }>()
+const props = defineProps<{ filing: FilingHistoryItem }>()
 </script>

@@ -5,5 +5,6 @@ export const state: BaseStateI = {
     authRoles: [],
   },
 
-  searchResults: []
+  searchResults: [],
+  filings: []
 }

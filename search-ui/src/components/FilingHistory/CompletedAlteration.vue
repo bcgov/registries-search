@@ -21,13 +21,13 @@ import { FilingHistoryItem } from '@/types'
 import { GetCorpFullDescription } from '@bcrs-shared-components/corp-type-module'
 
 
-const props = defineProps<{ filing?: {} & FilingHistoryItem, entityName: String }>()
+const props = defineProps<{ filing: FilingHistoryItem, entityName: '' }>()
 
 const fromLegalType = (): string => {
     return GetCorpFullDescription(props.filing?.fromLegalType)
 }
 
-const toLegalType = (): string {
+const toLegalType = (): string => {
     return GetCorpFullDescription(props.filing?.toLegalType)
 }
 </script>

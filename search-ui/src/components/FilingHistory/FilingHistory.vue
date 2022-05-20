@@ -18,7 +18,7 @@
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">
-          <v-expansion-panel-header class="no-dropdown-icon pa-0">
+          <v-expansion-panel-title class="no-dropdown-icon pa-0">
             <div class="item-header d-flex">
               <!-- the filing label (left side) -->
               <div class="item-header__label">
@@ -56,7 +56,7 @@
                   <span>FILED AND PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" outlined color="blue darken-2" :ripple=false
+                  <v-btn class="details-btn" flat color="blue darken-2" :ripple=false
                     @click.stop="togglePanel(index, filing)">
                     <v-icon left>mdi-information-outline</v-icon>
                     <span>{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
@@ -132,7 +132,7 @@
 
               <!-- the action button/menu (right side) -->
               <div class="item-header__actions">
-                <v-btn class="expand-btn" outlined :ripple=false @click.stop="togglePanel(index, filing)"
+                <v-btn class="expand-btn" flat :ripple=false @click.stop="togglePanel(index, filing)"
                   v-show="displayAction(filing)">
                   <span v-if="filing.availableOnPaperOnly" class="app-blue">
                     {{ (panel === index) ? "Close" : "Request a Copy" }}
@@ -146,9 +146,9 @@
                 </v-btn>
               </div>
             </div>
-          </v-expansion-panel-header>
+          </v-expansion-panel-title>
 
-          <v-expansion-panel-content>
+          <v-expansion-panel-text>
             <!-- NB: blocks below are mutually exclusive, and order is important -->
 
             <!-- is this a Staff Only filing? -->
@@ -214,7 +214,7 @@
               <DetailsList :filing=filing :isTask="false" />
             </template>
 
-          </v-expansion-panel-content>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
@@ -236,16 +236,16 @@
 // Components and dialogs
 import CompletedAlteration from './CompletedAlteration.vue'
 import CompletedDissolution from './CompletedDissolution.vue'
-import DocumentsList from './FilingHistoryList/DocumentsList.vue'
-import FiledLabel from './FilingHistoryList/FiledLabel.vue'
-import FutureEffective from './FilingHistoryList/FutureEffective.vue'
-import FutureEffectivePending from './FilingHistoryList/FutureEffectivePending.vue'
-import PaperFiling from './FilingHistoryList/PaperFiling.vue'
-import PendingFiling from './FilingHistoryList/PendingFiling.vue'
-import StaffFiling from './FilingHistoryList/StaffFiling.vue'
+import DocumentsList from './DocumentsList.vue'
+import FiledLabel from './FiledLabel.vue'
+import FutureEffective from './FutureEffective.vue'
+import FutureEffectivePending from './FutureEffectivePending.vue'
+import PaperFiling from './PaperFiling.vue'
+import PendingFiling from './PendingFiling.vue'
+import StaffFiling from './StaffFiling.vue'
 import { DetailsList } from '@/components/common'
 import {
-  isStatusPaid, isStatusCompleted, isTypeAlteration, isTypeChangeOfAddress, isTypeIncorporationApplication,
+  isStatusPaid, isStatusCompleted, isTypeAlteration, isTypeChangeOfAddress,
   isEffectOfOrderPlanOfArrangement, isTypeDissolution, isTypeStaff, filingTypeToName, camelCaseToWords,
   dateToYyyyMmDd, dateToPacificDateTime
 } from '@/utils'
@@ -265,7 +265,7 @@ const isBComp = computed(() => store.getters['isBComp'] as boolean)
 const identifier = computed(() => store.getters['getIdentifier'] as string)
 const legalName = computed(() => store.getters['getLegalName'] as string)
 const legalType = computed(() => store.getters['getLegalType'] as string)
-const filings = computed(() => store.getters['getFilings'] as ApiFiling[])
+const filings = computed(() => store.state.filings as ApiFiling[])
 
 const downloadErrorDialog = ref(false)
 const panel = ref(-1) // currently expanded panel
@@ -287,6 +287,7 @@ const loadData = (): void => {
 
   // create 'history items' list from 'filings' array from API
   for (const filing of filings.value) {
+
     // safety check for required fields
     if (!filing.name || !filing.displayName || !filing.effectiveDate || !filing.submittedDate || !filing.status) {
       // eslint-disable-next-line no-console
@@ -563,6 +564,7 @@ watch(() => filings.value, () => {
 
 .scrollable-container {
   max-height: 60rem;
+  overflow-y: auto;
 }
 
 .filing-history-item {
@@ -641,7 +643,11 @@ watch(() => filings.value, () => {
   margin-bottom: 0.25rem;
 }
 
-::v-deep .v-expansion-panel-content__wrap {
+.v-expansion-panel {
+  box-shadow: none !important;
+}
+
+::v-deep .v-expansion-panel-text__wrap {
   padding: 0;
 }
 
