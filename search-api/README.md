@@ -55,10 +55,6 @@ Run `make lint`
 - For an individual file run `pytest -v -s ./tests/unit/api/filename.py` or `pytest -v -s ./tests/unit/models/filename.py`
 - For an individual test case run `pytest -v -s ./tests/unit/api/filename.py::test-case-name`
   
-## Deployment (GCP)
-
-## Getting Help or Reporting an Issue
-
 ## How to Contribute
 
 If you would like to contribute, please see our [CONTRIBUTING](./CONTRIBUTING.md) guidelines.
