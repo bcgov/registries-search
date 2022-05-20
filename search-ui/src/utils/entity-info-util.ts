@@ -148,7 +148,7 @@ export const getCorpTypeNumberedDescription = GetCorpNumberedDescription
  * @param alterationRequired A boolean indicating a required business type change
  * @returns the filing name
  */
- export const filingTypeToName = (type: FilingTypes, agmYear: string = null, alterationRequired: boolean = false): string => {
+ export const filingTypeToName = (type: FilingTypes, agmYear: string = null, alterationRequired = false): string => {
     if (!type) return 'Unknown Type' // safety check
     switch (type) {
         case FilingTypes.ALTERATION:
