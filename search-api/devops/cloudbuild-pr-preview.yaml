@@ -3,7 +3,7 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
     args:
-      ["-c", "docker pull gcr.io/$PROJECT_ID/${_SERVICE_NAME}:latest || exit 0"]
+      ["-c", "docker pull ${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:latest || exit 0"]
 
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
@@ -11,7 +11,7 @@ steps:
       [
         "build",
         "-t",
-        "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
         "${_PATH}",
       ]
 
@@ -20,7 +20,7 @@ steps:
     args:
       [
         "push",
-        "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
       ]
 
   - id: "deploy revision with tag"
@@ -36,7 +36,7 @@ steps:
         "--region",
         "${_REGION}",
         "--image",
-        "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE_NAME}:${_PR_NUMBER}-${SHORT_SHA}",
         "--tag",
         "pr-${_PR_NUMBER}",
         "--no-traffic",
@@ -63,10 +63,12 @@ steps:
       ]
 
 substitutions:
-  _PATH: .
-  _SERVICE_NAME: search-api
-  _REGION: northamerica-northeast1
   _GITHUB_REPO: registries-search
+  _LOCATION: .
+  _PATH: .
+  _REGION: northamerica-northeast1
+  _REPOSITORY: registry-search
+  _SERVICE_NAME: search-api
 
 options:
   dynamicSubstitutions: true
