@@ -19,7 +19,7 @@
       </v-col>
     </v-row>
     <v-row no-gutters>
-      <v-col cols="9">
+      <v-col cols="9">        
         <filing-history/>
       </v-col>
     </v-row>

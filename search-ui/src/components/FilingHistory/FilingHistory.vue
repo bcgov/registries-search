@@ -1,9 +1,5 @@
 <template>
   <div id="filing-history-list">
-
-    <!--<DownloadErrorDialog :dialog="downloadErrorDialog" @close="downloadErrorDialog = false"
-      attach="#filing-history-list" />-->
-
     <!-- Alternate Loading Spinner -->
     <v-fade-transition>
       <div class="loading-container grayed-out" v-show="isBusy">
@@ -13,8 +9,10 @@
         </div>
       </div>
     </v-fade-transition>
-
-    <div class="scrollable-container">
+    <h2 data-test-id="dashboard-filing-history-subtitle">
+      <span>Recent Filing History</span>&nbsp;<span class="gray6">({{ filings.length }})</span>
+    </h2>
+    <div class="scrollable-container mt-3">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">
@@ -26,12 +24,12 @@
 
                 <!-- NB: blocks below are mutually exclusive, and order is important -->
 
-                <!-- is this a Staff Only filing? -->
+
                 <div v-if="filing.isTypeStaff" class="item-header__subtitle">
                   <FiledLabel :filing="filing" />
                 </div>
 
-                <!-- is this a FE BCOMP COA pending (not yet completed)? -->
+
                 <div v-else-if="filing.isFutureEffectiveBcompCoaPending" class="item-header__subtitle">
                   <span>FILED AND PENDING
                     <FiledLabel :filing="filing" />
@@ -48,9 +46,7 @@
                   </v-tooltip>
                 </div>
 
-                <!-- is this a completed IA? -->
-                <!-- or a completed Alteration? -->
-                <!-- or a completed Dissolution? -->
+
                 <div v-else-if="filing.isCompletedIa || filing.isCompletedAlteration || filing.isCompletedDissolution"
                   class="item-header__subtitle">
                   <span>FILED AND PAID
@@ -63,9 +59,7 @@
                   </v-btn>
                 </div>
 
-                <!-- is this a FE IA pending (overdue)? -->
-                <!-- or a FE Alteration pending (overdue)? -->
-                <!-- or a FE Dissolution pending (overdue)? -->
+
                 <div v-else-if="filing.isFutureEffectiveAlterationPending ||
                 filing.isFutureEffectiveDissolutionPending" class="item-header__subtitle">
                   <span class="orange--text text--darken-2">FILED AND PENDING</span>
@@ -80,9 +74,7 @@
                   </v-btn>
                 </div>
 
-                <!-- is this a FE IA still waiting for effective date/time? -->
-                <!-- is this a FE Alteration still waiting for effective date/time? -->
-                <!-- is this a FE Dissolution still waiting for effective date/time? -->
+
                 <div v-else-if="filing.isFutureEffectiveAlteration ||
                 filing.isFutureEffectiveDissolution" class="item-header__subtitle">
                   <span v-if="filing.isFutureEffectiveAlteration">FUTURE EFFECTIVE ALTERATION</span>
@@ -98,7 +90,7 @@
                   </v-btn>
                 </div>
 
-                <!-- is this a generic paid (not yet completed) filing? -->
+
                 <div v-else-if="isStatusPaid(filing)" class="item-header__subtitle">
                   <span class="orange--text text--darken-2">FILED AND PENDING</span>
                   <span class="vert-pipe" />
@@ -112,8 +104,7 @@
                   </v-btn>
                 </div>
 
-                <!-- else this must be a completed filing -->
-                <!-- NB: no view/hide details button -->
+
                 <div v-else class="item-header__subtitle">
                   <span>FILED AND PAID
                     <FiledLabel :filing="filing" />
@@ -149,71 +140,69 @@
           </v-expansion-panel-title>
 
           <v-expansion-panel-text>
-            <!-- NB: blocks below are mutually exclusive, and order is important -->
+            <div>
+              <!-- NB: blocks below are mutually exclusive, and order is important -->
+              
+              <template v-if="filing.isTypeStaff">
+                <StaffFiling :filing="filing" class="mt-6" />
+              </template>
 
-            <!-- is this a Staff Only filing? -->
-            <template v-if="filing.isTypeStaff">
-              <StaffFiling :filing="filing" class="mt-6" />
-            </template>
+              <!-- is this a FE BCOMP COA pending (not yet completed) -->
+              <template v-else-if="filing.isFutureEffectiveBcompCoaPending">
+                <!-- no details -->
+              </template>
 
-            <!-- is this a FE BCOMP COA pending (not yet completed)? -->
-            <template v-else-if="filing.isFutureEffectiveBcompCoaPending">
-              <!-- no details -->
-            </template>
+              <!-- is this a completed alteration -->
+              <template v-else-if="filing.isCompletedAlteration">
+                <CompletedAlteration :filing=filing :entity-name="legalName" class="mt-6" />
+              </template>
 
-            <!-- is this a completed alteration? -->
-            <template v-else-if="filing.isCompletedAlteration">
-              <CompletedAlteration :filing=filing :entity-name="legalName" class="mt-6" />
-            </template>
+              <!-- is this a completed dissolution -->
+              <template v-else-if="filing.isCompletedDissolution">
+                <CompletedDissolution :filing="filing" :entity-name="legalName" :entity-type="legalType" class="mt-6" />
+              </template>
 
-            <!-- is this a completed dissolution? -->
-            <template v-else-if="filing.isCompletedDissolution">
-              <CompletedDissolution :filing="filing" :entity-name="legalName" :entity-type="legalType" class="mt-6" />
-            </template>
+              <template
+                v-else-if="filing.isFutureEffectiveAlterationPending || filing.isFutureEffectiveDissolutionPending">
+                <FutureEffectivePending :filing=filing class="mt-6" :entity-name="legalName"/>
+              </template>
 
-            <!-- is this a FE IA pending (overdue)? -->
-            <!-- or a FE Alteration pending (overdue)? -->
-            <!-- or a FE Dissolution pending (overdue)? -->
-            <template
-              v-else-if="filing.isFutureEffectiveAlterationPending || filing.isFutureEffectiveDissolutionPending">
-              <FutureEffectivePending :filing=filing class="mt-6" />
-            </template>
+              <!-- is this a FE IA still waiting for effective date/time? -->
+              <!-- or a FE Alteration still waiting for effective date/time?  -->
+              <!-- or a FE Dissolution still waiting for effective date/time?  -->
+              <template v-else-if="filing.isFutureEffectiveAlteration || filing.isFutureEffectiveDissolution">
+                <FutureEffective :filing=filing class="mt-6" :entity-name="legalName"/>
+              </template>
 
-            <!-- is this a FE IA still waiting for effective date/time? -->
-            <!-- or a FE Alteration still waiting for effective date/time?  -->
-            <!-- or a FE Dissolution still waiting for effective date/time?  -->
-            <template v-else-if="filing.isFutureEffectiveAlteration || filing.isFutureEffectiveDissolution">
-              <FutureEffective :filing=filing class="mt-6" />
-            </template>
+              <!-- is this a generic paid (not yet completed) filing? -->
+              <template v-else-if="isStatusPaid(filing)">
+                <PendingFiling :filing=filing class="mt-6" />
+              </template>
 
-            <!-- is this a generic paid (not yet completed) filing? -->
-            <template v-else-if="isStatusPaid(filing)">
-              <PendingFiling :filing=filing class="mt-6" />
-            </template>
+              <!-- is this a paper filing? -->
+              <template v-else-if="filing.availableOnPaperOnly">
+                <PaperFiling class="mt-6" />
+              </template>
 
-            <!-- is this a paper filing? -->
-            <template v-else-if="filing.availableOnPaperOnly">
-              <PaperFiling class="mt-6" />
-            </template>
+              <!-- else this must be a completed filing -->
+              <template v-else>
+                <!-- no details -->
+              </template>
 
-            <!-- else this must be a completed filing -->
-            <template v-else>
-              <!-- no details -->
-            </template>
+              <!-- the documents section -->
+              <template v-if="filing.documents && filing.documents.length > 0">
+                <v-divider class="my-6" />
+                <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
+                  :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)" />
+              </template>
 
-            <!-- the documents section -->
-            <template v-if="filing.documents && filing.documents.length > 0">
-              <v-divider class="my-6" />
-              <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
-                :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)" />
-            </template>
+              <!-- the details (comments) section -->
+              <template v-if="filing.comments && filing.commentsCount > 0">
+                <v-divider class="my-6" />
+                <DetailsList :filing=filing :isTask="false" />
+              </template>
 
-            <!-- the details (comments) section -->
-            <template v-if="filing.comments && filing.commentsCount > 0">
-              <v-divider class="my-6" />
-              <DetailsList :filing=filing :isTask="false" />
-            </template>
-
+            </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -251,7 +240,6 @@ import {
 } from '@/utils'
 import { fetchDocument, fetchDocuments, fetchComments, flattenAndSortComments } from '@/requests'
 import { LegalFiling } from '@/types'
-//import { DownloadErrorDialog } from '@/components/dialogs'
 
 // Enums, interfaces and mixins
 import { ref, computed, watch } from 'vue'
@@ -354,23 +342,16 @@ const loadFiling = (filing: ApiFiling): void => {
     }
 
     // add properties for Alterations
-    if (isTypeAlteration(filing)) {
-      // is this a completed alteration?
+    if (isTypeAlteration(filing)) {     
       item.isCompletedAlteration = isStatusCompleted(filing)
-
-      // is this a Future Effective alteration (not yet completed)?
       item.isFutureEffectiveAlteration = (
         filing.isFutureEffective &&
         isStatusPaid(filing)
       )
-
-      // is this a Future Effective alteration pending (overdue)?
       item.isFutureEffectiveAlterationPending = (
         item.isFutureEffectiveAlteration &&
         isEffectiveDatePast(effectiveDate)
-      )
-
-      // data is available only for a completed filing
+      )      
       if (item.isCompletedAlteration) {
         item.courtOrderNumber = filing.data.order?.fileNumber || ''
         item.isArrangement = isEffectOfOrderPlanOfArrangement(filing.data.order?.effectOfOrder)
@@ -426,12 +407,12 @@ const isEffectiveDateFuture = (effectiveDate: Date): boolean => {
 }
 
 
-const downloadOne = async (document: Document, index: number): Promise<void> => {
-  if (document && index >= 0) { // safety check
+const downloadOne = async (event): Promise<void> => {
+  if (event.document && event.index >= 0) { // safety check
     loadingOne.value = true
-    loadingOneIndex.value = index
+    loadingOneIndex.value = event.index
 
-    await fetchDocument(document).catch(error => {
+    await fetchDocument(event.document).catch(error => {
       // eslint-disable-next-line no-console
       console.log('fetchDocument() error =', error)
       // downloadErrorDialog.value = true
@@ -453,7 +434,6 @@ const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
         // downloadErrorDialog.value = true
       })
     }
-
     loadingAll.value = false
   }
 }
@@ -510,6 +490,7 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
         pushDocument(title, filename, link)
       }
     }
+
   } catch (error) {
     // set property to null to retry next time
     item.documents = null
@@ -583,7 +564,7 @@ watch(() => filings.value, () => {
 
 .item-header {
   line-height: 1.25rem;
-  width:100%;
+  width: 100%;
 
   &__label {
     flex: 1 1 auto;
@@ -621,6 +602,7 @@ watch(() => filings.value, () => {
 .item-header+.item-header {
   border-top: 1px solid $gray3;
 }
+ 
 
 .v-col-padding {
   padding: 0 12px 0 12px;
@@ -649,8 +631,12 @@ watch(() => filings.value, () => {
   box-shadow: none !important;
 }
 
-::v-deep .v-expansion-panel-text__wrap {
+::v-deep .v-expansion-panel-text__wrapper {
   padding: 0;
+}
+
+::v-deep .v-expansion-panel-title__overlay {
+  background-color: white;
 }
 
 ::v-deep .theme--light.v-list-item--disabled {

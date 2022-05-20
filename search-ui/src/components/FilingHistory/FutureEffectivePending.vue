@@ -25,7 +25,7 @@ import { ContactInfo } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 import { dateToPacificDateTime } from '@/utils'
 
-const props = defineProps<{ filing: FilingHistoryItem, entityName: '' }>()
+const props = defineProps<{ filing: FilingHistoryItem, entityName: string }>()
 
 /** Data for the subject filing. */
 const _ = (): any => {

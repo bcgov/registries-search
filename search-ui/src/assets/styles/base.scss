@@ -6,30 +6,38 @@
   font-weight: 400;
   src: url('../fonts/BCSans/BCSans-Regular.woff2') format('woff2'),
     /* Optimized for very modern browsers */
-      url('../fonts/BCSans/BCSans-Regular.woff') format('woff'); /* Modern Browsers */
+    url('../fonts/BCSans/BCSans-Regular.woff') format('woff');
+  /* Modern Browsers */
 }
+
 @font-face {
   font-family: 'BCSans';
   font-style: italic;
   font-weight: 400;
   src: url('../fonts/BCSans/BCSans-Italic.woff2') format('woff2'),
     /* Optimized for very modern browsers */
-      url('../fonts/BCSans/BCSans-Italic.woff') format('woff'); /* Modern Browsers */
+    url('../fonts/BCSans/BCSans-Italic.woff') format('woff');
+  /* Modern Browsers */
 }
+
 @font-face {
   font-family: 'BCSans';
   font-style: normal;
   font-weight: 700;
   src: url('../fonts/BCSans/BCSans-Bold.woff2') format('woff2'),
-    /* Modern Browsers */ url('../fonts/BCSans/BCSans-Bold.woff') format('woff'); /* Optimized for very modern browsers */
+    /* Modern Browsers */
+    url('../fonts/BCSans/BCSans-Bold.woff') format('woff');
+  /* Optimized for very modern browsers */
 }
+
 @font-face {
   font-family: 'BCSans';
   font-style: italic;
   font-weight: 700;
   src: url('../fonts/BCSans/BCSans-BoldItalic.woff2') format('woff2'),
-    /* Modern Browsers */ url('../fonts/BCSans/BCSans-BoldItalic.woff')
-      format('woff'); /* Optimized for very modern browsers */
+    /* Modern Browsers */
+    url('../fonts/BCSans/BCSans-BoldItalic.woff') format('woff');
+  /* Optimized for very modern browsers */
 }
 
 html,
@@ -153,9 +161,11 @@ p {
 .pb-30px {
   padding-bottom: 30px !important;
 }
+
 .pt-30px {
   padding-top: 30px !important;
 }
+
 .py-30px {
   padding-bottom: 30px !important;
   padding-top: 30px !important;
@@ -165,6 +175,7 @@ p {
 .border-btm {
   border-bottom: 1px solid $gray3;
 }
+
 .border-tp {
   border-top: 1px solid $gray3;
 }
@@ -209,6 +220,7 @@ p {
 .fade-leave-active {
   transition: opacity 0.5s;
 }
+
 // .fade-enter,
 .fade-leave-to {
   opacity: 0;
@@ -218,10 +230,12 @@ p {
   0% {
     opacity: 1;
   }
+
   80% {
     opacity: 1;
     display: block;
   }
+
   100% {
     opacity: 0;
     display: none;
@@ -247,13 +261,13 @@ p {
 }
 
 .v-application div.invalid-message {
-  border-left: 3px solid $error !important;
+  border-left: 3px solid $error  !important;
 }
 
 // common error styles
 span.invalid-message {
   font-size: 16px;
-  color: $error !important;
+  color: $error  !important;
 }
 
 span.invalid-color {
@@ -330,11 +344,13 @@ span.invalid-color {
   font-weight: bold;
   vertical-align: bottom;
 }
+
 .tombstone-info {
   color: $gray7;
   font-size: 0.875rem;
   vertical-align: bottom;
 }
+
 .tombstone-sub-header {
   color: $gray7;
   font-size: 1rem;
@@ -378,18 +394,22 @@ span.invalid-color {
 // pdf button
 .pdf-btn {
   background-color: transparent !important;
-  color: $primary-blue !important;
+  color: $primary-blue  !important;
   justify-content: start;
 }
 
-.pdf-btn::before, .pdf-btn::after, .pdf-btn:hover {
+.pdf-btn::before,
+.pdf-btn::after,
+.pdf-btn:hover {
   background-color: transparent !important;
-  color: $primary-blue !important;
+  color: $primary-blue  !important;
   text-decoration: underline;
 }
+
 .white-background {
   background-color: white !important;
 }
+
 // vertical pipe for separating strings
 .vert-pipe {
   margin-top: 0.1rem;
@@ -400,9 +420,63 @@ span.invalid-color {
 }
 
 .app-blue {
-  color: $app-blue !important;
+  color: $app-blue  !important;
 }
 
 .app-red {
-  color: $app-red !important;
+  color: $app-red  !important;
+}
+
+// Loading Indicator
+.loading-container {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  background: rgba(255, 255, 255, 1);
+}
+
+.loading__content {
+  margin-top: -2rem;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.loading-msg {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+// class to auto-hide loading containers after 2 seconds
+.auto-fade-out {
+  animation: fadeOut 2s forwards;
+}
+
+// keyframes for auto-fade-out animation
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+    display: block;
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
+    z-index: -5;
+  }
+}
+
+.loading-container.grayed-out {
+  // these are the same styles as dialog overlay:
+  opacity: 0.46;
+  background-color: rgb(33, 33, 33); // grey darken-4
+  border-color: rgb(33, 33, 33); // grey darken-4
 }

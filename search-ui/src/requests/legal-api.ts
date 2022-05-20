@@ -71,16 +71,24 @@ export const flattenAndSortComments = (comments: Array<CommentIF>): Array<Commen
 * @returns a promise to return the documents object from the response
 */
 export const fetchDocuments = async (url: string): Promise<ApiDocuments> => {
-  return axios.get(url)
-    .then(response => {
-      const documents = response?.data?.documents
-      if (!documents) {
-        // eslint-disable-next-line no-console
-        console.log('fetchDocuments() error - invalid response =', response)
-        throw new Error('Invalid API response')
+  const config = { baseURL: sessionStorage.getItem('LEGAL_API_URL') }
+  return axios.get<any>(`${url}`, config)
+  .then(response => {
+    const data = response?.data?.documents
+    if (!data) {
+      throw new Error('Invalid API response')
+    }
+    return data
+  }).catch(error => {
+    return {
+      error: {
+        statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+        message: error?.response?.data?.message,
+        category: ErrorCategories.ENTITY_BASIC,
+        type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
       }
-      return documents
-    })
+    }
+  })
 }
 
 /**
