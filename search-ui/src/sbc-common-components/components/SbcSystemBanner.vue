@@ -1,5 +1,6 @@
 <template>
-  <v-alert tile v-model="show" :type="type" :icon="icon" :dismissible="dismissible">
+  <v-alert class="px-3 py-2" v-model="show" :type="type" icon="" :dismissible="dismissible">
+    <v-icon v-if="icon !== ''" class="mr-2" size="34">{{ icon }}</v-icon>
     <span v-html="message"></span>
   </v-alert>
 </template>
@@ -15,7 +16,7 @@ export default defineComponent({
     setIcon: { default: 'mdi-information' }, // See https://material.io/resources/icons/?style=baseline for accepted values
     setMessage: { default: '' },
     setShow: { default: false },
-    setType: { default: 'warning' }, // Accepted values are 'info', 'warning', 'danger', 'success',
+    setType: { default: 'warning' }
   },
   setup(props) {
     const state = reactive({
@@ -23,7 +24,7 @@ export default defineComponent({
       icon: computed(() => { return props.setIcon }),
       message: computed(() => { return props.setMessage }),
       show: computed(() => { return props.setShow }),
-      type: computed(() => { return props.setType }),
+      type: computed(() => { return props.setType as 'info' | 'warning' | 'error' | 'success' }),
     })
     return {
      ...state
@@ -34,13 +35,18 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .v-alert {
-  margin: 0;
+  border-radius: 0;
   padding: 0;
+  max-height: 48px;
+}
+:deep(.v-alert__prepend) {
+  height: 0;
+  width: 0;
+  margin-inline-end: 0;
 }
 
 .v-alert :deep(.v-alert__wrapper) {
-  margin: 0 auto;
-  padding: 1.25rem 0.75rem;
+  margin: 0;
   overflow: hidden;
 }
 </style>

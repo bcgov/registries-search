@@ -22,10 +22,17 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useEntity } from '@/composables'
 
-// const props = defineProps({
-//   identifier: { type: String }  // passed with param value in route.push
-// })
+const props = defineProps({
+  identifier: { type: String }  // passed with param value in route.push
+})
+const { loadEntity } = useEntity()
+
+onMounted(() => {
+  loadEntity(props.identifier)
+})
 </script>
 
 <style lang="scss" scoped>

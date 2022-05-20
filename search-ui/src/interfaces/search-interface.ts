@@ -1,5 +1,5 @@
 import { ErrorI } from '@/interfaces'
-import { BusinessStatuses, BusinessTypes } from '@/enums'
+import { BusinessStatuses, BusinessTypes, CorpTypeCd } from '@/enums'
 
 export interface SearchResponseI {     
     results: Array<SearchResultI>
@@ -11,5 +11,5 @@ export interface SearchResultI {
     identifier: string
     bn: string
     status: BusinessStatuses
-    legalType: BusinessTypes
+    legalType: BusinessTypes | CorpTypeCd
 }

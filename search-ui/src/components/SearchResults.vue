@@ -25,7 +25,7 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.identifier }}</td>
                     <td>{{ item.bn }}</td>
-                    <td>{{ getEntityDescription(item.legalType) }}</td>
+                    <td>{{ getEntityDescription(item.legalType as CorpTypeCd) }}</td>
                     <td>{{ item.status }}</td>
                     <td>
                         <v-btn                         
@@ -71,25 +71,22 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 // local
-import { RouteNames } from '@/enums'
+import { CorpTypeCd, RouteNames } from '@/enums'
 import { SearchResultI } from '@/interfaces'
-import { CorpInfoArray } from '@/resources'
+import { useEntity } from '@/composables'
 
 // Store
 const store = useStore()
 
 const router = useRouter()
+// composables
+const { getEntityDescription } = useEntity()
 
 const businesses = computed(() => store.getters['getSearchResults'] as SearchResultI[])
 const totalResultsLength = computed(() => businesses.value.length ) 
 
 const goToBusinessInfo  = (identifier: string )  => {  
   router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
-} 
-
-const getEntityDescription  = (entityType: string)  => {
-   const item = CorpInfoArray.find(obj => (entityType === obj.corpTypeCd))
-  return (item && item.fullDesc) || ''
 }
 </script>
 
