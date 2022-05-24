@@ -1,39 +1,37 @@
 <template>
   <div id="entity-info">
     <v-container class="container justify-center py-0">
-      <v-expand-transition>
-        <v-progress-circular v-if="entity._loading" class="v-loader" indeterminate size="50" />
-        <v-row v-else no-gutters>
-          <v-col cols="12" md="9">
-            <header>
-              <!-- Entity Name -->
-              <div id="entity-legal-name" aria-label="Business Legal Name">
-                <span>{{ entity.name || 'Name Unavailable' }}</span>
-              </div>
-              <!-- Description -->
-              <div id="business-subtitle">{{ businessDescription || 'Description Unavailable' }}</div>
-            </header>
+      <v-progress-circular v-if="entity._loading" class="v-loader" indeterminate size="50" />
+      <v-row v-else no-gutters>
+        <v-col cols="12" md="9">
+          <header>
+            <!-- Entity Name -->
+            <div id="entity-legal-name" aria-label="Business Legal Name">
+              <span>{{ name }}</span>
+            </div>
+            <!-- Description -->
+            <div id="business-subtitle">{{ businessDescription || 'Description Unavailable' }}</div>
+          </header>
 
-            <menu>
-              <span v-if="isHistorical">
-                <v-chip id="historical-chip" small label>
-                  <strong>HISTORICAL</strong>
-                </v-chip>
-                <!-- <span class="mx-3" style="font-size: 0.875rem;">{{ historicalReason }}</span> -->
-              </span>
-            </menu>
-          </v-col>
+          <menu>
+            <span v-if="isHistorical">
+              <v-chip id="historical-chip" small label>
+                <strong>HISTORICAL</strong>
+              </v-chip>
+              <!-- <span class="mx-3" style="font-size: 0.875rem;">{{ historicalReason }}</span> -->
+            </span>
+          </menu>
+        </v-col>
 
-          <v-col cols="12" md="3">
-            <dl>
-              <template v-for="info in businessInfo" :key="info.term">
-                <dt class="mr-2">{{ info.term }}:</dt>
-                <dd>{{ info.value }}</dd>
-              </template>
-            </dl>
-          </v-col>
-        </v-row>
-      </v-expand-transition>
+        <v-col cols="12" md="3">
+          <dl>
+            <template v-for="info in businessInfo" :key="info.term">
+              <dt class="mr-2">{{ info.term }}:</dt>
+              <dd>{{ info.value }}</dd>
+            </template>
+          </dl>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -41,18 +39,22 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 // local
-import { useEntity } from '@/composables'
+import { useDatetime, useEntity } from '@/composables'
 import { BusinessStatuses, CorpTypeCd } from '@/enums'
 
 // composables
+const { pacificDate } = useDatetime()
 const { entity, getEntityDescription } = useEntity()
+// computed
 const businessDescription = computed(() => getEntityDescription(entity.legalType as CorpTypeCd))
+const incorpDate = computed(() => pacificDate(new Date(entity.incorporationDate)))
 const businessInfo = computed(() => [
-  { term: 'Incorporation Date', value: entity.incorporationDate || 'Not Available' },
+  { term: 'Incorporation Date', value: incorpDate.value || 'Not Available' },
   { term: 'Registration Number', value: entity.identifier || 'Not Available' },
   { term: 'Business Number', value: entity.bn || 'Not Available'},
 ])
-const isHistorical = computed(() => entity.state === BusinessStatuses.HISTORICAL)
+const isHistorical = computed(() => entity.status === BusinessStatuses.HISTORICAL)
+const name = computed(() => entity.name?.toUpperCase() || 'Name Unavailable')
 </script>
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';

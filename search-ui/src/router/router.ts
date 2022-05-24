@@ -13,12 +13,7 @@ import { routes } from './routes'
 export function createVueRouter (): Router {
   const router = createRouter({
     history: createWebHistory(sessionStorage.getItem('VUE_ROUTER_BASE') || ''),
-    routes,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    scrollBehavior(to, from, savedPosition) {
-      // see https://router.vuejs.org/guide/advanced/scroll-behavior.html
-      return { top: 0 }
-    },
+    routes
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {

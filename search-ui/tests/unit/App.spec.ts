@@ -4,6 +4,7 @@ import { Router } from 'vue-router'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import App from '@/App.vue'
+import { EntityInfo } from '@/components'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
@@ -37,12 +38,14 @@ describe('App tests', () => {
   })
   it('mounts App with expected child components', async () => {
     expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
-    // breadcrumb will only exist with correct router meta data - should be on dashboard + showing
+    // breadcrumb will only exist with correct router meta data - should be on search + showing
     expect(wrapper.findComponent(BcrsBreadcrumb).exists()).toBe(true)
     // banner will only exist when systemMessage is not null
     expect(sessionStorage.getItem('SYSTEM_MESSAGE')).toBe(null)
     expect(wrapper.vm.systemMessage).toBe(null)
     expect(wrapper.findComponent(SbcSystemBanner).exists()).toBe(false)
+    // entity info will only exist specific pages - should be on search page and hidden
+    expect(wrapper.findComponent(EntityInfo).exists()).toBe(false)
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
   })
   it('passes correct breadcrumbs depending on route', async () => {
@@ -57,6 +60,12 @@ describe('App tests', () => {
     await router.push({name: RouteNames.BUSINESS_INFO, params: { identifier: identifier }})
     expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
     expect(wrapper.findComponent(BcrsBreadcrumb).props().breadcrumbs).toEqual(expectedBusinessInfoBreadcrumbs)
+  })
+  it('renders entity info on business info route', async () => {
+    const identifier = 'BC1234567'
+    await router.push({name: RouteNames.BUSINESS_INFO, params: { identifier: identifier }})
+    expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
+    expect(wrapper.findComponent(EntityInfo).exists()).toBe(true)
   })
   it('registers jest running', () => {
     expect(wrapper.vm.isJestRunning).toBe(true)

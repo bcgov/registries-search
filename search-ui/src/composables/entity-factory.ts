@@ -11,7 +11,7 @@ const entity = reactive({
   incorporationDate: '',
   legalType: null,
   name: '',
-  state: null,
+  status: null,
   _error: null,
   _loading: false,
 } as EntityI)
@@ -24,17 +24,14 @@ export const useEntity = () => {
     entity.incorporationDate = ''
     entity.legalType = null
     entity.name = ''
-    entity.state = null
+    entity.status = null
     entity._error = null
     entity._loading = false
   }
   const loadEntity = async (identifier: string) => {
     entity._loading = true
-    clearEntity()
     const entityInfo = await getEntityInfo(identifier)
-    if (entityInfo) {
-      setEntity(entityInfo)
-    }
+    if (entityInfo) setEntity(entityInfo)
     entity._loading = false
   }
   const getEntityDescription = (entityType: CorpTypeCd) => {
@@ -48,15 +45,23 @@ export const useEntity = () => {
       entity._error = entityInfo.error
       return null
     }
-    return entityInfo
+    const resp_entity: EntityI = {
+      bn: entityInfo.business.taxId || '',
+      identifier: entityInfo.business.identifier,
+      incorporationDate: entityInfo.business.foundingDate,
+      legalType: entityInfo.business.legalType,
+      name: entityInfo.business.legalName,
+      status: entityInfo.business.state
+    }
+    return resp_entity
   }
   const setEntity = (newEntity: EntityI) => {
     entity.bn = newEntity.bn || ''
     entity.identifier = newEntity.identifier
-    entity.incorporationDate = newEntity.incorporationDate
+    entity.incorporationDate = newEntity.incorporationDate || ''
     entity.legalType = newEntity.legalType
     entity.name = newEntity.name
-    entity.state = newEntity.state
+    entity.status = newEntity.status
   }
   return {
     entity,

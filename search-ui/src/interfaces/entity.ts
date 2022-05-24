@@ -4,10 +4,10 @@ import { ErrorI } from '@/interfaces';
 export interface EntityI {
   bn?: string,
   identifier: string,
-  incorporationDate: string,
+  incorporationDate?: string,
   legalType: BusinessTypes | CorpTypeCd,
   name: string,
-  state: BusinessStatuses,
-  _error: ErrorI,
-  _loading: boolean,
+  status: BusinessStatuses,
+  _error?: ErrorI,
+  _loading?: boolean,
 }
