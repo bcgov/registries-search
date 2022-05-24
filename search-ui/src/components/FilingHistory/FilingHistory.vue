@@ -192,7 +192,8 @@
               <template v-if="filing.documents && filing.documents.length > 0">
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
-                  :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)" />
+                  :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)"
+                  :isLocked=isLocked />
               </template>
 
               <!-- the details (comments) section -->
@@ -251,6 +252,7 @@ const identifier = computed(() => entity.identifier as string)
 const legalName = computed(() => entity.name as string)
 const legalType = computed(() => entity.legalType as string)
 const filings = computed(() => filingHistory.filings as ApiFiling[])
+const isLocked = computed(() => false)
 
 const downloadErrorDialog = ref(false)
 const panel = ref(-1) // currently expanded panel
