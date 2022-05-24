@@ -28,9 +28,10 @@ import { useEntity } from '@/composables'
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
-const { loadEntity } = useEntity()
+const { entity, clearEntity, loadEntity } = useEntity()
 
 onMounted(() => {
+  if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
 })
 </script>

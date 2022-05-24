@@ -32,7 +32,7 @@
                         large
                         id="open-business-btn"                     
                         class="search-bar-btn primary mr-2"
-                        @click="goToBusinessInfo(item.identifier)">
+                        @click="goToBusinessInfo(item)">
                             Open
                         </v-btn>
                        <!-- <v-tooltip
@@ -74,18 +74,20 @@ import { useStore } from 'vuex'
 import { CorpTypeCd, RouteNames } from '@/enums'
 import { SearchResultI } from '@/interfaces'
 import { useEntity } from '@/composables'
+import { EntityI } from '@/interfaces/entity'
 
-// Store
+// Store/Router
 const store = useStore()
-
 const router = useRouter()
 // composables
-const { getEntityDescription } = useEntity()
+const { getEntityDescription, setEntity } = useEntity()
 
 const businesses = computed(() => store.getters['getSearchResults'] as SearchResultI[])
 const totalResultsLength = computed(() => businesses.value.length ) 
 
-const goToBusinessInfo  = (identifier: string )  => {  
+const goToBusinessInfo  = (result: SearchResultI )  => {
+  const identifier = result.identifier
+  setEntity(result as EntityI)
   router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
 }
 </script>

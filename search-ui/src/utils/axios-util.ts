@@ -7,7 +7,6 @@ const axios = Axios.create()
 axios.interceptors.request.use(
   config => {
     config.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)}`
-    console.log(config.headers)
     return config
   },
   error => Promise.reject(error)

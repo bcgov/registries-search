@@ -53,7 +53,7 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/:identifier',
+    path: '/open-:identifier',
     name: RouteNames.BUSINESS_INFO,
     component: BusinessInfoView,
     props: true,

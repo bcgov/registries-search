@@ -4,12 +4,15 @@
     <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
     <sbc-system-banner
       v-if="systemMessage != null"
+      class="justify-center"
       :setShow="systemMessage != null"
       :setType="systemMessageType"
       :setMessage="systemMessage"
     />
     <v-expand-transition>
-      <entity-info v-if="showEntityInfo" />
+      <div v-if="showEntityInfo">
+        <entity-info />
+      </div>
     </v-expand-transition>
     <div class="app-body py-4">
       <main>
@@ -80,5 +83,5 @@ const handleError = (error: ErrorI) => {
   // FUTURE: add account info with error information 
   Sentry.captureException(error)
 }
-watch(entity._error, (error) => { if (error) handleError(error) })
+watch(entity, (val) => { if (val._error) handleError(val._error) })
 </script>

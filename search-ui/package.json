@@ -16,6 +16,7 @@
     "axios": "^0.26.1",
     "core-js": "^3.8.3",
     "http-status-codes": "^2.1.4",
+    "moment": "^2.29.3",
     "roboto-fontface": "*",
     "sbc-common-components": "^2.4.43",
     "vue": "^3.2.13",

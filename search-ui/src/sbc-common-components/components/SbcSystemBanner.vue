@@ -1,7 +1,10 @@
 <template>
-  <v-alert class="px-3 py-2" v-model="show" :type="type" icon="" :dismissible="dismissible">
-    <v-icon v-if="icon !== ''" class="mr-2" size="34">{{ icon }}</v-icon>
-    <span v-html="message"></span>
+  <!-- NB: set icon="null" to prevent v-alert default icon + vue complains if set to "" -->
+  <v-alert class="py-2" v-model="show" :type="type" icon="null" :dismissible="dismissible">
+    <div class="px-3">
+      <v-icon v-if="icon !== ''" class="mr-2" size="34">{{ icon }}</v-icon>
+      <span v-html="message"></span>
+    </div>
   </v-alert>
 </template>
 
@@ -48,5 +51,10 @@ export default defineComponent({
 .v-alert :deep(.v-alert__wrapper) {
   margin: 0;
   overflow: hidden;
+}
+
+:deep(.v-alert__content) {
+  max-width: 1360px;  // should match sbc header / breadcrumb max widths
+  width: 100%;
 }
 </style>
