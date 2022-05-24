@@ -23,8 +23,9 @@
         "vault": "API",
         "application": [
             "auth-api",
-            "status-api",
-            "registries-search-api"
+            "legal-api",
+            "registries-search-api",
+            "status-api"
         ]
     },
     {
