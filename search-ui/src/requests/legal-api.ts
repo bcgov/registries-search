@@ -26,7 +26,7 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
     })
 }
 
-export async function getFilings(identifier: string): Promise<ApiFiling[]> {
+export async function getFilings(identifier: string): Promise<any> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
   const config = { baseURL: url }
   return axios.get<any>(`businesses/${identifier}/filings`, config)

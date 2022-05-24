@@ -12,9 +12,3 @@ export const search: ActionI = async ({ commit }, searchString: string) => {
   const searchResults = await searchBusiness(searchString)   
   commit('mutateSearchResults', searchResults.results)
 }
-
-export const fetchFilings: ActionI = async ({ commit }, identifier: string) => {
-  commit('mutateFilings', [])
-  const filings: ApiFiling[] = await getFilings(identifier)
-  commit('mutateFilings', filings)
-}

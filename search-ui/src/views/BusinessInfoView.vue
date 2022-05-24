@@ -28,25 +28,19 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useEntity } from '@/composables'
-import { useStore } from 'vuex'
-import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-
-const store = useStore()
+import { useEntity, useFilingHistory } from '@/composables' 
+import FilingHistory from '@/components/FilingHistory/FilingHistory.vue' 
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
 const { entity, clearEntity, loadEntity } = useEntity()
-
-const getFilings = async (identifier: string) => {
-  await store.dispatch('fetchFilings', identifier)
-}
+const { loadFilingHistory } = useFilingHistory()
 
 onMounted(() => {
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
-  getFilings(props.identifier)
+  loadFilingHistory(props.identifier)
 })
 </script>
 

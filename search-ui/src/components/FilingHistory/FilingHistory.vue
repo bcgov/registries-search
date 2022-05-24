@@ -52,8 +52,7 @@
                   <span>FILED AND PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" flat :ripple=false
-                    @click.stop="togglePanel(index, filing)">
+                  <v-btn class="details-btn" flat :ripple=false @click.stop="togglePanel(index, filing)">
                     <v-icon left class="app-blue">mdi-information-outline</v-icon>
                     <span class="app-blue">{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
                   </v-btn>
@@ -113,10 +112,10 @@
 
                 <!-- optional detail comments button -->
                 <div v-if="filing.commentsCount > 0" class="item-header__subtitle mb-n2">
-                  <v-btn class="comments-btn" flat :ripple=false
-                    @click.stop="togglePanel(index, filing)">
+                  <v-btn class="comments-btn" flat :ripple=false @click.stop="togglePanel(index, filing)">
                     <v-icon small left style="padding-top: 2px" class="app-blue">mdi-message-reply</v-icon>
-                    <span class="app-blue">Detail{{ filing.commentsCount > 1 ? "s" : "" }} ({{ filing.commentsCount }})</span>
+                    <span class="app-blue">Detail{{ filing.commentsCount > 1 ? "s" : "" }} ({{ filing.commentsCount
+                    }})</span>
                   </v-btn>
                 </div>
               </div>
@@ -142,7 +141,7 @@
           <v-expansion-panel-text>
             <div>
               <!-- NB: blocks below are mutually exclusive, and order is important -->
-              
+
               <template v-if="filing.isTypeStaff">
                 <StaffFiling :filing="filing" class="mt-6" />
               </template>
@@ -164,14 +163,14 @@
 
               <template
                 v-else-if="filing.isFutureEffectiveAlterationPending || filing.isFutureEffectiveDissolutionPending">
-                <FutureEffectivePending :filing=filing class="mt-6" :entity-name="legalName"/>
+                <FutureEffectivePending :filing=filing class="mt-6" :entity-name="legalName" />
               </template>
 
               <!-- is this a FE IA still waiting for effective date/time? -->
               <!-- or a FE Alteration still waiting for effective date/time?  -->
               <!-- or a FE Dissolution still waiting for effective date/time?  -->
               <template v-else-if="filing.isFutureEffectiveAlteration || filing.isFutureEffectiveDissolution">
-                <FutureEffective :filing=filing class="mt-6" :entity-name="legalName"/>
+                <FutureEffective :filing=filing class="mt-6" :entity-name="legalName" />
               </template>
 
               <!-- is this a generic paid (not yet completed) filing? -->
@@ -209,11 +208,11 @@
       <!-- No Results Message -->
       <v-card class="no-results" flat v-else>
         <v-card-text>
-            <div class="no-results__title">You have no filing history</div>
-            <div class="no-results__subtitle">Your completed filings and transactions will appear here</div>
+          <div class="no-results__title">You have no filing history</div>
+          <div class="no-results__subtitle">Your completed filings and transactions will appear here</div>
         </v-card-text>
       </v-card>
-    </div>    
+    </div>
   </div>
 </template>
 
@@ -241,16 +240,17 @@ import { LegalFiling } from '@/types'
 // Enums, interfaces and mixins
 import { ref, computed, watch } from 'vue'
 import { FilingTypes } from '@/enums'
-import { useStore } from 'vuex'
 import { Document, FilingHistoryItem, ApiFiling } from '@/types'
+import { useEntity, useFilingHistory } from '@/composables'
 
-const store = useStore()
+const { entity } = useEntity()
+const { filingHistory } = useFilingHistory()
 
-const isBComp = computed(() => store.getters['isBComp'] as boolean)
-const identifier = computed(() => store.getters['getIdentifier'] as string)
-const legalName = computed(() => store.getters['getLegalName'] as string)
-const legalType = computed(() => store.getters['getLegalType'] as string)
-const filings = computed(() => store.state.filings as ApiFiling[])
+const isBComp = computed(() => (entity.legalType == 'BEN') as boolean)
+const identifier = computed(() => entity.identifier as string)
+const legalName = computed(() => entity.name as string)
+const legalType = computed(() => entity.legalType as string)
+const filings = computed(() => filingHistory.filings as ApiFiling[])
 
 const downloadErrorDialog = ref(false)
 const panel = ref(-1) // currently expanded panel
@@ -341,7 +341,7 @@ const loadFiling = (filing: ApiFiling): void => {
     }
 
     // add properties for Alterations
-    if (isTypeAlteration(filing)) {     
+    if (isTypeAlteration(filing)) {
       item.isCompletedAlteration = isStatusCompleted(filing)
       item.isFutureEffectiveAlteration = (
         filing.isFutureEffective &&
@@ -350,7 +350,7 @@ const loadFiling = (filing: ApiFiling): void => {
       item.isFutureEffectiveAlterationPending = (
         item.isFutureEffectiveAlteration &&
         isEffectiveDatePast(effectiveDate)
-      )      
+      )
       if (item.isCompletedAlteration) {
         item.courtOrderNumber = filing.data.order?.fileNumber || ''
         item.isArrangement = isEffectOfOrderPlanOfArrangement(filing.data.order?.effectOfOrder)
@@ -425,8 +425,9 @@ const downloadOne = async (event): Promise<void> => {
 const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
   if (item?.documents) { // safety check
     loadingAll.value = true
+    const filteredDocuments = item.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
-    for (const document of item.documents) {
+    for (const document of filteredDocuments) {
       await fetchDocument(document).catch(error => {
         // eslint-disable-next-line no-console
         console.log('fetchDocument() error =', error)
@@ -601,7 +602,7 @@ watch(() => filings.value, () => {
 .item-header+.item-header {
   border-top: 1px solid $gray3;
 }
- 
+
 
 .v-col-padding {
   padding: 0 12px 0 12px;
