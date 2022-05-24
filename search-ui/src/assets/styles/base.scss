@@ -480,3 +480,29 @@ span.invalid-color {
   background-color: rgb(33, 33, 33); // grey darken-4
   border-color: rgb(33, 33, 33); // grey darken-4
 }
+
+// No Results
+.no-results {
+  text-align: center;
+}
+
+.no-results__title {
+  color: $gray8;
+  @extend .font-16;
+  font-weight: 700;
+}
+
+.no-results__subtitle {
+  margin-top: 0.25rem;
+  color: $gray6;
+  @extend .font-14;
+  font-weight: 500;
+}
+
+.font-16 {
+  font-size: $px-16;
+}
+
+.font-14 {
+  font-size: $px-14;
+}

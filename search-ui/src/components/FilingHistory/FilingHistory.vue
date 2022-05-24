@@ -52,10 +52,10 @@
                   <span>FILED AND PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" flat color="blue darken-2" :ripple=false
+                  <v-btn class="details-btn" flat :ripple=false
                     @click.stop="togglePanel(index, filing)">
-                    <v-icon left>mdi-information-outline</v-icon>
-                    <span>{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
+                    <v-icon left class="app-blue">mdi-information-outline</v-icon>
+                    <span class="app-blue">{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
                   </v-btn>
                 </div>
 
@@ -113,10 +113,10 @@
 
                 <!-- optional detail comments button -->
                 <div v-if="filing.commentsCount > 0" class="item-header__subtitle mb-n2">
-                  <v-btn class="comments-btn" outlined color="primary" :ripple=false
+                  <v-btn class="comments-btn" flat :ripple=false
                     @click.stop="togglePanel(index, filing)">
-                    <v-icon small left style="padding-top: 2px">mdi-message-reply</v-icon>
-                    <span>Detail{{ filing.commentsCount > 1 ? "s" : "" }} ({{ filing.commentsCount }})</span>
+                    <v-icon small left style="padding-top: 2px" class="app-blue">mdi-message-reply</v-icon>
+                    <span class="app-blue">Detail{{ filing.commentsCount > 1 ? "s" : "" }} ({{ filing.commentsCount }})</span>
                   </v-btn>
                 </div>
               </div>
@@ -206,17 +206,14 @@
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
-    </div>
-
-    <!-- No Results Message -->
-    <v-card class="no-results" flat v-if="!historyItems.length">
-      <v-card-text>
-        <template>
-          <div class="no-results__title">You have no filing history</div>
-          <div class="no-results__subtitle">Your completed filings and transactions will appear here</div>
-        </template>
-      </v-card-text>
-    </v-card>
+      <!-- No Results Message -->
+      <v-card class="no-results" flat v-else>
+        <v-card-text>
+            <div class="no-results__title">You have no filing history</div>
+            <div class="no-results__subtitle">Your completed filings and transactions will appear here</div>
+        </v-card-text>
+      </v-card>
+    </div>    
   </div>
 </template>
 
@@ -271,6 +268,7 @@ const displayAction = (filing): string => {
 }
 
 const loadData = (): void => {
+  isBusy.value = true
   historyItems.value = []
 
   // create 'history items' list from 'filings' array from API
@@ -283,6 +281,7 @@ const loadData = (): void => {
       continue
     }
     loadFiling(filing)
+    isBusy.value = false
   }
 
   // report number of items back to parent (dashboard)
