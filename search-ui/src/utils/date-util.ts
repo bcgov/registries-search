@@ -120,3 +120,14 @@ export function dateToYyyyMmDd(date: Date): string {
   const [mm, dd, yyyy] = dateStr.split('/')
   return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`
 }
+
+/** Whether the subject effective date/time is in the past. */
+export function isEffectiveDatePast(effectiveDate: Date): boolean {
+  return (effectiveDate <= new Date())
+}
+
+/** Whether the subject effective date/time is in the future. */
+export function isEffectiveDateFuture(effectiveDate: Date): boolean {
+  return (effectiveDate > new Date())
+}
+

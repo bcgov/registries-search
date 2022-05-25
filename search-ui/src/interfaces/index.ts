@@ -1,3 +1,6 @@
+import type { CommentIF } from '@bcrs-shared-components/interfaces'
+
+export type { CommentIF }
 export * from './error'
 export * from './store'
 export * from './suggestion-interface'

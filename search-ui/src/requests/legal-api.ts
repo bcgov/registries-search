@@ -1,8 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 // local
 import { ErrorCategories, ErrorCodes } from '@/enums'
-import { EntityRespI } from '@/interfaces/legal-api-responses'
-import { CommentIF, ApiDocuments, Document, ApiFiling } from '@/types'
+import { CommentIF } from '@/interfaces'
+import { EntityRespI, ApiDocuments } from '@/interfaces/legal-api-responses'
+import {  Document } from '@/types'
 import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
@@ -48,23 +49,6 @@ export async function getFilings(identifier: string): Promise<any> {
     })
 }
 
-
-/**
-   * Flattens and sorts an array of comments.
-   * @param comments the array of comments to sort and deconstruct
-   * @returns the sorted and flattened array of comments
-   */
-export const flattenAndSortComments = (comments: Array<CommentIF>): Array<CommentIF> => {
-  if (comments && comments.length > 0) {
-    // first use map to change comment.comment to comment
-    const temp: Array<any> = comments.map(c => c.comment)
-    // then sort newest to oldest
-    temp.sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1)
-    return temp
-  }
-  return []
-}
-
 /**
 * Fetches documents object.
 * @param url the full URL to fetch the documents
@@ -73,22 +57,22 @@ export const flattenAndSortComments = (comments: Array<CommentIF>): Array<Commen
 export const fetchDocuments = async (url: string): Promise<ApiDocuments> => {
   const config = { baseURL: sessionStorage.getItem('LEGAL_API_URL') }
   return axios.get<any>(`${url}`, config)
-  .then(response => {
-    const data = response?.data?.documents
-    if (!data) {
-      throw new Error('Invalid API response')
-    }
-    return data
-  }).catch(error => {
-    return {
-      error: {
-        statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-        message: error?.response?.data?.message,
-        category: ErrorCategories.ENTITY_BASIC,
-        type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+    .then(response => {
+      const data = response?.data?.documents
+      if (!data) {
+        throw new Error('Invalid API response')
       }
-    }
-  })
+      return data
+    }).catch(error => {
+      return {
+        error: {
+          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+          message: error?.response?.data?.message,
+          category: ErrorCategories.ENTITY_BASIC,
+          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+        }
+      }
+    })
 }
 
 /**

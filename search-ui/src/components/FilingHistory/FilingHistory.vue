@@ -233,16 +233,18 @@ import { DetailsList } from '@/components/common'
 import {
   isStatusPaid, isStatusCompleted, isTypeAlteration, isTypeChangeOfAddress,
   isEffectOfOrderPlanOfArrangement, isTypeDissolution, isTypeStaff, filingTypeToName, camelCaseToWords,
-  dateToYyyyMmDd, dateToPacificDateTime
+  dateToYyyyMmDd, dateToPacificDateTime, flattenAndSortComments, isEffectiveDateFuture, isEffectiveDatePast
 } from '@/utils'
-import { fetchDocument, fetchDocuments, fetchComments, flattenAndSortComments } from '@/requests'
-import { LegalFiling } from '@/types'
+import { fetchDocument, fetchDocuments, fetchComments } from '@/requests'
+import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
 import { ref, computed, watch } from 'vue'
-import { FilingTypes } from '@/enums'
-import { Document, FilingHistoryItem, ApiFiling } from '@/types'
+import { ErrorCategories, ErrorCodes, FilingTypes } from '@/enums'
+import { Document, FilingHistoryItem } from '@/types'
 import { useEntity, useFilingHistory } from '@/composables'
+import { ErrorI } from '@/interfaces'
+import { StatusCodes } from 'http-status-codes'
 
 const { entity } = useEntity()
 const { filingHistory } = useFilingHistory()
@@ -254,7 +256,6 @@ const legalType = computed(() => entity.legalType as string)
 const filings = computed(() => filingHistory.filings as ApiFiling[])
 const isLocked = computed(() => true)
 
-const downloadErrorDialog = ref(false)
 const panel = ref(-1) // currently expanded panel
 const historyItems = ref([])
 const loadingOne = ref(false)
@@ -262,7 +263,14 @@ const loadingAll = ref(false)
 const loadingOneIndex = ref(-1)
 const isBusy = ref(false)
 
-const emit = defineEmits(['history-count'])
+const emit = defineEmits(['error'])
+
+const documentDownloadError: ErrorI = {
+  category: ErrorCategories.DOCUMENT_DOWNLOAD,
+  message: 'Document Download Error',
+  statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+  type: ErrorCodes.SERVICE_UNAVAILABLE
+}
 
 /** Returns whether the action button is visible or not. */
 const displayAction = (filing): string => {
@@ -285,9 +293,6 @@ const loadData = (): void => {
     loadFiling(filing)
     isBusy.value = false
   }
-
-  // report number of items back to parent (dashboard)
-  emit('history-count', historyItems.value.length)
 }
 
 /** Loads a filing into the historyItems list. */
@@ -389,24 +394,10 @@ const loadFiling = (filing: ApiFiling): void => {
     }
 
     historyItems.value.push(item)
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error loading filing =', error)
+  } catch (error) {     
+    console.error('Error loading filing =', error)
   }
 }
-
-/** Whether the subject effective date/time is in the past. */
-const isEffectiveDatePast = (effectiveDate: Date): boolean => {
-  // FUTURE: stop assuming local date is correct
-  return (effectiveDate <= new Date())
-}
-
-/** Whether the subject effective date/time is in the future. */
-const isEffectiveDateFuture = (effectiveDate: Date): boolean => {
-  // FUTURE: stop assuming local date is correct
-  return (effectiveDate > new Date())
-}
-
 
 const downloadOne = async (event): Promise<void> => {
   if (event.document && event.index >= 0) { // safety check
@@ -414,9 +405,8 @@ const downloadOne = async (event): Promise<void> => {
     loadingOneIndex.value = event.index
 
     await fetchDocument(event.document).catch(error => {
-      // eslint-disable-next-line no-console
-      console.log('fetchDocument() error =', error)
-      // downloadErrorDialog.value = true
+      console.error('fetchDocument() error =', error)
+      emit('error', documentDownloadError)
     })
 
     loadingOne.value = false
@@ -425,15 +415,14 @@ const downloadOne = async (event): Promise<void> => {
 }
 
 const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
-  if (item?.documents) { // safety check
+  if (item?.documents) {
     loadingAll.value = true
     const filteredDocuments = item.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
     for (const document of filteredDocuments) {
       await fetchDocument(document).catch(error => {
-        // eslint-disable-next-line no-console
-        console.log('fetchDocument() error =', error)
-        // downloadErrorDialog.value = true
+        console.error('fetchDocument() error =', error)
+        emit('error', documentDownloadError)
       })
     }
     loadingAll.value = false
@@ -443,38 +432,25 @@ const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
 /** Loads the comments for this history item. */
 const loadComments = async (item: FilingHistoryItem): Promise<void> => {
   try {
-    // fetch comments array from API
     const comments = await fetchComments(item.commentsLink)
-    // flatten and sort the comments
     item.comments = flattenAndSortComments(comments)
   } catch (error) {
-    // set property to null to retry next time
     item.comments = null
-    // eslint-disable-next-line no-console
     console.log('loadComments() error =', error)
-    // FUTURE: enable some error dialog?
   }
-  // update comments count
   item.commentsCount = item.comments?.length || 0
 }
 
 /** Loads the documents for this history item. */
 const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
   try {
-    // fetch documents object from API
     const documents = await fetchDocuments(item.documentsLink)
-    // load each type of document
     item.documents = []
-    // iterate over documents properties
     for (const prop in documents) {
       if (prop === 'legalFilings' && Array.isArray(documents.legalFilings)) {
-        // iterate over legalFilings array
         for (const legalFiling of documents.legalFilings as LegalFiling[]) {
-          // iterate over legalFiling properties
           for (const prop in legalFiling) {
-            // this is a legal filing output
             let title
-            // use display name for primary document's title
             if (prop === item.name) title = item.displayName
             else title = filingTypeToName(prop as FilingTypes, null, true)
             const date = dateToYyyyMmDd(item.submittedDate)
@@ -484,7 +460,6 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
           }
         }
       } else {
-        // this is a submission level output
         const title = camelCaseToWords(prop)
         const date = dateToYyyyMmDd(item.submittedDate)
         const filename = `${identifier.value} ${title} - ${date}.pdf`
@@ -492,21 +467,16 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
         pushDocument(title, filename, link)
       }
     }
-
   } catch (error) {
-    // set property to null to retry next time
     item.documents = null
-    // eslint-disable-next-line no-console
-    console.log('loadDocuments() error =', error)
-    // FUTURE: enable some error dialog?
+    console.error('loadDocuments() error =', error)
   }
 
   function pushDocument(title: string, filename: string, link: string) {
     if (title && filename && link) {
       item.documents.push({ title, filename, link } as Document)
     } else {
-      // eslint-disable-next-line no-console
-      console.log(`invalid document = ${title} | ${filename} | ${link}`)
+      console.error(`invalid document = ${title} | ${filename} | ${link}`)
     }
   }
 }

@@ -11,8 +11,8 @@
                 </v-btn>
             </v-list-item>
 
-            <v-list-item v-if="filing.documents.length > 1" >
-                <v-btn variant="text" class="download-all-btn" @click="downloadAll(filing)"
+            <v-list-item v-if="filing.documents.length > 1">
+                <v-btn variant="text" class="download-all-btn" @click="downloadAll()"
                     :disabled="props.loadingOne || props.loadingAll || props.isLocked" :loading="props.loadingAll">
                     <v-icon v-if="props.isLocked">mdi-lock</v-icon>
                     <v-icon class="app-blue" v-else>mdi-download</v-icon>
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { Document } from '@/types'
 import { FilingHistoryItem } from '@/types'
-import {computed} from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
     filing: FilingHistoryItem,
@@ -38,7 +38,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['downloadOne', 'downloadAll'])
 
-const filteredDocuments = computed(() => props.filing.documents.filter(document => (document.title.toLowerCase() != 'receipt')))
+const filteredDocuments = computed(() => props.filing.documents.filter(document =>
+    (document.title.toLowerCase() != 'receipt')))
 
 /** Emits an event to download the subject document. */
 const downloadOne = (document: Document, index: number): void => {
@@ -49,7 +50,7 @@ const downloadOne = (document: Document, index: number): void => {
 }
 
 /** Emits an event to download all. */
-const downloadAll = (filing: any): void => {
+const downloadAll = (): void => {
     emit('downloadAll')
 }
 

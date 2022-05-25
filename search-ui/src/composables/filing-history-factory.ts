@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-import { ApiFiling } from '@/types'
+import { ApiFiling } from '@/interfaces/legal-api-responses'
 import { getFilings } from '@/requests'
 import { FilingI } from '@/interfaces'
 

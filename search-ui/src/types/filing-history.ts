@@ -1,5 +1,6 @@
 import { CorpTypeCd, FilingTypes } from '@/enums'
-import { CommentIF, Document } from '@/types'
+import { Document } from '@/types'
+import { CommentIF } from '@/interfaces'
 
 /**
  * A Filing History List item (ie, local object).

@@ -1,5 +1,5 @@
 import { ErrorI } from '@/interfaces'
-import { ApiFiling } from '@/types'
+import { ApiFiling } from '@/interfaces/legal-api-responses'
 
 export interface FilingI {
     filings: ApiFiling[],

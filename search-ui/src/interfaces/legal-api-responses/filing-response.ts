@@ -4,7 +4,7 @@ import { CorpTypeCd, EffectOfOrderTypes, FilingStatus, FilingTypes } from '@/enu
  * A list item from the API "filings" call (ie, API object).
  * See also History Item interface.
  */
-export type ApiFiling = {
+export interface ApiFiling {
   availableOnPaperOnly: boolean
   businessIdentifier: string
   commentsCount: number
@@ -82,7 +82,7 @@ export type ApiFiling = {
   }  
 }
 
-export type ApiDocuments = {
+export interface ApiDocuments  {
   // contains any number of arbitrarily-named submission level outputs
   // or an array named "legalFilings"
   // eg, certificate, noticeOfArticles, receipt, etc

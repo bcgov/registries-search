@@ -19,8 +19,8 @@
       </v-col>
     </v-row>
     <v-row no-gutters>
-      <v-col cols="9">        
-        <filing-history/>
+      <v-col cols="9">
+        <filing-history />
       </v-col>
     </v-row>
   </v-container>
@@ -28,8 +28,8 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useEntity, useFilingHistory } from '@/composables' 
-import FilingHistory from '@/components/FilingHistory/FilingHistory.vue' 
+import { useEntity, useFilingHistory } from '@/composables'
+import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
