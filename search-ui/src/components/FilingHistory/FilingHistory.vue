@@ -252,7 +252,7 @@ const identifier = computed(() => entity.identifier as string)
 const legalName = computed(() => entity.name as string)
 const legalType = computed(() => entity.legalType as string)
 const filings = computed(() => filingHistory.filings as ApiFiling[])
-const isLocked = computed(() => false)
+const isLocked = computed(() => true)
 
 const downloadErrorDialog = ref(false)
 const panel = ref(-1) // currently expanded panel
