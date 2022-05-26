@@ -153,24 +153,24 @@
 
               <!-- is this a completed alteration -->
               <template v-else-if="filing.isCompletedAlteration">
-                <CompletedAlteration :filing=filing :entity-name="legalName" class="mt-6" />
+                <CompletedAlteration :filing=filing :entity-name="entity.name" class="mt-6" />
               </template>
 
               <!-- is this a completed dissolution -->
               <template v-else-if="filing.isCompletedDissolution">
-                <CompletedDissolution :filing="filing" :entity-name="legalName" :entity-type="legalType" class="mt-6" />
+                <CompletedDissolution :filing="filing" :entity-name="entity.name" :entity-type="entity.legalType" class="mt-6" />
               </template>
 
               <template
                 v-else-if="filing.isFutureEffectiveAlterationPending || filing.isFutureEffectiveDissolutionPending">
-                <FutureEffectivePending :filing=filing class="mt-6" :entity-name="legalName" />
+                <FutureEffectivePending :filing=filing class="mt-6" :entity-name="entity.name" />
               </template>
 
               <!-- is this a FE IA still waiting for effective date/time? -->
               <!-- or a FE Alteration still waiting for effective date/time?  -->
               <!-- or a FE Dissolution still waiting for effective date/time?  -->
               <template v-else-if="filing.isFutureEffectiveAlteration || filing.isFutureEffectiveDissolution">
-                <FutureEffective :filing=filing class="mt-6" :entity-name="legalName" />
+                <FutureEffective :filing=filing class="mt-6" :entity-name="entity.name" />
               </template>
 
               <!-- is this a generic paid (not yet completed) filing? -->
@@ -246,14 +246,10 @@ import { useEntity, useFilingHistory } from '@/composables'
 import { ErrorI } from '@/interfaces'
 import { StatusCodes } from 'http-status-codes'
 
-const { entity } = useEntity()
+const { entity, isBComp } = useEntity()
 const { filingHistory } = useFilingHistory()
 
-const isBComp = computed(() => (entity.legalType == 'BEN') as boolean)
-const identifier = computed(() => entity.identifier as string)
-const legalName = computed(() => entity.name as string)
-const legalType = computed(() => entity.legalType as string)
-const filings = computed(() => filingHistory.filings as ApiFiling[])
+const filings = computed(() => filingHistory.filings)
 const isLocked = computed(() => true)
 
 const panel = ref(-1) // currently expanded panel
@@ -454,7 +450,7 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
             if (prop === item.name) title = item.displayName
             else title = filingTypeToName(prop as FilingTypes, null, true)
             const date = dateToYyyyMmDd(item.submittedDate)
-            const filename = `${identifier.value} ${title} - ${date}.pdf`
+            const filename = `${entity.identifier} ${title} - ${date}.pdf`
             const link = legalFiling[prop] as string
             pushDocument(title, filename, link)
           }
@@ -462,7 +458,7 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
       } else {
         const title = camelCaseToWords(prop)
         const date = dateToYyyyMmDd(item.submittedDate)
-        const filename = `${identifier.value} ${title} - ${date}.pdf`
+        const filename = `${entity.identifier} ${title} - ${date}.pdf`
         const link = documents[prop] as string
         pushDocument(title, filename, link)
       }

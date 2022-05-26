@@ -63,12 +63,18 @@ export const useEntity = () => {
     entity.name = newEntity.name
     entity.status = newEntity.status
   }
+
+  const isBComp =  () => {
+    return entity.legalType == 'BEN'
+  }
+
   return {
     entity,
     clearEntity,
     getEntityDescription,
     getEntityInfo,
     loadEntity,
-    setEntity
+    setEntity,
+    isBComp
   }
 }
