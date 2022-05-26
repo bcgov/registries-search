@@ -128,12 +128,11 @@ tbody {
   }
 }
 
-.v-expansion-panel-header.no-dropdown {
-  .v-expansion-panel-header__icon {
+.v-expansion-panel-title.no-dropdown-icon {
+  .v-expansion-panel-title__icon {
     display: none;
   }
 }
-
 // loaders
 .v-loader {
   color: $primary-blue;

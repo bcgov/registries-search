@@ -25,7 +25,9 @@
     "vuex": "^4.0.0",
     "vuex-composition-helpers": "^2.0.3",
     "vuex-module-decorators": "^2.0.0",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "@bcrs-shared-components/interfaces": "1.0.28",
+    "@bcrs-shared-components/corp-type-module": "1.0.6"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",

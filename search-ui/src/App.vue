@@ -43,7 +43,7 @@ import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 import { ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { EntityInfo } from '@/components'
-import { useEntity } from '@/composables'
+import { useEntity, useFilingHistory } from '@/composables'
 import { RouteNames } from '@/enums'
 
 const aboutText: string = process.env.ABOUT_TEXT
@@ -51,6 +51,7 @@ const appReady = ref(true)
 const haveData = ref(true)
 const route = useRoute()
 const { entity } = useEntity()
+const { filingHistory } = useFilingHistory()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -83,5 +84,6 @@ const handleError = (error: ErrorI) => {
   // FUTURE: add account info with error information 
   Sentry.captureException(error)
 }
-watch(entity, (val) => { if (val._error) handleError(val._error) })
+watch(entity, (val) => { if (val._error) handleError(val._error) }) 
+watch(filingHistory, (val) => { if (val._error) handleError(val._error) })
 </script>

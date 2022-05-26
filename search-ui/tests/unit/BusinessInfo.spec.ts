@@ -5,13 +5,13 @@ import { Router } from 'vue-router'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { RouteNames } from '@/enums'
-import { useEntity } from '@/composables'
+import { useEntity, useFilingHistory } from '@/composables'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 import { axios } from '@/utils'
 import { BusinessInfoView } from '@/views'
 // test utils
-import { mockedBusinessResp } from './utils'
+import { mockedBusinessResp, mockedFilingResp } from './utils'
 
 
 describe('BusinessInfo tests', () => {
@@ -24,6 +24,7 @@ describe('BusinessInfo tests', () => {
 
   const identifier = mockedBusinessResp.identifier
   const { entity, clearEntity } = useEntity()
+  const {filingHistory} = useFilingHistory()
 
   beforeEach(async () => {
     const mockGet = jest.spyOn(axios, 'get')
@@ -31,7 +32,8 @@ describe('BusinessInfo tests', () => {
       switch (url) {
         case `businesses/${identifier}`:
           return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
-        // FUTURE: add case for filing history
+        case `businesses/${identifier}/filings`:
+          return Promise.resolve({ data: { filings: [ ...mockedFilingResp ] } })
       }
     })
     clearEntity()
@@ -59,7 +61,7 @@ describe('BusinessInfo tests', () => {
   })
   it('loads the entity of the given identifier when mounted', () => {
     // check call was made
-    expect(axios.get).toBeCalledTimes(1)
+    expect(axios.get).toBeCalledTimes(2)
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
     // check entity was loaded
     expect(entity.bn).toBe(mockedBusinessResp.taxId)
@@ -67,5 +69,13 @@ describe('BusinessInfo tests', () => {
     expect(entity.legalType).toBe(mockedBusinessResp.legalType)
     expect(entity.name).toBe(mockedBusinessResp.legalName)
     expect(entity.status).toBe(mockedBusinessResp.state)
+  })
+  it('loads the filing history when mounted', () => {
+    // check call was made
+    expect(axios.get).toBeCalledTimes(2)
+    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}/filings`, { baseURL: url })
+    // check entity was loaded
+    expect(filingHistory.filings.length).toEqual(1)
+     
   })
 })
