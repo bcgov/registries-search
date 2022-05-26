@@ -24,6 +24,7 @@
         "application": [
             "auth-api",
             "legal-api",
+            "pay-api",
             "registries-search-api",
             "status-api"
         ]
