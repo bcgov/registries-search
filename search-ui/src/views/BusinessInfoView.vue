@@ -1,7 +1,7 @@
 <template>
   <v-container id="business-info" class="container" fluid>
     <v-row no-gutters>
-      <v-col cols="9">
+      <v-col>
         <h2>How to Access Business Documents</h2>
         <p class="pt-3">1. Select from Available Documents to Download.</p>
         <p class="pt-1">2. Pay the appropriate fee.</p>
@@ -12,10 +12,24 @@
         </p>
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
+        <div class="document-list justify-center mt-3 pa-3 pr-5">
+          <v-progress-circular v-if="purchasableDocs.length < 1" class="v-loader" indeterminate size="50" />
+          <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
+            <v-col>
+              <v-checkbox
+                class="document-list__checkbox"
+                hide-details
+                :label="item.label"
+                @change="toggleFee($event, item.code)"
+              />
+            </v-col>
+            <v-col class="document-list__fee pt-4" align-self="end" cols="auto" v-html="item.fee" />
+          </v-row>
+        </div>
         <v-divider class="my-10" />
       </v-col>
-      <v-col cols="3">
-        <!-- pay summary to go here -->
+      <v-col cols="12" sm="auto">
+        <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
       </v-col>
     </v-row>
     <v-row no-gutters>
@@ -27,27 +41,113 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useEntity, useFilingHistory } from '@/composables'
+import { onMounted, ref, Ref } from 'vue'
+import { useRouter } from 'vue-router'
+// local
+import { BaseFeeCalculator } from '@/components'
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
+import { useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
+import { ActionComps, FeeCodes, RouteNames } from '@/enums'
+import { FeeAction, FeeI } from '@/interfaces'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
+const router = useRouter()
 const { entity, clearEntity, loadEntity } = useEntity()
 const { loadFilingHistory } = useFilingHistory()
+const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 
-onMounted(() => {
+// fee summary
+const feePreSelectItem: FeeI = {
+  code: FeeCodes.SRCH_BASE_DOCS,
+  fee: 0,
+  label: 'Select From Available Documents',
+  quantity: 0,
+  serviceFee: 1.5
+}
+const payForDocuments = () => {
+  console.log(fees)
+}
+const feeActions: FeeAction[][] = [
+  [{
+    action: (val) => { fees.folioNumber = val },
+    compType: ActionComps.TEXTFIELD,
+    outlined: false,
+    text: 'Folio Number (Optional)' }],
+  [{
+    action: () => { router.push({ name: RouteNames.SEARCH }) },
+    compType: ActionComps.BUTTON,
+    iconLeft: 'mdi-chevron-left',
+    outlined: true, text: 'Back to Search Results' }],
+  [{
+    action: payForDocuments,
+    compType: ActionComps.BUTTON,
+    iconRight: 'mdi-chevron-right',
+    outlined: false,
+    text: 'Pay and Unlock Documents' }],
+]
+
+// checkbox
+const getDocFee = async (code: FeeCodes) => {
+  const feeInfo = await getFeeInfo(code)
+  if (feeInfo) return displayFee(feeInfo.fee, true)
+  return 'Not Available'
+}
+const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string }[]>
+
+// load entity data, clear any previous fees
+onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
   loadFilingHistory(props.identifier)
+  clearFees()
+  const feeBaseDocs = await getDocFee(FeeCodes.SRCH_BASE_DOCS)
+  purchasableDocs.value.push({
+    code: FeeCodes.SRCH_BASE_DOCS,
+    fee: feeBaseDocs,
+    label: 'Business Summary and Filing History Documents'
+  })
 })
+
+const toggleFee = (event: any, code: FeeCodes) => {
+  if (event.target.checked) addFeeItem(code, 1)
+  else removeFeeItem(code, 1)
+}
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-
+.document-list {
+  background-color: white;
+  width: 100%;
+  &__checkbox, &__checkbox::before {
+    background-color: white !important;
+    display: flex;
+    box-shadow: none;
+  }
+  &__fee {
+    color: $gray8;
+    font-weight: 700;
+    height: 56px;
+  }
+}
 .v-divider {
   border-width: 1px;
+}
+:deep(.v-selection-control__input)::before {
+  display: none;
+}
+:deep(.mdi-checkbox-marked) {
+  color: $primary-blue
+}
+:deep(.mdi-checkbox-blank-outline) {
+  color: $gray8;
+  --v-medium-emphasis-opacity: 1;
+}
+:deep(.v-label) {
+  color: $gray8;
+  font-weight: 700;
+  --v-medium-emphasis-opacity: 1;
 }
 </style>
