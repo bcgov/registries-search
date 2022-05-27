@@ -27,14 +27,12 @@
           </v-row>
         </div>
         <v-divider class="my-10" />
+        <div>
+          <filing-history />
+        </div>
       </v-col>
       <v-col cols="12" sm="auto">
         <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
-      </v-col>
-    </v-row>
-    <v-row no-gutters>
-      <v-col cols="9">
-        <filing-history />
       </v-col>
     </v-row>
   </v-container>
