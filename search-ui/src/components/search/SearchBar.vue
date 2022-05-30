@@ -17,7 +17,7 @@
           @keydown="suggest.disabled=false"
           @keyup.enter="submitSearch()"
         />
-          <suggest-list v-if="suggestActive" />
+          <auto-complete v-if="suggestActive" />
       </v-col>
       <v-col class="pl-3 pt-2">
         <v-row no-gutters>
@@ -39,7 +39,7 @@
 import { computed } from 'vue'
 // local
 import { useSearch, useSuggest } from '@/composables';
-import { SuggestList } from '.'
+import { AutoComplete } from '.'
 
 // Composables
 const { suggest, suggestActive } = useSuggest()
