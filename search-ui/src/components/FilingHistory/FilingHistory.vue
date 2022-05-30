@@ -155,7 +155,7 @@
               <!-- is this a completed dissolution -->
               <template v-else-if="filing.isCompletedDissolution">
                 <CompletedDissolution
-                  :filing="filing" :entity-name="entity.name" :entity-type="entity.legalType" class="mt-6" />
+                  :filing="filing" class="mt-6" />
               </template>
 
               <template

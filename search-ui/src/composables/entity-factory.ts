@@ -64,8 +64,20 @@ export const useEntity = () => {
     entity.status = newEntity.status
   }
 
-  const isBComp =  () => {
+  const isBComp = () => {
     return entity.legalType == 'BEN'
+  }
+
+  const isCoop = () => {
+    return entity.legalType == 'CP'
+  }
+
+  const entityTitle = (): string => {
+    return isCoop() ? 'Cooperative Association' : 'Company'
+  }
+
+  const actTitle = (): string => {
+    return isCoop() ? 'Cooperative Association Act' : 'Business Corporations Act'
   }
 
   return {
@@ -75,6 +87,9 @@ export const useEntity = () => {
     getEntityInfo,
     loadEntity,
     setEntity,
-    isBComp
+    isBComp,
+    isCoop,
+    entityTitle,
+    actTitle
   }
 }
