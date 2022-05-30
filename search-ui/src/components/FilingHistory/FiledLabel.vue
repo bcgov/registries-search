@@ -1,13 +1,13 @@
 <template>
     <div v-if="props.filing" class="filed-label d-inline">
         <template v-if="props.filing.isTypeStaff">
-            <span>Filed by {{ props.filing.submitter }} on
+            <span>Filed on
                 <DateTooltip :date="props.filing.submittedDate" />
             </span>
         </template>
 
         <template v-else>
-            <span> (filed by {{ props.filing.submitter }} on
+            <span> (Filed on
                 <DateTooltip :date="props.filing.submittedDate" />)
             </span>
             <span class="vert-pipe" />
