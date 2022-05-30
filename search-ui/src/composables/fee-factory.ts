@@ -6,6 +6,7 @@ import { FilingData } from 'sbc-common-components/src/models'
 // local
 import { ErrorCategories, FeeCodes } from '@/enums'
 import { CachedFeeItem, FeeI, FeesI } from '@/interfaces'
+import { FeeDescriptions } from '@/resources/fee-descriptions'
 
 const fees = reactive({
   folioNumber: '',
@@ -50,14 +51,14 @@ export const useFeeCalculator = () => {
       const item = {
         code: code,
         fee: payResp[0].fee,
-        label: payResp[0].filingType,
+        label: FeeDescriptions[code] || payResp[0].filingType,
         quantity: 1,
         serviceFee: payResp[0].serviceFees 
       }
       _cachedFeeItems.push({ [code]: item })
       return item
     }
-    // only get here if error
+    // only get here if call err'd
     fees._error = {
       category: ErrorCategories.FEE_INFO,
       message: 'Unable to get fees.',

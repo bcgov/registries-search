@@ -4,6 +4,6 @@ export type { CommentIF }
 export * from './error'
 export * from './fees'
 export * from './store'
-export * from './suggestion-interface'
-export * from './search-interface'
+export * from './search'
+export * from './suggest'
 export * from './filing'
