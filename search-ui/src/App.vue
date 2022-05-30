@@ -43,7 +43,7 @@ import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 import { ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { EntityInfo } from '@/components'
-import { useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
+import { useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest } from '@/composables'
 import { RouteNames } from '@/enums'
 
 const aboutText: string = process.env.ABOUT_TEXT
@@ -53,6 +53,8 @@ const route = useRoute()
 const { entity } = useEntity()
 const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
+const { search } = useSearch()
+const { suggest } = useSuggest()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -82,10 +84,13 @@ const showEntityInfo = computed((): boolean => {
 
 const handleError = (error: ErrorI) => {
   console.error(error)
-  // FUTURE: add account info with error information 
+  // FUTURE: add account info with error information, add dialog popups for specific errors
   Sentry.captureException(error)
 }
+// watchers for errors
 watch(entity, (val) => { if (val._error) handleError(val._error) })
 watch(fees, (val) => { if (val._error) handleError(val._error) })
 watch(filingHistory, (val) => { if (val._error) handleError(val._error) })
+watch(search, (val) => { if (val._error) handleError(val._error) })
+watch(suggest, (val) => { if (val._error) handleError(val._error) })
 </script>

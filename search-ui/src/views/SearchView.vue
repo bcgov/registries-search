@@ -1,7 +1,7 @@
 <template>
   <v-container id="search" class="container" fluid>
-    <v-overlay v-model="isLoading">
-      <v-progress-circular color="primary" size="50" indeterminate />
+    <v-overlay v-model="search._loading">
+      <v-progress-circular class="v-loader" size="50" indeterminate />
     </v-overlay>
     <div>
       <v-row no-gutters>
@@ -20,7 +20,7 @@
     </div>
     <div class="container pa-0">               
       <v-row no-gutters>
-        <search-bar @is-loading="setLoading"/>
+        <search-bar />
       </v-row>         
     </div>
     <div class="container pa-0 mt-10">               
@@ -32,16 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import SearchBar from '@/components/SearchBar.vue'
-import SearchResults from '@/components/SearchResults.vue'
+// local
+import { SearchBar, SearchResults } from '@/components/search'
+import { useSearch } from '@/composables'
 
-
-const isLoading = ref(false)
-
-const setLoading = (loading: boolean) => {
-  isLoading.value = loading
-}
+const { search } = useSearch()
 </script>
 
 <style lang="scss" scoped>

@@ -21,7 +21,7 @@
             </tr>
             </thead>
             <tbody v-if="totalResultsLength>0">
-                <tr v-for="item in businesses" :key="item.identifier">
+                <tr v-for="item in search.results" :key="item.identifier">
                     <td>{{ item.name }}</td>
                     <td>{{ item.identifier }}</td>
                     <td>{{ item.bn }}</td>
@@ -69,21 +69,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 // local
 import { CorpTypeCd, RouteNames } from '@/enums'
 import { SearchResultI } from '@/interfaces'
-import { useEntity } from '@/composables'
+import { useEntity, useSearch } from '@/composables'
 import { EntityI } from '@/interfaces/entity'
 
-// Store/Router
-const store = useStore()
+// Router
 const router = useRouter()
 // composables
 const { getEntityDescription, setEntity } = useEntity()
+const { search } = useSearch()
 
-const businesses = computed(() => store.getters['getSearchResults'] as SearchResultI[])
-const totalResultsLength = computed(() => businesses.value.length ) 
+const totalResultsLength = computed(() => search.results?.length || 0 ) 
 
 const goToBusinessInfo  = (result: SearchResultI )  => {
   const identifier = result.identifier

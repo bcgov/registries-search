@@ -55,4 +55,10 @@ const props = defineProps({
   color: $gray7;
   font-weight: normal;
 }
+:deep(.v-field) {
+  background-color: white;
+}
+:deep(.v-field__overlay) {
+  color: transparent;
+}
 </style>

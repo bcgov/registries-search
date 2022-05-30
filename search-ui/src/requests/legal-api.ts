@@ -8,6 +8,7 @@ import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
+  if (!url) console.error('Error: LEGAL_API_URL expected, but not found.')
   const config = { baseURL: url }
   return axios.get<any>(`businesses/${identifier}`, config)
     .then(response => {
