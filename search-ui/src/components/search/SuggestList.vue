@@ -8,10 +8,11 @@
             :key="i"
             class="auto-complete-row"
             no-gutters
+            @click="submitSearch(result.value)"
           >
             <v-col class="title-size">
               <v-item>
-                <v-label class="auto-complete-item py-2 pl-4" @click="submitSearch(result.value)">
+                <v-label class="auto-complete-item py-2 pl-4">
                   <span v-html="result.value"/> 
                 </v-label>
               </v-item>
@@ -31,8 +32,9 @@ const { getSearchResults } = useSearch()
 const { suggest } = useSuggest()
 
 const submitSearch = (val: string) => {
+  const vhtmlRegex = /(<([^>]+)>)/ig
   suggest.disabled = true
-  suggest.query = val
+  suggest.query = val.replace(vhtmlRegex, '')
   getSearchResults(suggest.query)
 }
 </script>

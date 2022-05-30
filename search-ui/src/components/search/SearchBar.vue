@@ -11,7 +11,7 @@
           persistent-hint
           :hide-details="suggestActive"
           v-model="suggest.query"
-          @blur="suggest.disabled=true"
+          @blur="handleFocusChange()"
           @click="suggest.disabled=false"
           @keypress="suggest.disabled=false"
           @keydown="suggest.disabled=false"
@@ -48,6 +48,11 @@ const { getSearchResults } = useSearch()
 const searchHint = 'Example: "Test Construction Inc.", "BC0000123", "987654321"'
 
 const isSearchBtnActive = computed(() => suggest.query.trim().length > 0)
+
+const handleFocusChange = () => {
+  // delay until click fires (in case clicking a suggest list item)
+  setTimeout( () => suggest.disabled = true, 100)
+}
 
 const submitSearch = () => {
   suggest.disabled = true
