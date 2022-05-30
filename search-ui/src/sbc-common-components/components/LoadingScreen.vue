@@ -3,9 +3,9 @@
     <v-fade-transition>
       <div class="loading-container" v-if="props.isLoading">
         <v-progress-circular
+          class="v-loader"
           size="50"
           width="5"
-          color="primary"
           :indeterminate="props.isLoading"/>
       </div>
     </v-fade-transition>

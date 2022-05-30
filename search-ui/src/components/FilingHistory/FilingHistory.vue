@@ -1,18 +1,14 @@
 <template>
   <div id="filing-history-list">
-    <!-- Alternate Loading Spinner -->
-    <v-fade-transition>
-      <div class="loading-container grayed-out" v-show="isBusy">
-        <div class="loading__content">
-          <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg white--text">Fetching data</div>
-        </div>
-      </div>
-    </v-fade-transition>
     <h2 data-test-id="dashboard-filing-history-subtitle">
-      <span>Recent Filing History</span>&nbsp;<span class="gray6">({{ filings.length }})</span>
+      <span>Recent Filing History</span>&nbsp;
+      <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
+      <span v-else class="gray6">({{ filings.length }})</span>
     </h2>
-    <div class="scrollable-container mt-3">
+    <v-container v-if="filingHistory._loading" class="justify-center mt-3 white-background">
+      <v-progress-circular class="v-loader" size="50" indeterminate />
+    </v-container>
+    <div v-else class="scrollable-container mt-3">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">

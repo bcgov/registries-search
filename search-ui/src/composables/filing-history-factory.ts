@@ -14,9 +14,8 @@ const filingHistory = reactive({
 export const useFilingHistory = () => {
     // functions  to manage the filing history
     const clearFilingHistory = () => {
-        filingHistory._loading = false
-        filingHistory._error = null,
-            filingHistory.filings = []
+        filingHistory._error = null
+        filingHistory.filings = []
     }
 
 
