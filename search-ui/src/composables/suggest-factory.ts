@@ -14,7 +14,6 @@ const suggest = reactive({
 
 export const useSuggest = () => {
   const getSuggestResults = _.debounce(async (val: string) => {
-    console.log(val)
     suggest._loading = true
     const response = await getAutoComplete(val)
     if (response) {
