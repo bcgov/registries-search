@@ -12,9 +12,6 @@ import { DetailsList } from '@/components/common'
 import { useEntity, useFilingHistory } from '@/composables'
 import { EntityI } from '@/interfaces/entity'
 import { BusinessStatuses, BusinessTypes, FilingStatus, FilingTypes } from '@/enums'
-import { ApiFiling } from '@/interfaces/legal-api-responses'
-import Vue from 'Vue'
-import { wrap } from '@sentry/browser/types/helpers'
 
 const { entity, setEntity } = useEntity()
 const { filingHistory } = useFilingHistory()
