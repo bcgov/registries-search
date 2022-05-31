@@ -3,11 +3,11 @@
     <h4>Dissolution Complete</h4>
 
     <p>
-      The {{ entityTitle() }} {{ entity.name || '' }} was successfully
+      The {{ entityTitle }} {{ entity.name || '' }} was successfully
       <strong>dissolved on {{ dissolutionDateTime }}</strong>.
-      The {{ entityTitle() }} has been struck from the register and dissolved,
-      and ceased to be an incorporated {{ entityTitle() }}
-      under the {{ actTitle() }}.
+      The {{ entityTitle }} has been struck from the register and dissolved,
+      and ceased to be an incorporated {{ entityTitle }}
+      under the {{ actTitle }}.
     </p>
 
     <p>
