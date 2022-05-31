@@ -2,7 +2,7 @@
     <div v-if="props.filing" class="pending-filing-details body-2">
         <h4>Filing Pending</h4>
 
-        <p>This {{ title }} is paid, but the filing has not been completed by the Business Registry yet.
+        <p>This {{ title() }} is paid, but the filing has not been completed by the Business Registry yet.
             Some filings may take longer than expected.</p>
 
         <p v-if="props.filing.courtOrderNumber">Court Order Number: {{ props.filing.courtOrderNumber }}</p>
