@@ -1,10 +1,10 @@
 <template>
     <div v-if="props.filing" class="future-effective-details body-2">
-        <h4>{{ _.subtitle }}</h4>
+        <h4>{{ future_effective_title.subtitle }}</h4>
 
         <p>
-            The {{ _.filingLabel }} date and time for {{ props.entityName || 'this company' }}
-            will be <strong>{{ effectiveDateTime }}</strong>.
+            The {{ future_effective_title.filingLabel }} date and time for {{ props.entityName || 'this company' }}
+            will be <strong>{{ effectiveDateTime() }}</strong>.
         </p>
 
         <p v-if="props.filing.courtOrderNumber">Court Order Number: {{ props.filing.courtOrderNumber }}</p>
@@ -12,9 +12,9 @@
         <p v-if="props.filing.isArrangement">Pursuant to a Plan of Arrangement</p>
 
         <p>
-            If you wish to change the information in this {{ _.filingLabel }}, you must contact BC
-            Registries staff to file a withdrawal. Withdrawing this {{ _.filingTitle }} will remove
-            this {{ _.filingLabel }} and all associated information, and will incur a $20.00 fee.
+            If you wish to change the information in this {{ future_effective_title.filingLabel }}, you must contact BC
+            Registries staff to file a withdrawal. Withdrawing this {{ future_effective_title.filingTitle }} will remove
+            this {{ future_effective_title.filingLabel }} and all associated information, and will incur a $20.00 fee.
         </p>
 
         <h4 class="font-14">BC Registries Contact Information:</h4>
@@ -27,11 +27,12 @@
 import { ContactInfo } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 import { dateToPacificDateTime } from '@/utils'
+import { computed } from '@vue/reactivity'
 
 const props = defineProps<{ filing: FilingHistoryItem, entityName: string }>()
 
 /** Data for the subject filing. */
-const _ = (): any => {
+const future_effective_title = computed((): any => {
     if (props.filing.isFutureEffectiveIa) {
         return {
             subtitle: 'Future Effective Incorporation Date',
@@ -51,7 +52,7 @@ const _ = (): any => {
         filingLabel: 'filing',
         filingTitle: 'filing'
     }
-}
+})
 
 /** The future effective datetime of the subject filing. */
 const effectiveDateTime = (): string => {

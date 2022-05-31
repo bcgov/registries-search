@@ -1,10 +1,10 @@
 <template>
     <div v-if="props.filing" class="future-effective-pending-details body-2">
-        <h4>{{ _.subtitle }}</h4>
+        <h4>{{ future_effective_title.subtitle }}</h4>
 
         <p>
-            The {{ _.filingLabel }} date and time for {{ props.entityName || 'this company' }}
-            has been recorded as <strong>{{ effectiveDateTime }}</strong>.
+            The {{ future_effective_title.filingLabel }} date and time for {{ props.entityName || 'this company' }}
+            has been recorded as <strong>{{ effectiveDateTime() }}</strong>.
         </p>
 
         <p v-if="filing.courtOrderNumber">Court Order Number: {{ filing.courtOrderNumber }}</p>
@@ -24,11 +24,12 @@
 import { ContactInfo } from '@/components/common'
 import { FilingHistoryItem } from '@/types'
 import { dateToPacificDateTime } from '@/utils'
+import { computed } from '@vue/reactivity'
 
 const props = defineProps<{ filing: FilingHistoryItem, entityName: string }>()
 
 /** Data for the subject filing. */
-const _ = (): any => {
+const future_effective_title = computed((): any => {
     if (props.filing.isFutureEffectiveIaPending) {
         return {
             subtitle: 'Incorporation Pending',
@@ -45,7 +46,7 @@ const _ = (): any => {
         subtitle: 'Filing Pending',
         filingLabel: 'filing'
     }
-}
+})
 
 /** The future effective datetime of the subject filing. */
 const effectiveDateTime = (): string => {

@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 // Local
 import { CorpTypeCd } from '@/enums'
 import { getEntity } from '@/requests'
@@ -64,9 +64,21 @@ export const useEntity = () => {
     entity.status = newEntity.status
   }
 
-  const isBComp =  () => {
-    return entity.legalType == 'BEN'
-  }
+  const isBComp = computed(() => {
+    return entity.legalType == CorpTypeCd.BENEFIT_COMPANY
+  })
+
+  const isCoop = computed(() => {
+    return entity.legalType == CorpTypeCd.COOP
+  })
+
+  const entityTitle = computed((): string => {
+    return isCoop.value ? 'Cooperative Association' : 'Company'
+  })
+
+  const actTitle = computed((): string => {
+    return isCoop.value ? 'Cooperative Association Act' : 'Business Corporations Act'
+  })
 
   return {
     entity,
@@ -75,6 +87,9 @@ export const useEntity = () => {
     getEntityInfo,
     loadEntity,
     setEntity,
-    isBComp
+    isBComp,
+    isCoop,
+    entityTitle,
+    actTitle
   }
 }
