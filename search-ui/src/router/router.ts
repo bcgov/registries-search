@@ -16,19 +16,19 @@ export function createVueRouter (): Router {
     routes
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  router.beforeEach((to, from, next) => {
+  router.beforeEach(async (to, from, next) => {
     if (isLoginSuccess(to)) {
       // this route is to verify login
       next({
         name: RouteNames.SIGN_IN,
-        query: { redirect: to.query.redirect },
+        query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
       })
     } else {
       if (requiresAuth(to) && !isAuthenticated()) {
         // this route needs authentication, so re-route to login
         next({
           name: RouteNames.LOGIN,
-          query: { redirect: to.fullPath },
+          query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
         })
       } else {
         if (isLogin(to) && isAuthenticated()) {

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // BC registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+// local
+import { StaffRoles, UserRoles } from '@/enums'
 
 /** Gets Keycloak JWT and parses it. */
 function getJWT(): any {
@@ -31,7 +33,7 @@ function parseToken(token: string): any {
 }
 
 /** Gets Keycloak roles from JWT. */
-export function getKeycloakRoles(): Array<string> {
+export function getKeycloakRoles(): Array<StaffRoles | UserRoles> {
   const jwt = getJWT()
   const keycloakRoles = jwt.roles
   if (keycloakRoles && keycloakRoles.length > 0) {

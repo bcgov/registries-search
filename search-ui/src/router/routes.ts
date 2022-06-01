@@ -48,7 +48,7 @@ export const routes: RouteRecordRaw[] = [
     name: RouteNames.SEARCH,
     component: SearchView,
     meta: {
-      requiresAuth: true,
+      requiresAuth: false, // landing page so needs chance to load without auth
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     },
   },

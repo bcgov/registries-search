@@ -1,20 +1,22 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-
 // Vuetify
 import { createVuetify } from 'vuetify'
 
 export default createVuetify({
   iconfont: 'mdi',
   theme: {
+    defaultTheme: 'bcgov',
     themes: {
-      light: {
-        primary: '#1669bb', // same as $$primary-blue
-        darkBlue: '#38598a',
-        error: '#d3272c',
-        success: '#1a9031',
-      },
+      bcgov: {
+        colors: {
+          primary: '#1669bb', // same as $$primary-blue
+          darkBlue: '#38598a',
+          error: '#d3272c',
+          success: '#1a9031',
+        }
+      }
     },
   },
 })

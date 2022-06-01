@@ -1,6 +1,6 @@
 <template>
   <v-container id="search" class="container" fluid>
-    <v-overlay v-model="search._loading">
+    <v-overlay v-model="search._loading" style="top: 50%; left: 50%;">
       <v-progress-circular class="v-loader" size="50" indeterminate />
     </v-overlay>
     <div>
