@@ -8,7 +8,8 @@ import { EntityInfo } from '@/components'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
-import { RouteNames } from '@/enums'
+import { useAuth } from '@/composables'
+import { ProductCode, ProductStatus, RouteNames } from '@/enums'
 import { SearchBusinessInfoBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 import { createVueRouter } from '@/router'
 import store from '@/store'
@@ -22,6 +23,11 @@ describe('App tests', () => {
   beforeEach(async () => {
     // set keycloak token so it doesn't redirect
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
+    // set auth
+    const { auth } = useAuth()
+    auth.tokenInitialized = true
+    auth.activeProducts = [{ code: ProductCode.BUSINESS_SEARCH, subscriptionStatus: ProductStatus.ACTIVE }]
+    // set router
     router = createVueRouter()
     await router.push(RouteNames.SEARCH)
 

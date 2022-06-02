@@ -1,6 +1,8 @@
 @import 'theme.scss';
 
 .app-container {
+  background-color: #f1f3f5;
+  color: #495057;
   display: flex;
   flex-flow: column nowrap;
   min-height: 100vh;
