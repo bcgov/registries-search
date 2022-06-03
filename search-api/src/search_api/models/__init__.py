@@ -16,6 +16,8 @@
 # flake8: noqa I001
 from .db import db
 from .user import User
+from .document_access_request import DocumentAccessRequest
+from .document import Document
 
 
-__all__ = ('db', 'User',)
+__all__ = ('db', 'User', 'Document', 'DocumentAccessRequest')
