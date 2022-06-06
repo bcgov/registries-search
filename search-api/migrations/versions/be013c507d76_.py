@@ -28,7 +28,7 @@ def upgrade():
     sa.Column('payment_completion_date', sa.DateTime(timezone=True), nullable=True),
     sa.Column('submission_date', sa.DateTime(timezone=True), nullable=True),
     sa.Column('expiry_date', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('output_file_key', sa.String(length=100), nullable=False),
+    sa.Column('output_file_key', sa.String(length=100), nullable=True),
     sa.Column('submitter_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['submitter_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')

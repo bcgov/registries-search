@@ -33,20 +33,32 @@ class Document(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     document_type = db.Column(db.String(30), index=True)
-    _document_key = db.Column('document_key', db.String(100), nullable=False)
-    _file_name = db.Column('file_name', db.String(100))
-    _file_key = db.Column('file_key', db.String(100))
+    document_key = db.Column('document_key', db.String(100), nullable=False)
+    file_name = db.Column('file_name', db.String(100))
+    file_key = db.Column('file_key', db.String(100))
     access_request_id = db.Column('access_request_id', db.Integer, db.ForeignKey('document_access_request.id'))
 
+    @property
+    def json(self):
+        """Return a dict of this object, with keys in JSON format."""
+        document = {
+            'id': self.id,
+            'documentType': self.document_type,
+            'documentKey': self.document_key,
+            'fileName': self.file_name or '',
+            'fileKey': self.file_key or ''
+        }
+        return document
+
     @classmethod
-    def find_by_id(cls, submitter_id: int = None):
+    def find_by_id(cls, document_id: int = None):
         """Return a Document that has the specified id."""
-        return cls.query.filter_by(id=submitter_id).one_or_none()
+        return cls.query.filter_by(id=document_id).one_or_none()
 
     @classmethod
     def find_by_document_key(cls, document_key: str):
         """Return a Document having the specified document key."""
-        return cls.query.filter_by(_document_key=document_key).one_or_none()
+        return cls.query.filter_by(document_key=document_key).one_or_none()
 
     def save(self):
         """Store the Document."""

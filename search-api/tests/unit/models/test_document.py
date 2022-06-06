@@ -24,7 +24,7 @@ from search_api.models import Document
 def test_document_save(session):
     """Assert that a document can be stored in the service."""
     document = Document(document_type=Document.DocumentTypes.CERTIFICATE_OF_GOOD_STANDING,
-                        _document_key='test')
+                        document_key='test')
 
     document.save()
 
@@ -34,23 +34,41 @@ def test_document_save(session):
 def test_find_by_document_key(session):
     """Assert that a document can be retrieved using document key."""
     document = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL,
-                        _document_key='test')
+                        document_key='test')
 
     document.save()
 
-    u = Document.find_by_document_key('test')
+    retrieved_document = Document.find_by_document_key('test')
 
-    assert u is not None
-    assert u.id == document.id
+    assert retrieved_document is not None
+    assert retrieved_document.id == document.id
 
 
 def test_find_by_id(session):
     """Assert that a document can be retrieved using document id."""
     document = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL,
-                        _document_key='test')
+                        document_key='test')
 
     document.save()
 
-    u = Document.find_by_id(document.id)
+    retrieved_document = Document.find_by_id(document.id)
 
-    assert u is not None
+    assert retrieved_document is not None
+
+
+def test_document_json(session):
+    """Assert that a document can be retrieved using document id."""
+    document = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL,
+                        document_key='test')
+
+    document.save()
+
+    document_json={
+        'documentKey': document.document_key,
+        'documentType': document.document_type,
+        'fileKey': '',
+        'fileName': '',
+        'id': document.id
+    }
+
+    assert document.json == document_json
