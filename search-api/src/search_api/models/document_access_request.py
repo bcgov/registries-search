@@ -13,7 +13,7 @@
 # limitations under the License.
 """Table for storing document access request details."""
 from datetime import datetime
-from enum import Enum
+from enum import auto
 from http import HTTPStatus
 
 from sqlalchemy import inspect
@@ -21,6 +21,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref
 
 from search_api.exceptions import BusinessException
+from search_api.utils.base import BaseEnum
 
 from .db import db
 
@@ -28,20 +29,19 @@ from .db import db
 class DocumentAccessRequest(db.Model):
     """Used to hold the document access request information."""
 
-    class Status(str, Enum):
+    class Status(BaseEnum):
         """Enum of the request statuses."""
 
-        CREATED = 'CREATED'
-        PAID = 'PAID'
-        ERROR = 'ERROR'
-        COMPLETED = 'COMPLETED'  # After all docs are generated and stored.
+        CREATED = auto()
+        PAID = auto()
+        ERROR = auto()
+        COMPLETED = auto()  # After all docs are generated and stored.
 
-    __versioned__ = {}
     __tablename__ = 'document_access_request'
 
     id = db.Column(db.Integer, primary_key=True)
     business_identifier = db.Column('business_identifier', db.String(10), index=True)
-    status = db.Column('status', db.String(20), default=Status.CREATED)
+    status = db.Column('status', db.Enum(Status), default=Status.CREATED.value)
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
     _payment_token = db.Column('payment_id', db.String(4096))
@@ -112,11 +112,11 @@ class DocumentAccessRequest(db.Model):
         document_access_request = {
             'id': self.id,
             'businessIdentifier': self.business_identifier,
-            'status': self.status,
+            'status': self.status.name,
             'paymentStatus': self.payment_status_code,
             'submissionDate': self.submission_date.isoformat(),
             'expiryDate': self.expiry_date.isoformat(),
-            'outputFileKey': self._output_file_key or ''
+            'outputFileKey': self._output_file_key
         }
 
         documents = []

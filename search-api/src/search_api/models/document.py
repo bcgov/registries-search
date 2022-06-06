@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Table for storing document details."""
-from enum import Enum
+from enum import auto
+
+from search_api.utils.base import BaseEnum
 
 from .db import db
 
@@ -20,19 +22,18 @@ from .db import db
 class Document(db.Model):
     """Used to hold the documents requested in an access request."""
 
-    class DocumentTypes(str, Enum):
+    class DocumentType(BaseEnum):
         """Enum of the document types."""
 
-        BUSINESS_SUMMARY_FILING_HISTORY = 'summary_history'
-        CERTIFICATE_OF_GOOD_STANDING = 'cogs'
-        CERTIFICATE_OF_STATUS = 'cert_of_status'
-        LETTER_UNDER_SEAL = 'letter_under_seal'
+        BUSINESS_SUMMARY_FILING_HISTORY = auto()
+        CERTIFICATE_OF_GOOD_STANDING = auto()
+        CERTIFICATE_OF_STATUS = auto()
+        LETTER_UNDER_SEAL = auto()
 
-    __versioned__ = {}
     __tablename__ = 'document'
 
     id = db.Column(db.Integer, primary_key=True)
-    document_type = db.Column(db.String(30), index=True)
+    document_type = db.Column(db.Enum(DocumentType), index=True)
     document_key = db.Column('document_key', db.String(100), nullable=False)
     file_name = db.Column('file_name', db.String(100))
     file_key = db.Column('file_key', db.String(100))
@@ -43,10 +44,10 @@ class Document(db.Model):
         """Return a dict of this object, with keys in JSON format."""
         document = {
             'id': self.id,
-            'documentType': self.document_type,
+            'documentType': self.document_type.name,
             'documentKey': self.document_key,
-            'fileName': self.file_name or '',
-            'fileKey': self.file_key or ''
+            'fileName': self.file_name,
+            'fileKey': self.file_key
         }
         return document
 

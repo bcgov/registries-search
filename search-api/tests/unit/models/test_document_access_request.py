@@ -15,11 +15,9 @@
 
 Test-Suite to ensure that the Document Access Request Class is working as expected.
 """
-import pytest
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from search_api.exceptions import BusinessException
 from search_api.models import Document, DocumentAccessRequest, User
 
 
@@ -35,7 +33,7 @@ def test_document_request_save(session):
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
     document_access_request.submitter = user
 
-    document = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL, document_key='test')
+    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
     document_access_request.documents.append(document)
 
     document_access_request.save()
@@ -52,14 +50,14 @@ def test_find_active_requests(session):
         payment_completion_date=datetime.utcnow(),
         submission_date=datetime.utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
-        status=DocumentAccessRequest.Status.PAID
+        status=DocumentAccessRequest.Status.PAID.value
     )
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
     document_access_request.submitter = user
 
-    document_1 = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL, document_key='test1')
-    document_2 = Document(document_type=Document.DocumentTypes.CERTIFICATE_OF_GOOD_STANDING, document_key='test2')
+    document_1 = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value, document_key='test1')
+    document_2 = Document(document_type=Document.DocumentType.CERTIFICATE_OF_GOOD_STANDING.value, document_key='test2')
     document_access_request.documents.append(document_1)
     document_access_request.documents.append(document_2)
 
@@ -84,7 +82,7 @@ def test_find_by_id(session):
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
     document_access_request.submitter = user
 
-    document = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL, document_key='test')
+    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
     document_access_request.documents.append(document)
 
     document_access_request.save()
@@ -104,14 +102,14 @@ def test_document_access_request_json(session):
         payment_completion_date=datetime.utcnow(),
         submission_date=datetime.utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
-        status=DocumentAccessRequest.Status.PAID
+        status=DocumentAccessRequest.Status.PAID.value
     )
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
     document_access_request.submitter = user
 
-    document_1 = Document(document_type=Document.DocumentTypes.LETTER_UNDER_SEAL, document_key='test1')
-    document_2 = Document(document_type=Document.DocumentTypes.CERTIFICATE_OF_GOOD_STANDING, document_key='test2')
+    document_1 = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL, document_key='test1')
+    document_2 = Document(document_type=Document.DocumentType.CERTIFICATE_OF_GOOD_STANDING, document_key='test2')
     document_access_request.documents.append(document_1)
     document_access_request.documents.append(document_2)
 
@@ -121,22 +119,22 @@ def test_document_access_request_json(session):
        'documents': [
            {
                 'documentKey': 'test1',
-                'documentType': 'letter_under_seal',
-                'fileKey': '',
-                'fileName': '',
+                'documentType': document_1.document_type.name,
+                'fileKey': None,
+                'fileName': None,
                 'id': document_1.id
            },
            {
                 'documentKey': 'test2',
-                'documentType': 'cogs',
-                'fileKey': '',
-                'fileName': '',
+                'documentType': document_2.document_type.name,
+                'fileKey': None,
+                'fileName': None,
                 'id': document_2.id
             }
        ],
        'expiryDate': document_access_request.expiry_date.isoformat(),
        'id': document_access_request.id,
-       'outputFileKey': '',
+       'outputFileKey': None,
        'paymentStatus': 'COMPLETED',
        'status': 'PAID',
        'submissionDate': document_access_request.submission_date.isoformat()

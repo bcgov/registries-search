@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('document_access_request',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('business_identifier', sa.String(length=10), nullable=True),
-    sa.Column('status', sa.String(length=20), nullable=True),
+    sa.Column('status', sa.Enum('CREATED', 'PAID', 'ERROR', 'COMPLETED', name='status'), nullable=True),
     sa.Column('account_id', sa.Integer(), nullable=True),
     sa.Column('payment_status_code', sa.String(length=50), nullable=True),
     sa.Column('payment_id', sa.String(length=4096), nullable=True),
@@ -36,7 +36,7 @@ def upgrade():
     op.create_index(op.f('ix_document_access_request_business_identifier'), 'document_access_request', ['business_identifier'], unique=False)
     op.create_table('document',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('document_type', sa.String(length=30), nullable=True),
+    sa.Column('document_type', sa.Enum('BUSINESS_SUMMARY_FILING_HISTORY', 'CERTIFICATE_OF_GOOD_STANDING', 'CERTIFICATE_OF_STATUS', 'LETTER_UNDER_SEAL', name='documenttype'), nullable=True),
     sa.Column('document_key', sa.String(length=100), nullable=False),
     sa.Column('file_name', sa.String(length=100), nullable=True),
     sa.Column('file_key', sa.String(length=100), nullable=True),
