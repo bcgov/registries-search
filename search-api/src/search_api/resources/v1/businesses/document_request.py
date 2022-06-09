@@ -50,4 +50,3 @@ def get(business_identifier, request_id=None):
         return jsonify(documentAccessRequests=access_requests_list)
     except Exception as default_exception:  # noqa: B902
         return resource_utils.default_exception_response(default_exception)
-
