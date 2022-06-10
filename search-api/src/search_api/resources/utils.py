@@ -99,6 +99,11 @@ def sbc_payment_invalid():
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
 
 
+def sbc_payment_required(message: dict):
+    """Build sbc payment required error response."""
+    return jsonify({'message': message}), HTTPStatus.PAYMENT_REQUIRED
+
+
 def validation_error_response(errors, cause, additional_msg: str = None):
     """Build a schema validation error response."""
     message = ResourceErrorCodes.VALIDATION_ERR + ': ' + cause

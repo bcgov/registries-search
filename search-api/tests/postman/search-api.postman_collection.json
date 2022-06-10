@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "2c7ca3fe-52bc-445a-9fd3-2391cff5df39",
+		"_postman_id": "e63ca5a0-214b-4a31-b957-faa32ce31e25",
 		"name": "SEARCH API Integration Tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7999989"
 	},
 	"item": [
 		{
@@ -525,6 +526,210 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "document-requests",
+			"item": [
+				{
+					"name": "Create Document Access Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 201/Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    \r",
+									"    // success, so set filing_id\r",
+									"    pm.environment.set(\"access_request_id\", jsonData.id)\r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "accountId",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documentAccessRequest\":{\r\n        \"documents\": [\r\n            {\r\n                \"type\": \"BUSINESS_SUMMARY_FILING_HISTORY\"\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"{{identifier}}",
+								"documents",
+								"requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Requests",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);     \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "accountId",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"{{identifier}}",
+								"documents",
+								"requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Request By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);     \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "accountId",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/requests/{{access_request_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"{{identifier}}",
+								"documents",
+								"requests",
+								"{{access_request_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "identifier",
+			"value": "1"
 		}
 	]
 }
