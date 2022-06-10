@@ -22,6 +22,7 @@ status_code - where possible use HTTP Error Codes
 import functools
 from enum import Enum
 from http import HTTPStatus
+from typing import Dict, List
 
 
 class ResourceErrorCodes(str, Enum):
@@ -62,3 +63,13 @@ class SolrException(Exception):
         super(SolrException, self).__init__(*args, **kwargs)
         self.error = error
         self.status_code = status_code
+
+
+class ApiConnectionException(Exception):
+    """Api Connection exception."""
+
+    def __init__(self, code: int, detail: List[Dict]):
+        """Initialize the error object."""
+        super(ApiConnectionException, self).__init__()
+        self.code = code
+        self.detail = detail

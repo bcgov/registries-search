@@ -115,7 +115,7 @@ class DocumentAccessRequest(db.Model):
             'status': self.status.name,
             'paymentStatus': self.payment_status_code,
             'submissionDate': self.submission_date.isoformat(),
-            'expiryDate': self.expiry_date.isoformat(),
+            'expiryDate': self.expiry_date.isoformat() if self.expiry_date else None,
             'outputFileKey': self._output_file_key
         }
 

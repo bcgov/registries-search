@@ -40,3 +40,11 @@ class BaseEnum(str, Enum, metaclass=BaseMeta):
             if enum_value.value == value:
                 return enum_value
         return None
+
+    @classmethod
+    def get_enum_by_name(cls, value: str) -> Optional[str]:
+        """Return the enum by value."""
+        for enum_value in cls:
+            if enum_value.name == value:
+                return enum_value
+        return None
