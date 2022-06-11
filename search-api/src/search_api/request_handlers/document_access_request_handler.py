@@ -75,11 +75,11 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             error_type = payment_response.json().get('type')
             document_access_request.payment_status_code = error_type
             document_access_request.save()
-            return resource_utils.sbc_payment_required(payment_response.json().get('detail'))
+            return {'error': payment_response.json().get('detail')}, HTTPStatus.PAYMENT_REQUIRED
 
         return resource_utils.sbc_payment_required({'message': 'unable to create invoice for payment.'})
     except ApiConnectionException as connection_error:
-        return resource_utils.sbc_payment_required(connection_error.detail)
+        return {'error': connection_error.detail}, HTTPStatus.PAYMENT_REQUIRED
 
 
 def _generate_key():
