@@ -12,13 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test-Suite to ensure that the document access endpoints/functions work as expected."""
+import json
 from datetime import datetime
 from http import HTTPStatus
-from search_api.services.authz import STAFF_ROLE
+
 from dateutil.relativedelta import relativedelta
-from tests.unit.services.utils import create_header
 
 from search_api.models import Document, DocumentAccessRequest, User
+from search_api.services.authz import STAFF_ROLE
+from search_api.services.validator import RequestValidator
+from tests.unit import MockResponse
+from tests.unit.services.utils import create_header
+
+
+DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
+    "documentAccessRequest":{
+        "documents": [
+            {
+                "type": "BUSINESS_SUMMARY_FILING_HISTORY"
+            }
+        ]
+    }
+}
 
 
 def test_get_business_documents(session, client, jwt):
@@ -119,6 +134,56 @@ def test_get_business_document_by_id_unauthorized(session, client, jwt):
                     )
     # check
     assert rv.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_post_business_document(session, client, jwt, mocker):
+    """Assert that unauthorized error is returned."""
+    account_id = 123
+    business_identifier = 'CP1234567'
+    mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
+                 return_value=[])
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
+    mock_response = MockResponse({'id': 123}, HTTPStatus.CREATED)
+    mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
+                 return_value=mock_response)
+    api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
+                     data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
+                    headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
+                                                                                     'accountId': account_id,
+                                                                                     'content-type': 'application/json'
+                                                                                     })
+                    )
+    # check
+    assert api_response.status_code == HTTPStatus.CREATED
+    response_json = api_response.json
+    assert response_json['expiryDate']
+    assert response_json['id']
+
+
+def test_post_business_document_payment_failure(session, client, jwt, mocker):
+    """Assert that unauthorized error is returned."""
+    account_id = 123
+    business_identifier = 'CP1234567'
+    mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
+                 return_value=[])
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
+    mock_response = MockResponse({'id': 123}, HTTPStatus.BAD_REQUEST)
+    mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
+                 return_value=mock_response)
+    api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
+                     data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
+                    headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
+                                                                                     'accountId': account_id,
+                                                                                     'content-type': 'application/json'
+                                                                                     })
+                    )
+    # check
+    assert api_response.status_code == HTTPStatus.PAYMENT_REQUIRED
+    response_json = api_response.json
+    assert not response_json['expiryDate']
+    assert response_json['id']
 
 
 def create_document_access_request(identifier: str, account_id: int, is_paid: bool = False):
