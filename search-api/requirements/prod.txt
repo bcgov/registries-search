@@ -11,9 +11,10 @@ dpath
 google-auth
 google-auth-oauthlib
 gunicorn
-jsonschema
+jsonschema<4
 launchdarkly-server-sdk
 psycopg2-binary
+python-dateutil
 python-dotenv
 requests
 sentry-sdk[flask]
