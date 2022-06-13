@@ -14,8 +14,8 @@
             </thead>
             <tbody v-if="totalResultsLength>0">
                 <tr v-for="item in documentAccessRequest.requests" :key="item.id">
-                    <td>{{ item.submissionDate }}</td>
-                    <td>{{ item.expiryDate }}</td>
+                    <td>{{ dateTimeString(item.submissionDate) }}</td>
+                    <td>{{ dateTimeString(item.expiryDate) }}</td>
                     <td></td>                     
                 </tr>
             </tbody>
@@ -36,11 +36,16 @@
 import { computed } from 'vue'
 // local
 import {useDocumentAccessRequest } from '@/composables'
+import { dateToPacificDateTime } from '@/utils'
 
 // composables
 const { documentAccessRequest } = useDocumentAccessRequest()
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0 )
+
+const dateTimeString = (val: string): string => {  
+  return (dateToPacificDateTime(new Date(val)) || 'Unknown')
+}
  
 </script>
 

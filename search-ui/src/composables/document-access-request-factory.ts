@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 
-import { AccessRequestsHistoryI, DocumentAccessRequestsI } from '@/interfaces'
-import { getActiveAccessRequests } from '@/requests'
+import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI } from '@/interfaces'
+import { getActiveAccessRequests, createDocumentAccessRequest } from '@/requests'
 
 
 const documentAccessRequest = reactive({
@@ -31,9 +31,20 @@ export const useDocumentAccessRequest = () => {
         documentAccessRequest._loading = false
     }
 
+    const createAccessRequest = async (identifier: string, selectedDocs: any) => {
+        documentAccessRequest._loading = true
+
+        const createAccessRequestsResponse: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs)
+        if (createAccessRequestsResponse.error) {
+            documentAccessRequest._error = createAccessRequestsResponse.error
+        }        
+        documentAccessRequest._loading = false
+    }
+
     return {
         documentAccessRequest,
         clearAccessRequestHistory,
+        createAccessRequest,
         loadAccessRequestHistory
     }
 }

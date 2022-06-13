@@ -1,5 +1,8 @@
 <template>
   <v-container id="business-info" class="container" fluid>
+    <v-overlay v-model="documentAccessRequest._loading" style="top: 50%; left: 50%;">
+      <v-progress-circular class="v-loader" size="50" indeterminate />
+    </v-overlay>
     <v-row no-gutters>
       <v-col>
         <h2>How to Access Business Documents</h2>
@@ -53,8 +56,6 @@ import DocumentAccessRequestHistory from '@/components/BusinessInfo/DocumentAcce
 import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ActionComps, FeeCodes, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI } from '@/interfaces'
-import {createDocumentAccessRequest} from '@/requests'
-import {CreateDocumentResponseI} from '@/interfaces'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
@@ -66,7 +67,7 @@ const router = useRouter()
 const { entity, clearEntity, loadEntity } = useEntity()
 const { loadFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
-const { loadAccessRequestHistory } = useDocumentAccessRequest()
+const { documentAccessRequest, loadAccessRequestHistory, createAccessRequest } = useDocumentAccessRequest()
 
 // fee summary
 const feePreSelectItem: FeeI = {
@@ -82,8 +83,8 @@ const selectedDocs = ref([])as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
 const payForDocuments = async () => {  
-  const response  = await createDocumentAccessRequest(entity.identifier, selectedDocs)   
-  if (response.createDocumentResponse){     
+  await createAccessRequest(entity.identifier, selectedDocs)   
+  if (!documentAccessRequest._error) {     
     window.location.reload()
   }   
 }

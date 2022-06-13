@@ -136,7 +136,8 @@ class DocumentAccessRequest(db.Model):
             filter(DocumentAccessRequest.business_identifier == business_identifier).\
             filter(DocumentAccessRequest.expiry_date > datetime.utcnow()).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
-                                                     DocumentAccessRequest.Status.COMPLETED])).all()
+                                                     DocumentAccessRequest.Status.COMPLETED])). \
+            order_by(DocumentAccessRequest.id.desc()).all()
 
     @classmethod
     def find_by_id(cls, request_id: int):
