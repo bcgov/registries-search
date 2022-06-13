@@ -5,10 +5,3 @@ launchdarkly-server-sdk
 paramiko
 python-dotenv
 pytz
-
-# search-api dependencies (pckgs need to be same version as search-api or pip will complain):
-cachetools==5.0.0
-certifi==2021.10.8
-google-auth==2.6.6
-importlib-metadata==4.11.3
-requests==2.27.1
