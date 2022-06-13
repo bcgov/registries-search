@@ -20,7 +20,7 @@
                 class="document-list__checkbox"
                 hide-details
                 :label="item.label"
-                @change="toggleFee($event, item.code)"
+                @change="toggleFee($event, item)"
               />
             </v-col>
             <v-col class="document-list__fee pt-4" align-self="end" cols="auto" v-html="item.fee" />
@@ -28,6 +28,11 @@
         </div>
         <v-divider class="my-10" />
         <div>
+          <h4>Purchase History</h4> 
+          <document-access-request-history />
+        </div>
+        <v-divider class="my-10" />
+         <div>
           <filing-history />
         </div>
       </v-col>
@@ -39,22 +44,29 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue'
+import { onMounted, ref, Ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { BaseFeeCalculator } from '@/components'
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-import { useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
-import { ActionComps, FeeCodes, RouteNames } from '@/enums'
+import DocumentAccessRequestHistory from '@/components/BusinessInfo/DocumentAccessRequestHistory.vue'
+import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
+import { ActionComps, FeeCodes, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI } from '@/interfaces'
+import {createDocumentAccessRequest} from '@/requests'
+import {CreateDocumentResponseI} from '@/interfaces'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
+
 const router = useRouter()
+
+
 const { entity, clearEntity, loadEntity } = useEntity()
 const { loadFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
+const { loadAccessRequestHistory } = useDocumentAccessRequest()
 
 // fee summary
 const feePreSelectItem: FeeI = {
@@ -64,25 +76,34 @@ const feePreSelectItem: FeeI = {
   quantity: 0,
   serviceFee: 1.5
 }
-const payForDocuments = () => {
-  console.log(fees)
+
+const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string, documentType: DocumentType }[]>
+const selectedDocs = ref([])as Ref<DocumentType[]>
+const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
+
+const payForDocuments = async () => {  
+  const response  = await createDocumentAccessRequest(entity.identifier, selectedDocs)   
+  if (response.createDocumentResponse){     
+    window.location.reload()
+  }   
 }
+
 const feeActions: FeeAction[][] = [
   [{
     action: (val) => { fees.folioNumber = val },
     compType: ActionComps.TEXTFIELD,
-    outlined: false,
+    outlined: false,    
     text: 'Folio Number (Optional)' }],
   [{
     action: () => { router.push({ name: RouteNames.SEARCH }) },
     compType: ActionComps.BUTTON,
-    iconLeft: 'mdi-chevron-left',
+    iconLeft: 'mdi-chevron-left',    
     outlined: true, text: 'Back to Search Results' }],
   [{
     action: payForDocuments,
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
-    outlined: false,
+    outlined: false,     
     text: 'Pay and Unlock Documents' }],
 ]
 
@@ -92,25 +113,34 @@ const getDocFee = async (code: FeeCodes) => {
   if (feeInfo) return displayFee(feeInfo.fee, true)
   return 'Not Available'
 }
-const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string }[]>
+
 
 // load entity data, clear any previous fees
 onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
   loadFilingHistory(props.identifier)
+  loadAccessRequestHistory(props.identifier)
   clearFees()
   const feeBaseDocs = await getDocFee(FeeCodes.SRCH_BASE_DOCS)
   purchasableDocs.value.push({
     code: FeeCodes.SRCH_BASE_DOCS,
     fee: feeBaseDocs,
-    label: 'Business Summary and Filing History Documents'
+    label: 'Business Summary and Filing History Documents',
+    documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY
   })
 })
 
-const toggleFee = (event: any, code: FeeCodes) => {
-  if (event.target.checked) addFeeItem(code, 1)
-  else removeFeeItem(code, 1)
+const toggleFee = (event: any, item: any) => {
+  if (event.target.checked) {
+    addFeeItem(item.code, 1)
+    selectedDocs.value.push(item.documentType)
+  }
+  else 
+  {
+    removeFeeItem(item.code, 1)
+    selectedDocs.value = selectedDocs.value.filter(doc => doc != item.documentType)
+  }
 }
 </script>
 
