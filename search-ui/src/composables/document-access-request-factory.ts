@@ -34,9 +34,9 @@ export const useDocumentAccessRequest = () => {
     const createAccessRequest = async (identifier: string, selectedDocs: any) => {
         documentAccessRequest._loading = true
 
-        const createAccessRequestsResponse: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs)
-        if (createAccessRequestsResponse.error) {
-            documentAccessRequest._error = createAccessRequestsResponse.error
+        const response: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs)
+        if (response.error) {
+            documentAccessRequest._error = response.error
         }        
         documentAccessRequest._loading = false
     }

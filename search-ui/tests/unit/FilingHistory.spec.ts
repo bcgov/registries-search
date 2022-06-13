@@ -1,4 +1,4 @@
-import { flushPromises, mount, shallowMount, VueWrapper } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 
 // Components and sub-components
 import FilingHistoryList from '@/components/FilingHistory/FilingHistory.vue'
@@ -13,7 +13,7 @@ import { useEntity, useFilingHistory } from '@/composables'
 import { EntityI } from '@/interfaces/entity'
 import { BusinessStatuses, BusinessTypes, FilingStatus, FilingTypes } from '@/enums'
 
-const { entity, setEntity } = useEntity()
+const { setEntity } = useEntity()
 const { filingHistory } = useFilingHistory()
 
 const cp_entity: EntityI = {
@@ -104,9 +104,13 @@ describe('Filing History List - misc functionality', () => {
         expect(vm.historyItems.length).toEqual(2)
         await wrapper.vm.$nextTick()
 
-        expect(wrapper.findAll('.filing-history-item')[0].find('.item-header__title').text()).toEqual("Annual Report")
-        expect(wrapper.findAll('.filing-history-item')[0].find('.item-header__subtitle').text()).toContain("FILED AND PAID  (Filed on  June 2, 2019 at 12:22 pm Pacific time) EFFECTIVE as of  June 2, 2019 at 12:22 pm Pacific time")
-        expect(wrapper.findAll('.filing-history-item')[1].find('.item-header__title').text()).toEqual("Change of Address")
+        expect(wrapper.findAll('.filing-history-item')[0].find('.item-header__title').text())
+        .toEqual("Annual Report")
+        expect(wrapper.findAll('.filing-history-item')[0].find('.item-header__subtitle').text())
+        .toContain("FILED AND PAID  (Filed on  June 2, 2019 at 12:22 pm Pacific time) EFFECTIVE"+
+         "as of  June 2, 2019 at 12:22 pm Pacific time")
+        expect(wrapper.findAll('.filing-history-item')[1].find('.item-header__title').text())
+        .toEqual("Change of Address")
 
         wrapper.unmount()
     })

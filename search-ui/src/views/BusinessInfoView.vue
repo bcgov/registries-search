@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref, computed } from 'vue'
+import { onMounted, ref, Ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { BaseFeeCalculator } from '@/components'
@@ -105,6 +105,7 @@ const feeActions: FeeAction[][] = [
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
     outlined: false,     
+    disabled: reactive(hasNoSelectedDocs),
     text: 'Pay and Unlock Documents' }],
 ]
 

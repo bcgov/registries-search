@@ -1,7 +1,8 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 
-import { SearchResponseI, SuggestionResponseI, DocumentDetailsI, CreateDocumentResponseI,  AccessRequestsHistoryI } from '@/interfaces'
+import { SearchResponseI, SuggestionResponseI, DocumentDetailsI,
+   CreateDocumentResponseI,  AccessRequestsHistoryI } from '@/interfaces'
 import { ErrorCategories } from '@/enums'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
@@ -61,7 +62,8 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 }
 
 
-export async function createDocumentAccessRequest(business_identifier: string, documentList: any): Promise<CreateDocumentResponseI> {
+export async function createDocumentAccessRequest(business_identifier: string,
+   documentList: any): Promise<CreateDocumentResponseI> {
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const accountInfo: any = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))
   const config = {

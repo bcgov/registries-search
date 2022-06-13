@@ -1,5 +1,5 @@
 import { BusinessStatuses, BusinessTypes, FilingStatus, FilingTypes } from '@/enums'
-import { ApiFiling, LegalApiBusinessI } from '@/interfaces/legal-api-responses'
+import { LegalApiBusinessI } from '@/interfaces/legal-api-responses'
 
 
 export const mockedBusinessResp: LegalApiBusinessI = {

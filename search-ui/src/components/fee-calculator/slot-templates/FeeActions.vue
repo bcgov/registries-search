@@ -1,5 +1,5 @@
 <template>
-  <v-row v-for="actions, i in actionsList" :key="'fee-action-'+i" class="pt-4" no-gutters>
+  <v-row v-for="actions, i in props.actionsList" :key="'fee-action-'+i" class="pt-4" no-gutters>
     <v-col v-for="item, i in actions" :key="'fee-action-item-'+i" cols="12" :md="actions.length > 1 ? '6' : '12'">
       <base-action :fee-action="item" />
     </v-col>
