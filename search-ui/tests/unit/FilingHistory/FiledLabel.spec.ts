@@ -47,7 +47,6 @@ describe('Filed Label', () => {
         })
 
         // verify content
-        const spans = wrapper.findAll('.filed-label > span')
         expect(wrapper.html().toString()).toContain('Filed on')
         expect(wrapper.html().toString()).toContain('May 15, 2020 at 5:00 am Pacific time')
         expect(wrapper.html().toString()).toContain('EFFECTIVE as of')

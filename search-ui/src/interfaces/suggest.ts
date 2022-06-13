@@ -1,5 +1,5 @@
 import { ErrorI } from '@/interfaces'
-import { BusinessStatuses, BusinessTypes, CorpTypeCd, SuggestionTypes } from '@/enums'
+import { SuggestionTypes } from '@/enums'
 
 // UI models
 export interface SuggestI {

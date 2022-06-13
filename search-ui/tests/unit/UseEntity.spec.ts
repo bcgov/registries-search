@@ -62,7 +62,7 @@ describe('Entity Factory tests', () => {
     const { getEntityDescription } = useEntity()
     // returns '' if no description
     expect(getEntityDescription('fakeCorpType' as CorpTypeCd)).toBe('')
-    for (let status in Object.values(BusinessStatuses)) {
+    for (const status in Object.values(BusinessStatuses)) {
       expect(getEntityDescription(status as CorpTypeCd)).toBe('')
     }
   })

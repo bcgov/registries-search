@@ -1,9 +1,7 @@
 import { mount } from '@vue/test-utils'
-import Vue from 'vue'
 
 // Components and sub-components
 import DocumentsList from '@/components/FilingHistory/DocumentsList.vue'
-import { wrap } from '@sentry/browser/types/helpers'
 
 describe('Documents List', () => {
     const SAMPLE_FILING = {
@@ -95,7 +93,8 @@ describe('Documents List', () => {
             ]
         }
 
-        const wrapper = mount(DocumentsList, { props: { filing: filing, loadingOne: false, loadingAll: false, isLocked: false } })
+        const wrapper = mount(DocumentsList, { props: { filing: filing, 
+            loadingOne: false, loadingAll: false, isLocked: false } })
 
         const documentBtns = wrapper.findAll('.download-one-btn')
 
@@ -115,7 +114,8 @@ describe('Documents List', () => {
             ]
         }
 
-        const wrapper = mount(DocumentsList, { props: { filing: filing, loadingOne: false, loadingAll: false, isLocked: true } })
+        const wrapper = mount(DocumentsList, { props: { filing: filing, 
+            loadingOne: false, loadingAll: false, isLocked: true } })
 
         const documentBtns = wrapper.findAll('.download-one-btn')
 
@@ -135,7 +135,8 @@ describe('Documents List', () => {
             ]
         }
 
-        const wrapper = mount(DocumentsList, { props: { filing: filing, loadingOne: true, loadingAll: false, isLocked: false } })
+        const wrapper = mount(DocumentsList, { props: { filing: filing, 
+            loadingOne: true, loadingAll: false, isLocked: false } })
 
         const documentBtns = wrapper.findAll('.download-one-btn')
 
@@ -155,7 +156,8 @@ describe('Documents List', () => {
             ]
         }
 
-        const wrapper = mount(DocumentsList, { props: { filing: filing, loadingOne: false, loadingAll: true, isLocked: false } })
+        const wrapper = mount(DocumentsList, { props: { filing: filing,
+             loadingOne: false, loadingAll: true, isLocked: false } })
 
         const documentBtns = wrapper.findAll('.download-one-btn')
 

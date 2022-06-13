@@ -65,7 +65,8 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             document_access_request.payment_status_code = payment_response.json().get('statusCode', '')
             document_access_request.payment_completion_date = payment_completion_date
             validity_in_days = current_app.config.get('DOCUMENT_REQUEST_VALIDITY_DURATION', 7)
-            document_access_request.expiry_date = payment_completion_date + relativedelta(days=validity_in_days),
+            document_access_request.expiry_date = payment_completion_date + relativedelta(days=validity_in_days)
+            document_access_request.status = DocumentAccessRequest.Status.PAID
             document_access_request.save()
             return {'isPaymentActionRequired': payment_response.json().get('isPaymentActionRequired',
                                                                            False)}, HTTPStatus.CREATED

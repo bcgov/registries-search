@@ -1,6 +1,7 @@
 import { ActionComps } from '@/enums'
 import { FeeCodes } from '@/enums/fee-codes'
 import { ErrorI } from '@/interfaces'
+import { ComputedRef } from 'vue'
 
 export interface FeeI {
   code: FeeCodes
@@ -27,5 +28,6 @@ export type FeeAction = {
   iconLeft?: string
   iconRight?: string
   text: string
-  outlined: boolean
+  outlined: boolean,
+  disabled?: ComputedRef<boolean>
 }

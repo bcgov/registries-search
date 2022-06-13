@@ -2,6 +2,7 @@
   <v-btn
     v-if="feeAction.compType === ActionComps.BUTTON"
     :class="feeAction.outlined ? 'btn-stacked__outlined' : 'btn-stacked'"
+    :disabled="feeAction.disabled?.value"
     @click="feeAction.action()"
   >
     <v-icon v-if="feeAction.iconLeft" class="btn-stacked__icon">{{ feeAction.iconLeft }}</v-icon>
