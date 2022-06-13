@@ -127,6 +127,11 @@ class DocumentAccessRequest(db.Model):
         document_access_request['documents'] = documents
 
         return document_access_request
+    
+    @property
+    def isActive(self) -> bool:
+        "Return if this object is active or not."
+        return DocumentAccessRequest.expiry_date > datetime.utcnow()
 
     @classmethod
     def find_active_requests(cls, account_id: int, business_identifier: str):
@@ -134,13 +139,13 @@ class DocumentAccessRequest(db.Model):
         return db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
             filter(DocumentAccessRequest.business_identifier == business_identifier).\
-            filter(DocumentAccessRequest.expiry_date > datetime.utcnow()).\
+            filter(DocumentAccessRequest.isActive).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
                                                      DocumentAccessRequest.Status.COMPLETED])). \
             order_by(DocumentAccessRequest.id.desc()).all()
 
     @classmethod
-    def find_by_id(cls, request_id: int):
+    def find_by_id(cls, request_id: int) -> DocumentAccessRequest:
         """Return a request having the specified id."""
         return cls.query.filter_by(id=request_id).one_or_none()
 

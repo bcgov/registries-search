@@ -180,6 +180,13 @@ def unauthorized_error_response(account_id):
     return jsonify({'message': message}), HTTPStatus.UNAUTHORIZED
 
 
+def authorization_expired_error_response(account_id):
+    """Build an unauthorized error response."""
+    message = UNAUTHORIZED.format(code=ResourceErrorCodes.AUTH_EXPIRED_ERR, account_id=account_id)
+    current_app.logger.info(str(HTTPStatus.UNAUTHORIZED.value) + ': ' + message)
+    return jsonify({'message': message}), HTTPStatus.UNAUTHORIZED
+
+
 def path_param_error_response(param_name):
     """Build a bad request param missing error response."""
     message = PATH_PARAM.format(code=ResourceErrorCodes.PATH_PARAM_ERR, param_name=param_name)

@@ -36,7 +36,6 @@ class Document(db.Model):
     document_type = db.Column(db.Enum(DocumentType), index=True)
     document_key = db.Column('document_key', db.String(100), nullable=False)
     file_name = db.Column('file_name', db.String(100))
-    file_key = db.Column('file_key', db.String(100))
     access_request_id = db.Column('access_request_id', db.Integer, db.ForeignKey('document_access_request.id'))
 
     @property
@@ -52,12 +51,12 @@ class Document(db.Model):
         return document
 
     @classmethod
-    def find_by_id(cls, document_id: int = None):
+    def find_by_id(cls, document_id: int = None) -> Document:
         """Return a Document that has the specified id."""
         return cls.query.filter_by(id=document_id).one_or_none()
 
     @classmethod
-    def find_by_document_key(cls, document_key: str):
+    def find_by_document_key(cls, document_key: str) -> Document:
         """Return a Document having the specified document key."""
         return cls.query.filter_by(document_key=document_key).one_or_none()
 
