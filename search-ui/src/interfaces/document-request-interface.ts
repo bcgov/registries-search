@@ -32,5 +32,6 @@ export interface AccessRequestsHistoryI {
 export interface DocumentAccessRequestsI {     
     requests: DocumentDetailsI[],
     _error: ErrorI,
-    _loading: boolean
+    _loading: boolean,
+    _saving: boolean,
 }

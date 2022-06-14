@@ -97,7 +97,7 @@ th {
 
 .table {
     max-width: calc(100% - 48px);
-    max-height: calc(100vh - 170px);
+    max-height: calc(50vh - 85px);
 }
 
 .v-table {
