@@ -48,7 +48,6 @@ def get(business_identifier, request_id=None):
 
         access_requests_list = []
         access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
-        print(access_requests)
         for access_request in access_requests:
             access_requests_list.append(access_request.json)
 
