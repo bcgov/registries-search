@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Table for storing document details."""
+from __future__ import annotations
+
 from enum import auto
 
 from search_api.utils.base import BaseEnum

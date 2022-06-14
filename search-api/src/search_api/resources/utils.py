@@ -35,6 +35,7 @@ PATH_MISMATCH = '{code}: the path value ({path_value}) does not match the data {
 DEFAULT = '{code}: error processing request.'
 PAYMENT = '{code}:{status} payment error for account {account_id}.'
 SOLR = '{code}: {status} solr error while processing request.'
+STORAGE = '{code}: GCP storage error while processing request.'
 
 CERTIFIED_PARAM = 'certified'
 ROUTING_SLIP_PARAM = 'routingSlipNumber'
@@ -207,6 +208,13 @@ def path_data_mismatch_error_response(path_value, description, data_value):
                                    description=description, data_value=data_value)
     current_app.logger.info(str(HTTPStatus.BAD_REQUEST.value) + ': ' + message)
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
+
+
+def gcp_storage_service_error(detail):
+    """Build a storage servcie error response."""
+    message = STORAGE.format(code=ResourceErrorCodes.STORAGE_ERR)
+    current_app.logger.info(str(HTTPStatus.INTERNAL_SERVER_ERROR.value) + ': ' + detail)
+    return jsonify({'message': message, 'detail': detail}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def get_account_name(token: str, account_id: str = None):  # pylint: disable=too-many-return-statements; added staff

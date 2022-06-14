@@ -20,7 +20,7 @@ import google.auth.transport.requests
 from google.oauth2 import service_account
 from flask import current_app
 
-from mhr_api.services.abstract_auth_service import AuthService
+from search_api.services.gcp_auth.abstract_auth_service import AuthService
 
 
 class GoogleAuthService(AuthService):  # pylint: disable=too-few-public-methods

@@ -40,6 +40,7 @@ class ResourceErrorCodes(str, Enum):
     DEFAULT_ERR = '010'
     SOLR_ERR = '011'
     AUTH_EXPIRED_ERR = '012'
+    STORAGE_ERR = '013'
 
 
 class BusinessException(Exception):

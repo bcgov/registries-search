@@ -10,6 +10,8 @@ datedelta
 dpath
 google-auth
 google-auth-oauthlib
+google-cloud-pubsub
+google-cloud-storage
 gunicorn
 jsonschema<4
 launchdarkly-server-sdk

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Document Access Requests."""
+from __future__ import annotations
 
 import secrets
 import string
@@ -29,7 +30,7 @@ from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.payment import DOCUMENT_TYPE_TO_FILING_TYPE, create_payment
 
 
-def save_request(account_id, business_identifier, request_json):
+def save_request(account_id, business_identifier, request_json) -> DocumentAccessRequest:
     """Validate and saves the request in db."""
     user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
     document_access_request: DocumentAccessRequest = DocumentAccessRequest(

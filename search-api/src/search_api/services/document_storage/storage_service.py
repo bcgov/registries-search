@@ -21,9 +21,9 @@ from flask import current_app
 from google.cloud import storage
 
 from search_api.models import Document
+from search_api.exceptions import StorageException
 from search_api.services.gcp_auth.auth_service import GoogleAuthService
-from search_api.services.utils.exceptions import StorageException
-from search_api.services.abstract_storage_service import StorageService
+from search_api.services.document_storage.abstract_storage_service import StorageService
 
 
 class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-methods
@@ -48,14 +48,11 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
             storage_client = storage.Client(credentials=credentials)
             bucket = storage_client.bucket(cls.__get_bucket_id(doc_type))
             blob = bucket.blob(name)
-            contents = blob.download_as_bytes()
-            return cls.__call_cs_api(name, doc_type)
-        except StorageException as storage_err:
-            raise storage_err
+            return blob.download_as_bytes()
+
         except Exception as err:  # pylint: disable=broad-except # noqa F841;
-            current_app.logger.error(f'get_document failed for doc type={doc_type}, name={name}.')
             current_app.logger.error(str(err))
-            raise StorageException('GET document failed for doc type={doc_type}, name={name}.')
+            raise StorageException(f'GET document failed for doc type={doc_type}, name={name}.')
 
     @classmethod
     def __get_bucket_id(cls, doc_type: Document.DocumentType = None):

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Table for storing document access request details."""
+from __future__ import annotations
+
 from datetime import datetime
 from enum import auto
 from http import HTTPStatus

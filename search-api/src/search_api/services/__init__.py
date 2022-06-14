@@ -21,6 +21,8 @@ from .solr import Solr
 
 
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
-queue = GoogleQueueService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
+# TODO: uncomment after testing with running gcp service
+# queue = GoogleQueueService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 solr = Solr()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
-storage = GoogleStorageService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
+# TODO: uncomment after testing with running gcp service
+# storage = GoogleStorageService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
