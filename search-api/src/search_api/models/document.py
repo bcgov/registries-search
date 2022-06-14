@@ -47,8 +47,7 @@ class Document(db.Model):
             'id': self.id,
             'documentType': self.document_type.name,
             'documentKey': self.document_key,
-            'fileName': self.file_name,
-            'fileKey': self.file_key
+            'fileName': self.file_name
         }
         return document
 

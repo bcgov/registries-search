@@ -19,7 +19,6 @@ export interface CreateDocumentResponseI {
 export interface DocumentI {     
     documentKey: string,
     documentType: string,
-    fileKey?: string,
     fileName: string,
     id: number
 }
