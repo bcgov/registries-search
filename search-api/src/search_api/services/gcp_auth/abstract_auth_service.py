@@ -11,15 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all of the businesses endpoints in Flask-Blueprint style."""
-from flask import Blueprint
-
-from .document_request import bp as document_request_bp
-from .documents import bp as documents_bp
-from .search import bp as search_bp
+"""This maintains auth access tokens and credentials for API calls."""
+from abc import ABC, abstractmethod
 
 
-bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')  # pylint: disable=invalid-name
-bp.register_blueprint(search_bp)
-bp.register_blueprint(document_request_bp)
-bp.register_blueprint(documents_bp)
+class AuthService(ABC):  # pylint: disable=too-few-public-methods
+    """Auth Service abstract class with get_token, get_credentials methods."""
+
+    @classmethod
+    @abstractmethod
+    def get_token(cls):
+        """Generate an OAuth access token with the appropriate access."""
+
+    @classmethod
+    def get_credentials(cls):
+        """Generate auth credentials with the appropriate access."""

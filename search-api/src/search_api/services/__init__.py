@@ -14,9 +14,15 @@
 """This module wraps the calls to external services used by the API."""
 
 from .authz import BASIC_USER, STAFF_ROLE, SYSTEM_ROLE, authorized, is_staff
+from .document_storage.storage_service import GoogleStorageService
 from .flags import Flags
+from .queue import GoogleQueueService
 from .solr import Solr
 
 
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
+# TODO: uncomment after testing with running gcp service
+# queue = GoogleQueueService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 solr = Solr()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
+# TODO: uncomment after testing with running gcp service
+# storage = GoogleStorageService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.

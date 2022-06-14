@@ -35,6 +35,7 @@ PATH_MISMATCH = '{code}: the path value ({path_value}) does not match the data {
 DEFAULT = '{code}: error processing request.'
 PAYMENT = '{code}:{status} payment error for account {account_id}.'
 SOLR = '{code}: {status} solr error while processing request.'
+STORAGE = '{code}: GCP storage error while processing request.'
 
 CERTIFIED_PARAM = 'certified'
 ROUTING_SLIP_PARAM = 'routingSlipNumber'
@@ -180,6 +181,13 @@ def unauthorized_error_response(account_id):
     return jsonify({'message': message}), HTTPStatus.UNAUTHORIZED
 
 
+def authorization_expired_error_response(account_id):
+    """Build an unauthorized error response."""
+    message = UNAUTHORIZED.format(code=ResourceErrorCodes.AUTH_EXPIRED_ERR, account_id=account_id)
+    current_app.logger.info(str(HTTPStatus.UNAUTHORIZED.value) + ': ' + message)
+    return jsonify({'message': message}), HTTPStatus.UNAUTHORIZED
+
+
 def path_param_error_response(param_name):
     """Build a bad request param missing error response."""
     message = PATH_PARAM.format(code=ResourceErrorCodes.PATH_PARAM_ERR, param_name=param_name)
@@ -200,6 +208,13 @@ def path_data_mismatch_error_response(path_value, description, data_value):
                                    description=description, data_value=data_value)
     current_app.logger.info(str(HTTPStatus.BAD_REQUEST.value) + ': ' + message)
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
+
+
+def gcp_storage_service_error(detail):
+    """Build a storage servcie error response."""
+    message = STORAGE.format(code=ResourceErrorCodes.STORAGE_ERR)
+    current_app.logger.info(str(HTTPStatus.INTERNAL_SERVER_ERROR.value) + ': ' + detail)
+    return jsonify({'message': message, 'detail': detail}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def get_account_name(token: str, account_id: str = None):  # pylint: disable=too-many-return-statements; added staff

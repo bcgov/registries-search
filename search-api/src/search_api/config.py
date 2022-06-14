@@ -64,6 +64,7 @@ class _Config():  # pylint: disable=too-few-public-methods
     PAYMENT_SVC_URL = os.getenv('PAYMENT_SVC_URL', 'http://')
     AUTH_SVC_URL = os.getenv('AUTH_SVC_URL', 'http://')
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
+    LEAR_SVC_URL = os.getenv('LEGAL_API_URL', 'http://') + os.getenv('LEGAL_API_VERSION_2', '/api/v2')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 

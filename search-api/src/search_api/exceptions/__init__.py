@@ -39,6 +39,8 @@ class ResourceErrorCodes(str, Enum):
     DATA_MISMATCH_ERR = '009'
     DEFAULT_ERR = '010'
     SOLR_ERR = '011'
+    AUTH_EXPIRED_ERR = '012'
+    STORAGE_ERR = '013'
 
 
 class BusinessException(Exception):
@@ -73,3 +75,7 @@ class ApiConnectionException(Exception):
         super(ApiConnectionException, self).__init__()
         self.code = code
         self.detail = detail
+
+
+class StorageException(Exception):
+    """Exception for document storage service related errors."""

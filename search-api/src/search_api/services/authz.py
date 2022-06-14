@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This manages all of the authentication and authorization service."""
-# from http import HTTPStatus
+from http import HTTPStatus
 from typing import List
 
-from flask import current_app
-from flask_jwt_oidc import JwtManager
+import requests
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
+from flask import current_app
+from flask_jwt_oidc import JwtManager
 from urllib3.util.retry import Retry
+
+from search_api.exceptions import ApiConnectionException
 
 
 # TODO: identify what roles we need for search
@@ -33,6 +36,33 @@ PUBLIC_USER = 'public_user'
 USER_ORGS_PATH = 'users/orgs'
 GOV_ACCOUNT_ROLE = 'gov_account_user'
 BCOL_HELP = 'helpdesk'
+
+
+def get_bearer_token():
+    """Get a valid Bearer token for the service to use."""
+    token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
+    client_id = current_app.config.get('ACCOUNT_SVC_CLIENT_ID')
+    client_secret = current_app.config.get('ACCOUNT_SVC_CLIENT_SECRET')
+
+    data = 'grant_type=client_credentials'
+
+    # get service account token
+    try:
+        res = requests.post(url=token_url,
+                            data=data,
+                            headers={'content-type': 'application/x-www-form-urlencoded'},
+                            auth=(client_id, client_secret),
+                            timeout=20.0)
+
+        return res.json().get('access_token')
+    except (exceptions.ConnectionError, exceptions.Timeout) as err:
+        current_app.logger.error('AUTH connection failure:', err)
+        raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
+                                     [{'message': 'Unable to get service account token from auth.'}])
+    except Exception as err:  # noqa: B902
+        current_app.logger.error('AUTH connection failure:', err)
+        raise ApiConnectionException(HTTPStatus.INTERNAL_SERVER_ERROR,
+                                     [{'message': 'Unable to get service account token from auth.'}])
 
 
 #  def authorized(identifier: str, jwt: JwtManager, action: List[str]) -> bool:

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Table for storing document access request details."""
+from __future__ import annotations
+
 from datetime import datetime
 from enum import auto
 from http import HTTPStatus
@@ -54,6 +56,11 @@ class DocumentAccessRequest(db.Model):
     submitter = db.relationship('User', backref=backref('filing_submitter', uselist=False),
                                 foreign_keys=[_submitter_id])
     documents = db.relationship('Document', backref='document_access_request', cascade='all, delete, delete-orphan')
+
+    @hybrid_property
+    def is_active(self) -> bool:
+        """Return if this object is active or not."""
+        return self.expiry_date > datetime.utcnow()
 
     @hybrid_property
     def payment_status_code(self):
@@ -134,13 +141,13 @@ class DocumentAccessRequest(db.Model):
         return db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
             filter(DocumentAccessRequest.business_identifier == business_identifier).\
-            filter(DocumentAccessRequest.expiry_date > datetime.utcnow()).\
+            filter(DocumentAccessRequest.is_active).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
                                                      DocumentAccessRequest.Status.COMPLETED])). \
             order_by(DocumentAccessRequest.id.desc()).all()
 
     @classmethod
-    def find_by_id(cls, request_id: int):
+    def find_by_id(cls, request_id: int) -> DocumentAccessRequest:
         """Return a request having the specified id."""
         return cls.query.filter_by(id=request_id).one_or_none()
 
