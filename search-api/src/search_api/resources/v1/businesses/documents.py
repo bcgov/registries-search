@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Document json/pdfs."""
-from http import HTTPStatus
+# from http import HTTPStatus
 
 from flask import Blueprint, request
 from flask_cors import cross_origin
@@ -25,14 +25,16 @@ from search_api.services.entity import get_business_document, get_business_filin
 from search_api.utils.auth import jwt
 
 
-bp = Blueprint('DOCUMENTS', __name__, url_prefix='/<string:business_identifier>/documents/<int:document_key>')  # pylint: disable=invalid-name
+bp = Blueprint('DOCUMENTS',  # pylint: disable=invalid-name
+               __name__,
+               url_prefix='/<string:business_identifier>/documents/<int:document_key>')
 
 
 @bp.get('')
 @bp.get('/<int:filing_id>')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def get_document_data(business_identifier, document_key, filing_id = None):
+def get_document_data(business_identifier, document_key, filing_id=None):  # pylint: disable=too-many-return-statements
     """Return the document json/pdf specified by the document key / file name."""
     try:
         account_id = request.headers.get('accountId', None)
@@ -48,7 +50,7 @@ def get_document_data(business_identifier, document_key, filing_id = None):
         access_request = DocumentAccessRequest.find_by_id(document.access_request_id)
         if str(access_request.account_id) != account_id:
             return resource_utils.unauthorized_error_response(account_id)
-        if not access_request.isActive:
+        if not access_request.is_active:
             return resource_utils.authorization_expired_error_response(account_id)
 
         # get pdf
@@ -66,7 +68,7 @@ def get_document_data(business_identifier, document_key, filing_id = None):
         # get from lear (cached doc not ready yet)
         resp = get_business_document(business_identifier, document.document_type)
         return resp.content, resp.status_code
-    
+
     except ApiConnectionException as api_exception:
         return resource_utils.default_exception_response(api_exception)
     except StorageException as storage_exception:

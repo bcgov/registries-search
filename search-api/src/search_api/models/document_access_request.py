@@ -56,11 +56,11 @@ class DocumentAccessRequest(db.Model):
     submitter = db.relationship('User', backref=backref('filing_submitter', uselist=False),
                                 foreign_keys=[_submitter_id])
     documents = db.relationship('Document', backref='document_access_request', cascade='all, delete, delete-orphan')
-    
+
     @hybrid_property
-    def isActive(self) -> bool:
-        "Return if this object is active or not."
-        return DocumentAccessRequest.expiry_date > datetime.utcnow()
+    def is_active(self) -> bool:
+        """Return if this object is active or not."""
+        return self.expiry_date > datetime.utcnow()
 
     @hybrid_property
     def payment_status_code(self):
@@ -141,7 +141,7 @@ class DocumentAccessRequest(db.Model):
         return db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
             filter(DocumentAccessRequest.business_identifier == business_identifier).\
-            filter(DocumentAccessRequest.isActive).\
+            filter(DocumentAccessRequest.is_active).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
                                                      DocumentAccessRequest.Status.COMPLETED])). \
             order_by(DocumentAccessRequest.id.desc()).all()

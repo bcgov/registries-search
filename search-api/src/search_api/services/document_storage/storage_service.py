@@ -13,10 +13,7 @@
 # limitations under the License.
 """This class is a wrapper for document storage API calls."""
 import os
-import json
-import urllib.parse
 
-import requests
 from flask import current_app
 from google.cloud import storage
 
@@ -37,7 +34,6 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
     GCP_BUCKET_ID_COGS = str(os.getenv('GCP_BUCKET_ID_CERT_OF_GOOD_STANDING'))
     GCP_BUCKET_ID_COS = str(os.getenv('GCP_BUCKET_ID_CERT_OF_STATUS'))
     GCP_BUCKET_ID_LUS = str(os.getenv('GCP_BUCKET_ID_LETTER_UNDER_SEAL'))
-
 
     @classmethod
     def get_document(cls, name: str, doc_type: Document.DocumentType = None):

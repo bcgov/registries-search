@@ -14,8 +14,6 @@
 """This class is a wrapper for document storage API calls."""
 from abc import ABC, abstractmethod
 
-from search_api.utils.base import BaseEnum
-
 
 class StorageService(ABC):  # pylint: disable=too-few-public-methods
     """Storage Service abstract class for all implementations."""

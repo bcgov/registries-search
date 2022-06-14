@@ -20,7 +20,7 @@ from google.cloud import pubsub_v1
 from search_api.services.gcp_auth.auth_service import GoogleAuthService
 
 
-class GoogleQueueService():
+class GoogleQueueService():  # pylint: disable=too-few-public-methods
     """Google Pub/Sub implementation to publish/enqueue events.
 
     Publish aync messages for downstream processing.
@@ -34,10 +34,9 @@ class GoogleQueueService():
         self.topic = str(current_app.config.get('GCP_PS_TOPIC'))
         self.topic_name = f'projects/{self.project_id}/topics/{self.topic}'
 
-
     def publish(self, payload_json):
         """Publish the payload to the specified topic."""
         payload = json.dumps(payload_json).encode('utf-8')
-        current_app.logger.info('Publishing topic=' + topic_name + ', payload=' + json.dumps(payload_json))
+        current_app.logger.info('Publishing topic=' + self.topic_name + ', payload=' + json.dumps(payload_json))
         future = self.publisher.publish(self.topic_name, payload)
         future.result()

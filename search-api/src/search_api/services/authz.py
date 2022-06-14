@@ -16,11 +16,10 @@ from http import HTTPStatus
 from typing import List
 
 import requests
-from requests import exceptions
-from flask import current_app
-from flask_jwt_oidc import JwtManager
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
+from flask import current_app
+from flask_jwt_oidc import JwtManager
 from urllib3.util.retry import Retry
 
 from search_api.exceptions import ApiConnectionException
@@ -60,7 +59,7 @@ def get_bearer_token():
         current_app.logger.error('AUTH connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
                                      [{'message': 'Unable to get service account token from auth.'}])
-    except Exception as err:
+    except Exception as err:  # noqa: B902
         current_app.logger.error('AUTH connection failure:', err)
         raise ApiConnectionException(HTTPStatus.INTERNAL_SERVER_ERROR,
                                      [{'message': 'Unable to get service account token from auth.'}])

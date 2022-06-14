@@ -13,12 +13,10 @@
 # limitations under the License.
 """Manages LEAR api interactions."""
 from http import HTTPStatus
-from typing import Tuple
 
 import requests
 from requests import exceptions
 from flask import current_app
-from flask_jwt_oidc import JwtManager
 
 from search_api.exceptions import ApiConnectionException
 from search_api.models import Document
@@ -35,7 +33,8 @@ def get_business_document(identifier: str, document_type: Document.DocumentType)
     """Get the business document for the given identifier and type."""
     document_name = DOCUMENT_NAME[document_type]
     if not document_name:
-        raise ApiConnectionException(HTTPStatus.NOT_IMPLEMENTED, [{'message': f'Report type for {document_type.name} does not exist.'}])
+        raise ApiConnectionException(HTTPStatus.NOT_IMPLEMENTED,
+                                     [{'message': f'Report type for {document_type.name} does not exist.'}])
 
     lear_svc_url = f"{current_app.config.get('LEAR_SVC_URL')}/businesses/{identifier}/documents/{document_name}"
     try:
@@ -47,6 +46,7 @@ def get_business_document(identifier: str, document_type: Document.DocumentType)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
                                      [{'message': 'Unable to get business document pdf from lear.'}])
     return lear_response
+
 
 def get_business_filing_document(identifier: str, filing_id: int):
     """Get the business filing document for the given identifier and id."""
