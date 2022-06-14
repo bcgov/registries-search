@@ -7,7 +7,8 @@ import { getActiveAccessRequests, createDocumentAccessRequest } from '@/requests
 const documentAccessRequest = reactive({
     requests: [],
     _error: null,
-    _loading: false
+    _loading: false,
+    _saving: false
 }) as DocumentAccessRequestsI
 
 export const useDocumentAccessRequest = () => {
@@ -32,13 +33,13 @@ export const useDocumentAccessRequest = () => {
     }
 
     const createAccessRequest = async (identifier: string, selectedDocs: any) => {
-        documentAccessRequest._loading = true
+        documentAccessRequest._saving = true
 
         const response: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs)
         if (response.error) {
             documentAccessRequest._error = response.error
         }        
-        documentAccessRequest._loading = false
+        documentAccessRequest._saving = false
     }
 
     return {

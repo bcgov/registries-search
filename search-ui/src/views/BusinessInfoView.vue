@@ -1,8 +1,14 @@
 <template>
-  <v-container id="business-info" class="container" fluid>
-    <v-overlay v-model="documentAccessRequest._loading" style="top: 50%; left: 50%;">
-      <v-progress-circular class="v-loader" size="50" indeterminate />
-    </v-overlay>
+  <v-container  id="business-info" class="container" fluid>    
+   <v-fade-transition>
+      <div class="loading-container" v-if="isLoading||documentAccessRequest._saving">
+        <div class="loading__content">
+          <v-progress-circular color="primary" size="50" indeterminate />
+          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
+          <div class="loading-msg" v-if="isLoading">Loading Business</div>
+        </div>
+        </div>    
+    </v-fade-transition>
     <v-row no-gutters>
       <v-col>
         <h2>How to Access Business Documents</h2>
@@ -15,8 +21,7 @@
         </p>
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
-        <div class="document-list justify-center mt-3 pa-3 pr-5">
-          <v-progress-circular v-if="purchasableDocs.length < 1" class="v-loader" indeterminate size="50" />
+        <div class="document-list justify-center mt-3 pa-3 pr-5">          
           <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
             <v-col>
               <v-checkbox
@@ -65,7 +70,7 @@ const router = useRouter()
 
 
 const { entity, clearEntity, loadEntity } = useEntity()
-const { loadFilingHistory } = useFilingHistory()
+const { loadFilingHistory, filingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, loadAccessRequestHistory, createAccessRequest } = useDocumentAccessRequest()
 
@@ -81,11 +86,12 @@ const feePreSelectItem: FeeI = {
 const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string, documentType: DocumentType }[]>
 const selectedDocs = ref([])as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
+const isLoading = ref(false)
 
 const payForDocuments = async () => {  
   await createAccessRequest(entity.identifier, selectedDocs)   
   if (!documentAccessRequest._error) {     
-    window.location.reload()
+    router.go()
   }   
 }
 
@@ -119,6 +125,7 @@ const getDocFee = async (code: FeeCodes) => {
 
 // load entity data, clear any previous fees
 onMounted(async () => {
+  isLoading.value = true
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
   loadFilingHistory(props.identifier)
@@ -131,6 +138,7 @@ onMounted(async () => {
     label: 'Business Summary and Filing History Documents',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY
   })
+  isLoading.value = false
 })
 
 const toggleFee = (event: any, item: any) => {

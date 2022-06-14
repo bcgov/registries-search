@@ -1,8 +1,7 @@
 <template>
   <div id="entity-info">
     <v-container class="container justify-center py-0">
-      <v-progress-circular v-if="entity._loading" class="v-loader" indeterminate size="50" />
-      <v-row v-else no-gutters>
+      <v-row no-gutters>
         <v-col cols="12" md="9">
           <header>
             <!-- Entity Name -->
