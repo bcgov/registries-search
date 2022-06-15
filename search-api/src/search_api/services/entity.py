@@ -49,13 +49,29 @@ def get_business_document(identifier: str, document_type: Document.DocumentType)
 
 
 def get_business_filing_document(identifier: str, filing_id: int, filing_name: str):
-    """Get the business filing document for the given identifier and id."""
+    """Get the business filing document for the given identifier, id and name."""
     lear_svc_url = \
         current_app.config.get('LEAR_SVC_URL') + \
         f'/businesses/{identifier}/filings/{filing_id}/documents/{filing_name}'
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/pdf'}
+        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
+    except (exceptions.ConnectionError, exceptions.Timeout) as err:
+        current_app.logger.error('LEAR connection failure:', err)
+        raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
+                                     [{'message': 'Unable to get business document pdf from lear.'}])
+    return lear_response
+
+
+def get_business_filing_document_list(identifier: str, filing_id: int):
+    """Get the business filing document list for the given identifier and id."""
+    lear_svc_url = \
+        current_app.config.get('LEAR_SVC_URL') + \
+        f'/businesses/{identifier}/filings/{filing_id}/documents'
+    try:
+        token = get_bearer_token()
+        headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
         lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
