@@ -3,8 +3,10 @@ import { StatusCodes } from 'http-status-codes'
 // local
 import { useAuth } from '@/composables'
 import { SearchResponseI, SuggestionResponseI, DocumentDetailsI,
-   CreateDocumentResponseI,  AccessRequestsHistoryI } from '@/interfaces'
+   CreateDocumentResponseI,  AccessRequestsHistoryI, DocumentI } from '@/interfaces'
+
 import { ErrorCategories } from '@/enums'
+import { DocumentTypeDescriptions } from '@/resources'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
@@ -64,7 +66,7 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 
 
 export async function createDocumentAccessRequest(business_identifier: string,
-   documentList: any): Promise<CreateDocumentResponseI> {
+  documentList: any): Promise<CreateDocumentResponseI> {
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const { auth } = useAuth()
   if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
@@ -109,14 +111,14 @@ export async function getActiveAccessRequests(business_identifier: string): Prom
   return axios.get< AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
     config)
     .then(response => {
-      const data:  AccessRequestsHistoryI = response?.data
+      const data: AccessRequestsHistoryI = response?.data
       if (!data) {
         throw new Error('Invalid API response')
       }
       return data
     }).catch(error => {
       console.error(error)
-      const documentRequests:  AccessRequestsHistoryI = {
+      const documentRequests: AccessRequestsHistoryI = {
         error:
         {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -126,5 +128,41 @@ export async function getActiveAccessRequests(business_identifier: string): Prom
         }
       }
       return documentRequests
+    })
+}
+
+
+export async function getDocument(businessIdentifier: string, document: DocumentI): Promise<any> {
+  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
+  const accountInfo: any = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))
+
+  const config = {
+    headers: { 
+      'Accept': 'application/pdf',
+      'accountId': accountInfo.id
+     },
+    responseType: 'blob' as 'json',
+    baseURL: url    
+  }
+
+  return axios.get(`businesses/${businessIdentifier}/documents/${document.documentKey}`,
+    config).then(response => {
+      if (!response) throw new Error('Null response')
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const fileType = DocumentTypeDescriptions[document.documentType]
+      if (window.navigator && window.navigator['msSaveOrOpenBlob']) {
+        window.navigator['msSaveOrOpenBlob'](blob, `${fileType}.pdf`)
+      } else {
+        // for other browsers, create a link pointing to the ObjectURL containing the blob
+        const url = window.URL.createObjectURL(blob)
+        const a = window.document.createElement('a')
+        window.document.body.appendChild(a)
+        a.setAttribute('style', 'display: none')
+        a.href = url
+        a.download = `${fileType}.pdf`
+        a.click()
+        window.URL.revokeObjectURL(url)
+        a.remove()
+      }
     })
 }

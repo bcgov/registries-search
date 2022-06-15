@@ -4,7 +4,15 @@
       <div class="loading-container" v-if="documentAccessRequest._saving">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
+          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>           
+        </div>
+      </div>
+    </v-fade-transition>
+    <v-fade-transition>
+      <div class="loading-container  grayed-out" v-if="documentAccessRequest._downloading">
+        <div class="loading__content">
+          <v-progress-circular color="primary" size="50" indeterminate />           
+          <div class="loading-msg" v-if="documentAccessRequest._downloading">Downloading document</div>
         </div>
       </div>
     </v-fade-transition>

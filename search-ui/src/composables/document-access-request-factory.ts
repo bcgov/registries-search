@@ -1,14 +1,15 @@
 import { reactive } from 'vue'
 
-import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI } from '@/interfaces'
-import { getActiveAccessRequests, createDocumentAccessRequest } from '@/requests'
+import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
+import { getActiveAccessRequests, createDocumentAccessRequest, getDocument } from '@/requests'
 
 
 const documentAccessRequest = reactive({
     requests: [],
     _error: null,
     _loading: false,
-    _saving: false
+    _saving: false,
+    _downloading: false
 }) as DocumentAccessRequestsI
 
 export const useDocumentAccessRequest = () => {
@@ -42,10 +43,17 @@ export const useDocumentAccessRequest = () => {
         documentAccessRequest._saving = false
     }
 
+    const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
+        documentAccessRequest._downloading = true
+        await getDocument(businessIdentifier, document)          
+        documentAccessRequest._downloading = false
+    }
+
     return {
         documentAccessRequest,
         clearAccessRequestHistory,
         createAccessRequest,
-        loadAccessRequestHistory
+        loadAccessRequestHistory,
+        downloadDocument
     }
 }
