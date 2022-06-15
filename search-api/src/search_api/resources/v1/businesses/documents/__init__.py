@@ -18,6 +18,8 @@ from .document_request import bp as document_request_bp
 from .documents import bp as documents_bp
 
 
-bp = Blueprint('DOCUMENTS', __name__, url_prefix='/<string:business_identifier>/documents')  # pylint: disable=invalid-name
+bp = Blueprint('DOCUMENTS',  # pylint: disable=invalid-name
+               __name__,
+               url_prefix='/<string:business_identifier>/documents')
 bp.register_blueprint(document_request_bp)
 bp.register_blueprint(documents_bp)

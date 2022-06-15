@@ -14,12 +14,10 @@
 """Exposes all of the businesses endpoints in Flask-Blueprint style."""
 from flask import Blueprint
 
-# from .document_request import bp as document_request_bp
 from .documents import bp as documents_bp
 from .search import bp as search_bp
 
 
 bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')  # pylint: disable=invalid-name
 bp.register_blueprint(search_bp)
-# bp.register_blueprint(document_request_bp)
 bp.register_blueprint(documents_bp)

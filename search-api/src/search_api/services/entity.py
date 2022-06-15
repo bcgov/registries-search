@@ -50,7 +50,9 @@ def get_business_document(identifier: str, document_type: Document.DocumentType)
 
 def get_business_filing_document(identifier: str, filing_id: int, filing_name: str):
     """Get the business filing document for the given identifier and id."""
-    lear_svc_url = f"{current_app.config.get('LEAR_SVC_URL')}/businesses/{identifier}/filings/{filing_id}/documents/{filing_name}"
+    lear_svc_url = \
+        current_app.config.get('LEAR_SVC_URL') + \
+        f'/businesses/{identifier}/filings/{filing_id}/documents/{filing_name}'
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/pdf'}
