@@ -1,6 +1,7 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
-
+// local
+import { useAuth } from '@/composables'
 import { SearchResponseI, SuggestionResponseI, DocumentDetailsI,
    CreateDocumentResponseI,  AccessRequestsHistoryI } from '@/interfaces'
 import { ErrorCategories } from '@/enums'
@@ -65,13 +66,9 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 export async function createDocumentAccessRequest(business_identifier: string,
    documentList: any): Promise<CreateDocumentResponseI> {
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const accountInfo: any = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))
-  const config = {
-    baseURL: url,
-    headers: {
-      'accountId': accountInfo.id
-    }
-  }
+  const { auth } = useAuth()
+  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
+  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
 
   const docs = []
   documentList.value.forEach((doc) => { docs.push({ 'type': doc }) })
@@ -106,13 +103,9 @@ export async function createDocumentAccessRequest(business_identifier: string,
 
 export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const accountInfo: any = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))
-  const config = {
-    baseURL: url,
-    headers: {
-      'accountId': accountInfo.id
-    }
-  }
+  const { auth } = useAuth()
+  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
+  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
   return axios.get< AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
     config)
     .then(response => {

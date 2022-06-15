@@ -25,16 +25,14 @@ from search_api.services.entity import get_business_document, get_business_filin
 from search_api.utils.auth import jwt
 
 
-bp = Blueprint('DOCUMENTS',  # pylint: disable=invalid-name
-               __name__,
-               url_prefix='/<string:business_identifier>/documents/<int:document_key>')
+bp = Blueprint('DOCUMENTS',  __name__, url_prefix='/<string:document_key>')  # pylint: disable=invalid-name
 
 
 @bp.get('')
-@bp.get('/<int:filing_id>')
+@bp.get('/<int:filing_id>/<string:filing_name>')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def get_document_data(business_identifier, document_key, filing_id=None):  # pylint: disable=too-many-return-statements
+def get_document_data(business_identifier, document_key, filing_id=None, filing_name=None):  # pylint: disable=too-many-return-statements
     """Return the document json/pdf specified by the document key / file name."""
     try:
         account_id = request.headers.get('accountId', None)
@@ -54,9 +52,9 @@ def get_document_data(business_identifier, document_key, filing_id=None):  # pyl
             return resource_utils.authorization_expired_error_response(account_id)
 
         # get pdf
-        if filing_id and document.document_type == Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY:
+        if filing_id and filing_name and document.document_type == Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY:
             # Request is for a filing history document.
-            resp = get_business_filing_document(business_identifier, filing_id)
+            resp = get_business_filing_document(business_identifier, filing_id, filing_name)
             return resp.content, resp.status_code
 
         # TODO: uncomment after testing with running gcp service
