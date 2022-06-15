@@ -13,7 +13,6 @@
 # limitations under the License.
 """API endpoints for Document json/pdfs."""
 # from http import HTTPStatus
-
 from flask import Blueprint, request
 from flask_cors import cross_origin
 
@@ -21,15 +20,32 @@ import search_api.resources.utils as resource_utils
 from search_api.exceptions import ApiConnectionException, StorageException
 from search_api.models import Document, DocumentAccessRequest
 # from search_api.services import storage
-from search_api.services.entity import get_business_document, get_business_filing_document
+from search_api.services.entity import (
+    get_business_document,
+    get_business_filing_document,
+    get_business_filing_document_list)
 from search_api.utils.auth import jwt
 
 
-bp = Blueprint('DOCUMENTS', __name__, url_prefix='/<string:document_key>')  # pylint: disable=invalid-name
+bp = Blueprint('DOCUMENTS', __name__, url_prefix='')  # pylint: disable=invalid-name
 
 
-@bp.get('')
-@bp.get('/<int:filing_id>/<string:filing_name>')
+@bp.get('/info/<int:filing_id>')
+@cross_origin(origin='*')
+def get_filing_documents_info(business_identifier, filing_id):
+    """Return the document list for the given filing id."""
+    try:
+        resp = get_business_filing_document_list(business_identifier, filing_id)
+        return resp.json(), resp.status_code
+
+    except ApiConnectionException as api_exception:
+        return resource_utils.default_exception_response(api_exception)
+    except Exception as default_exception:  # noqa: B902
+        return resource_utils.default_exception_response(default_exception)
+
+
+@bp.get('/<string:document_key>')
+@bp.get('/<string:document_key>/<int:filing_id>/<string:filing_name>')
 @cross_origin(origin='*')
 @jwt.requires_auth
 # pylint: disable=too-many-return-statements

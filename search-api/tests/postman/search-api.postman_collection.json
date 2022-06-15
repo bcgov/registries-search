@@ -954,6 +954,19 @@
 			"item": [
 				{
 					"name": "Get summary pdf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);     ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1066,7 +1079,291 @@
 					]
 				},
 				{
+					"name": "Get Filings LEAR",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    // set filing id + name\r",
+									"    const filings = jsonData.filings\r",
+									"    for (let i=0; i<filings.length; i++) {\r",
+									"        if (!filings[i].availableOnPaperOnly && filings[i].status == 'COMPLETED') {\r",
+									"            pm.environment.set(\"filing_id\", filings[i].filingId)\r",
+									"            pm.environment.set(\"filing_name\", filings[i].name)\r",
+									"            // break\r",
+									"        }\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "accountId",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{lear_url}}/{{lear_version}}/businesses/{{identifier}}/filings",
+							"host": [
+								"{{lear_url}}"
+							],
+							"path": [
+								"{{lear_version}}",
+								"businesses",
+								"{{identifier}}",
+								"filings"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Filings LEAR",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "accountId",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{lear_url}}/{{lear_version}}/businesses/{{identifier}}/filings",
+									"host": [
+										"{{lear_url}}"
+									],
+									"path": [
+										"{{lear_version}}",
+										"businesses",
+										"{{identifier}}",
+										"filings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "date",
+									"value": "Wed, 15 Jun 2022 17:02:34 GMT"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json"
+								},
+								{
+									"key": "content-length",
+									"value": "2566"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "api",
+									"value": "legal_api/2.47.0-2daeda0"
+								},
+								{
+									"key": "schemas",
+									"value": "registry_schemas/2.15.24"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"filings\": [\n        {\n            \"availableOnPaperOnly\": false,\n            \"businessIdentifier\": \"BC1218851\",\n            \"commentsCount\": 0,\n            \"commentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/111494/comments\",\n            \"data\": {\n                \"applicationDate\": \"2021-02-11T08:00:00+00:00\",\n                \"changeOfDirectors\": {},\n                \"legalFilings\": [\n                    \"changeOfDirectors\"\n                ]\n            },\n            \"displayName\": \"Director Change\",\n            \"documentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/111494/documents\",\n            \"effectiveDate\": \"Thu, 11 Feb 2021 08:00:00 GMT\",\n            \"filingId\": 111494,\n            \"filingLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/111494\",\n            \"isFutureEffective\": false,\n            \"name\": \"changeOfDirectors\",\n            \"paymentStatusCode\": \"COMPLETED\",\n            \"status\": \"COMPLETED\",\n            \"submittedDate\": \"Thu, 11 Feb 2021 23:20:37 GMT\",\n            \"submitter\": \"BCREGTEST Dalia ONE\"\n        },\n        {\n            \"availableOnPaperOnly\": false,\n            \"businessIdentifier\": \"BC1218851\",\n            \"commentsCount\": 0,\n            \"commentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110686/comments\",\n            \"data\": {\n                \"alteration\": {},\n                \"applicationDate\": \"2020-10-01T20:30:00+00:00\",\n                \"legalFilings\": [\n                    \"alteration\"\n                ]\n            },\n            \"displayName\": \"Alteration\",\n            \"documentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110686/documents\",\n            \"effectiveDate\": \"Thu, 01 Oct 2020 20:30:00 GMT\",\n            \"filingId\": 110686,\n            \"filingLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110686\",\n            \"isFutureEffective\": false,\n            \"name\": \"alteration\",\n            \"paymentStatusCode\": \"COMPLETED\",\n            \"status\": \"COMPLETED\",\n            \"submittedDate\": \"Thu, 01 Oct 2020 22:09:09 GMT\",\n            \"submitter\": \"service-account-entity-service-account\"\n        },\n        {\n            \"availableOnPaperOnly\": false,\n            \"businessIdentifier\": \"BC1218851\",\n            \"commentsCount\": 0,\n            \"commentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/comments\",\n            \"data\": {\n                \"applicationDate\": \"2020-10-01T21:20:12.666434+00:00\",\n                \"incorporationApplication\": {},\n                \"legalFilings\": [\n                    \"incorporationApplication\"\n                ]\n            },\n            \"displayName\": \"BC Benefit Company Incorporation Application\",\n            \"documentsLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/documents\",\n            \"effectiveDate\": \"Thu, 01 Oct 2020 21:20:12 GMT\",\n            \"filingId\": 110682,\n            \"filingLink\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682\",\n            \"isFutureEffective\": false,\n            \"name\": \"incorporationApplication\",\n            \"paymentStatusCode\": \"COMPLETED\",\n            \"status\": \"COMPLETED\",\n            \"submittedDate\": \"Thu, 01 Oct 2020 21:20:12 GMT\",\n            \"submitter\": \"BCREGTEST Dalia ONE\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Filing documents info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "accountId",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/info/{{filing_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"{{identifier}}",
+								"documents",
+								"info",
+								"{{filing_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Filing documents info",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "accountId",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/info/{{filing_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"businesses",
+										"{{identifier}}",
+										"documents",
+										"info",
+										"{{filing_id}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 15 Jun 2022 17:02:42 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "591"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"documents\": {\n        \"certificate\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/documents/certificate\",\n        \"legalFilings\": [\n            {\n                \"incorporationApplication\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/documents/incorporationApplication\"\n            }\n        ],\n        \"noticeOfArticles\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/documents/noticeOfArticles\",\n        \"receipt\": \"https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v2/businesses/BC1218851/filings/110682/documents/receipt\"\n    }\n}"
+						}
+					]
+				},
+				{
 					"name": "Get filing pdf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);     ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
