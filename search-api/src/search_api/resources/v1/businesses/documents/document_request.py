@@ -24,11 +24,11 @@ from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
 
 
-bp = Blueprint('DOCUMENT_REQUESTS', __name__)  # pylint: disable=invalid-name
+bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint: disable=invalid-name
 
 
-@bp.route('/<string:business_identifier>/documents/requests/<int:request_id>', methods=['GET', 'OPTIONS'])
-@bp.route('/<string:business_identifier>/documents/requests', methods=['GET', 'OPTIONS'])
+@bp.get('')
+@bp.get('/<int:request_id>')
 @cross_origin(origin='*')
 @jwt.requires_auth
 def get(business_identifier, request_id=None):
@@ -56,7 +56,7 @@ def get(business_identifier, request_id=None):
         return resource_utils.default_exception_response(default_exception)
 
 
-@bp.route('/<string:business_identifier>/documents/requests', methods=['POST', 'OPTIONS'])
+@bp.post('')
 @cross_origin(origin='*')
 @jwt.requires_auth
 def post(business_identifier):

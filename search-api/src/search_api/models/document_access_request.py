@@ -14,7 +14,7 @@
 """Table for storing document access request details."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import auto
 from http import HTTPStatus
 
@@ -60,7 +60,7 @@ class DocumentAccessRequest(db.Model):
     @hybrid_property
     def is_active(self) -> bool:
         """Return if this object is active or not."""
-        return self.expiry_date > datetime.utcnow()
+        return self.expiry_date > datetime.now(timezone.utc)
 
     @hybrid_property
     def payment_status_code(self):

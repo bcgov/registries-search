@@ -1,7 +1,10 @@
 <template>
-    <div class="main-results-div white-background soft-corners-top soft-corners-bottom pb-2 mt-4">
-        <v-row class="pt-3 pl-4" no-gutters>
-            <v-col cols="12">
+    <div class="main-results-div white-background soft-corners pb-2 mt-4 justify-center">
+        <v-row class="pt-3 pl-4" justify="center" no-gutters>
+            <v-col v-if="documentAccessRequest._loading" cols="auto">
+                <v-progress-circular v-if="documentAccessRequest._loading" color="primary" size="50" indeterminate />
+            </v-col>
+            <v-col v-else cols="12">
                 <v-table fixed-header class="table">
                     <thead>
                         <tr>

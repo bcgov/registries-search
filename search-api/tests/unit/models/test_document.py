@@ -63,7 +63,6 @@ def test_document_json(session):
     document_json={
         'documentKey': document.document_key,
         'documentType': document.document_type.name,
-        'fileKey': None,
         'fileName': None,
         'id': document.id
     }

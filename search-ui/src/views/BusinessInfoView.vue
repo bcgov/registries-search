@@ -1,13 +1,12 @@
 <template>
   <v-container  id="business-info" class="container" fluid>    
    <v-fade-transition>
-      <div class="loading-container" v-if="isLoading||documentAccessRequest._saving">
+      <div class="loading-container" v-if="documentAccessRequest._saving">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
           <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
-          <div class="loading-msg" v-if="isLoading">Loading Business</div>
         </div>
-        </div>    
+      </div>
     </v-fade-transition>
     <v-row no-gutters>
       <v-col>
@@ -21,7 +20,7 @@
         </p>
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
-        <div class="document-list justify-center mt-3 pa-3 pr-5">          
+        <div class="document-list justify-center mt-3 pa-3 pr-5" :key="checkBoxesKey">
           <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
             <v-col>
               <v-checkbox
@@ -56,6 +55,7 @@ import { onMounted, ref, Ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { BaseFeeCalculator } from '@/components'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 import DocumentAccessRequestHistory from '@/components/BusinessInfo/DocumentAccessRequestHistory.vue'
 import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
@@ -83,15 +83,18 @@ const feePreSelectItem: FeeI = {
   serviceFee: 1.5
 }
 
+const checkBoxesKey = ref(0)
 const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string, documentType: DocumentType }[]>
 const selectedDocs = ref([])as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
-const isLoading = ref(false)
 
 const payForDocuments = async () => {  
   await createAccessRequest(entity.identifier, selectedDocs)   
   if (!documentAccessRequest._error) {     
-    router.go()
+    loadAccessRequestHistory(props.identifier)
+    clearFees()
+    // refresh checkboxes
+    checkBoxesKey.value += 1
   }   
 }
 
@@ -125,7 +128,6 @@ const getDocFee = async (code: FeeCodes) => {
 
 // load entity data, clear any previous fees
 onMounted(async () => {
-  isLoading.value = true
   if (entity.identifier !== props.identifier) clearEntity()
   loadEntity(props.identifier)
   loadFilingHistory(props.identifier)
@@ -138,7 +140,6 @@ onMounted(async () => {
     label: 'Business Summary and Filing History Documents',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY
   })
-  isLoading.value = false
 })
 
 const toggleFee = (event: any, item: any) => {
