@@ -20,7 +20,7 @@
                             <td>
                                 <v-list class="py-0" density="compact">
                                     <v-list-item v-for="(document, index) in item.documents" :key="index">
-                                        <span class="app-blue doc-link" @click="downloadDocument(document.documentKey)">
+                                        <span class="app-blue doc-link" @click="downloadDoc(document)">
                                             {{ documentDescription(document.documentType) }}
                                         </span>
                                     </v-list-item>
@@ -44,13 +44,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 // local
-import { useDocumentAccessRequest } from '@/composables'
+import { useDocumentAccessRequest, useEntity } from '@/composables'
 import { dateToPacificDateTime } from '@/utils'
 
 import { DocumentTypeDescriptions } from '@/resources'
+import { DocumentI } from '@/interfaces'
 
 // composables
-const { documentAccessRequest } = useDocumentAccessRequest()
+const { documentAccessRequest, downloadDocument } = useDocumentAccessRequest()
+const { entity } = useEntity()
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
 
@@ -62,8 +64,8 @@ const documentDescription = (type: string): string => {
     return DocumentTypeDescriptions[type]
 }
 
-const downloadDocument = (documentKey: string): void => {
-     console.log(documentKey)
+const downloadDoc = (document: DocumentI): void => {
+   downloadDocument(entity.identifier, document)
 }
 
 </script>

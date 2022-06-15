@@ -33,4 +33,5 @@ export interface DocumentAccessRequestsI {
     _error: ErrorI,
     _loading: boolean,
     _saving: boolean,
+    _downloading: boolean
 }
