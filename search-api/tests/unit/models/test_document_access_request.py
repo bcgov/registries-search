@@ -120,14 +120,12 @@ def test_document_access_request_json(session):
            {
                 'documentKey': 'test1',
                 'documentType': document_1.document_type.name,
-                'fileKey': None,
                 'fileName': None,
                 'id': document_1.id
            },
            {
                 'documentKey': 'test2',
                 'documentType': document_2.document_type.name,
-                'fileKey': None,
                 'fileName': None,
                 'id': document_2.id
             }
