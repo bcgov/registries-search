@@ -80,6 +80,11 @@ export const useEntity = () => {
     return isCoop.value ? 'Cooperative Association Act' : 'Business Corporations Act'
   })
 
+  const entityNumberLabel = computed(() => {
+    // more rules tbd
+    return isCoop.value || isBComp.value ? 'Incorporation Number' : 'Registration Number'
+  })
+
   return {
     entity,
     clearEntity,
@@ -90,6 +95,7 @@ export const useEntity = () => {
     isBComp,
     isCoop,
     entityTitle,
-    actTitle
+    actTitle,
+    entityNumberLabel
   }
 }

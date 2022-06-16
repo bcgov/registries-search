@@ -43,13 +43,13 @@ import { BusinessStatuses, CorpTypeCd } from '@/enums'
 
 // composables
 const { pacificDate } = useDatetime()
-const { entity, getEntityDescription } = useEntity()
+const { entity, entityNumberLabel, getEntityDescription } = useEntity()
 // computed
 const businessDescription = computed(() => getEntityDescription(entity.legalType as CorpTypeCd))
 const incorpDate = computed(() => pacificDate(new Date(entity.incorporationDate)))
 const businessInfo = computed(() => [
   { term: 'Incorporation Date', value: incorpDate.value || 'Not Available' },
-  { term: 'Registration Number', value: entity.identifier || 'Not Available' },
+  { term: entityNumberLabel.value, value: entity.identifier || 'Not Available' },
   { term: 'Business Number', value: entity.bn || 'Not Available'},
 ])
 const isHistorical = computed(() => entity.status === BusinessStatuses.HISTORICAL)
