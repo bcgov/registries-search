@@ -3,10 +3,11 @@ import { StatusCodes } from 'http-status-codes'
 // local
 import { useAuth } from '@/composables'
 import { SearchResponseI, SuggestionResponseI, DocumentDetailsI,
-   CreateDocumentResponseI,  AccessRequestsHistoryI, DocumentI } from '@/interfaces'
+   CreateDocumentResponseI,  AccessRequestsHistoryI, DocumentI, ApiDocuments } from '@/interfaces'
 
-import { ErrorCategories } from '@/enums'
+import { ErrorCategories, ErrorCodes } from '@/enums'
 import { DocumentTypeDescriptions } from '@/resources'
+import {  Document } from '@/types'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
@@ -159,4 +160,73 @@ export async function getDocument(businessIdentifier: string, document: Document
         a.remove()
       }
     })
+}
+
+
+/**
+ * Fetches the list of documents belonging to a particular filing
+ * 
+ * @param businessIdentifier  - The business identifier
+ * @param filingId - filing Id 
+ * @returns List of documents applicable for the specified filing
+ */
+export const fetchDocumentList = async (businessIdentifier: string, filingId: number): Promise<ApiDocuments> => {
+  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')   
+  const { auth } = useAuth()   
+  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
+  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
+  return axios.get<any>(`businesses/${businessIdentifier}/documents/info/${filingId}`, config)
+    .then(response => {
+      const data = response?.data?.documents
+      if (!data) {
+        throw new Error('Invalid API response')
+      }
+      return data
+    }).catch(error => {
+      return {
+        error: {
+          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+          message: error?.response?.data?.message,
+          category: ErrorCategories.ENTITY_BASIC,
+          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+        }
+      }
+    })
+}
+
+/**
+   * Fetches a document and prompts browser to open/save it.
+   * @param document the document info object
+   */
+export const fetchFilingDocument = (businessIdentifier: string, filingId: number, document: Document): Promise<any> => {
+  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')   
+  const { auth } = useAuth()   
+  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
+  const config = {
+    headers: { 
+      'Accept': 'application/pdf',
+      'accountId':auth.currentAccount.id
+     },
+    responseType: 'blob' as 'json',
+    baseURL: url    
+  }
+
+  return axios.get(`businesses/${businessIdentifier}/documents/info/${filingId}`, config).then(response => {
+    if (!response) throw new Error('Null response') 
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+ 
+    if (window.navigator && window.navigator['msSaveOrOpenBlob']) {
+      window.navigator['msSaveOrOpenBlob'](blob, document.filename)
+    } else {
+      const url = window.URL.createObjectURL(blob)
+      const a = window.document.createElement('a')
+      window.document.body.appendChild(a)
+      a.setAttribute('style', 'display: none')
+      a.href = url
+      a.download = document.filename
+      a.click()
+      window.URL.revokeObjectURL(url)
+      a.remove()
+    }
+  })
 }

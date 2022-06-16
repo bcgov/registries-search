@@ -3,20 +3,20 @@
         <v-list class="py-0" density="compact">
             <v-list-item v-for="(document, index) in filteredDocuments" :key="index">
                 <v-btn variant="text" class="download-one-btn" @click="downloadOne(document, index)"
-                    :disabled="props.loadingOne || props.loadingAll || props.isLocked"
+                    :disabled="props.loadingOne || props.loadingAll || isLocked"
                     :loading="props.loadingOne && (index === props.loadingOneIndex)">
-                    <v-icon v-if="props.isLocked">mdi-lock</v-icon>
+                    <v-icon v-if="isLocked">mdi-lock</v-icon>
                     <v-icon v-else class="app-blue">mdi-file-pdf-box</v-icon>
-                    <span v-bind:class="[props.isLocked ? '' : 'app-blue']">{{ document.title }}</span>
+                    <span v-bind:class="[isLocked ? '' : 'app-blue']">{{ document.title }}</span>
                 </v-btn>
             </v-list-item>
 
             <v-list-item v-if="filing.documents.length > 1">
                 <v-btn variant="text" class="download-all-btn" @click="downloadAll()"
-                    :disabled="props.loadingOne || props.loadingAll || props.isLocked" :loading="props.loadingAll">
-                    <v-icon v-if="props.isLocked">mdi-lock</v-icon>
+                    :disabled="props.loadingOne || props.loadingAll || isLocked" :loading="props.loadingAll">
+                    <v-icon v-if="isLocked">mdi-lock</v-icon>
                     <v-icon class="app-blue" v-else>mdi-download</v-icon>
-                    <span v-bind:class="[props.isLocked ? '' : 'app-blue']">Download All</span>
+                    <span v-bind:class="[isLocked ? '' : 'app-blue']">Download All</span>
                 </v-btn>
             </v-list-item>
         </v-list>
@@ -26,17 +26,19 @@
 <script setup lang="ts">
 import { Document } from '@/types'
 import { FilingHistoryItem } from '@/types'
-import { computed } from 'vue'
+import { filingTypeToName } from '@/utils';
+import { computed, toRef } from 'vue'
 
 const props = defineProps<{
     filing: FilingHistoryItem,
     loadingOne: boolean,
     loadingAll: boolean,
-    loadingOneIndex: number,
-    isLocked: boolean
+    loadingOneIndex: number
+    isFilingLocked: boolean,
 }>()
 
 const emit = defineEmits(['downloadOne', 'downloadAll'])
+const isLocked = toRef(props, 'isFilingLocked')
 
 const filteredDocuments = computed(() => props.filing.documents.filter(document =>
     (document.title.toLowerCase() != 'receipt')))
@@ -44,6 +46,7 @@ const filteredDocuments = computed(() => props.filing.documents.filter(document 
 /** Emits an event to download the subject document. */
 const downloadOne = (document: Document, index: number): void => {
     emit('downloadOne', {
+        'filing': props.filing,
         'document': document,
         'index': index
     })
@@ -53,7 +56,6 @@ const downloadOne = (document: Document, index: number): void => {
 const downloadAll = (): void => {
     emit('downloadAll')
 }
-
 </script>
 
 <style lang="scss" scoped>

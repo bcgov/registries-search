@@ -187,7 +187,7 @@
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
                   :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)"
-                  :isLocked=isLocked />
+                  :isFilingLocked=isLocked />
               </template>
 
               <!-- the details (comments) section -->
@@ -229,23 +229,35 @@ import {
   isEffectOfOrderPlanOfArrangement, isTypeDissolution, isTypeStaff, filingTypeToName, camelCaseToWords,
   dateToYyyyMmDd, dateToPacificDateTime, flattenAndSortComments, isEffectiveDateFuture, isEffectiveDatePast
 } from '@/utils'
-import { fetchDocument, fetchDocuments, fetchComments } from '@/requests'
+import { fetchFilingDocument, fetchDocumentList, fetchComments } from '@/requests'
 import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
 import { ref, computed, watch } from 'vue'
-import { ErrorCategories, ErrorCodes, FilingTypes } from '@/enums'
+import { ErrorCategories, ErrorCodes, FilingTypes, DocumentType } from '@/enums'
 import { Document, FilingHistoryItem } from '@/types'
-import { useEntity, useFilingHistory } from '@/composables'
+import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ErrorI } from '@/interfaces'
 import { StatusCodes } from 'http-status-codes'
 
 const { entity, isBComp } = useEntity()
 const { filingHistory } = useFilingHistory()
+const { documentAccessRequest } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
-const isLocked = computed(() => true)
 
+const isLocked = computed(() => {
+  let locked = true
+  documentAccessRequest.requests.forEach((request) => {
+    request.documents.forEach((document) => {
+      if (document.documentType === DocumentType.BUSINESS_SUMMARY_FILING_HISTORY) {         
+        locked = false
+      }
+    })
+  })
+  return locked
+})
+ 
 const panel = ref(-1) // currently expanded panel
 const historyItems = ref([])
 const loadingOne = ref(false)
@@ -394,8 +406,8 @@ const downloadOne = async (event): Promise<void> => {
     loadingOne.value = true
     loadingOneIndex.value = event.index
 
-    await fetchDocument(event.document).catch(error => {
-      console.error('fetchDocument() error =', error)
+    await fetchFilingDocument(event.document).catch(error => {
+      console.error('fetchFilingDocument() error =', error)
       emit('error', documentDownloadError)
     })
 
@@ -410,8 +422,8 @@ const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
     const filteredDocuments = item.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
     for (const document of filteredDocuments) {
-      await fetchDocument(document).catch(error => {
-        console.error('fetchDocument() error =', error)
+      await fetchFilingDocument(document).catch(error => {
+        console.error('fetchFilingDocument() error =', error)
         emit('error', documentDownloadError)
       })
     }
@@ -434,7 +446,7 @@ const loadComments = async (item: FilingHistoryItem): Promise<void> => {
 /** Loads the documents for this history item. */
 const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
   try {
-    const documents = await fetchDocuments(item.documentsLink)
+    const documents = await fetchDocumentList(entity.identifier, item.filingId)
     item.documents = []
     for (const prop in documents) {
       if (prop === 'legalFilings' && Array.isArray(documents.legalFilings)) {
