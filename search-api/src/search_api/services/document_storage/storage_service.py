@@ -17,7 +17,7 @@ import os
 from flask import current_app
 from google.cloud import storage
 
-from search_api.models import Document
+from search_api.enums import DocumentType
 from search_api.exceptions import StorageException
 from search_api.services.gcp_auth.auth_service import GoogleAuthService
 from search_api.services.document_storage.abstract_storage_service import StorageService
@@ -36,7 +36,7 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
     GCP_BUCKET_ID_LUS = str(os.getenv('GCP_BUCKET_ID_LETTER_UNDER_SEAL'))
 
     @classmethod
-    def get_document(cls, name: str, doc_type: Document.DocumentType = None):
+    def get_document(cls, name: str, doc_type: DocumentType = None):
         """Fetch the uniquely named document from cloud storage as binary data."""
         try:
             current_app.logger.info(f'Fetching doc type={doc_type}, name={name}.')
@@ -51,15 +51,15 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
             raise StorageException(f'GET document failed for doc type={doc_type}, name={name}.')
 
     @classmethod
-    def __get_bucket_id(cls, doc_type: Document.DocumentType = None):
+    def __get_bucket_id(cls, doc_type: DocumentType = None):
         """Map the document type to a bucket ID. The default is GCP_BUCKET_ID_SUMMARY."""
-        if not doc_type or doc_type == Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY:
+        if not doc_type or doc_type == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY:
             return cls.GCP_BUCKET_ID_SUMMARY
-        if doc_type == Document.DocumentType.CERTIFICATE_OF_GOOD_STANDING:
+        if doc_type == DocumentType.CERTIFICATE_OF_GOOD_STANDING:
             return cls.GCP_BUCKET_ID_COGS
-        if doc_type == Document.DocumentType.CERTIFICATE_OF_STATUS:
+        if doc_type == DocumentType.CERTIFICATE_OF_STATUS:
             return cls.GCP_BUCKET_ID_COS
-        if doc_type == Document.DocumentType.LETTER_UNDER_SEAL:
+        if doc_type == DocumentType.LETTER_UNDER_SEAL:
             return cls.GCP_BUCKET_ID_LUS
 
         current_app.logger.error(f'No bucket ID mapped for DocumentType {str(doc_type)}')

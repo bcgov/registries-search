@@ -14,23 +14,13 @@
 """Table for storing document details."""
 from __future__ import annotations
 
-from enum import auto
-
-from search_api.utils.base import BaseEnum
+from search_api.enums import DocumentType
 
 from .db import db
 
 
 class Document(db.Model):
     """Used to hold the documents requested in an access request."""
-
-    class DocumentType(BaseEnum):
-        """Enum of the document types."""
-
-        BUSINESS_SUMMARY_FILING_HISTORY = auto()
-        CERTIFICATE_OF_GOOD_STANDING = auto()
-        CERTIFICATE_OF_STATUS = auto()
-        LETTER_UNDER_SEAL = auto()
 
     __tablename__ = 'document'
 

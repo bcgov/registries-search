@@ -34,7 +34,7 @@ bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint:
 def get(business_identifier, request_id=None):
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
-        account_id = request.headers.get('accountId', None)
+        account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
 
@@ -62,7 +62,7 @@ def get(business_identifier, request_id=None):
 def post(business_identifier):
     """Create a new request for the business."""
     try:
-        account_id = request.headers.get('accountId', None)
+        account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
 

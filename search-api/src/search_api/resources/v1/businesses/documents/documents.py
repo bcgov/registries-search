@@ -17,6 +17,7 @@ from flask import Blueprint, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
+from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException, StorageException
 from search_api.models import Document, DocumentAccessRequest
 # from search_api.services import storage
@@ -30,13 +31,31 @@ from search_api.utils.auth import jwt
 bp = Blueprint('DOCUMENTS', __name__, url_prefix='')  # pylint: disable=invalid-name
 
 
-@bp.get('/info/<int:filing_id>')
+@bp.get('/filings/<int:filing_id>')
+@bp.get('/filings/<int:filing_id>/<string:filing_name>')
 @cross_origin(origin='*')
-def get_filing_documents_info(business_identifier, filing_id):
-    """Return the document list for the given filing id."""
+@jwt.requires_auth
+def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
+    """Return the document list or document pdf for the given filing id / name."""
     try:
-        resp = get_business_filing_document_list(business_identifier, filing_id)
-        return resp.json(), resp.status_code
+        if not filing_name:
+            # get filing document list
+            resp = get_business_filing_document_list(business_identifier, filing_id)
+            return resp.json(), resp.status_code
+
+        account_id = request.headers.get('Account-Id', None)
+        if not account_id:
+            return resource_utils.account_required_response()
+        # check access
+        active_access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
+        for access_req in active_access_requests:
+            if not [x for x in access_req.documents if x.document_type == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY]:
+                # account doesn't have an active access request with a business summary/history doc
+                return resource_utils.unauthorized_error_response(account_id)
+
+        # get pdf
+        resp = get_business_filing_document(business_identifier, filing_id, filing_name)
+        return resp.content, resp.status_code
 
     except ApiConnectionException as api_exception:
         return resource_utils.default_exception_response(api_exception)
@@ -45,14 +64,13 @@ def get_filing_documents_info(business_identifier, filing_id):
 
 
 @bp.get('/<string:document_key>')
-@bp.get('/<string:document_key>/<int:filing_id>/<string:filing_name>')
 @cross_origin(origin='*')
 @jwt.requires_auth
 # pylint: disable=too-many-return-statements
-def get_document_data(business_identifier, document_key, filing_id=None, filing_name=None):
-    """Return the document json/pdf specified by the document key / file name."""
+def get_document_data(business_identifier, document_key):
+    """Return the document json/pdf specified by the document key."""
     try:
-        account_id = request.headers.get('accountId', None)
+        account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
 
@@ -67,13 +85,6 @@ def get_document_data(business_identifier, document_key, filing_id=None, filing_
             return resource_utils.unauthorized_error_response(account_id)
         if not access_request.is_active:
             return resource_utils.authorization_expired_error_response(account_id)
-
-        # get pdf
-        doc_type_history = document.document_type == Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY
-        if filing_id and filing_name and doc_type_history:
-            # Request is for a filing history document.
-            resp = get_business_filing_document(business_identifier, filing_id, filing_name)
-            return resp.content, resp.status_code
 
         # TODO: uncomment after testing with running gcp service
         # if document.file_name:

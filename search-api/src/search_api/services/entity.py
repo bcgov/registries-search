@@ -18,18 +18,18 @@ import requests
 from requests import exceptions
 from flask import current_app
 
+from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
-from search_api.models import Document
 from search_api.services.authz import get_bearer_token
 
 
 # DocumentType mapper to document name used in LEAR for business documents
 DOCUMENT_NAME = {
-    Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY: 'summary',
+    DocumentType.BUSINESS_SUMMARY_FILING_HISTORY: 'summary',
 }
 
 
-def get_business_document(identifier: str, document_type: Document.DocumentType):
+def get_business_document(identifier: str, document_type: DocumentType):
     """Get the business document for the given identifier and type."""
     document_name = DOCUMENT_NAME[document_type]
     if not document_name:

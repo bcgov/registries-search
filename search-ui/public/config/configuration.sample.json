@@ -12,6 +12,7 @@
   "POD_NAMESPACE": "dev",
   "REGISTRIES_SEARCH_API_URL": "https://search-api-6jj2coshgq-nn.a.run.app",
   "REGISTRIES_SEARCH_API_VERSION": "/api/v1",
+  "REGISTRY_SEARCH_API_KEY": "xxxxxxxxx",
   "REGISTRY_URL": "https://yfthig-dev.web.app/dashboard",
   "SENTRY_ENABLE": "false",
   "SENTRY_DSN": "",

@@ -10,12 +10,21 @@ import { DocumentTypeDescriptions } from '@/resources'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
+const getSearchConfig = () => {
+  const { auth } = useAuth()
+  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
+  const apiKey = window['searchApiKey']
+  if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
+  if (!apiKey) console.error('Error: REGISTRY_SEARCH_API_KEY expected, but not found.')
+  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
+
+  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey }}
+}
+
 export async function getAutoComplete(searchValue: string): Promise<SuggestionResponseI> {
   if (!searchValue) return
 
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
-  const config = { baseURL: url }
+  const config = getSearchConfig()
   return axios.get<SuggestionResponseI>
     (`businesses/search/suggest?query=${searchValue}&max_results=${AUTO_SUGGEST_RESULT_SIZE}`,
       config)
@@ -41,8 +50,7 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 export async function searchBusiness(searchValue: string): Promise<SearchResponseI> {
   if (!searchValue) return
 
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const config = { baseURL: url }
+  const config = getSearchConfig()
   return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start_row=0&num_of_rows=100`,
     config)
     .then(response => {
@@ -64,13 +72,11 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
     })
 }
 
-
-export async function createDocumentAccessRequest(business_identifier: string,
-  documentList: any): Promise<CreateDocumentResponseI> {
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const { auth } = useAuth()
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
+export async function createDocumentAccessRequest(
+  business_identifier: string,
+  documentList: any
+): Promise<CreateDocumentResponseI> {
+  const config = getSearchConfig()
 
   const docs = []
   documentList.value.forEach((doc) => { docs.push({ 'type': doc }) })
@@ -104,10 +110,7 @@ export async function createDocumentAccessRequest(business_identifier: string,
 
 
 export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const { auth } = useAuth()
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
+  const config = getSearchConfig()
   return axios.get< AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
     config)
     .then(response => {
@@ -131,19 +134,10 @@ export async function getActiveAccessRequests(business_identifier: string): Prom
     })
 }
 
-
 export async function getDocument(businessIdentifier: string, document: DocumentI): Promise<any> {
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const accountInfo: any = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))
-
-  const config = {
-    headers: { 
-      'Accept': 'application/pdf',
-      'accountId': accountInfo.id
-     },
-    responseType: 'blob' as 'json',
-    baseURL: url    
-  }
+  const config = getSearchConfig()
+  config.headers['Accept'] = 'application/pdf'
+  config['responseType'] = 'blob' as 'json'
 
   return axios.get(`businesses/${businessIdentifier}/documents/${document.documentKey}`,
     config).then(response => {

@@ -25,6 +25,7 @@ from flask import current_app, g
 from flask_jwt_oidc import JwtManager
 
 import search_api.resources.utils as resource_utils
+from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.payment import DOCUMENT_TYPE_TO_FILING_TYPE, create_payment
@@ -40,7 +41,7 @@ def save_request(account_id, business_identifier, request_json) -> DocumentAcces
         submission_date=datetime.utcnow()
     )
     for doc in request_json.get('documentAccessRequest', {}).get('documents', []):
-        document_type = Document.DocumentType.get_enum_by_name(doc.get('type'))
+        document_type = DocumentType.get_enum_by_name(doc.get('type'))
         document = Document(
             document_type=document_type.value,
             document_key=_generate_key()
