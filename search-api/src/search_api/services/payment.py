@@ -21,13 +21,13 @@ from requests import exceptions
 from flask import current_app
 from flask_jwt_oidc import JwtManager
 
+from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
-from search_api.models import Document
 
 
 # Maps Document Type to Pay API Filing Type
 DOCUMENT_TYPE_TO_FILING_TYPE = {
-    Document.DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: 'BSRCH'
+    DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: 'BSRCH'
 }
 
 PAYMENT_REQUEST_TEMPLATE = {

@@ -18,6 +18,7 @@ from http import HTTPStatus
 
 from dateutil.relativedelta import relativedelta
 
+from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.authz import STAFF_ROLE
 from search_api.services.validator import RequestValidator
@@ -43,7 +44,7 @@ def test_get_business_documents(session, client, jwt):
     create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -58,7 +59,7 @@ def test_get_business_documents_no_payment(session, client, jwt):
     create_document_access_request(business_identifier, account_id, False)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -72,7 +73,7 @@ def test_get_business_documents_no_records(session, client, jwt):
     business_identifier = 'CP1234567'
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -87,7 +88,7 @@ def test_get_business_documents_invalid_account(session, client, jwt):
     create_document_access_request(business_identifier, account_id)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': 234})
+                                                                                     'Account-Id': 234})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -103,7 +104,7 @@ def test_get_business_document_by_id(session, client, jwt):
     access_request = create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests/{access_request.id}',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -117,7 +118,7 @@ def test_get_business_document_by_invalid_id(session, client, jwt):
     access_request = create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests/567',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.NOT_FOUND
@@ -130,7 +131,7 @@ def test_get_business_document_by_id_unauthorized(session, client, jwt):
     access_request = create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests/{access_request.id}',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': 567})
+                                                                                     'Account-Id': 567})
                     )
     # check
     assert rv.status_code == HTTPStatus.UNAUTHORIZED
@@ -150,7 +151,7 @@ def test_post_business_document(session, client, jwt, mocker):
     api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
                      data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id,
+                                                                                     'Account-Id': account_id,
                                                                                      'content-type': 'application/json'
                                                                                      })
                     )
@@ -175,7 +176,7 @@ def test_post_business_document_payment_failure(session, client, jwt, mocker):
     api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
                      data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id,
+                                                                                     'Account-Id': account_id,
                                                                                      'content-type': 'application/json'
                                                                                      })
                     )
@@ -202,7 +203,7 @@ def create_document_access_request(identifier: str, account_id: int, is_paid: bo
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
     document_access_request.submitter = user
 
-    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
+    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
     document_access_request.documents.append(document)
 
     document_access_request.save()

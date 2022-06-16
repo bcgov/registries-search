@@ -15,12 +15,13 @@
 
 Test-Suite to ensure that the Document Class is working as expected.
 """
+from search_api.enums import DocumentType
 from search_api.models import Document
 
 
 def test_document_save(session):
     """Assert that a document can be stored in the service."""
-    document = Document(document_type=Document.DocumentType.CERTIFICATE_OF_GOOD_STANDING.value,
+    document = Document(document_type=DocumentType.CERTIFICATE_OF_GOOD_STANDING.value,
                         document_key='test')
 
     document.save()
@@ -30,7 +31,7 @@ def test_document_save(session):
 
 def test_find_by_document_key(session):
     """Assert that a document can be retrieved using document key."""
-    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value,
+    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value,
                         document_key='test')
 
     document.save()
@@ -43,7 +44,7 @@ def test_find_by_document_key(session):
 
 def test_find_by_id(session):
     """Assert that a document can be retrieved using document id."""
-    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value,
+    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value,
                         document_key='test')
 
     document.save()
@@ -55,7 +56,7 @@ def test_find_by_id(session):
 
 def test_document_json(session):
     """Assert that a document can be retrieved using document id."""
-    document = Document(document_type=Document.DocumentType.LETTER_UNDER_SEAL.value,
+    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value,
                         document_key='test')
 
     document.save()

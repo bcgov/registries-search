@@ -37,6 +37,12 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('REGISTRY_SEARCH_API_URL', searchApiUrl)
   console.info('Set Registry Search API URL to: ' + searchApiUrl)
 
+  const searchApiKey: string = response.data.REGISTRY_SEARCH_API_KEY
+  if (searchApiKey) {
+    (<any>window).searchApiKey = searchApiKey
+    console.info('Set Search API key.')
+  }
+
   const registryUrl: string = response.data.REGISTRY_URL
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
   console.info('Set REGISTRY URL to: ' + registryUrl)
