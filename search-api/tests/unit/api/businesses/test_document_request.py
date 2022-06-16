@@ -44,7 +44,7 @@ def test_get_business_documents(session, client, jwt):
     create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -59,7 +59,7 @@ def test_get_business_documents_no_payment(session, client, jwt):
     create_document_access_request(business_identifier, account_id, False)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -73,7 +73,7 @@ def test_get_business_documents_no_records(session, client, jwt):
     business_identifier = 'CP1234567'
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': account_id})
+                                                                                     'Account-Id': account_id})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
@@ -88,7 +88,7 @@ def test_get_business_documents_invalid_account(session, client, jwt):
     create_document_access_request(business_identifier, account_id)
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
-                                                                                     'accountId': 234})
+                                                                                     'Account-Id': 234})
                     )
     # check
     assert rv.status_code == HTTPStatus.OK
