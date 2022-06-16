@@ -42,7 +42,6 @@ export async function fetchConfig(): Promise<any> {
     (<any>window).searchApiKey = searchApiKey
     console.info('Set Search API key.')
   }
-  sessionStorage.setItem('REGISTRY_SEARCH_API_KEY', searchApiKey)
 
   const registryUrl: string = response.data.REGISTRY_URL
   sessionStorage.setItem('REGISTRY_URL', registryUrl)

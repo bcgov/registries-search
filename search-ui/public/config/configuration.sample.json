@@ -10,7 +10,7 @@
   "PAY_API_URL": "https://pay-api-dev.apps.silver.devops.gov.bc.ca",
   "PAY_API_VERSION": "/api/v1",
   "POD_NAMESPACE": "dev",
-  "REGISTRIES_SEARCH_API_URL": "https://search-api-6jj2coshgq-nn.a.run.app",
+  "REGISTRIES_SEARCH_API_URL": "https://bcregistry-dev.apigee.net/registry-search",
   "REGISTRIES_SEARCH_API_VERSION": "/api/v1",
   "REGISTRY_SEARCH_API_KEY": "xxxxxxxxx",
   "REGISTRY_URL": "https://yfthig-dev.web.app/dashboard",
