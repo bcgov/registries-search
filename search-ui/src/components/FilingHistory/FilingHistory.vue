@@ -229,7 +229,7 @@ import {
   isEffectOfOrderPlanOfArrangement, isTypeDissolution, isTypeStaff, filingTypeToName, camelCaseToWords,
   dateToYyyyMmDd, dateToPacificDateTime, flattenAndSortComments, isEffectiveDateFuture, isEffectiveDatePast
 } from '@/utils'
-import { fetchFilingDocument, fetchDocumentList, fetchComments } from '@/requests'
+import { fetchDocumentList, fetchComments } from '@/requests'
 import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
@@ -242,7 +242,7 @@ import { StatusCodes } from 'http-status-codes'
 
 const { entity, isBComp } = useEntity()
 const { filingHistory } = useFilingHistory()
-const { documentAccessRequest } = useDocumentAccessRequest()
+const { documentAccessRequest, downloadFilingDocument } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
 
@@ -406,7 +406,7 @@ const downloadOne = async (event): Promise<void> => {
     loadingOne.value = true
     loadingOneIndex.value = event.index
 
-    await fetchFilingDocument(event.document).catch(error => {
+    await downloadFilingDocument(entity.identifier, event.filing.filingId, event.document).catch(error => {
       console.error('fetchFilingDocument() error =', error)
       emit('error', documentDownloadError)
     })
@@ -422,7 +422,7 @@ const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
     const filteredDocuments = item.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
     for (const document of filteredDocuments) {
-      await fetchFilingDocument(document).catch(error => {
+      await downloadFilingDocument(entity.identifier, item.filingId, document).catch(error => {
         console.error('fetchFilingDocument() error =', error)
         emit('error', documentDownloadError)
       })

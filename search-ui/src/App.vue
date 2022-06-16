@@ -1,5 +1,12 @@
 <template>
   <v-app id="app" class="app-container">
+    
+    <ErrorDialog
+      :dialog="errorDialog"
+      @close="clearError"
+      attach="#app"
+    />
+
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
     <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
     <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
@@ -45,14 +52,16 @@ import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
 import { ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
-import { EntityInfo } from '@/components'
-import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest } from '@/composables'
+import { EntityInfo, ErrorDialog } from '@/components'
+import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest, 
+useDocumentAccessRequest } from '@/composables'
 import { navigate } from '@/utils'
 
 const aboutText: string = process.env.ABOUT_TEXT
 const appLoading = ref(false)
 const appReady = ref(false)
 const haveData = ref(true)
+const errorDialog = ref(false)
 
 const route = useRoute()
 const router = useRouter()
@@ -62,6 +71,7 @@ const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
 const { search } = useSearch()
 const { suggest } = useSuggest()
+const {documentAccessRequest} = useDocumentAccessRequest()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -131,8 +141,9 @@ onMounted(async () => {
   appLoading.value = false
 })
 
-const handleError = (error: ErrorI) => {
+const handleError = (error: ErrorI) => {  
   console.error(error)
+  
   // FUTURE: add account info with error information, add dialog popups for specific errors
   switch (error.category) {
     case ErrorCategories.ACCOUNT_ACCESS:
@@ -140,6 +151,12 @@ const handleError = (error: ErrorI) => {
   }
   Sentry.captureException(error)
 }
+
+const clearError = () => {
+  documentAccessRequest._error = null
+  errorDialog.value = false
+}
+
 // watchers for errors
 watch(auth, (val) => { if (val._error) handleError(val._error) })
 watch(entity, (val) => { if (val._error) handleError(val._error) })
@@ -147,4 +164,7 @@ watch(fees, (val) => { if (val._error) handleError(val._error) })
 watch(filingHistory, (val) => { if (val._error) handleError(val._error) })
 watch(search, (val) => { if (val._error) handleError(val._error) })
 watch(suggest, (val) => { if (val._error) handleError(val._error) })
+watch(documentAccessRequest, (val)=> {if (val._error){
+errorDialog.value = true
+handleError(val._error)}})
 </script>

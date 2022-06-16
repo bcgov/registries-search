@@ -12,7 +12,7 @@ import {  Document } from '@/types'
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
 const getSearchConfig = () => {
-  const { auth } = useAuth()
+  const { auth } = useAuth() 
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const apiKey = window['searchApiKey']
   if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
@@ -111,8 +111,10 @@ export async function createDocumentAccessRequest(
 
 
 export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
+  const {  loadAuth } = useAuth()
+  loadAuth()
   const config = getSearchConfig()
-  return axios.get< AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
+  return axios.get<AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
     config)
     .then(response => {
       const data: AccessRequestsHistoryI = response?.data
@@ -171,11 +173,8 @@ export async function getDocument(businessIdentifier: string, document: Document
  * @returns List of documents applicable for the specified filing
  */
 export const fetchDocumentList = async (businessIdentifier: string, filingId: number): Promise<ApiDocuments> => {
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')   
-  const { auth } = useAuth()   
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  const config = { baseURL: url, headers: { 'accountId': auth.currentAccount.id }}
-  return axios.get<any>(`businesses/${businessIdentifier}/documents/info/${filingId}`, config)
+  const config = getSearchConfig()
+  return axios.get<any>(`businesses/${businessIdentifier}/documents/filings/${filingId}`, config)
     .then(response => {
       const data = response?.data?.documents
       if (!data) {
@@ -199,19 +198,12 @@ export const fetchDocumentList = async (businessIdentifier: string, filingId: nu
    * @param document the document info object
    */
 export const fetchFilingDocument = (businessIdentifier: string, filingId: number, document: Document): Promise<any> => {
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')   
-  const { auth } = useAuth()   
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  const config = {
-    headers: { 
-      'Accept': 'application/pdf',
-      'accountId':auth.currentAccount.id
-     },
-    responseType: 'blob' as 'json',
-    baseURL: url    
-  }
-
-  return axios.get(`businesses/${businessIdentifier}/documents/info/${filingId}`, config).then(response => {
+  const config = getSearchConfig()
+  config.headers['Accept'] = 'application/pdf'
+  config['responseType'] = 'blob' as 'json'
+  const documentType = document.link.split('/').pop()
+  return axios.get(`businesses/${businessIdentifier}/documents/filings/${filingId}/${documentType}`, config)
+  .then(response => {
     if (!response) throw new Error('Null response') 
     const blob = new Blob([response.data], { type: 'application/pdf' })
  
@@ -227,6 +219,15 @@ export const fetchFilingDocument = (businessIdentifier: string, filingId: number
       a.click()
       window.URL.revokeObjectURL(url)
       a.remove()
+    }
+  }).catch(error => {
+    return {
+      error: {
+        statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while downloading the document.',
+        category: ErrorCategories.DOCUMENT_DOWNLOAD,
+        type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+      }
     }
   })
 }
