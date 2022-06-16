@@ -2,24 +2,26 @@ import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 // local
 import { useAuth } from '@/composables'
-import { SearchResponseI, SuggestionResponseI, DocumentDetailsI,
-   CreateDocumentResponseI,  AccessRequestsHistoryI, DocumentI, ApiDocuments } from '@/interfaces'
+import {
+  SearchResponseI, SuggestionResponseI, DocumentDetailsI,
+  CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI, ApiDocuments
+} from '@/interfaces'
 
 import { ErrorCategories, ErrorCodes } from '@/enums'
 import { DocumentTypeDescriptions } from '@/resources'
-import {  Document } from '@/types'
+import { Document } from '@/types'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
 const getSearchConfig = () => {
-  const { auth } = useAuth() 
+  const { auth } = useAuth()
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const apiKey = window['searchApiKey']
   if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
   if (!apiKey) console.error('Error: REGISTRY_SEARCH_API_KEY expected, but not found.')
   if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
 
-  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey }}
+  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey } }
 }
 
 export async function getAutoComplete(searchValue: string): Promise<SuggestionResponseI> {
@@ -111,7 +113,7 @@ export async function createDocumentAccessRequest(
 
 
 export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
-  const {  loadAuth } = useAuth()
+  const { loadAuth } = useAuth()
   loadAuth()
   const config = getSearchConfig()
   return axios.get<AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
@@ -161,6 +163,15 @@ export async function getDocument(businessIdentifier: string, document: Document
         window.URL.revokeObjectURL(url)
         a.remove()
       }
+    }).catch(error => {
+      return {
+        error: {
+          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+          message: 'An error occured while downloading the document.',
+          category: ErrorCategories.DOCUMENT_DOWNLOAD,
+          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+        }
+      }
     })
 }
 
@@ -203,31 +214,31 @@ export const fetchFilingDocument = (businessIdentifier: string, filingId: number
   config['responseType'] = 'blob' as 'json'
   const documentType = document.link.split('/').pop()
   return axios.get(`businesses/${businessIdentifier}/documents/filings/${filingId}/${documentType}`, config)
-  .then(response => {
-    if (!response) throw new Error('Null response') 
-    const blob = new Blob([response.data], { type: 'application/pdf' })
- 
-    if (window.navigator && window.navigator['msSaveOrOpenBlob']) {
-      window.navigator['msSaveOrOpenBlob'](blob, document.filename)
-    } else {
-      const url = window.URL.createObjectURL(blob)
-      const a = window.document.createElement('a')
-      window.document.body.appendChild(a)
-      a.setAttribute('style', 'display: none')
-      a.href = url
-      a.download = document.filename
-      a.click()
-      window.URL.revokeObjectURL(url)
-      a.remove()
-    }
-  }).catch(error => {
-    return {
-      error: {
-        statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'An error occured while downloading the document.',
-        category: ErrorCategories.DOCUMENT_DOWNLOAD,
-        type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+    .then(response => {
+      if (!response) throw new Error('Null response')
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+
+      if (window.navigator && window.navigator['msSaveOrOpenBlob']) {
+        window.navigator['msSaveOrOpenBlob'](blob, document.filename)
+      } else {
+        const url = window.URL.createObjectURL(blob)
+        const a = window.document.createElement('a')
+        window.document.body.appendChild(a)
+        a.setAttribute('style', 'display: none')
+        a.href = url
+        a.download = document.filename
+        a.click()
+        window.URL.revokeObjectURL(url)
+        a.remove()
       }
-    }
-  })
+    }).catch(error => {
+      return {
+        error: {
+          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
+          message: 'An error occured while downloading the document.',
+          category: ErrorCategories.DOCUMENT_DOWNLOAD,
+          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
+        }
+      }
+    })
 }

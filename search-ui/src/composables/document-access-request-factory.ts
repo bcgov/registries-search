@@ -46,7 +46,10 @@ export const useDocumentAccessRequest = () => {
 
     const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
         documentAccessRequest._downloading = true
-        await getDocument(businessIdentifier, document)          
+        const response = await getDocument(businessIdentifier, document)       
+        if (response?.error){
+            documentAccessRequest._error = response.error
+        }   
         documentAccessRequest._downloading = false
     }
 

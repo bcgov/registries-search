@@ -26,7 +26,6 @@
 <script setup lang="ts">
 import { Document } from '@/types'
 import { FilingHistoryItem } from '@/types'
-import { filingTypeToName } from '@/utils';
 import { computed, toRef } from 'vue'
 
 const props = defineProps<{
