@@ -16,7 +16,7 @@ from contextlib import suppress
 from http import HTTPStatus
 from typing import List
 
-from flask import current_app, jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
 
 from search_api.exceptions import SolrException
