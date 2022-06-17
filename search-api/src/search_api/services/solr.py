@@ -135,6 +135,7 @@ class Solr:
             start=start,
             rows=rows)
         try:
+            print(query)
             response = requests.get(query)
             if response.status_code != HTTPStatus.OK:
                 raise SolrException('Error handling Solr request.', response.status_code)
