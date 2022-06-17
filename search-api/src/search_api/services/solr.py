@@ -27,14 +27,15 @@ class SolrField(str, Enum):
     """Enum of the fields available in the solr search core."""
 
     BN = 'bn'
-    BN_SELECT = 'bn_select'
+    BN_Q = 'bn_q'
     IDENTIFIER = 'identifier'
-    IDENTIFIER_SELECT = 'identifier_select'
+    IDENTIFIER_Q = 'identifier_q'
     NAME = 'name'
-    NAME_SELECT = 'name_select'
+    NAME_Q = 'name_q'
     NAME_SINGLE = 'name_single_term'
     NAME_STEM_AGRO = 'name_stem_agro'
-    NAME_SYNONYM = 'name_synonym'
+    # NAME_SYNONYM = 'name_synonym'
+    NAME_SUGGEST = 'name_suggest'
     SCORE = 'score'
     STATE = 'status'
     TYPE = 'legalType'
@@ -84,7 +85,7 @@ class Solr:
             f'{SolrField.TYPE},{SolrField.SCORE}'
         self.boost_params = '{boost_params}&defType=edismax'
 
-        self.search_query = '{url}/{core}/select?{search_params}{fields}&start={start}&rows={rows}'
+        self.search_query = '{url}/{core}/query?{search_params}{fields}&start={start}&rows={rows}'
         self.suggest_query = '{url}/{core}/suggest?{suggest_params}&suggest.count={rows}&suggest.build={build}'
         self.update_query = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
 
@@ -112,19 +113,21 @@ class Solr:
 
     def delete_docs(self, identifiers: List):
         """Delete solr docs from the core."""
-        payload = '<add><delete>'
-        for identifier in identifiers:
-            payload += f'<id>{identifier.upper()}</id>'
-        payload += '</delete></add>'
+        payload = '<delete><query>'
+        if identifiers:
+            payload += f'{SolrField.IDENTIFIER}:{identifiers[0].upper()}'
+        for identifier in identifiers[1:]:
+            payload += f' OR {SolrField.IDENTIFIER}:{identifier.upper()}'
+        payload += '</query></delete>'
 
         delete_url = self.update_query.format(url=self.solr_url, core=self.core)
         headers = {'Content-Type': 'application/xml'}
         response = requests.post(url=delete_url, data=payload, headers=headers)
         return response
 
-    def select(self, params: str, start: int, rows: int) -> List:
-        """Return a list of solr docs from the solr select handler for the given params."""
-        select_query = self.search_query.format(
+    def query(self, params: str, start: int, rows: int) -> List:
+        """Return a list of solr docs from the solr query handler for the given params."""
+        query = self.search_query.format(
             url=self.solr_url,
             core=self.core,
             search_params=params,
@@ -132,7 +135,8 @@ class Solr:
             start=start,
             rows=rows)
         try:
-            response = requests.get(select_query)
+            print(query)
+            response = requests.get(query)
             if response.status_code != HTTPStatus.OK:
                 raise SolrException('Error handling Solr request.', response.status_code)
         except Exception as err:  # noqa B902

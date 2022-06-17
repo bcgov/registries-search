@@ -38,9 +38,10 @@ from . import SOLR_TEST_DOCS
     ('test-stem-matches', 'test 2222', ['tests 2222']),
     ('test-multiple-matches', 'test', ['test 1234', 'tester 1111', 'tests 2222', 'test 3333', '4444 test']),
 ])
-def test_solr_suggest_name(test_name, query, expected):
+def test_solr_suggest_name(app, test_name, query, expected):
     """Assert that solr suggest call works as expected."""
     # setup
+    solr.init_app(app)
     solr.delete_all_docs()
     solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(0.5) # wait for solr to register update
@@ -53,8 +54,8 @@ def test_solr_suggest_name(test_name, query, expected):
 
 @integration_solr
 @pytest.mark.parametrize('test_name,query,query_field,expected_field,expected', [
-    ('test-identifier', 'CP00', SolrField.IDENTIFIER_SELECT, SolrField.IDENTIFIER, ['CP0034567']),
-    ('test-bn', '0012334', SolrField.BN_SELECT, SolrField.BN, ['BN00012334']),
+    ('test-identifier', 'CP00', SolrField.IDENTIFIER_Q, SolrField.IDENTIFIER, ['CP0034567']),
+    ('test-bn', '0012334', SolrField.BN_Q, SolrField.BN, ['BN00012334']),
     ('test-name-exact', 'tests 2222', SolrField.NAME_SINGLE, SolrField.NAME, ['tests 2222']),
     ('test-case', 'not case sensitive', SolrField.NAME_SINGLE, SolrField.NAME, ['NOt Case SENSitive']),
     ('test-partial-1', 'tester', SolrField.NAME_SINGLE, SolrField.NAME, ['tester 1111']),
@@ -64,15 +65,17 @@ def test_solr_suggest_name(test_name, query, expected):
     ('test-all-words-match', 'tests oops 2222', SolrField.NAME_SINGLE, SolrField.NAME, []),
     ('test-multiple-matches', 'test 1', SolrField.NAME_SINGLE, SolrField.NAME, ['test 1234', 'tester 1111']),
 ])
-def test_solr_select(test_name, query, query_field, expected_field, expected):
-    """Assert that solr select call works as expected."""
+def test_solr_query(app, test_name, query, query_field, expected_field, expected):
+    """Assert that solr query call works as expected."""
     # setup
+    solr.init_app(app)
     solr.delete_all_docs()
     solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(0.5) # wait for solr to register update
-    search_params = Solr.build_split_query(query, query_field)
+    search_params = Solr.build_split_query(query, [query_field], [SolrField.NAME_SINGLE])
     # call select
-    docs = solr.select(search_params, 10)
+    resp = solr.query(search_params, 0, 10)
+    docs = resp['response']['docs']
     # test
     assert len(docs) == len(expected)
     for doc in docs:

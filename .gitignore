@@ -122,4 +122,9 @@ search-api/tests/postman/.DS_Store
 # local config
 search-ui/public/config/configuration.json
 
+# local solr index
+search-solr/bitnami/solr/server/solr/search/data/*
+# local test solr (for api unit tests)
+search-solr/test_solr
+
 .idea/
