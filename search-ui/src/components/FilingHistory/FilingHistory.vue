@@ -186,7 +186,7 @@
               <template v-if="filing.documents && filing.documents.length > 0">
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
-                  :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll($event)"
+                  :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll"
                   :isFilingLocked=isLocked />
               </template>
 
@@ -416,13 +416,13 @@ const downloadOne = async (event): Promise<void> => {
   }
 }
 
-const downloadAll = async (item: FilingHistoryItem): Promise<void> => {
-  if (item?.documents) {
+const downloadAll = async (event): Promise<void> => {
+  if (event.filing?.documents) {
     loadingAll.value = true
-    const filteredDocuments = item.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
+    const filteredDocuments = event.filing.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
     for (const document of filteredDocuments) {
-      await downloadFilingDocument(entity.identifier, item.filingId, document).catch(error => {
+      await downloadFilingDocument(entity.identifier,  event.filing.filingId, document).catch(error => {
         console.error('fetchFilingDocument() error =', error)
         emit('error', documentDownloadError)
       })

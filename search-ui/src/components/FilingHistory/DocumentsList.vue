@@ -53,7 +53,9 @@ const downloadOne = (document: Document, index: number): void => {
 
 /** Emits an event to download all. */
 const downloadAll = (): void => {
-    emit('downloadAll')
+    emit('downloadAll', {        
+        'filing': props.filing
+    })
 }
 </script>
 
