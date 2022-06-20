@@ -14,7 +14,10 @@ import { Document } from '@/types'
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
 const getSearchConfig = () => {
-  const { auth } = useAuth()
+  const { auth, loadAuth } = useAuth()
+  if(!auth.currentAccount){
+      loadAuth()
+  }
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const apiKey = window['searchApiKey']
   if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
@@ -113,8 +116,6 @@ export async function createDocumentAccessRequest(
 
 
 export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
-  const { loadAuth } = useAuth()
-  loadAuth()
   const config = getSearchConfig()
   return axios.get<AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
     config)
