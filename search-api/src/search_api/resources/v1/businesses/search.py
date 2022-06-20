@@ -16,7 +16,7 @@ from contextlib import suppress
 from http import HTTPStatus
 from typing import List
 
-from flask import current_app, jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
 
 from search_api.exceptions import SolrException
@@ -99,13 +99,13 @@ def _business_search(query: str, legal_type: str, state: str, start: int, rows: 
     solr_query = Solr.build_split_query(
         query,
         [
-            SolrField.NAME_SELECT,
+            SolrField.NAME_Q,
             SolrField.NAME_STEM_AGRO,
-            SolrField.NAME_SYNONYM,
-            SolrField.IDENTIFIER_SELECT,
-            SolrField.BN_SELECT
+            # SolrField.NAME_SYNONYM,
+            SolrField.IDENTIFIER_Q,
+            SolrField.BN_Q
         ],
-        [SolrField.NAME_SELECT]
+        [SolrField.NAME_Q]
     )
 
     # facets
@@ -116,20 +116,22 @@ def _business_search(query: str, legal_type: str, state: str, start: int, rows: 
         solr_query += f'&{SolrField.STATE}:{state.upper()}'
 
     # boosts for result ordering
-    solr_bq_params = f'&bq={SolrField.NAME_SELECT}:("{query}"~10)^30.0' + \
+    solr_bq_params = f'&bq={SolrField.NAME_Q}:("{query}"~10)^30.0' + \
         f'&bq={SolrField.NAME_STEM_AGRO}:("{query}"~10)^20.0' + \
-        f'&bq={SolrField.NAME_SELECT}:({query.split()[0]}*)^10.0'
+        f'&bq={SolrField.NAME_Q}:({query.split()[0]}*)^10.0' + \
+        f'&bq={SolrField.NAME_SUGGEST}:({query.split()[0]}*)^5.0'
     solr_query += solr.boost_params.format(boost_params=solr_bq_params)
 
-    try:
-        results = solr.select(solr_query, start, rows)
-    except SolrException as err:
-        current_app.logger.debug(f'1st solr call attempt failed with {err.with_traceback(None)}')
-        terms = query.split()
-        for term in terms:
-            solr_query.replace(f' OR {SolrField.NAME_SYNONYM}:{term}', '')
-        current_app.logger.debug('Trying again without synonym clause...')
-        results = solr.select(solr_query, start, rows)
+    results = solr.query(solr_query, start, rows)
+    # try:
+    #     results = solr.query(solr_query, start, rows)
+    # except SolrException as err:
+    #     current_app.logger.debug(f'1st solr call attempt failed with {err.with_traceback(None)}')
+    #     terms = query.split()
+    #     for term in terms:
+    #         solr_query.replace(f' OR {SolrField.NAME_SYNONYM}:{term}', '')
+    #     current_app.logger.debug('Trying again without synonym clause...')
+    #     results = solr.query(solr_query, start, rows)
 
     return results
 
@@ -145,7 +147,7 @@ def _business_suggest(query: str, rows: int = None) -> List:
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
         name_select_params = Solr.build_split_query(query, [SolrField.NAME_SINGLE], [])
-        name_docs = solr.select(name_select_params, 0, rows).get('response', {}).get('docs', [])
+        name_docs = solr.query(name_select_params, 0, rows).get('response', {}).get('docs', [])
         extra_name_suggestions = [x.get(SolrField.NAME, '').upper() for x in name_docs]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
@@ -156,8 +158,8 @@ def _business_suggest(query: str, rows: int = None) -> List:
     identifier_suggestions = []
     bn_suggestions = []
     if len(name_suggestions) < rows:
-        bn_id_params = f'q={SolrField.IDENTIFIER_SELECT}:{query} OR {SolrField.BN_SELECT}:{query}'
-        bn_id_docs = solr.select(bn_id_params, 0, rows).get('response', {}).get('docs', [])
+        bn_id_params = f'q={SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}'
+        bn_id_docs = solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
         # return list of identifier strings with highlighted query
         identifier_suggestions = [
             x.get(SolrField.IDENTIFIER).replace(query, f'<b>{query}</b>')
