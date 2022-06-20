@@ -1,7 +1,8 @@
 import { reactive } from 'vue'
 
 import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
-import { getActiveAccessRequests, createDocumentAccessRequest, getDocument } from '@/requests'
+import { getActiveAccessRequests, createDocumentAccessRequest, getDocument, fetchFilingDocument } from '@/requests'
+import {  Document } from '@/types'
 
 
 const documentAccessRequest = reactive({
@@ -45,15 +46,28 @@ export const useDocumentAccessRequest = () => {
 
     const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
         documentAccessRequest._downloading = true
-        await getDocument(businessIdentifier, document)          
+        const response = await getDocument(businessIdentifier, document)       
+        if (response?.error){
+            documentAccessRequest._error = response.error
+        }   
         documentAccessRequest._downloading = false
     }
+
+    const downloadFilingDocument = async (businessIdentifier: string, filingId: number, document: Document) => {     
+        documentAccessRequest._downloading = true
+        const response = await fetchFilingDocument(businessIdentifier, filingId, document)      
+        if (response?.error){
+            documentAccessRequest._error = response.error
+        }
+        documentAccessRequest._downloading = false
+     }
 
     return {
         documentAccessRequest,
         clearAccessRequestHistory,
         createAccessRequest,
         loadAccessRequestHistory,
-        downloadDocument
+        downloadDocument,
+        downloadFilingDocument
     }
 }

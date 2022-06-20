@@ -18,7 +18,7 @@
   </ul>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 </script>
 
 <style lang="scss" scoped>

@@ -10,7 +10,7 @@
                         <tr>
                             <th width="33%" class="bg-grey-lighten-4">Submitted on</th>
                             <th width="33%" class="bg-grey-lighten-4">Expires on</th>
-                            <th width="34%" class="bg-grey-lighten-4">Documents</th>
+                            <th width="34%" class="bg-grey-lighten-4 opaque-header">Documents</th>
                         </tr>
                     </thead>
                     <tbody v-if="totalResultsLength > 0">
@@ -119,5 +119,9 @@ th {
 
 .doc-link{
     cursor: pointer;
+}
+
+.opaque-header {
+  z-index: 1;
 }
 </style>
