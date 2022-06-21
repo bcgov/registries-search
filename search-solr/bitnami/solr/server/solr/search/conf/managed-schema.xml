@@ -2,7 +2,7 @@
 <!-- Solr managed schema - automatically generated - DO NOT EDIT -->
 <schema name="default-config" version="1.6">
   <uniqueKey>identifier</uniqueKey>
-  <fieldType name="_nest_path_" class="solr.NestPathField" omitTermFreqAndPositions="true" omitNorms="true" maxCharsForDocValues="-1" stored="false" multiValued="false"/>
+  <fieldType name="_nest_path_" class="solr.NestPathField" maxCharsForDocValues="-1" omitNorms="true" omitTermFreqAndPositions="true" stored="false" multiValued="false"/>
   <fieldType name="ancestor_path" class="solr.TextField">
     <analyzer type="index">
       <tokenizer name="keyword"/>
@@ -77,14 +77,14 @@
     <analyzer type="index">
       <tokenizer name="keyword"/>
       <filter name="lowercase"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
-      <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="15"/>
+      <filter class="solr.NGramFilterFactory" maxGramSize="15" minGramSize="3"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="keyword"/>
       <filter name="lowercase"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
     </analyzer>
   </fieldType>
   <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
@@ -180,7 +180,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="standard"/>
-      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter name="lowercase"/>
       <filter name="englishPossessive"/>
@@ -200,7 +200,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="whitespace"/>
-      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter generateNumberParts="1" generateWordParts="1" catenateAll="0" name="wordDelimiterGraph" splitOnCaseChange="1" catenateNumbers="0" catenateWords="0"/>
       <filter name="lowercase"/>
@@ -211,9 +211,9 @@
   <fieldType name="text_en_splitting_tight" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100">
     <analyzer type="index">
       <tokenizer name="whitespace"/>
-      <filter name="synonymGraph" expand="false" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="false" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph" generateNumberParts="0" catenateAll="0"/>
+      <filter catenateAll="0" generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="lowercase"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="englishMinimalStem"/>
@@ -222,9 +222,9 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="whitespace"/>
-      <filter name="synonymGraph" expand="false" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="false" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph" generateNumberParts="0" catenateAll="0"/>
+      <filter catenateAll="0" generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="lowercase"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="englishMinimalStem"/>
@@ -301,7 +301,7 @@
     <analyzer type="query">
       <tokenizer name="standard"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
-      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="lowercase"/>
     </analyzer>
   </fieldType>
@@ -314,7 +314,7 @@
     <analyzer type="query">
       <tokenizer name="standard"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
-      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="lowercase"/>
     </analyzer>
   </fieldType>
@@ -327,7 +327,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="standard"/>
-      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
       <filter name="lowercase"/>
     </analyzer>
@@ -415,15 +415,15 @@
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
-      <filter name="nGram" minGramSize="1" maxGramSize="15"/>
+      <filter maxGramSize="15" name="nGram" minGramSize="1"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
     </analyzer>
   </fieldType>
   <fieldType name="text_nl" class="solr.TextField" positionIncrementGap="100">
@@ -472,7 +472,7 @@
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
       <filter name="englishMinimalStem"/>
     </analyzer>
@@ -480,7 +480,7 @@
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="englishMinimalStem"/>
     </analyzer>
   </fieldType>
@@ -489,7 +489,7 @@
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
       <filter name="porterStem"/>
     </analyzer>
@@ -497,7 +497,7 @@
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="classic"/>
-      <filter splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0" generateWordParts="0"/>
+      <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="porterStem"/>
     </analyzer>
   </fieldType>
@@ -530,24 +530,19 @@
     </analyzer>
   </fieldType>
   <field name="_nest_path_" type="_nest_path_"/>
-  <field name="_root_" type="text_basic" docValues="false" indexed="true" stored="false"/>
+  <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
-  <field name="bn" type="text_basic" indexed="true" stored="true"/>
-  <field name="bn_q" type="phrase_ngram" indexed="true" stored="true"/>
-  <field name="bn_select" type="plongs"/>
-  <field name="delete" type="text_general"/>
-  <field name="id" type="plongs"/>
-  <field name="identifier" type="text_basic" indexed="true" required="true" stored="true"/>
-  <field name="identifier_q" type="phrase_ngram" indexed="true" stored="true"/>
-  <field name="identifier_select" type="text_general"/>
+  <field name="bn" type="string" indexed="true" stored="true"/>
+  <field name="bn_q" type="phrase_ngram" indexed="true" stored="false"/>
+  <field name="identifier" type="string" indexed="true" required="true" stored="true"/>
+  <field name="identifier_q" type="phrase_ngram" indexed="true" stored="false"/>
   <field name="legalType" type="string" docValues="true" indexed="true" required="true" stored="true"/>
-  <field name="name" type="text_basic" indexed="true" required="true" stored="true"/>
-  <field name="name_q" type="text_stemmed" indexed="true" stored="true"/>
-  <field name="name_select" type="text_general"/>
-  <field name="name_single_term" type="text_ngram" indexed="true" stored="true"/>
-  <field name="name_stem_agro" type="text_stemmed_agro" indexed="true" stored="true"/>
-  <field name="name_suggest" type="phrase_basic" indexed="true" stored="true"/>
+  <field name="name" type="string" indexed="true" required="true" stored="true"/>
+  <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>
+  <field name="name_single_term" type="text_ngram" indexed="true" stored="false"/>
+  <field name="name_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
+  <field name="name_suggest" type="phrase_basic" indexed="true" stored="false"/>
   <field name="status" type="string" docValues="true" indexed="true" required="true" stored="true"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
@@ -624,7 +619,4 @@
   <copyField source="name" dest="name_single_term"/>
   <copyField source="name" dest="name_stem_agro"/>
   <copyField source="name" dest="name_suggest"/>
-  <copyField source="identifier_select" dest="identifier_select_str" maxChars="256"/>
-  <copyField source="name_select" dest="name_select_str" maxChars="256"/>
-  <copyField source="delete" dest="delete_str" maxChars="256"/>
 </schema>

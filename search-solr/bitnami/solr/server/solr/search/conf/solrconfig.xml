@@ -1051,7 +1051,7 @@
   </updateProcessor>
 
   <!-- The update.autoCreateFields property can be turned to false to disable schemaless mode -->
-  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:true}"
+  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="false"
            processor="uuid,remove-blank,field-name-mutating,parse-boolean,parse-long,parse-double,parse-date,add-schema-fields">
     <processor class="solr.LogUpdateProcessorFactory"/>
     <processor class="solr.DistributedUpdateProcessorFactory"/>
@@ -1067,18 +1067,18 @@
        uniqueness based on that anyway.
 
     -->
-  <!--
-     <updateRequestProcessorChain name="dedupe">
-       <processor class="solr.processor.SignatureUpdateProcessorFactory">
-         <bool name="enabled">true</bool>
-         <str name="signatureField">id</str>
-         <str name="fields">name,features,cat</str>
-         <str name="signatureClass">solr.processor.Lookup3Signature</str>
-       </processor>
-       <processor class="solr.LogUpdateProcessorFactory" />
-       <processor class="solr.RunUpdateProcessorFactory" />
-     </updateRequestProcessorChain>
-    -->
+  
+  <updateRequestProcessorChain name="dedupe">
+    <processor class="solr.processor.SignatureUpdateProcessorFactory">
+      <bool name="enabled">true</bool>
+      <str name="signatureField">identifier</str>
+      <str name="fields">identifier</str>
+      <str name="signatureClass">solr.processor.Lookup3Signature</str>
+    </processor>
+    <processor class="solr.LogUpdateProcessorFactory" />
+    <processor class="solr.RunUpdateProcessorFactory" />
+  </updateRequestProcessorChain>
+   
 
   <!-- Response Writers
 

@@ -29,17 +29,21 @@ from registry_schemas.flask import SchemaServices  # noqa: I001
 from search_api.services import solr
 
 from search_solr_importer import config
-from search_solr_importer.oracle import oracle_db
 from search_solr_importer.logging import setup_logging
+from search_solr_importer.oracle import oracle_db
 from search_solr_importer.translations import babel
 from search_solr_importer.version import __version__
 # noqa: I003; the sentry import creates a bad line count in isort
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
 
+
+def _get_build_openshift_commit_hash():
+    return os.getenv('OPENSHIFT_BUILD_COMMIT', None)
+
+
 def get_run_version():
     """Return a formatted version string for this service."""
-    __version__ = '0.0.1'
     commit_hash = _get_build_openshift_commit_hash()
     if commit_hash:
         return f'{__version__}-{commit_hash}'
@@ -50,7 +54,7 @@ def register_shellcontext(app):
     """Register shell context objects."""
     def shell_context():
         """Shell context objects."""
-        return {'app': app, 'db': db}
+        return {'app': app}
 
     app.shell_context_processor(shell_context)
 

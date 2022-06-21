@@ -44,7 +44,7 @@ class OracleDB:
         if not ctx:
             ctx = _app_ctx_stack.top
         if hasattr(ctx, '_oracle_pool'):
-            ctx._oracle_pool.close()
+            ctx._oracle_pool.close()  # pylint: disable=protected-access
 
     @staticmethod
     def _create_pool():
@@ -62,21 +62,21 @@ class OracleDB:
             cursor.execute("alter session set TIME_ZONE = 'America/Vancouver'")
 
         return cx_Oracle.SessionPool(user=current_app.config.get('ORACLE_USER'),  # pylint:disable=c-extension-no-member
-                                    password=current_app.config.get('ORACLE_PASSWORD'),
-                                    dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),
-                                                            current_app.config.get('ORACLE_PORT'),
-                                                            current_app.config.get('ORACLE_DB_NAME')),
-                                    min=1,
-                                    max=10,
-                                    increment=1,
-                                    #  connectiontype=cx_Oracle.Connection,  # pylint:disable=c-extension-no-member
-                                    threaded=True,
-                                    getmode=cx_Oracle.SPOOL_ATTRVAL_NOWAIT,  # pylint:disable=c-extension-no-member
-                                    waitTimeout=1500,
-                                    timeout=3600,
-                                    sessionCallback=init_session,
-                                    encoding='UTF-8',
-                                    nencoding='UTF-8')
+                                     password=current_app.config.get('ORACLE_PASSWORD'),
+                                     dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),
+                                                              current_app.config.get('ORACLE_PORT'),
+                                                              current_app.config.get('ORACLE_DB_NAME')),
+                                     min=1,
+                                     max=10,
+                                     increment=1,
+                                     #  connectiontype=cx_Oracle.Connection,  # pylint:disable=c-extension-no-member
+                                     threaded=True,
+                                     getmode=cx_Oracle.SPOOL_ATTRVAL_NOWAIT,  # pylint:disable=c-extension-no-member
+                                     waitTimeout=1500,
+                                     timeout=3600,
+                                     sessionCallback=init_session,
+                                     encoding='UTF-8',
+                                     nencoding='UTF-8')
 
     @property
     def connection(self):  # pylint: disable=inconsistent-return-statements
@@ -91,9 +91,8 @@ class OracleDB:
         if ctx is not None:
             if not hasattr(ctx, '_oracle_pool'):
                 ctx._oracle_pool = self._create_pool()  # pylint: disable = protected-access; need this method
-                print(ctx._oracle_pool)
             return ctx._oracle_pool.acquire()  # pylint: disable = protected-access; need this method
 
 
 # export instance of this class
-oracle_db = OracleDB()
+oracle_db = OracleDB()  # pylint: disable=invalid-name;

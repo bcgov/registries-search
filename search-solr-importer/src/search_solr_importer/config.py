@@ -21,7 +21,6 @@ or by accessing this configuration directly.
 """
 import os
 import sys
-import json
 
 from dotenv import find_dotenv, load_dotenv
 
@@ -69,10 +68,11 @@ class _Config():  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
-    SECRET_KEY = 'a secret'
-    
+    SECRET_KEY = os.getenv('SECRET_KEY', 'a secret')
+
     BATCH_SIZE = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
-    
+    REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
+
     # ORACLE - CDEV/CTST/CPRD
     ORACLE_USER = os.getenv('ORACLE_USER', '')
     ORACLE_PASSWORD = os.getenv('ORACLE_PASSWORD', '')

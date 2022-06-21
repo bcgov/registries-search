@@ -65,9 +65,11 @@ ci: pylint flake8 test ## CI flow
 
 pylint: ## Linting with pylint
 	. venv/bin/activate && pylint --rcfile=setup.cfg src/$(PROJECT_NAME)
+	. venv/bin/activate && pylint --rcfile=setup.cfg data_import_handler
 
 flake8: ## Linting with flake8 ## tests
 	. venv/bin/activate && flake8 src/$(PROJECT_NAME)
+	. venv/bin/activate && flake8 data_import_handler.py
 
 lint: pylint flake8 ## run all lint type scripts
 
