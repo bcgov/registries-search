@@ -108,7 +108,7 @@ describe('Filing History List - misc functionality', () => {
         .toEqual("Annual Report")
         expect(wrapper.findAll('.filing-history-item')[0].find('.item-header__subtitle').text())
         .toContain("FILED AND PAID  (Filed on  June 2, 2019 at 12:22 pm Pacific time) EFFECTIVE"+
-         "as of  June 2, 2019 at 12:22 pm Pacific time")
+         " as of  June 2, 2019 at 12:22 pm Pacific time")
         expect(wrapper.findAll('.filing-history-item')[1].find('.item-header__title').text())
         .toEqual("Change of Address")
 

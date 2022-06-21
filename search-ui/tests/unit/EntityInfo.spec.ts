@@ -28,12 +28,9 @@ describe('Entity Info tests', () => {
     const html = wrapper.html()
     expect(html).toContain('Name Unavailable')
     expect(html).toContain('Description Unavailable')
-    expect(wrapper.find('v-progress-circular').exists()).toBe(false)
     // shows loader when entity is loading
     entity._loading = true
     await nextTick()
-    expect(wrapper.html()).not.toContain('Name Unavailable')
-    expect(wrapper.find('v-progress-circular').exists()).toBe(true)
     // updates with correct data when entity is not empty
     const newEntity = {
       bn: 'bnwjff2229',
@@ -49,7 +46,6 @@ describe('Entity Info tests', () => {
     await nextTick()
     entity._loading = false
     await nextTick()
-    expect(wrapper.find('v-progress-circular').exists()).toBe(false)
     expect(entity.name).toEqual(newEntity.name)
     const htmlUpdated = wrapper.html()
     expect(htmlUpdated).toContain(newEntity.name.toUpperCase())

@@ -42,12 +42,17 @@ PAYMENT_REQUEST_TEMPLATE = {
 }
 
 
-def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager) -> Tuple[int, dict, int]:
+def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, header: dict) -> Tuple[int, dict, int]:
     """Create the invoice for the document access request."""
     payment_svc_url = current_app.config.get('PAYMENT_SVC_URL')
 
     payload = PAYMENT_REQUEST_TEMPLATE
     payload['filingInfo']['filingTypes'] = filing_types
+
+    folio_number = header.get('folioNumber', None)
+    if folio_number:
+        payload['filingInfo']['folioNumber'] = folio_number
+
     try:
         token = user_jwt.get_token_auth_header()
         headers = {'Authorization': 'Bearer ' + token,

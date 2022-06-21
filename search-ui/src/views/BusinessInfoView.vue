@@ -99,6 +99,7 @@ const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 
 const payForDocuments = async () => {  
   await createAccessRequest(entity.identifier, selectedDocs)   
   if (!documentAccessRequest._error) {     
+    selectedDocs.value = []
     loadAccessRequestHistory(props.identifier)
     clearFees()
     // refresh checkboxes

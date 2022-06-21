@@ -80,16 +80,18 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 
 export async function createDocumentAccessRequest(
   business_identifier: string,
-  documentList: any
+  documentList: any,
+  headerInfo: any
 ): Promise<CreateDocumentResponseI> {
   const config = getSearchConfig()
 
   const docs = []
   documentList.value.forEach((doc) => { docs.push({ 'type': doc }) })
 
-  const createRequest = {
-    "documentAccessRequest": {
-      "documents": docs
+  const createRequest = {  
+    header: headerInfo,   
+    documentAccessRequest: {
+      documents: docs
     }
   }
   return axios.post<DocumentDetailsI>(`businesses/${business_identifier}/documents/requests`, createRequest,
