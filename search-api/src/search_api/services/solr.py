@@ -68,7 +68,7 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
             if self.tax_id:
                 doc_json[SolrField.BN] = self.tax_id
         return doc_json
-    
+
     @property
     def update_json(self):
         """Return the update dict representation of a SolrDoc."""
@@ -82,6 +82,7 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
             if self.tax_id:
                 update_json[SolrField.BN] = {'set': self.tax_id}
         return update_json
+
 
 class Solr:
     """Wrapper around the solr instance."""
