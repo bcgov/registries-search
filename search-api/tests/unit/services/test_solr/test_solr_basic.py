@@ -19,9 +19,11 @@ import pytest
 from flask import Flask
 
 from search_api.services import solr
-from search_api.services.solr import Solr, SolrDoc, SolrField
+from search_api.services.solr import Solr, SolrField
 
 from tests import integration_solr
+
+from . import create_solr_doc
 
 
 @pytest.mark.parametrize('test_name,identifier,state,name,legal_type,bn', [
@@ -29,9 +31,9 @@ from tests import integration_solr
 ])
 def test_solr_doc(test_name, identifier, state, name, legal_type, bn):
     """Assert that solr doc class works as expected."""
-    new_doc = SolrDoc(identifier=identifier, name=name, state=state, legal_type=legal_type, tax_id=bn)
+    new_doc = create_solr_doc(identifier, name, state, legal_type, bn)
     assert new_doc
-    json = new_doc.json()
+    json = new_doc.json
     assert json
     assert json.get(SolrField.IDENTIFIER) == identifier
     assert json.get(SolrField.STATE) == state
@@ -49,8 +51,8 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     solr.init_app(app)
     solr.delete_all_docs()
     # add new doc
-    new_doc = SolrDoc(identifier=identifier, name=name, state=state, legal_type=legal_type, tax_id=bn)
-    added = solr.create_or_replace_docs([new_doc.json()])
+    new_doc = create_solr_doc(identifier, name, state, legal_type, bn)
+    added = solr.create_or_replace_docs([new_doc])
     assert added.status_code == HTTPStatus.OK
     time.sleep(2) # takes up to 1 second for solr to register update
     # search new doc

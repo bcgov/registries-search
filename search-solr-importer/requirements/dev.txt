@@ -1,0 +1,28 @@
+# Testing
+coverage
+freezegun
+hypothesis<=4.38.1
+pyhamcrest
+pytest<7.0
+pytest-mock
+pytest-asyncio
+requests-mock
+
+# Lint and code style
+autopep8
+flake8
+flake8-blind-except
+flake8-debugger
+flake8-docstrings
+flake8-isort
+flake8-quotes
+pep8-naming
+pydocstyle<4
+pylint<=2.3.1
+pylint-flask
+isort<5,>=4.2.5
+pytest-cov
+
+# docker
+lovely-pytest-docker
+pytest_docker

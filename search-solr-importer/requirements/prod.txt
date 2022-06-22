@@ -1,0 +1,9 @@
+cx_Oracle
+Flask
+Flask-Babel
+python-dotenv
+sentry-sdk[flask]
+# for search-api dependency
+jsonschema==3.2.0
+Babel==2.10.1
+certifi==2022.5.18.1

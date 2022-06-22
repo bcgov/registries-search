@@ -11,15 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Centralized setup of logging for the service."""
+import logging
+import sys
+from os import path
 
-"""Version of this service in PEP440.
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
+def setup_logging(conf):
+    """Create the services logger.
 
-__version__ = '0.0.2'  # pylint: disable=invalid-name
+    TODO should be reworked to load in the proper loggers and remove others
+    """
+    # log_file_path = path.join(path.abspath(path.dirname(__file__)), conf)
+
+    if conf and path.isfile(conf):
+        logging.config.fileConfig(conf)
+        print('Configure logging, from conf:{}'.format(conf), file=sys.stdout)
+    else:
+        print('Unable to configure logging, attempted conf:{}'.format(conf), file=sys.stderr)

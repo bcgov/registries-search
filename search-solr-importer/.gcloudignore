@@ -1,0 +1,12 @@
+.pytest_cache
+__pycache__
+venv
+.env
+.env*
+.eggs
+Makefile
+devops
+k8s
+requirements
+test_data
+tests

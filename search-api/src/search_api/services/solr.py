@@ -45,16 +45,17 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
     """Class representation for a solr search core doc."""
 
     # TODO: make enums for state and type
-    def __init__(self, identifier: str, name: str, state: str, legal_type: str, tax_id: str = None):
+    def __init__(self, data: Dict):
         # pylint: disable=too-many-arguments
         """Initialize this object."""
-        self.identifier = identifier
-        self.name = name
-        self.state = state
-        self.legal_type = legal_type
-        if tax_id:
-            self.tax_id = tax_id
+        self.identifier = data['identifier']
+        self.name = data['name']
+        self.state = data['status']
+        self.legal_type = data['legaltype']
+        if data['bn']:
+            self.tax_id = data['bn']
 
+    @property
     def json(self):
         """Return the dict representation of a SolrDoc."""
         doc_json = {
@@ -67,6 +68,20 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
             if self.tax_id:
                 doc_json[SolrField.BN] = self.tax_id
         return doc_json
+
+    @property
+    def update_json(self):
+        """Return the update dict representation of a SolrDoc."""
+        update_json = {
+            SolrField.IDENTIFIER: self.identifier,
+            SolrField.NAME: {'set': self.name},
+            SolrField.STATE: {'set': self.state},
+            SolrField.TYPE: {'set': self.legal_type},
+        }
+        with suppress(AttributeError):
+            if self.tax_id:
+                update_json[SolrField.BN] = {'set': self.tax_id}
+        return update_json
 
 
 class Solr:
@@ -97,10 +112,11 @@ class Solr:
         self.app = app
         self.solr_url = app.config.get('SOLR_SVC_URL')
 
-    def create_or_replace_docs(self, docs: List):
+    def create_or_replace_docs(self, docs: List[SolrDoc]):
         """Create or replace solr docs in the core."""
+        update_json = [doc.update_json for doc in docs]
         url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = requests.post(url=url, json=docs)
+        response = requests.post(url=url, json=update_json)
         return response
 
     def delete_all_docs(self):
@@ -111,7 +127,7 @@ class Solr:
         response = requests.post(url=delete_url, data=payload, headers=headers)
         return response
 
-    def delete_docs(self, identifiers: List):
+    def delete_docs(self, identifiers: List[str]):
         """Delete solr docs from the core."""
         payload = '<delete><query>'
         if identifiers:
@@ -148,10 +164,9 @@ class Solr:
             raise SolrException(
                 error=msg,
                 status_code=status_code)
-
         return response.json()
 
-    def suggest(self, query: str, rows: int, build: bool = False) -> List:
+    def suggest(self, query: str, rows: int, build: bool = False) -> List[str]:
         """Return a list of suggestions from the solr suggest handler for the given query."""
         suggest_params = f'suggest.q={query}'
         # build solr query
@@ -185,7 +200,7 @@ class Solr:
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
 
     @staticmethod
-    def build_split_query(query: str, fields: List, wild_card_fields: List) -> str:
+    def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> str:
         """Return a solr query with fqs for each subsequent term."""
         terms = query.split()
         params = f'q={fields[0]}:{terms[0]}'
@@ -207,7 +222,7 @@ class Solr:
         return params
 
     @staticmethod
-    def highlight_names(query: str, names: List) -> List:
+    def highlight_names(query: str, names: List[str]) -> List[str]:
         """Highlight terms within names."""
         highlighted_names = []
         # TODO: add stuff in here to catch special chars / stems etc.

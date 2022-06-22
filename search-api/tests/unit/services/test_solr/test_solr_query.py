@@ -44,7 +44,7 @@ def test_solr_suggest_name(app, test_name, query, expected):
     solr.init_app(app)
     solr.delete_all_docs()
     solr.create_or_replace_docs(SOLR_TEST_DOCS)
-    time.sleep(0.5) # wait for solr to register update
+    time.sleep(1) # wait for solr to register update
     # call suggester
     suggestions = solr.suggest(query, 10, True)
     assert len(suggestions) == len(expected)

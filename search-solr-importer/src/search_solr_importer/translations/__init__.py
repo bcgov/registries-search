@@ -11,15 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Translations for the API messages, not for the content returned from the datastore or entered by users."""
+from flask_babel import Babel
 
-"""Version of this service in PEP440.
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-
-__version__ = '0.0.2'  # pylint: disable=invalid-name
+babel = Babel()  # pylint: disable=invalid-name; by convention our external services are lower case
