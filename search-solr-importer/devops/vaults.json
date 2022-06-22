@@ -1,0 +1,17 @@
+[
+    {
+        "vault": "entity",
+        "application": [
+            "colin-api",
+            "postgres-legal"
+        ]
+    },
+    {
+        "vault": "registries-search",
+        "application": [
+            "shared",
+            "registries-search-api",
+            "registries-search-solr-importer"
+        ]
+    }
+]
