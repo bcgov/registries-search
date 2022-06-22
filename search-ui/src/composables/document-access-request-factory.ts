@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
 import { getActiveAccessRequests, createDocumentAccessRequest, getDocument, fetchFilingDocument } from '@/requests'
 import {  Document } from '@/types'
+import {  useFeeCalculator } from '@/composables'
 
 
 const documentAccessRequest = reactive({
@@ -36,8 +37,11 @@ export const useDocumentAccessRequest = () => {
 
     const createAccessRequest = async (identifier: string, selectedDocs: any) => {
         documentAccessRequest._saving = true
-
-        const response: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs)
+        const { fees } = useFeeCalculator()
+        const header =  {
+            folioNumber: fees.folioNumber
+        }
+        const response: CreateDocumentResponseI = await createDocumentAccessRequest(identifier, selectedDocs, header)
         if (response.error) {
             documentAccessRequest._error = response.error
         }        

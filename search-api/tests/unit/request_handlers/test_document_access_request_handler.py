@@ -54,13 +54,20 @@ def test_create_invoice(client, session, jwt, mocker):
         account_id=123,
         submission_date=datetime.utcnow()
     )
+    request_json = {
+        'header': {
+            'folioNumber': '1234'
+        },
+        'documentAccessRequest': document_access_request
+    }
+
     document_access_request.save()
 
     mock_response = MockResponse({'id': 123},HTTPStatus.CREATED)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
 
-    create_invoice(document_access_request, jwt)
+    create_invoice(document_access_request, jwt, request_json)
 
     document_access_request = DocumentAccessRequest.find_by_id(document_access_request.id)
     assert document_access_request.payment_token
@@ -77,11 +84,18 @@ def test_create_invoice_failure(client, session, jwt, mocker):
     )
     document_access_request.save()
 
+    request_json = {
+        'header': {
+            'folioNumber': '1234'
+        },
+        'documentAccessRequest': document_access_request
+    }
+
     mock_response = MockResponse({'type': 'BAD_REQUEST'},HTTPStatus.BAD_REQUEST)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
 
-    create_invoice(document_access_request, jwt)
+    create_invoice(document_access_request, jwt, request_json)
 
     document_access_request = DocumentAccessRequest.find_by_id(document_access_request.id)
 

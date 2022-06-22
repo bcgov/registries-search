@@ -34,6 +34,8 @@ describe('BusinessInfo tests', () => {
           return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
         case `businesses/${identifier}/filings`:
           return Promise.resolve({ data: { filings: [ ...mockedFilingResp ] } })
+        case `businesses/${identifier}/documents/requests`:
+          return Promise.resolve({ data: { documentAccessRequests: [] } })
       }
     })
     clearEntity()
@@ -61,7 +63,7 @@ describe('BusinessInfo tests', () => {
   })
   it('loads the entity of the given identifier when mounted', () => {
     // check call was made
-    expect(axios.get).toBeCalledTimes(2)
+    expect(axios.get).toBeCalledTimes(3)
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
     // check entity was loaded
     expect(entity.bn).toBe(mockedBusinessResp.taxId)
@@ -72,7 +74,7 @@ describe('BusinessInfo tests', () => {
   })
   it('loads the filing history when mounted', () => {
     // check call was made
-    expect(axios.get).toBeCalledTimes(2)
+    expect(axios.get).toBeCalledTimes(3)
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}/filings`, { baseURL: url })
     // check entity was loaded
     expect(filingHistory.filings.length).toEqual(1)
