@@ -15,10 +15,12 @@
 
 This module is the API for the BC Registries Registry Search system.
 """
+from http import HTTPStatus
 from typing import List
 
 import psycopg2
 from flask import current_app
+from search_api.exceptions import SolrException
 from search_api.services import solr
 from search_api.services.solr import SolrDoc
 
@@ -88,25 +90,39 @@ def update_solr(data: List, data_name: str, cur):
 
 def load_search_core():
     """Load data from LEAR and COLIN into the search core."""
-    colin_data_cur = collect_colin_data()
-    colin_data = colin_data_cur.fetchall()
-    current_app.logger.debug(f'Collected {len(colin_data)} COLIN records for import.')
-    lear_data_cur = collect_lear_data()
-    lear_data = lear_data_cur.fetchall()
-    current_app.logger.debug(f'Collected {len(lear_data)} LEAR records for import.')
-    if current_app.config.get('REINDEX_CORE', False):
-        # delete existing index
-        current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
-        solr.delete_all_docs()
-    # execute update to solr in batches
-    current_app.logger.debug('Importing collected records from COLIN...')
-    count = update_solr(colin_data, 'COLIN', colin_data_cur)
-    current_app.logger.debug('COLIN import completed.')
-    current_app.logger.debug('Importing collected records from LEAR...')
-    count += update_solr(lear_data, 'LEAR', lear_data_cur)
-    current_app.logger.debug('LEAR import completed.')
-    current_app.logger.debug(f'Total records imported: {count}')
-    current_app.logger.debug('SOLR import finished successfully.')
+    try:
+        colin_data_cur = collect_colin_data()
+        colin_data = colin_data_cur.fetchall()
+        current_app.logger.debug(f'Collected {len(colin_data)} COLIN records for import.')
+        lear_data_cur = collect_lear_data()
+        lear_data = lear_data_cur.fetchall()
+        current_app.logger.debug(f'Collected {len(lear_data)} LEAR records for import.')
+        if current_app.config.get('REINDEX_CORE', False):
+            # delete existing index
+            current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
+            solr.delete_all_docs()
+        # execute update to solr in batches
+        current_app.logger.debug('Importing collected records from COLIN...')
+        count = update_solr(colin_data, 'COLIN', colin_data_cur)
+        current_app.logger.debug('COLIN import completed.')
+        current_app.logger.debug('Importing collected records from LEAR...')
+        count += update_solr(lear_data, 'LEAR', lear_data_cur)
+        current_app.logger.debug('LEAR import completed.')
+        current_app.logger.debug(f'Total records imported: {count}')
+        current_app.logger.debug('Building suggester...')
+        solr.suggest('', 1, True)
+        current_app.logger.debug('Suggester built.')
+        current_app.logger.debug('SOLR import finished successfully.')
+
+    except SolrException as err:
+        current_app.logger.error(f'SOLR gave status code: {err.status_code}')
+        if err.status_code == HTTPStatus.BAD_GATEWAY:
+            current_app.logger.debug('SOLR timeout most likely due to suggester build. ' +
+                                     'Please wait a couple minutes and then verify import '
+                                     'and suggester build manually in the solr admin UI.')
+        else:
+            current_app.logger.error(err.error)
+            current_app.logger.error('SOLR import failed.')
 
 
 if __name__ == '__main__':
