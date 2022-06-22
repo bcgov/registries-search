@@ -96,10 +96,13 @@ def load_search_core():
     current_app.logger.debug(f'Collected {len(lear_data)} LEAR records for import.')
     if current_app.config.get('REINDEX_CORE', False):
         # delete existing index
+        current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
         solr.delete_all_docs()
     # execute update to solr in batches
+    current_app.logger.debug('Importing collected records from COLIN...')
     count = update_solr(colin_data, 'COLIN', colin_data_cur)
     current_app.logger.debug('COLIN import completed.')
+    current_app.logger.debug('Importing collected records from LEAR...')
     count += update_solr(lear_data, 'LEAR', lear_data_cur)
     current_app.logger.debug('LEAR import completed.')
     current_app.logger.debug(f'Total records imported: {count}')
