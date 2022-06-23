@@ -1,5 +1,4 @@
 include requirements.txt
-include config.py
-include logging.conf
+include src/search_solr_importer/logging.conf
 include LICENSE
 include README.md
