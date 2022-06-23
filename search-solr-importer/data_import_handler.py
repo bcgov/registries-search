@@ -109,9 +109,10 @@ def load_search_core():
         count += update_solr(lear_data, 'LEAR', lear_data_cur)
         current_app.logger.debug('LEAR import completed.')
         current_app.logger.debug(f'Total records imported: {count}')
-        current_app.logger.debug('Building suggester...')
-        solr.suggest('', 1, True)
-        current_app.logger.debug('Suggester built.')
+        if current_app.config.get('REINDEX_CORE', False):
+            current_app.logger.debug('Building suggester...')
+            solr.suggest('', 1, True)
+            current_app.logger.debug('Suggester built.')
         current_app.logger.debug('SOLR import finished successfully.')
 
     except SolrException as err:
