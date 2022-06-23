@@ -124,6 +124,7 @@ def load_search_core():
         else:
             current_app.logger.error(err.error)
             current_app.logger.error('SOLR import failed.')
+        raise(err)
 
 
 if __name__ == '__main__':
