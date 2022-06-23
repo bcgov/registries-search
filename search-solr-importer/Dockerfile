@@ -46,5 +46,3 @@ USER 1001
 ENV PYTHONPATH=/opt/app-root
 
 EXPOSE 8080
-
-CMD [ "python", "/opt/app-root/data_import_handler.py" ]
