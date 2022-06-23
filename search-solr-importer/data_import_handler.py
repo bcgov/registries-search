@@ -15,6 +15,7 @@
 
 This module is the API for the BC Registries Registry Search system.
 """
+import sys
 from http import HTTPStatus
 from typing import List
 
@@ -121,10 +122,11 @@ def load_search_core():
             current_app.logger.debug('SOLR timeout most likely due to suggester build. ' +
                                      'Please wait a couple minutes and then verify import '
                                      'and suggester build manually in the solr admin UI.')
+            sys.exit(0)
         else:
             current_app.logger.error(err.error)
             current_app.logger.error('SOLR import failed.')
-        raise(err)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
