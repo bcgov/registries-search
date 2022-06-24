@@ -27,6 +27,7 @@ export const useEntity = () => {
     entity.status = null
     entity._error = null
     entity._loading = false
+    entity.goodStanding = true
   }
   const loadEntity = async (identifier: string) => {
     entity._loading = true
@@ -51,7 +52,8 @@ export const useEntity = () => {
       incorporationDate: entityInfo.business.foundingDate,
       legalType: entityInfo.business.legalType,
       name: entityInfo.business.legalName,
-      status: entityInfo.business.state
+      status: entityInfo.business.state,
+      goodStanding: entityInfo.business.goodStanding
     }
     return resp_entity
   }
@@ -62,6 +64,7 @@ export const useEntity = () => {
     entity.legalType = newEntity.legalType
     entity.name = newEntity.name
     entity.status = newEntity.status
+    entity.goodStanding = newEntity.goodStanding
   }
 
   const isBComp = computed(() => {

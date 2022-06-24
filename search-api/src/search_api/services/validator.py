@@ -19,7 +19,8 @@ from search_api.enums import DocumentType
 class RequestValidator():  # pylint: disable=too-few-public-methods
     """The class manages methods to validate a request."""
 
-    valid_doc_types = [DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name]
+    valid_doc_types = [DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name,
+                       DocumentType.CERTIFICATE_OF_GOOD_STANDING.name]
 
     @staticmethod
     def validate_document_access_request(document_access_request_json: dict, account_id: str, token):

@@ -19,7 +19,7 @@ export interface FeesI {
 }
 
 export type CachedFeeItem = {
-  [key in FeeCodes]: FeeI
+  [key in FeeCodes]?: FeeI
 }
 
 export type FeeAction = {

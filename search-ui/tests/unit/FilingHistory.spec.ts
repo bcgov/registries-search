@@ -20,7 +20,8 @@ const cp_entity: EntityI = {
     identifier: 'CP0001191',
     legalType: BusinessTypes.COOPERATIVE_ASSOCIATION,
     name: 'Test CP',
-    status: BusinessStatuses.ACTIVE
+    status: BusinessStatuses.ACTIVE,
+    goodStanding: true
 }
 
 // Boilerplate to prevent the complaint "[Vuetify] Unable to locate target [data-app]"

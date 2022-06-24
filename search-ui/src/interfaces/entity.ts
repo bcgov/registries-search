@@ -10,4 +10,5 @@ export interface EntityI {
   status: BusinessStatuses,
   _error?: ErrorI,
   _loading?: boolean,
+  goodStanding: boolean
 }
