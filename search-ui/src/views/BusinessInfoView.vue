@@ -38,7 +38,8 @@
                 :disabled="!item.active"
               />
             </v-col>
-            <v-col class="document-list__fee pt-4" align-self="end" cols="auto" v-html="item.fee" />
+            <v-col :class="['document-list__fee', 'pt-4', item.active ? '' : 'disabled-text']" 
+            align-self="end" cols="auto" v-html="item.fee" />
           </v-row>
         </div>
         <v-divider class="my-10" />
@@ -207,5 +208,9 @@ const toggleFee = (event: any, item: any) => {
   color: $gray8;
   font-weight: 700;
   --v-medium-emphasis-opacity: 1;
+}
+
+.disabled-text{
+  color: $gray7;
 }
 </style>
