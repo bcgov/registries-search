@@ -180,7 +180,7 @@ const loadPurchasableDocs = async () => {
 }
 
 const isCogsAvailable = () => {   
-  return isFirm
+  return !isFirm.value
 }
 
 const toggleFee = (event: any, item: any) => {
