@@ -99,7 +99,8 @@ const feePreSelectItem: FeeI = {
 }
 
 const checkBoxesKey = ref(0)
-const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string, documentType: DocumentType, active: boolean }[]>
+const purchasableDocs = ref([]) as Ref<{ 
+  code: FeeCodes, fee: string, label: string, documentType: DocumentType, active: boolean }[]>
 const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
@@ -150,8 +151,8 @@ onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   await loadEntity(props.identifier)
   await loadPurchasableDocs()
-  loadFilingHistory(props.identifier)
-  loadAccessRequestHistory(props.identifier)
+  await loadFilingHistory(props.identifier)
+  await loadAccessRequestHistory(props.identifier)
   clearFees()
 })
 

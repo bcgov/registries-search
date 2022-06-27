@@ -36,6 +36,7 @@ describe('Entity Factory tests', () => {
       incorporationDate: 'date',
       legalType: BusinessTypes.BC_LIMITED_COMPANY,
       name: 'blabla test bla',
+      goodStanding: true,
       status: BusinessStatuses.ACTIVE,
       _error: null,
       _loading: false
@@ -46,6 +47,7 @@ describe('Entity Factory tests', () => {
       incorporationDate: '',
       legalType: null,
       name: '',
+      goodStanding: true,
       status: null,
       _error: null,
       _loading: false
