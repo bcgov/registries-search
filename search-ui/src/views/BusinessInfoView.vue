@@ -1,17 +1,17 @@
 <template>
-  <v-container  id="business-info" class="container" fluid>    
-   <v-fade-transition>
+  <v-container id="business-info" class="container" fluid>
+    <v-fade-transition>
       <div class="loading-container" v-if="documentAccessRequest._saving">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>           
+          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
         </div>
       </div>
     </v-fade-transition>
     <v-fade-transition>
       <div class="loading-container  grayed-out" v-if="documentAccessRequest._downloading">
         <div class="loading__content">
-          <v-progress-circular color="primary" size="50" indeterminate />           
+          <v-progress-circular color="primary" size="50" indeterminate />
           <div class="loading-msg" v-if="documentAccessRequest._downloading">Downloading document</div>
         </div>
       </div>
@@ -30,25 +30,31 @@
         <h2>Available Documents to Download:</h2>
         <div class="document-list  mt-3 pa-3 pr-5" :key="checkBoxesKey">
           <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
-            <v-col>
-              <v-checkbox                 
-                hide-details
-                :label="item.label"
-                @change="toggleFee($event, item)"
-                :disabled="!item.active"
-              />
+            <v-col cols="6">
+              <v-tooltip v-if="!item.active" top content-class="top-tooltip" transition="fade-transition">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">
+                    <v-checkbox hide-details :label="item.label" @change="toggleFee($event, item)"
+                      :disabled="!item.active" />
+                  </span>
+                </template>
+                <span v-if="item.documentType == DocumentType.CERTIFICATE_OF_GOOD_STANDING">
+                  The Certificate of Good Standing can only be ordered if the business is in Good Standing.
+                </span>
+              </v-tooltip>
+              <v-checkbox hide-details :label="item.label" @change="toggleFee($event, item)" :disabled="!item.active"
+                v-else />
             </v-col>
-            <v-col :class="['document-list__fee', 'pt-4', item.active ? '' : 'disabled-text']" 
-            align-self="end" cols="auto" v-html="item.fee" />
+            <v-col :class="['document-list__fee', 'pt-4', item.active ? '' : 'disabled-text']" v-html="item.fee" />
           </v-row>
         </div>
         <v-divider class="my-10" />
         <div>
-          <h4>Purchase History</h4> 
+          <h4>Purchase History</h4>
           <document-access-request-history />
         </div>
         <v-divider class="my-10" />
-         <div>
+        <div>
           <filing-history />
         </div>
       </v-col>
@@ -94,38 +100,41 @@ const feePreSelectItem: FeeI = {
 
 const checkBoxesKey = ref(0)
 const purchasableDocs = ref([]) as Ref<{ code: FeeCodes, fee: string, label: string, documentType: DocumentType, active: boolean }[]>
-const selectedDocs = ref([])as Ref<DocumentType[]>
+const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
-const payForDocuments = async () => {  
-  await createAccessRequest(entity.identifier, selectedDocs)   
-  if (!documentAccessRequest._error) {     
+const payForDocuments = async () => {
+  await createAccessRequest(entity.identifier, selectedDocs)
+  if (!documentAccessRequest._error) {
     selectedDocs.value = []
     loadAccessRequestHistory(props.identifier)
     clearFees()
     // refresh checkboxes
     checkBoxesKey.value += 1
-  }   
+  }
 }
 
 const feeActions: FeeAction[][] = [
   [{
     action: (val) => { fees.folioNumber = val },
     compType: ActionComps.TEXTFIELD,
-    outlined: false,    
-    text: 'Folio Number (Optional)' }],
+    outlined: false,
+    text: 'Folio Number (Optional)'
+  }],
   [{
     action: () => { router.push({ name: RouteNames.SEARCH }) },
     compType: ActionComps.BUTTON,
-    iconLeft: 'mdi-chevron-left',    
-    outlined: true, text: 'Back to Search Results' }],
+    iconLeft: 'mdi-chevron-left',
+    outlined: true, text: 'Back to Search Results'
+  }],
   [{
     action: payForDocuments,
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
-    outlined: false,     
+    outlined: false,
     disabled: reactive(hasNoSelectedDocs),
-    text: 'Pay and Unlock Documents' }],
+    text: 'Pay and Unlock Documents'
+  }],
 ]
 
 // checkbox
@@ -149,7 +158,7 @@ onMounted(async () => {
 const loadPurchasableDocs = async () => {
   const feeBaseDocs = await getDocFee(FeeCodes.SRCH_BASE_DOCS)
   const feeCOGS = await getDocFee(FeeCodes.COGS)
-  
+
   purchasableDocs.value.push({
     code: FeeCodes.SRCH_BASE_DOCS,
     fee: feeBaseDocs,
@@ -157,7 +166,7 @@ const loadPurchasableDocs = async () => {
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
     active: true
   })
- 
+
   purchasableDocs.value.push({
     code: FeeCodes.COGS,
     fee: feeCOGS,
@@ -172,8 +181,7 @@ const toggleFee = (event: any, item: any) => {
     addFeeItem(item.code, 1)
     selectedDocs.value.push(item.documentType)
   }
-  else 
-  {
+  else {
     removeFeeItem(item.code, 1)
     selectedDocs.value = selectedDocs.value.filter(doc => doc != item.documentType)
   }
@@ -182,35 +190,52 @@ const toggleFee = (event: any, item: any) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
 .document-list {
   background-color: white;
-  width: 100%;   
+  width: 100%;
+
   &__fee {
     color: $gray8;
     font-weight: 700;
     height: 56px;
+    text-align: right;
   }
 }
+
 .v-divider {
   border-width: 1px;
 }
+
 :deep(.v-selection-control__input)::before {
   display: none;
 }
+
 :deep(.mdi-checkbox-marked) {
   color: $primary-blue
 }
+
 :deep(.mdi-checkbox-blank-outline) {
   color: $gray8;
   --v-medium-emphasis-opacity: 1;
 }
+
 :deep(.v-label) {
   color: $gray8;
   font-weight: 700;
   --v-medium-emphasis-opacity: 1;
 }
 
-.disabled-text{
+.disabled-text {
   color: $gray7;
+}
+
+.top-tooltip:after {
+  top: 100% !important;
+  left: 45% !important;
+  margin-top: 0 !important;
+  border-right: 10px solid transparent !important;
+  border-left: 10px solid transparent !important;
+  border-top: 8px solid RGBA(73, 80, 87, 0.95) !important;
 }
 </style>
