@@ -75,6 +75,11 @@ export const useEntity = () => {
     return entity.legalType == CorpTypeCd.COOP
   })
 
+  const isFirm = computed(() => {
+    return entity.legalType == CorpTypeCd.SOLE_PROP || 
+    entity.legalType == CorpTypeCd.PARTNERSHIP
+  })
+
   const entityTitle = computed((): string => {
     return isCoop.value ? 'Cooperative Association' : 'Company'
   })
@@ -97,6 +102,7 @@ export const useEntity = () => {
     setEntity,
     isBComp,
     isCoop,
+    isFirm,
     entityTitle,
     actTitle,
     entityNumberLabel

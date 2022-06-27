@@ -84,7 +84,7 @@ const props = defineProps({
 const router = useRouter()
 
 
-const { entity, clearEntity, loadEntity } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm } = useEntity()
 const { loadFilingHistory, filingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, loadAccessRequestHistory, createAccessRequest } = useDocumentAccessRequest()
@@ -168,13 +168,19 @@ const loadPurchasableDocs = async () => {
     active: true
   })
 
-  purchasableDocs.value.push({
-    code: FeeCodes.COGS,
-    fee: feeCOGS,
-    label: 'Certificate of Good Standing',
-    documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
-    active: entity.goodStanding
-  })
+  if(isCogsAvailable()){
+    purchasableDocs.value.push({
+      code: FeeCodes.COGS,
+      fee: feeCOGS,
+      label: 'Certificate of Good Standing',
+      documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
+      active: entity.goodStanding
+    })
+  }
+}
+
+const isCogsAvailable = () => {   
+  return isFirm
 }
 
 const toggleFee = (event: any, item: any) => {
