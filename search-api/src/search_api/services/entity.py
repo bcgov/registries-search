@@ -26,6 +26,7 @@ from search_api.services.authz import get_bearer_token
 # DocumentType mapper to document name used in LEAR for business documents
 DOCUMENT_NAME = {
     DocumentType.BUSINESS_SUMMARY_FILING_HISTORY: 'summary',
+    DocumentType.CERTIFICATE_OF_GOOD_STANDING: 'cogs',
 }
 
 

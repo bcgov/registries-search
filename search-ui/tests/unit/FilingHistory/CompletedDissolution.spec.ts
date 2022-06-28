@@ -9,14 +9,16 @@ const bc_entity: EntityI = {
     identifier: 'BC1234567',
     legalType: BusinessTypes.BENEFIT_COMPANY,
     name: 'MY COMPANY',
-    status: BusinessStatuses.ACTIVE
+    status: BusinessStatuses.ACTIVE,
+    goodStanding: true
 }
 
 const cp_entity: EntityI = {
     identifier: 'CP1234567',
     legalType: BusinessTypes.COOPERATIVE_ASSOCIATION,
     name: 'MY COMPANY',
-    status: BusinessStatuses.ACTIVE
+    status: BusinessStatuses.ACTIVE,
+    goodStanding: true
 }
 
 
