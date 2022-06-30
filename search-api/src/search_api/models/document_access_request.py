@@ -136,15 +136,18 @@ class DocumentAccessRequest(db.Model):
         return document_access_request
 
     @classmethod
-    def find_active_requests(cls, account_id: int, business_identifier: str):
+    def find_active_requests(cls, account_id: int, business_identifier: str=None):
         """Return all active requests matching specified account id and business identifier."""
-        return db.session.query(DocumentAccessRequest).\
+        query = db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
-            filter(DocumentAccessRequest.business_identifier == business_identifier).\
             filter(DocumentAccessRequest.is_active).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
-                                                     DocumentAccessRequest.Status.COMPLETED])). \
-            order_by(DocumentAccessRequest.id.desc()).all()
+                                                     DocumentAccessRequest.Status.COMPLETED]))
+        if business_identifier:
+            query = query.filter(DocumentAccessRequest.business_identifier == business_identifier)
+
+        query = query.order_by(DocumentAccessRequest.id.desc())
+        return query.all()
 
     @classmethod
     def find_by_id(cls, request_id: int) -> DocumentAccessRequest:

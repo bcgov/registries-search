@@ -8,21 +8,21 @@
                 <v-table fixed-header class="table">
                     <thead>
                         <tr>
-                            <th width="33%" class="bg-grey-lighten-4">Submitted on</th>
+                            <th width="15%" class="bg-grey-lighten-4">Incorporation/Registration Number</th>
+                            <th width="28%" class="bg-grey-lighten-4">Submitted on</th>
                             <th width="33%" class="bg-grey-lighten-4">Expires on</th>
-                            <th width="34%" class="bg-grey-lighten-4 opaque-header">Documents</th>
+                            <th width="24%" class="bg-grey-lighten-4 opaque-header">Purchased Items</th>
                         </tr>
                     </thead>
                     <tbody v-if="totalResultsLength > 0">
                         <tr v-for="item in documentAccessRequest.requests" :key="item.id">
+                            <td>{{ item.businessIdentifier }}</td>
                             <td>{{ dateTimeString(item.submissionDate) }}</td>
                             <td>{{ dateTimeString(item.expiryDate) }}</td>
                             <td>
                                 <v-list class="py-0" density="compact">
                                     <v-list-item v-for="(document, index) in item.documents" :key="index">
-                                        <span class="app-blue doc-link" @click="downloadDoc(document)">
-                                            {{ documentDescription(document.documentType) }}
-                                        </span>
+                                        <span>{{ documentDescription(document.documentType) }}</span>
                                     </v-list-item>
                                 </v-list>
                             </td>
@@ -102,7 +102,7 @@ th {
 
 .table {
     max-width: calc(100% - 48px);
-    max-height: calc(50vh - 85px);
+    max-height: calc(100vh - 85px);
 }
 
 .v-table {

@@ -47,12 +47,7 @@
             </v-col>
             <v-col :class="['document-list__fee', 'pt-4', item.active ? '' : 'disabled-text']" v-html="item.fee" />
           </v-row>
-        </div>
-        <v-divider class="my-10" />
-        <div>
-          <h4>Purchase History</h4>
-          <document-access-request-history />
-        </div>
+        </div>       
         <v-divider class="my-10" />
         <div>
           <filing-history />
@@ -72,7 +67,7 @@ import { useRouter } from 'vue-router'
 import { BaseFeeCalculator } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-import DocumentAccessRequestHistory from '@/components/BusinessInfo/DocumentAccessRequestHistory.vue'
+
 import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ActionComps, FeeCodes, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI } from '@/interfaces'
@@ -87,7 +82,7 @@ const router = useRouter()
 const { entity, clearEntity, loadEntity, isFirm } = useEntity()
 const { loadFilingHistory, filingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
-const { documentAccessRequest, loadAccessRequestHistory, createAccessRequest } = useDocumentAccessRequest()
+const { documentAccessRequest, createAccessRequest } = useDocumentAccessRequest()
 
 // fee summary
 const feePreSelectItem: FeeI = {
@@ -107,8 +102,7 @@ const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 
 const payForDocuments = async () => {
   await createAccessRequest(entity.identifier, selectedDocs)
   if (!documentAccessRequest._error) {
-    selectedDocs.value = []
-    loadAccessRequestHistory(props.identifier)
+    selectedDocs.value = []     
     clearFees()
     // refresh checkboxes
     checkBoxesKey.value += 1
@@ -151,8 +145,7 @@ onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   await loadEntity(props.identifier)
   await loadPurchasableDocs()
-  await loadFilingHistory(props.identifier)
-  await loadAccessRequestHistory(props.identifier)
+  await loadFilingHistory(props.identifier)   
   clearFees()
 })
 

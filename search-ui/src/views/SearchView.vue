@@ -4,29 +4,30 @@
       <v-progress-circular class="v-loader" size="50" indeterminate />
     </v-overlay>
     <div>
-      <v-row no-gutters>
-        <v-col>
-          <h1>Business Search</h1>
-        </v-col>
-      </v-row>
-      <v-row no-gutters class="pt-4">
-        <v-col class="search-info select-search-text">
+      <v-row no-gutters class="pt-4 pl-4">
+        <v-col class="search-info">
           <span>
-            Search for businesses registered in B.C. and access business documents
-            (for a fee).
+            Search for businesses registered or incorporated in B.C. or for owners of Firms registered in B.C.
           </span>
         </v-col>
       </v-row>
     </div>
-    <div class="container pa-0">               
+    <div class="container pa-0">
       <v-row no-gutters>
         <search-bar />
-      </v-row>         
+      </v-row>
     </div>
-    <div class="container pa-0 mt-10">               
+    <div>
+      <v-row class="result-info pt-30px pl-8" no-gutters v-if="totalResultsLength > 0">   
+        <v-col cols="12">
+        <b>Search Results({{ totalResultsLength }})</b>
+        </v-col>           
+    </v-row>
+    </div>
+    <div class="container pa-0 mt-10">
       <v-row no-gutters>
         <search-results/>
-      </v-row>         
+      </v-row>
     </div>
   </v-container>
 </template>
@@ -35,10 +36,18 @@
 // local
 import { SearchBar, SearchResults } from '@/components/search'
 import { useSearch } from '@/composables'
+import { computed } from 'vue'
 
 const { search } = useSearch()
+
+const totalResultsLength = computed(() => search.results?.length || 0 ) 
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
+.search-info {
+  font-size: 16px;
+  color: $gray7
+}
 </style>

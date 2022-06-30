@@ -3,7 +3,7 @@ import { RouteRecordRaw } from 'vue-router'
 // Local
 import {
   BusinessInfoView,
-  SearchView,
+  DashboardView,
   Login,
   Signin,
   Signout
@@ -45,8 +45,8 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
-    name: RouteNames.SEARCH,
-    component: SearchView,
+    name: RouteNames.DASHBOARD,
+    component: DashboardView,
     meta: {
       requiresAuth: false, // landing page so needs chance to load without auth
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]

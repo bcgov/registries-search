@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid no-gutters class="white-background mt-8 soft-corners">    
-    <v-row no-gutters class="pt-6">
+  <v-container fluid no-gutters class="white-background mt-4 soft-corners">    
+    <v-row no-gutters class="pt-2">
       <v-col class="ml-n6 pl-6" cols="11">
         <v-text-field
           id="search-bar-field"

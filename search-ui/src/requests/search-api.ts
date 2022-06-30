@@ -117,9 +117,9 @@ export async function createDocumentAccessRequest(
 }
 
 
-export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
+export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI> {
   const config = getSearchConfig()
-  return axios.get<AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
+  return axios.get<AccessRequestsHistoryI>(`purchases`,
     config)
     .then(response => {
       const data: AccessRequestsHistoryI = response?.data

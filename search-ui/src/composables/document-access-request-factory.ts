@@ -22,10 +22,10 @@ export const useDocumentAccessRequest = () => {
     }
 
 
-    const loadAccessRequestHistory = async (identifier: string) => {
+    const loadAccessRequestHistory = async () => {
         documentAccessRequest._loading = true
         clearAccessRequestHistory()
-        const accessRequestsResponse: AccessRequestsHistoryI = await getActiveAccessRequests(identifier)
+        const accessRequestsResponse: AccessRequestsHistoryI = await getActiveAccessRequests()
         if (accessRequestsResponse.error) {
             documentAccessRequest._error = accessRequestsResponse.error
         }
