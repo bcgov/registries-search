@@ -529,6 +529,7 @@
       <tokenizer name="whitespace"/>
     </analyzer>
   </fieldType>
+  <field name="_nest_parent_" type="string" indexed="true" stored="true"/>
   <field name="_nest_path_" type="_nest_path_"/>
   <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
@@ -537,13 +538,26 @@
   <field name="bn_q" type="phrase_ngram" indexed="true" stored="false"/>
   <field name="identifier" type="string" indexed="true" required="true" stored="true"/>
   <field name="identifier_q" type="phrase_ngram" indexed="true" stored="false"/>
-  <field name="legalType" type="string" docValues="true" indexed="true" required="true" stored="true"/>
-  <field name="name" type="string" indexed="true" required="true" stored="true"/>
+  <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
+  <field name="name" type="string" indexed="true" stored="true"/>
   <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>
   <field name="name_single_term" type="text_ngram" indexed="true" stored="false"/>
   <field name="name_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
   <field name="name_suggest" type="phrase_basic" indexed="true" stored="false"/>
-  <field name="status" type="string" docValues="true" indexed="true" required="true" stored="true"/>
+  <field name="parties" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="parentBN" type="string" indexed="false" stored="true"/>
+  <field name="parentIdentifier" type="string" indexed="false" stored="true"/>
+  <field name="parentLegalType" type="string" indexed="false" stored="true"/>
+  <field name="parentName" type="string" indexed="false" stored="true"/>
+  <field name="parentStatus" type="string" indexed="false" stored="true"/>
+  <field name="partyName" type="string" indexed="true" stored="true"/>
+  <field name="partyName_q" type="text_stemmed" indexed="true" stored="false"/>
+  <field name="partyName_single_term" type="text_ngram" indexed="true" stored="false"/>
+  <field name="partyName_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
+  <field name="partyName_suggest" type="phrase_basic" indexed="true" stored="false"/>
+  <field name="partyRoles" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="partyType" type="string" indexed="true" stored="true"/>
+  <field name="status" type="string" docValues="true" indexed="true" stored="true"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
   <dynamicField name="*_ancestor_path" type="ancestor_path" indexed="true" stored="true"/>
@@ -619,4 +633,9 @@
   <copyField source="name" dest="name_single_term"/>
   <copyField source="name" dest="name_stem_agro"/>
   <copyField source="name" dest="name_suggest"/>
+  <copyField source="partyName" dest="partyName_q"/>
+  <copyField source="partyName" dest="partyName_single_term"/>
+  <copyField source="partyName" dest="partyName_stem_agro"/>
+  <copyField source="partyName" dest="partyName_suggest"/>
+  <copyField source="_nest_parent_" dest="parentIdentifier"/>
 </schema>
