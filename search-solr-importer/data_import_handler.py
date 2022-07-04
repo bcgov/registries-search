@@ -163,7 +163,7 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
     return solr_docs
 
 
-def update_solr(base_docs: List[SolrDoc], data_name: str):
+def update_solr(base_docs: List[SolrDoc], data_name: str) -> int:
     """Import data into solr."""
     count = 0
     offset = 0
