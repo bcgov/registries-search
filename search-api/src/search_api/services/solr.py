@@ -18,6 +18,7 @@ from http import HTTPStatus
 from typing import Dict, List
 
 import requests
+from requests import Response
 from flask import current_app
 
 from search_api.exceptions import SolrException
@@ -26,19 +27,37 @@ from search_api.exceptions import SolrException
 class SolrField(str, Enum):
     """Enum of the fields available in the solr search core."""
 
+    # base doc stored fields
     BN = 'bn'
-    BN_Q = 'bn_q'
     IDENTIFIER = 'identifier'
-    IDENTIFIER_Q = 'identifier_q'
     NAME = 'name'
-    NAME_Q = 'name_q'
-    NAME_SINGLE = 'name_single_term'
-    NAME_STEM_AGRO = 'name_stem_agro'
-    # NAME_SYNONYM = 'name_synonym'
-    NAME_SUGGEST = 'name_suggest'
+    PARTIES = 'parties'
     SCORE = 'score'
     STATE = 'status'
     TYPE = 'legalType'
+
+    # child parties doc stored fields
+    PARENT_BN = 'parentBN'
+    PARENT_IDENTIFIER = 'parentIdentifier'
+    PARENT_NAME = 'parentName'
+    PARENT_STATE = 'parentStatus'
+    PARENT_TYPE = 'parentLegalType'
+    PARTY_NAME = 'partyName'
+    PARTY_ROLE = 'partyRoles'
+    PARTY_TYPE = 'partyType'
+
+    # business query fields
+    BN_Q = 'bn_q'
+    IDENTIFIER_Q = 'identifier_q'
+    NAME_Q = 'name_q'
+    NAME_SINGLE = 'name_single_term'
+    NAME_STEM_AGRO = 'name_stem_agro'
+    NAME_SUGGEST = 'name_suggest'
+    # party query fields
+    PARTY_NAME_Q = 'partyName_q'
+    PARTY_NAME_SINGLE = 'partyName_single_term'
+    PARTY_NAME_STEM_AGRO = 'partyName_stem_agro'
+    PARTY_NAME_SUGGEST = 'partyName_suggest'
 
 
 class SolrDoc:  # pylint: disable=too-few-public-methods
@@ -52,7 +71,9 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
         self.name = data['name']
         self.state = data['status']
         self.legal_type = data['legaltype']
-        if data['bn']:
+        if data.get('parties'):
+            self.parties = data['parties']
+        if data.get('bn'):
             self.tax_id = data['bn']
 
     @property
@@ -62,26 +83,15 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
             SolrField.IDENTIFIER: self.identifier,
             SolrField.NAME: self.name,
             SolrField.STATE: self.state,
-            SolrField.TYPE: self.legal_type,
+            SolrField.TYPE: self.legal_type
         }
+        with suppress(AttributeError):
+            if self.parties:
+                doc_json[SolrField.PARTIES] = self.parties
         with suppress(AttributeError):
             if self.tax_id:
                 doc_json[SolrField.BN] = self.tax_id
         return doc_json
-
-    @property
-    def update_json(self):
-        """Return the update dict representation of a SolrDoc."""
-        update_json = {
-            SolrField.IDENTIFIER: self.identifier,
-            SolrField.NAME: {'set': self.name},
-            SolrField.STATE: {'set': self.state},
-            SolrField.TYPE: {'set': self.legal_type},
-        }
-        with suppress(AttributeError):
-            if self.tax_id:
-                update_json[SolrField.BN] = {'set': self.tax_id}
-        return update_json
 
 
 class Solr:
@@ -95,11 +105,21 @@ class Solr:
         self.core = 'search'
         self.default_start = 0
         self.default_rows = 10
-        self.facets = f'&facet=on&facet.field={SolrField.STATE}&facet.field={SolrField.TYPE}'
-        self.fields = f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
+        # facets
+        self.base_facets = f'&facet=on&facet.field={SolrField.STATE}&facet.field={SolrField.TYPE}'
+        self.party_facets = f'&facet=on&facet.field={SolrField.PARTY_ROLE}' + \
+            f'&facet.field={SolrField.PARENT_STATE}&facet.field={SolrField.PARENT_TYPE}'
+        # fields
+        self.base_fields = f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
             f'{SolrField.TYPE},{SolrField.SCORE}'
+        self.nest_fields_party = f'&fl={SolrField.PARTIES},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
+            f'{SolrField.PARTY_TYPE},[child childFilter=' + '{filter}]'
+        self.party_fields = f'&fl={SolrField.PARENT_BN},{SolrField.PARENT_IDENTIFIER},{SolrField.PARENT_NAME},' + \
+            f'{SolrField.PARENT_STATE},{SolrField.PARENT_TYPE},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
+            f'{SolrField.PARTY_TYPE}'
+        # boost
         self.boost_params = '{boost_params}&defType=edismax'
-
+        # query urls
         self.search_query = '{url}/{core}/query?{search_params}{fields}&start={start}&rows={rows}'
         self.suggest_query = '{url}/{core}/suggest?{suggest_params}&suggest.count={rows}&suggest.build={build}'
         self.update_query = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
@@ -114,17 +134,16 @@ class Solr:
 
     def create_or_replace_docs(self, docs: List[SolrDoc]):
         """Create or replace solr docs in the core."""
-        update_json = [doc.update_json for doc in docs]
+        update_json = [doc.json for doc in docs]
         url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = requests.post(url=url, json=update_json)
+        response = Solr.call_solr('POST', url, json=update_json)
         return response
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
         delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        headers = {'Content-Type': 'application/xml'}
-        response = requests.post(url=delete_url, data=payload, headers=headers)
+        response = Solr.call_solr('POST', delete_url, data=payload)
         return response
 
     def delete_docs(self, identifiers: List[str]):
@@ -137,37 +156,32 @@ class Solr:
         payload += '</query></delete>'
 
         delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        headers = {'Content-Type': 'application/xml'}
-        response = requests.post(url=delete_url, data=payload, headers=headers)
+        response = Solr.call_solr('POST', delete_url, data=payload)
         return response
 
-    def query(self, params: str, start: int, rows: int) -> List:
+    def query(self, params: str, fields, start: int, rows: int) -> List:
         """Return a list of solr docs from the solr query handler for the given params."""
+        if not start:
+            start = self.default_start
+        if not rows:
+            rows = self.default_rows
+
         query = self.search_query.format(
             url=self.solr_url,
             core=self.core,
             search_params=params,
-            fields=self.fields,
+            fields=fields,
             start=start,
             rows=rows)
-        try:
-            response = requests.get(query)
-            if response.status_code != HTTPStatus.OK:
-                raise SolrException('Error handling Solr request.', response.status_code)
-        except Exception as err:  # noqa B902
-            current_app.logger.error(err.with_traceback(None))
-            msg = 'Error handling Solr request.'
-            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-            with suppress(Exception):
-                status_code = response.status_code
-                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-            raise SolrException(
-                error=msg,
-                status_code=status_code)
+
+        response = Solr.call_solr('GET', query)
         return response.json()
 
     def suggest(self, query: str, rows: int, build: bool = False) -> List[str]:
         """Return a list of suggestions from the solr suggest handler for the given query."""
+        if not rows:
+            rows = self.default_rows
+
         suggest_params = f'suggest.q={query}'
         # build solr query
         suggest_query = self.suggest_query.format(
@@ -177,27 +191,33 @@ class Solr:
             rows=rows,
             build=str(build).lower())
         # call solr
-        try:
-            response = requests.get(suggest_query)
-            # check for error
-            if response.status_code != HTTPStatus.OK:
-                raise SolrException(
-                    error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
-                    status_code=response.status_code)
-        except Exception as err:  # noqa B902
-            current_app.logger.error(err.with_traceback(None))
-            msg = 'Error handling Solr request.'
-            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-            with suppress(Exception):
-                status_code = response.status_code
-                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-            raise SolrException(
-                error=msg,
-                status_code=status_code)
+        response = Solr.call_solr('GET', suggest_query)
         # parse response
         suggestions = response.json() \
             .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions', [])
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
+
+    @staticmethod
+    def build_child_query(query: str,
+                          nest_field: SolrField,
+                          boost_fields: List[SolrField],
+                          search_field: SolrField) -> str:
+        """Return a solr child query with fqs for each subsequent term."""
+        terms = query.split()
+        params = 'q={!parent which="*:* -_nest_path_:\\\\/' + f'{nest_field}' + '" score=Max}'
+        params += f'(+_nest_path_:"/{nest_field}"'
+        # add boosters
+        for field in boost_fields:
+            params += f' +{field}: "{query}"'
+            params += f' +{field}: "{query}"~1'
+            params += f' +{field}: "{query}"~2'
+            params += f' +{field}: "{query}"~3'
+            params += f' +{field}: "{query}"~10'
+        # add main search match (should be less specific than booster fields in most cases)
+        params += f' +{search_field}:{terms[0]}'
+        for term in terms[1:]:
+            params += f' AND {search_field}:{term}'
+        return params + ')'
 
     @staticmethod
     def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> str:
@@ -220,6 +240,37 @@ class Solr:
                 if field in wild_card_fields:
                     params += '*'
         return params
+
+    @staticmethod
+    def call_solr(method: str, url: str, json: dict = None, data: str = None) -> Response:
+        """Call solr instance with given params."""
+        try:
+            response = None
+            if method == 'GET':
+                response = requests.get(url)
+            elif method == 'POST' and json:
+                response = requests.post(url=url, json=json)
+            elif method == 'POST' and data:
+                headers = {'Content-Type': 'application/xml'}
+                response = requests.post(url=url, data=data, headers=headers)
+            else:
+                raise Exception('Invalid params given.')
+            # check for error
+            if response.status_code != HTTPStatus.OK:
+                raise SolrException(
+                    error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
+                    status_code=response.status_code)
+            return response
+        except Exception as err:  # noqa B902
+            current_app.logger.error(err.with_traceback(None))
+            msg = 'Error handling Solr request.'
+            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+            with suppress(Exception):
+                status_code = response.status_code
+                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
+            raise SolrException(
+                error=msg,
+                status_code=status_code)
 
     @staticmethod
     def highlight_names(query: str, names: List[str]) -> List[str]:
