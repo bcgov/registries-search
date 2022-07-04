@@ -15,7 +15,7 @@
       </v-tab>
       <v-tab class="tab-item-style">
         <v-icon>mdi-file-document-edit-outline</v-icon>
-        <span class="ml-1">View Recently Purchased Documents</span>
+        <span class="ml-1">View Recently Purchased Documents ({{totalResultsLength}})</span>
       </v-tab>
     </v-tabs>
 
@@ -41,10 +41,22 @@
 
 <script setup lang="ts">
 // local
+import { onMounted } from 'vue'
 import { PurchaseHistoryView, SearchView } from '@/views'
-import { ref } from 'vue'
+import { useDocumentAccessRequest } from '@/composables'
+import { ref, computed } from 'vue'
 
 const tab = ref('')
+
+const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
+
+const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
+
+
+onMounted(async () => {
+    await loadAccessRequestHistory()
+})
+
 
 </script>
 

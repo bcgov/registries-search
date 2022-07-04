@@ -1,12 +1,14 @@
 import { ErrorI } from '@/interfaces' 
 
 export interface DocumentDetailsI {
-    businessIdentifier: string
+    businessIdentifier: string,
+    legalName?: string,
     id: number,
     outputFileKey?: string,
     status: string,
     submissionDate: string,
     expiryDate: string,
+    submitter: string,
     documents: DocumentI[]
 }
 

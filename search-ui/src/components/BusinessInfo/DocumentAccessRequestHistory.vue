@@ -8,23 +8,34 @@
                 <v-table fixed-header class="table">
                     <thead>
                         <tr>
-                            <th width="15%" class="bg-grey-lighten-4">Incorporation/Registration Number</th>
-                            <th width="28%" class="bg-grey-lighten-4">Submitted on</th>
-                            <th width="33%" class="bg-grey-lighten-4">Expires on</th>
-                            <th width="24%" class="bg-grey-lighten-4 opaque-header">Purchased Items</th>
+                            <th width="10%" class="bg-grey-lighten-4">Incorporation/<br />Registration<br /> Number</th>
+                            <th width="15%" class="bg-grey-lighten-4">Business Name</th>
+                            <th width="21%" class="bg-grey-lighten-4">Purchased Items</th>
+                            <th width="17%" class="bg-grey-lighten-4">Search Date/Time<br />(Pacific time)</th>
+                            <th width="17%" class="bg-grey-lighten-4 opaque-header">Expiry Date/Time <br />(Pacific
+                                time)</th>
+                            <th width="10%" class="bg-grey-lighten-4 opaque-header">User Name</th>
+                            <th width="10%" class="bg-grey-lighten-4 opaque-header"></th>
                         </tr>
                     </thead>
                     <tbody v-if="totalResultsLength > 0">
                         <tr v-for="item in documentAccessRequest.requests" :key="item.id">
                             <td>{{ item.businessIdentifier }}</td>
-                            <td>{{ dateTimeString(item.submissionDate) }}</td>
-                            <td>{{ dateTimeString(item.expiryDate) }}</td>
+                            <td class="wrap-word">{{ item.legalName }}</td>
                             <td>
                                 <v-list class="py-0" density="compact">
                                     <v-list-item v-for="(document, index) in item.documents" :key="index">
                                         <span>{{ documentDescription(document.documentType) }}</span>
                                     </v-list-item>
                                 </v-list>
+                            </td>
+                            <td>{{ dateTimeString(item.submissionDate) }}</td>
+                            <td>{{ dateTimeString(item.expiryDate) }}</td>
+                            <td  class="wrap-word">{{ item.submitter }}</td>
+                            <td>
+                                <v-btn large id="open-business-btn" class="search-bar-btn primary">
+                                    View
+                                </v-btn>
                             </td>
                         </tr>
                     </tbody>
@@ -44,30 +55,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 // local
-import { useDocumentAccessRequest, useEntity } from '@/composables'
-import { dateToPacificDateTime } from '@/utils'
-
+import { useDocumentAccessRequest } from '@/composables'
+import { dateToPacificDateTimeShort } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
-import { DocumentI } from '@/interfaces'
+ 
 
 // composables
-const { documentAccessRequest, downloadDocument } = useDocumentAccessRequest()
-const { entity } = useEntity()
+const { documentAccessRequest } = useDocumentAccessRequest()
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
 
 const dateTimeString = (val: string): string => {
-    return (dateToPacificDateTime(new Date(val)) || 'Unknown')
+    return (dateToPacificDateTimeShort(new Date(val)) || 'Unknown')
 }
 
 const documentDescription = (type: string): string => {
     return DocumentTypeDescriptions[type]
 }
-
-const downloadDoc = (document: DocumentI): void => {
-   downloadDocument(entity.identifier, document)
-}
-
 </script>
 
 <style lang="scss" scoped>
@@ -100,10 +104,16 @@ th {
     color: $app-dk-blue  !important;
 }
 
-.table {
-    max-width: calc(100% - 48px);
+.table {    
     max-height: calc(100vh - 85px);
+    table-layout: fixed;
 }
+
+table td {
+word-wrap:break-word;
+white-space: normal;
+}
+ 
 
 .v-table {
     overflow: auto;
@@ -117,11 +127,23 @@ th {
     z-index: 1;
 }
 
-.doc-link{
+.doc-link {
     cursor: pointer;
 }
 
 .opaque-header {
-  z-index: 1;
+    z-index: 1;
+}
+
+.wrap-word {
+    word-wrap: break-word;
+}
+
+::v-deep .v-list-item {
+  padding: 0; 
+}
+
+.v-list--density-compact.v-list--one-line .v-list-item {
+     min-height: 30px;
 }
 </style>

@@ -37,7 +37,7 @@ def save_request(account_id, business_identifier, request_json) -> DocumentAcces
     document_access_request: DocumentAccessRequest = DocumentAccessRequest(
         business_identifier=business_identifier,
         account_id=account_id,
-        submitter=user,
+        _submitter_id=user.id,
         submission_date=datetime.utcnow()
     )
     for doc in request_json.get('documentAccessRequest', {}).get('documents', []):
