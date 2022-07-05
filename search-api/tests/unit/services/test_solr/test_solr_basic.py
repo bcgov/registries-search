@@ -56,7 +56,7 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     assert added.status_code == HTTPStatus.OK
     time.sleep(2) # takes up to 1 second for solr to register update
     # search new doc
-    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', 0, 10)
+    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', solr.base_fields, 0, 10)
     docs = resp['response']['docs']
     assert docs[0][SolrField.IDENTIFIER] == identifier
     assert docs[0][SolrField.BN] == bn
@@ -68,7 +68,7 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     assert deleted.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # test search returns nothing
-    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', 0, 10)
+    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', solr.base_fields, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
 

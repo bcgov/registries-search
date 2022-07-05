@@ -53,28 +53,33 @@ def test_solr_suggest_name(app, test_name, query, expected):
 
 
 @integration_solr
-@pytest.mark.parametrize('test_name,query,query_field,expected_field,expected', [
-    ('test-identifier', 'CP00', SolrField.IDENTIFIER_Q, SolrField.IDENTIFIER, ['CP0034567']),
-    ('test-bn', '0012334', SolrField.BN_Q, SolrField.BN, ['BN00012334']),
-    ('test-name-exact', 'tests 2222', SolrField.NAME_SINGLE, SolrField.NAME, ['tests 2222']),
-    ('test-case', 'not case sensitive', SolrField.NAME_SINGLE, SolrField.NAME, ['NOt Case SENSitive']),
-    ('test-partial-1', 'tester', SolrField.NAME_SINGLE, SolrField.NAME, ['tester 1111']),
-    ('test-partial-2', 'tester 11', SolrField.NAME_SINGLE, SolrField.NAME, ['tester 1111']),
-    ('test-partial-3', 'lots of wor', SolrField.NAME_SINGLE, SolrField.NAME, ['lots of words in here']),
-    ('test-partial-4', 'ots of ords', SolrField.NAME_SINGLE, SolrField.NAME, ['lots of words in here']),
-    ('test-all-words-match', 'tests oops 2222', SolrField.NAME_SINGLE, SolrField.NAME, []),
-    ('test-multiple-matches', 'test 1', SolrField.NAME_SINGLE, SolrField.NAME, ['test 1234', 'tester 1111']),
+@pytest.mark.parametrize('test_name,query,query_field,base_fields,expected_field,expected', [
+    ('test-identifier', 'CP00', SolrField.IDENTIFIER_Q, True, SolrField.IDENTIFIER, ['CP0034567']),
+    ('test-bn', '0012334', SolrField.BN_Q, True, SolrField.BN, ['BN00012334']),
+    ('test-name-exact', 'tests 2222', SolrField.NAME_SINGLE, True, SolrField.NAME, ['tests 2222']),
+    ('test-case', 'not case sensitive', SolrField.NAME_SINGLE, True, SolrField.NAME, ['NOt Case SENSitive']),
+    ('test-partial-1', 'tester', SolrField.NAME_SINGLE, True, SolrField.NAME, ['tester 1111']),
+    ('test-partial-2', 'tester 11', SolrField.NAME_SINGLE, True, SolrField.NAME, ['tester 1111']),
+    ('test-partial-3', 'lots of wor', SolrField.NAME_SINGLE, True, SolrField.NAME, ['lots of words in here']),
+    ('test-partial-4', 'ots of ords', SolrField.NAME_SINGLE, True, SolrField.NAME, ['lots of words in here']),
+    ('test-all-words-match', 'tests oops 2222', SolrField.NAME_SINGLE, True, SolrField.NAME, []),
+    ('test-multiple-matches', 'test 1', SolrField.NAME_SINGLE, True, SolrField.NAME, ['test 1234', 'tester 1111']),
+    ('test-parties-1', 'org', SolrField.PARTY_NAME_SINGLE, False, SolrField.PARTY_NAME, ['org 1', 'test org partner']),
+    ('test-parties-2', 'person', SolrField.PARTY_NAME_SINGLE, False, SolrField.PARTY_NAME, ['person 1','test person partner']),
+    ('test-parties-3', 'test Person', SolrField.PARTY_NAME_SINGLE, False, SolrField.PARTY_NAME, ['test person partner']),
+    ('test-parties-4', 'test partner', SolrField.PARTY_NAME_SINGLE, False, SolrField.PARTY_NAME, ['test org partner','test person partner']),
 ])
-def test_solr_query(app, test_name, query, query_field, expected_field, expected):
+def test_solr_query(app, test_name, query, query_field, base_fields, expected_field, expected):
     """Assert that solr query call works as expected."""
     # setup
     solr.init_app(app)
     solr.delete_all_docs()
     solr.create_or_replace_docs(SOLR_TEST_DOCS)
-    time.sleep(0.5) # wait for solr to register update
+    time.sleep(1) # wait for solr to register update
     search_params = Solr.build_split_query(query, [query_field], [SolrField.NAME_SINGLE])
     # call select
-    resp = solr.query(search_params, 0, 10)
+    fields = solr.base_fields if base_fields else solr.party_fields
+    resp = solr.query(search_params, fields, 0, 10)
     docs = resp['response']['docs']
     # test
     assert len(docs) == len(expected)
