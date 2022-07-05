@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="mt-4 ml-6 info-text">
+        This table will display up to 1000 of the most recent document purchases in the last 14 days
+    </div>
+    <div class="mt-6">
         <document-access-request-history />
     </div>
 </template>
@@ -15,3 +18,11 @@ onMounted(async () => {
     await loadAccessRequestHistory()
 })
 </script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+.info-text {
+  font-size: 16px;
+  color: $gray7
+}
+</style>

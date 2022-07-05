@@ -97,6 +97,7 @@ def test_document_access_request_json(session):
     """Assert that active access requests for a business by an account are returned."""
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
+        business_name='test',
         account_id=123,
         payment_token=567,
         payment_status_code='COMPLETED',
@@ -117,6 +118,7 @@ def test_document_access_request_json(session):
     document_access_request.save()
     access_request_json = {
        'businessIdentifier': 'CP1234567',
+       'businessName': 'test',
        'documents': [
            {
                 'documentKey': 'test1',
@@ -136,7 +138,8 @@ def test_document_access_request_json(session):
        'outputFileKey': None,
        'paymentStatus': 'COMPLETED',
        'status': 'PAID',
-       'submissionDate': document_access_request.submission_date.isoformat()
+       'submissionDate': document_access_request.submission_date.isoformat(),
+       'submitter': 'firstname lastname'
     }
 
     assert access_request_json == document_access_request.json

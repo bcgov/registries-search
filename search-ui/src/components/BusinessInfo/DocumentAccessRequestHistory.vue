@@ -21,7 +21,7 @@
                     <tbody v-if="totalResultsLength > 0">
                         <tr v-for="item in documentAccessRequest.requests" :key="item.id">
                             <td>{{ item.businessIdentifier }}</td>
-                            <td class="wrap-word">{{ item.legalName }}</td>
+                            <td class="wrap-word">{{ item.businessName }}</td>
                             <td>
                                 <v-list class="py-0" density="compact">
                                     <v-list-item v-for="(document, index) in item.documents" :key="index">
@@ -42,7 +42,7 @@
                     <tbody v-else>
                         <tr>
                             <td colspan="6">
-                                <p class="pt-4 pb-2"><b>No purchase history</b></p>
+                                <p class="pt-4 pb-2"><b>No purchases in the last 14 days.</b></p>
                             </td>
                         </tr>
                     </tbody>

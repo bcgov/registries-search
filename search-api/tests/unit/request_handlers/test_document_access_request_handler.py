@@ -40,6 +40,7 @@ def test_save_request(client, session, jwt, mocker):
     """Assert that request can be saved."""
     g.jwt_oidc_token_info={}
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user.save()
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
     document_access_request = save_request(1, 1, DOCUMENT_ACCESS_REQUEST_TEMPLATE)
     assert document_access_request.id

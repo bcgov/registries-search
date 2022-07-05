@@ -43,6 +43,7 @@ class DocumentAccessRequest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     business_identifier = db.Column('business_identifier', db.String(10), index=True)
+    business_name = db.Column('business_name', db.String(1000))
     status = db.Column('status', db.Enum(Status), default=Status.CREATED.value)
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
@@ -119,12 +120,13 @@ class DocumentAccessRequest(db.Model):
         document_access_request = {
             'id': self.id,
             'businessIdentifier': self.business_identifier,
+            'businessName': self.business_name,
             'status': self.status.name,
             'paymentStatus': self.payment_status_code,
             'submissionDate': self.submission_date.isoformat(),
             'expiryDate': self.expiry_date.isoformat() if self.expiry_date else None,
             'outputFileKey': self._output_file_key,
-            'submitter': self.submitter.display_name
+            'submitter': self.submitter.display_name if self.submitter else None
         }
 
         documents = []
@@ -137,7 +139,7 @@ class DocumentAccessRequest(db.Model):
         return document_access_request
 
     @classmethod
-    def find_active_requests(cls, account_id: int, business_identifier: str=None):
+    def find_active_requests(cls, account_id: int, business_identifier: str = None):
         """Return all active requests matching specified account id and business identifier."""
         query = db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\

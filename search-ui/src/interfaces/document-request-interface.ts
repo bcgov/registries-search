@@ -2,7 +2,7 @@ import { ErrorI } from '@/interfaces'
 
 export interface DocumentDetailsI {
     businessIdentifier: string,
-    legalName?: string,
+    businessName?: string,
     id: number,
     outputFileKey?: string,
     status: string,

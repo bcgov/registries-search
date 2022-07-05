@@ -75,7 +75,6 @@ def post(business_identifier):
 
         document_access_request = save_request(account_id, business_identifier, request_json)
         pay_message, pay_code = create_invoice(document_access_request, jwt, request_json)
-
         reply = document_access_request.json
         if pay_code != HTTPStatus.CREATED:
             reply['errors'] = [pay_message]

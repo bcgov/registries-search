@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Document Access Requests."""
-from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin

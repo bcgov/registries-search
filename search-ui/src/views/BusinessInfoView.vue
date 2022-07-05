@@ -100,7 +100,7 @@ const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
 const payForDocuments = async () => {
-  await createAccessRequest(entity.identifier, selectedDocs)
+  await createAccessRequest(selectedDocs)
   if (!documentAccessRequest._error) {
     selectedDocs.value = []     
     clearFees()
