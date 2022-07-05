@@ -32,7 +32,7 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 
   const config = getSearchConfig()
   return axios.get<SuggestionResponseI>
-    (`businesses/search/suggest?query=${searchValue}&max_results=${AUTO_SUGGEST_RESULT_SIZE}`,
+    (`businesses/search/suggest?query=${searchValue}&max_results=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
       config)
     .then(response => {
       const data: SuggestionResponseI = response?.data
