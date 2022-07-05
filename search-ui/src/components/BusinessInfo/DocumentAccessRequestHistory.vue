@@ -23,11 +23,11 @@
                             <td>{{ item.businessIdentifier }}</td>
                             <td class="wrap-word">{{ item.businessName }}</td>
                             <td>
-                                <v-list class="py-0" density="compact">
-                                    <v-list-item v-for="(document, index) in item.documents" :key="index">
+                                <ul class="py-0 doc-list">
+                                    <li v-for="(document, index) in item.documents" :key="index" class="doc-list-item">
                                         <span>{{ documentDescription(document.documentType) }}</span>
-                                    </v-list-item>
-                                </v-list>
+                                    </li>
+                                </ul>
                             </td>
                             <td>{{ dateTimeString(item.submissionDate) }}</td>
                             <td>{{ dateTimeString(item.expiryDate) }}</td>
@@ -123,10 +123,6 @@ white-space: normal;
     overflow: unset;
 }
 
-.opaque-header {
-    z-index: 1;
-}
-
 .doc-link {
     cursor: pointer;
 }
@@ -138,12 +134,13 @@ white-space: normal;
 .wrap-word {
     word-wrap: break-word;
 }
-
-::v-deep .v-list-item {
-  padding: 0; 
+ 
+.doc-list{
+    list-style: none;
 }
 
-.v-list--density-compact.v-list--one-line .v-list-item {
-     min-height: 30px;
+.doc-list-item {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
 }
 </style>
