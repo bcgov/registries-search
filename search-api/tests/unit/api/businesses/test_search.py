@@ -151,15 +151,27 @@ def test_parties_search(session, client, requests_mock, test_name, query, mock_d
     assert results['response']['start'] == 0
 
 
-@pytest.mark.parametrize('test_name,query,mock_name,expected', [
-    ('test-single-result', '123', '123 test name', {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}]}),
+@pytest.mark.parametrize('test_name,query,mocks,highlight,expected', [
+    ('test-single-result', '123', ['123 test name'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}]}),
+    ('test-single-result-highlight', '123', ['123 test name'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}]}),
+    ('test-two-results', '123', ['123 test name', 'BC0001234'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}]}),
+    ('test-two-results-highlight', '123', ['123 test name', 'BC0001234'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}]}),
+    ('test-three-results', '123', ['123 test name', 'BC0001234', '123456789BC0001'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}, {'type':SolrField.BN,'value':'123456789BC0001'}]}),
+    ('test-three-results-highlight', '123', ['123 test name', 'BC0001234', '123456789BC0001'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}, {'type':SolrField.BN,'value':'<b>123</b>456789BC0001'}]}),
 ])
-def test_endpoint_suggest(session, client, requests_mock, test_name, query, mock_name, expected):
+def test_endpoint_suggest(session, client, requests_mock, test_name, query, mocks, highlight, expected):
     """Assert that search suggest endpoint works as expected."""
     # setup mock - need to add more here if max_results > 1
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={'suggest':{'name':{query:{'suggestions':[{'term':mock_name}]}}}})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={'suggest':{'name':{query:{'suggestions':[{'term':mocks[0]}]}}}})
+    if len(mocks) > 2:
+        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query",json={'response':{'docs':[{SolrField.IDENTIFIER:mocks[1]},{SolrField.IDENTIFIER: '',SolrField.BN:mocks[2]}]}})
+    elif len(mocks) > 1:
+        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query",json={'response':{'docs':[{SolrField.IDENTIFIER:mocks[1]}]}})
     # call endpoint
-    resp = client.get(f'/api/v1/businesses/search/suggest?query={query}&max_results={1}')
+    url = f'/api/v1/businesses/search/suggest?query={query}&max_results={len(mocks)}'
+    if highlight:
+        url += f'&highlight={highlight}'
+    resp = client.get(url)
     # check response
     assert resp.status_code == HTTPStatus.OK
     assert resp.json == expected

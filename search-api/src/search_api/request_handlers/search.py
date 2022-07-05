@@ -51,6 +51,7 @@ def business_search(params: SearchParams):
         [SolrField.NAME_Q]
     )
     # TODO: add nested parties query
+    # NB: keeping for future: build a query based on child values and return parent doc
     # child_query = Solr.build_child_query(query,
     #                                     SolrField.PARTIES,
     #                                     [SolrField.PARTY_NAME_Q,SolrField.PARTY_NAME_STEM_AGRO],
@@ -93,7 +94,7 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     if len(name_suggestions) < rows:
         name_select_params = Solr.build_split_query(query, [SolrField.NAME_SINGLE], [])
         name_docs = solr.query(name_select_params, solr.base_fields, 0, rows).get('response', {}).get('docs', [])
-        extra_name_suggestions = [x.get(SolrField.NAME, '').upper() for x in name_docs]
+        extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
     # highlight
@@ -106,14 +107,19 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     if len(name_suggestions) < rows:
         bn_id_params = f'q={SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}'
         bn_id_docs = solr.query(bn_id_params, solr.base_fields, 0, rows).get('response', {}).get('docs', [])
-        # return list of identifier strings with highlighted query
-        identifier_suggestions = [
-            x.get(SolrField.IDENTIFIER).replace(query, f'<b>{query}</b>')
-            for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
-        # return list of bn strings with highlighted query
-        bn_suggestions = [
-            x.get(SolrField.BN).replace(query, f'<b>{query}</b>')
-            for x in bn_id_docs if query in x.get(SolrField.BN, '')]
+        if highlight:
+            # return list of identifier strings with highlighted query
+            identifier_suggestions = [
+                x.get(SolrField.IDENTIFIER).replace(query, f'<b>{query}</b>')
+                for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
+            # return list of bn strings with highlighted query
+            bn_suggestions = [
+                x.get(SolrField.BN).replace(query, f'<b>{query}</b>')
+                for x in bn_id_docs if query in x.get(SolrField.BN, '')]
+        else:
+            identifier_suggestions = [
+                x.get(SolrField.IDENTIFIER) for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
+            bn_suggestions = [x.get(SolrField.BN) for x in bn_id_docs if query in x.get(SolrField.BN, '')]
 
     # format/combine response
     suggestions = [{'type': SolrField.NAME, 'value': x} for x in name_suggestions]
