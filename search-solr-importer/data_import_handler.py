@@ -73,6 +73,7 @@ def collect_lear_data():
             JOIN party_roles pr on pr.business_id = b.id
             JOIN parties p on p.id = pr.party_id
         WHERE legal_type in ('BEN', 'CP', 'SP', 'GP')
+            AND pr.cessation_date is null
         """)
     return cur
 
