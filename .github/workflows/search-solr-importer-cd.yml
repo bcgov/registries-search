@@ -24,7 +24,7 @@ env:
   TAG_NAME: "dev"
 
 jobs:
-  search-ui-cd-by-push:
+  search-solr-importer-cd-by-push:
     runs-on: ubuntu-20.04
 
     if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
@@ -62,7 +62,7 @@ jobs:
           commit: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  search-ui-cd-by-dispatch:
+  search-solr-importer-cd-by-dispatch:
     runs-on: ubuntu-20.04
 
     if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
