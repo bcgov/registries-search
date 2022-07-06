@@ -45,7 +45,7 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
-    name: RouteNames.DASHBOARD,
+    name: RouteNames.SEARCH,
     component: DashboardView,
     meta: {
       requiresAuth: false, // landing page so needs chance to load without auth

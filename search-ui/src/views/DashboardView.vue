@@ -3,7 +3,7 @@
     <div>
       <v-row no-gutters>
         <v-col>
-          <h1>Business Search</h1>
+          <span class="page-header"><h1>Business Search</h1><span class="beta-version pl-2">BETA</span></span>
         </v-col>
       </v-row>
     </div>
@@ -81,5 +81,17 @@ onMounted(async () => {
 
 .v-list-item {
     padding-left: 0;    
+}
+
+.beta-version{
+  line-height:10px;
+  text-decoration: underline;
+  font-weight: bold;
+  color: $BCgovBlue4;
+  font-size: 0.9rem
+}
+
+.page-header{
+  display: flex;  
 }
 </style>

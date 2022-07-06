@@ -6,7 +6,7 @@
           id="search-bar-field"
           autocomplete="off"
           filled
-          label="Business Name, Registration Number or CRA Business Number"
+          label="Business Name, Incorporation/Registration Number, CRA Business Number or Firm Owner Name"
           :hint="searchHint"
           persistent-hint
           :hide-details="suggestActive"

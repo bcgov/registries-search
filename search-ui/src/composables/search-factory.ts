@@ -4,7 +4,7 @@ import { SearchI } from '@/interfaces'
 import { searchBusiness } from '@/requests'
 
 const search = reactive({
-  results: [],
+  results: null,
   _error: null,
   _loading: false,
   _value: '', // not used for anything yet
