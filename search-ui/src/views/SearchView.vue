@@ -1,19 +1,19 @@
 <template>
-  <v-container id="search" class="container" fluid>
+  <v-container id="search"  fluid>
     <v-overlay v-model="search._loading" style="top: 50%; left: 50%;">
       <v-progress-circular class="v-loader" size="50" indeterminate />
     </v-overlay>
     <div>
       <v-row no-gutters class="pt-4 pl-4">
         <v-col>
-          <div class="search-info">
+          <span class="search-info">
             Search for businesses registered or incorporated in B.C.<span class="lift-text mr-1">*</span> or
             for owners of Firms registered in B.C.
-          </div>
+          </span>
         </v-col>
       </v-row>
     </div>
-    <div class="container pa-0">
+    <div class="container pa-0 search-bar">
       <v-row no-gutters>
         <search-bar />
       </v-row>
@@ -23,14 +23,14 @@
        businesses incorporated under Private acts.
     </div>
     <template v-if="search.results!=null">
-    <div>
-      <v-row class="result-info pt-30px pl-8" no-gutters v-if="totalResultsLength > 0">   
-        <v-col cols="12">
-        <b>Search Results({{ totalResultsLength }})</b>
+    <div class="result-info mt-12">
+      <v-row no-gutters v-if="totalResultsLength > 0">   
+        <v-col cols="12" style="vertical-align: middle;">
+        <span class="results-count ml-6">Search Results({{ totalResultsLength }})</span>
         </v-col>           
     </v-row>
     </div>
-    <div class="container pa-0 mt-10">
+    <div class="container pa-0 ">
       <v-row no-gutters>
         <search-results/>
       </v-row>
@@ -62,6 +62,11 @@ const totalResultsLength = computed(() => search.results?.length || 0 )
 .lift-text{
   line-height: 10px;
   font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.results-count{
+  font-size: 1rem;
   font-weight: bold;
 }
 </style>

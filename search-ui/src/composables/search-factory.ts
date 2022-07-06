@@ -13,13 +13,19 @@ const search = reactive({
 export const useSearch = () => {
   const getSearchResults = async (val: string) => {
     search._loading = true
-    search.results = []
     search._value = val
     const searchResp = await searchBusiness(val)
     if (searchResp) {
-      if (searchResp.error) search._error = searchResp.error
-      search.results = searchResp.results
-    } else console.error('Nothing returned from searchBusiness fn.')
+      if (searchResp.error) {
+        search.results = []
+        search._error = searchResp.error
+      } else {
+        search.results = searchResp.results
+      }
+    } else {
+      search.results = []
+      console.error('Nothing returned from searchBusiness fn.')
+    }
     search._loading = false
   }
   return {
