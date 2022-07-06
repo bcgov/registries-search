@@ -39,8 +39,12 @@ def facets():
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
 
         # TODO: validate legal_type + state
-        legal_type = request.args.get(SolrField.TYPE, None)
-        state = request.args.get(SolrField.STATE, None)
+        legal_types = None
+        with suppress(AttributeError):
+            legal_types = (request.args.get(SolrField.TYPE, None)).split(',')
+        states = None
+        with suppress(AttributeError):
+            states = (request.args.get(SolrField.STATE, None)).split(',')
         # TODO: add parties filter
 
         start = None
@@ -50,7 +54,7 @@ def facets():
         with suppress(TypeError):
             rows = int(request.args.get('num_of_rows', None))
 
-        params = SearchParams(query, start, rows, legal_type, state)
+        params = SearchParams(query, start, rows, legal_types, states)
         results = business_search(params)
         response = {
             'facets': Solr.parse_facets(results),
@@ -89,8 +93,12 @@ def parties():
             ), HTTPStatus.BAD_REQUEST
 
         # TODO: validate legal_type + state
-        legal_type = request.args.get(SolrField.TYPE, None)
-        state = request.args.get(SolrField.STATE, None)
+        legal_types = None
+        with suppress(AttributeError):
+            legal_types = (request.args.get(SolrField.TYPE, None)).split(',')
+        states = None
+        with suppress(AttributeError):
+            states = (request.args.get(SolrField.STATE, None)).split(',')
         start = None
         with suppress(TypeError):
             start = int(request.args.get('start_row', None))
@@ -98,7 +106,7 @@ def parties():
         with suppress(TypeError):
             rows = int(request.args.get('num_of_rows', None))
 
-        params = SearchParams(query, start, rows, legal_type, state, party_roles)
+        params = SearchParams(query, start, rows, legal_types, states, party_roles)
         results = parties_search(params)
         response = {
             'facets': Solr.parse_facets(results),
