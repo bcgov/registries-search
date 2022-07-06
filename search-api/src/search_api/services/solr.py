@@ -220,7 +220,7 @@ class Solr:
         return params + ')'
 
     @staticmethod
-    def build_filter_query(query: str, field: SolrField, values: List[str]):
+    def build_filter_query(field: SolrField, values: List[str]):
         """Return the solr filter clause for the given params."""
         filter_q = f'&fq={field}:("{values[0]}"'
         for val in values[1:]:

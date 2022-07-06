@@ -67,13 +67,9 @@ def business_search(params: SearchParams):
     solr_query += solr.base_facets
     # filter queries
     if params.legal_types:
-        solr_query += Solr.build_filter_query(params.query,
-                                              SolrField.TYPE,
-                                              [x.upper() for x in params.legal_types])
+        solr_query += Solr.build_filter_query(SolrField.TYPE, [x.upper() for x in params.legal_types])
     if params.states:
-        solr_query += Solr.build_filter_query(params.query,
-                                              SolrField.STATE,
-                                              [x.upper() for x in params.states])
+        solr_query += Solr.build_filter_query(SolrField.STATE, [x.upper() for x in params.states])
 
     # boosts for result ordering
     solr_bq_params = f'&bq={SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
@@ -142,17 +138,11 @@ def parties_search(params: SearchParams):
     solr_query += solr.party_facets
     # filters
     if params.party_roles:
-        solr_query += Solr.build_filter_query(params.query,
-                                              SolrField.PARTY_ROLE,
-                                              [x.lower() for x in params.party_roles])
+        solr_query += Solr.build_filter_query(SolrField.PARTY_ROLE, [x.lower() for x in params.party_roles])
     if params.legal_types:
-        solr_query += Solr.build_filter_query(params.query,
-                                              SolrField.PARENT_TYPE,
-                                              [x.upper() for x in params.legal_types])
+        solr_query += Solr.build_filter_query(SolrField.PARENT_TYPE, [x.upper() for x in params.legal_types])
     if params.states:
-        solr_query += Solr.build_filter_query(params.query,
-                                              SolrField.PARENT_STATE,
-                                              [x.upper() for x in params.states])
+        solr_query += Solr.build_filter_query(SolrField.PARENT_STATE, [x.upper() for x in params.states])
 
     # boosts for result ordering
     solr_bq_params = f'&bq={SolrField.PARTY_NAME_Q}:("{params.query}"~10)^30.0' + \
