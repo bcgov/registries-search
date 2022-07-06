@@ -3,15 +3,13 @@ BC Registry's business search service
 ## search-ui
 UI portion for registries search. Contains user facing registries searching and results components.
 ## search-api
-Makes calls to solr for search, calls to lear apps, etc. for business data, and puts payments on the queue.
+Makes calls to solr for search, calls to lear apps, etc. for business data, and stores payments/access rights for documents.
 ## search-solr
-Reused the bcgov/namex solr instance and added a new 'search' core for this project.
-- To contribute to the search core you can update https://github.com/bcgov/namex/tree/main/solr/cores/search
-- To update the solr build or run it locally checkout https://github.com/bcgov/namex-solr.git
-## search-solr-feeder
-Adds new businesses / updates businesses in solr when they are created/changed in bcgov/lear.
-## search-pay-listener
-Listens for completed search payments and updates the search db via the search-api model.
+Indexes / queries our business data.
+## search-solr-importer
+Adds new businesses / updates businesses in solr from COLIN and LEAR.
+## doc-service
+Stores point in time documents (i.e. business summary)
 ## Developer contirbution flow
 setup
 1. fork this repo
