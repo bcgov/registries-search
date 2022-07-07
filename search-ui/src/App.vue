@@ -119,7 +119,12 @@ onMounted(async () => {
       // check every second for up to 10 seconds
       for (let i=0; i<10; i++) {
         await new Promise(resolve => setTimeout(resolve, 1000))
-        if (sessionStorage.getItem(SessionStorageKeys.SessionSynced) === 'true') break
+        if (
+          sessionStorage.getItem(SessionStorageKeys.SessionSynced) === 'true' &&
+          sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+        ) {
+          break
+        }
       }
       console.info('Loading account authorizations...')
       // initialize auth stuff

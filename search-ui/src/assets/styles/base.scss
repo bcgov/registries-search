@@ -299,42 +299,30 @@ span.invalid-color {
 }
 
 // common tooltip styles
-.top-tooltip,
-.left-tooltip {
-  margin-left: 0 !important;
+.tooltip {
+  background-color: RGBA(73, 80, 87, .9) !important;
+  width: 250px !important;
 }
 
-.top-tooltip:after {
-  top: 100% !important;
-  left: 45% !important;
-  margin-top: 0 !important;
-  border-right: 10px solid transparent !important;
-  border-left: 10px solid transparent !important;
-  border-top: 8px solid RGBA(73, 80, 87, 0.95) !important;
+.top-tooltip-arrow,
+.bottom-tooltip-arrow,
+.right-tooltip-arrow,
+.left-tooltip-arrow {
+  width: 20px;
+  position: absolute;
 }
 
-.left-tooltip:after {
-  top: 50% !important;
-  left: 100% !important;
-  margin-top: -10px !important;
-  border-bottom: 10px solid transparent !important;
-  border-top: 10px solid transparent !important;
-  border-right: 10px solid transparent !important;
-  border-left: 8px solid RGBA(73, 80, 87, 0.95) !important;
+.top-tooltip-arrow,
+.bottom-tooltip-arrow {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  left: 0;
 }
 
-.bottom-tooltip {
-  width: 390px !important;
-}
-
-.bottom-tooltip:after {
-  left: 45% !important;
-  top: 0 !important;
-  margin-top: -18px !important;
-  border-top: 10px solid transparent !important;
-  border-left: 10px solid transparent !important;
-  border-right: 10px solid transparent !important;
-  border-bottom: 8px solid RGBA(73, 80, 87, 0.95) !important;
+.top-tooltip-arrow {
+  border-top: 9px solid RGBA(73, 80, 87, .9);
+  // box-shadow: 0px -2px RGBA(73, 80, 87, 0.75);
+  margin-top: -31px !important;
 }
 
 // tombstone styles
