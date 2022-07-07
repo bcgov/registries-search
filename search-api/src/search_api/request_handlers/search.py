@@ -25,15 +25,15 @@ class SearchParams:  # pylint: disable=too-few-public-methods
                  query: str,
                  start: int,
                  rows: int,
-                 legal_type: str = None,
-                 state: str = None,
+                 legal_types: List[str] = None,
+                 states: List[str] = None,
                  party_roles: List[str] = None):
         """Init instance."""
         self.query = query
         self.start = start
         self.rows = rows
-        self.legal_type = legal_type
-        self.state = state
+        self.legal_types = legal_types
+        self.states = states
         self.party_roles = party_roles
 
 
@@ -65,11 +65,11 @@ def business_search(params: SearchParams):
 
     # facets
     solr_query += solr.base_facets
-    # filters
-    if params.legal_type:
-        solr_query += f'&{SolrField.TYPE}:{params.legal_type.upper()}'
-    if params.state:
-        solr_query += f'&{SolrField.STATE}:{params.state.upper()}'
+    # filter queries
+    if params.legal_types:
+        solr_query += Solr.build_filter_query(SolrField.TYPE, [x.upper() for x in params.legal_types])
+    if params.states:
+        solr_query += Solr.build_filter_query(SolrField.STATE, [x.upper() for x in params.states])
 
     # boosts for result ordering
     solr_bq_params = f'&bq={SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
@@ -138,14 +138,11 @@ def parties_search(params: SearchParams):
     solr_query += solr.party_facets
     # filters
     if params.party_roles:
-        role_filter = f'&fq={SolrField.PARTY_ROLE}:("{params.party_roles[0]}"'
-        for role in params.party_roles[1:]:
-            role_filter += f' OR "{role.lower()}"'
-        solr_query += role_filter + ')'
-    if params.legal_type:
-        solr_query += f'&{SolrField.PARENT_TYPE}:{params.legal_type.upper()}'
-    if params.state:
-        solr_query += f'&{SolrField.PARENT_STATE}:{params.state.upper()}'
+        solr_query += Solr.build_filter_query(SolrField.PARTY_ROLE, [x.lower() for x in params.party_roles])
+    if params.legal_types:
+        solr_query += Solr.build_filter_query(SolrField.PARENT_TYPE, [x.upper() for x in params.legal_types])
+    if params.states:
+        solr_query += Solr.build_filter_query(SolrField.PARENT_STATE, [x.upper() for x in params.states])
 
     # boosts for result ordering
     solr_bq_params = f'&bq={SolrField.PARTY_NAME_Q}:("{params.query}"~10)^30.0' + \

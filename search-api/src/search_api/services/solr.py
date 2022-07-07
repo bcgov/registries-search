@@ -220,6 +220,14 @@ class Solr:
         return params + ')'
 
     @staticmethod
+    def build_filter_query(field: SolrField, values: List[str]):
+        """Return the solr filter clause for the given params."""
+        filter_q = f'&fq={field}:("{values[0]}"'
+        for val in values[1:]:
+            filter_q += f' OR "{val}"'
+        return filter_q + ')'
+
+    @staticmethod
     def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> str:
         """Return a solr query with fqs for each subsequent term."""
         terms = query.split()

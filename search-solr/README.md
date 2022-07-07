@@ -15,14 +15,13 @@ BC Registries Registry Search SOLR
   - `docker logs solr-local`
 4. Go to admin UI in browser and check the solr core is there (it will be empty)
   - http://localhost:8983/solr
-5. Data import via the solr importer
-  - see _TBD_
-6. Build the solr suggester
-  - http://localhost:8983/solr/search/suggest?suggest.build=true
-7. Stop the solr instance, make changes and reindex / rebuild the suggester
+5. Data import via the solr importer with REINDEX=True
+  - see https://github.com/bcgov/registries-search/tree/main/search-solr-importer and you will need:
+    - run local COLIN oracle db OR setup VPN connection to COLIN dev OR comment out the COLIN load
+    - run local LEAR db OR port-forward to dev instance OR comment out LEAR load
+6. Stop the solr instance, make changes and reindex / rebuild the suggester
   - `docker stop solr-local`
   - make changes
   - `docker start solr-local`
-  - reimport data (5.)
-  - rebuild suggester (6.)
+  - reimport data with REINDEX=True (5.)
 
