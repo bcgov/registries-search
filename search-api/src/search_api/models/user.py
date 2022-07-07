@@ -60,14 +60,15 @@ class User(db.Model):
             return ' '.join(filter(None, [self.firstname, self.lastname])).strip()
 
         # parse off idir\ or @idir
-        if self.username[:4] == 'idir':
-            return self.username[5:]
-        if self.username[-4:] == 'idir':
-            return self.username[:-5]
+        if self.username:
+            if self.username[:4] == 'idir':
+                return self.username[5:]
+            if self.username[-4:] == 'idir':
+                return self.username[:-5]
 
-        # do not show services card usernames
-        if self.username[:4] == 'bcsc':
-            return None
+            # do not show services card usernames
+            if self.username[:4] == 'bcsc':
+                return None
 
         return self.username if self.username else None
 
