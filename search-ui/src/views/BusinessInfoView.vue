@@ -19,33 +19,57 @@
     <v-row no-gutters>
       <v-col>
         <h2>How to Access Business Documents</h2>
-        <p class="pt-3">1. Select from Available Documents to Download.</p>
-        <p class="pt-1">2. Pay the appropriate fee.</p>
-        <p class="pt-1">3. Download the individual files you require.</p>
         <p class="pt-3">
-          Note: some documents are available on paper only and not available
-          to download. To request copies of paper documents, contact BC Registries Staff.
+          1. Determine if the filing documents that you want are available for 
+          download or are on paper only.*
+        </p>
+        <p class="pt-1">2. Select from Available Documents to Download.</p>
+        <p class="pt-1">3. Pay the appropriate fee.</p>
+        <p class="pt-1">4. Download the individual files you require.</p>
+        <p class="pt-3">
+          * Some documents are available on paper only and not available to download. 
+          To request copies of paper documents, contact BC Registries staff.
         </p>
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
-        <div class="document-list  mt-3 pa-3 pr-5" :key="checkBoxesKey">
+        <div class="document-list  mt-3 pa-3 pr-5 pt-7" :key="checkBoxesKey">
           <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
-            <v-col cols="6">
-              <v-tooltip v-if="!item.active" top content-class="top-tooltip" transition="fade-transition">
-                <template v-slot:activator="{ props }">
-                  <span v-bind="props">
-                    <v-checkbox hide-details :label="item.label" @change="toggleFee($event, item)"
-                      :disabled="!item.active" />
-                  </span>
-                </template>
-                <span v-if="item.documentType == DocumentType.CERTIFICATE_OF_GOOD_STANDING">
-                  The Certificate of Good Standing can only be ordered if the business is in Good Standing.
-                </span>
-              </v-tooltip>
-              <v-checkbox hide-details :label="item.label" @change="toggleFee($event, item)" :disabled="!item.active"
-                v-else />
+            <v-col>
+              <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top"></v-tooltip>
+              <v-row no-gutters>
+                <v-col cols="auto" style="position: relative;">
+                  <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top">
+                    <template v-slot:activator="{ isActive, props }">
+                      <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
+                      <v-row v-bind="props" no-gutters>
+                        <v-col v-bind="props" cols="auto">
+                          <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
+                        </v-col>
+                        <v-col v-bind="props" class="document-list__label">
+                          <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                        </v-col>
+                      </v-row>
+                    </template>
+                    <span>{{ item.tooltip }}</span>
+                  </v-tooltip>
+                  <v-row v-else no-gutters>
+                    <v-col cols="auto">
+                      <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
+                    </v-col>
+                    <v-col class="document-list__label">
+                      <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col />
+              </v-row>
             </v-col>
-            <v-col :class="['document-list__fee', 'pt-4', item.active ? '' : 'disabled-text']" v-html="item.fee" />
+            <v-col
+              :class="['document-list__fee', item.active ? '' : 'disabled-text']"
+              align-self="end"
+              cols="auto"
+              v-html="item.fee"
+            />
           </v-row>
         </div>       
         <v-divider class="my-10" />
@@ -67,7 +91,6 @@ import { useRouter } from 'vue-router'
 import { BaseFeeCalculator } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-
 import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ActionComps, FeeCodes, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI } from '@/interfaces'
@@ -95,7 +118,12 @@ const feePreSelectItem: FeeI = {
 
 const checkBoxesKey = ref(0)
 const purchasableDocs = ref([]) as Ref<{ 
-  code: FeeCodes, fee: string, label: string, documentType: DocumentType, active: boolean }[]>
+  code: FeeCodes,
+  fee: string,
+  label: string,
+  documentType: DocumentType,
+  active: boolean,
+  tooltip: string }[]>
 const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
@@ -156,9 +184,10 @@ const loadPurchasableDocs = async () => {
   purchasableDocs.value.push({
     code: FeeCodes.SRCH_BASE_DOCS,
     fee: feeBaseDocs,
-    label: 'Business Summary and Filing History Documents',
+    label: 'Business Summary and Filing History Documents (paper-only copies are not included)',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
-    active: true
+    active: true,
+    tooltip: ''
   })
 
   if(isCogsAvailable()){
@@ -167,7 +196,9 @@ const loadPurchasableDocs = async () => {
       fee: feeCOGS,
       label: 'Certificate of Good Standing',
       documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
-      active: entity.goodStanding
+      active: entity.goodStanding,
+      tooltip: !entity.goodStanding ? 'The Certificate of Good Standing ' +
+        'can only be ordered if the business is in Good Standing.' : ''
     })
   }
 }
@@ -177,6 +208,7 @@ const isCogsAvailable = () => {
 }
 
 const toggleFee = (event: any, item: any) => {
+  if (!item.active) return
   if (event.target.checked) {
     addFeeItem(item.code, 1)
     selectedDocs.value.push(item.documentType)
@@ -195,11 +227,30 @@ const toggleFee = (event: any, item: any) => {
   background-color: white;
   width: 100%;
 
+  &__label,
   &__fee {
     color: $gray8;
     font-weight: 700;
     height: 56px;
+  }
+
+  &__label {
+    padding-top: 5px !important;
+  }
+
+  &__fee {
+    padding-left: 8px !important;
+    padding-top: 3px !important;
     text-align: right;
+  }
+
+  &__tooltip {
+    margin-top: 30px !important;
+  }
+
+  &__tooltip-arrow {
+    margin-left: 10px;
+    margin-top: -9px !important;
   }
 }
 
@@ -220,22 +271,18 @@ const toggleFee = (event: any, item: any) => {
   --v-medium-emphasis-opacity: 1;
 }
 
+:deep(.v-checkbox .v-selection-control) {
+  height: 32px;
+}
+
 :deep(.v-label) {
   color: $gray8;
   font-weight: 700;
+  white-space: normal;
   --v-medium-emphasis-opacity: 1;
 }
 
 .disabled-text {
   color: $gray7;
-}
-
-.top-tooltip:after {
-  top: 100% !important;
-  left: 45% !important;
-  margin-top: 0 !important;
-  border-right: 10px solid transparent !important;
-  border-left: 10px solid transparent !important;
-  border-top: 8px solid RGBA(73, 80, 87, 0.95) !important;
 }
 </style>

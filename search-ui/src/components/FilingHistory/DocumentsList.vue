@@ -5,7 +5,16 @@
                 <v-btn variant="text" class="download-one-btn" @click="downloadOne(document, index)"
                     :disabled="props.loadingOne || props.loadingAll || isLocked"
                     :loading="props.loadingOne && (index === props.loadingOneIndex)">
-                    <v-icon v-if="isLocked">mdi-lock</v-icon>
+                    <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
+                        <template v-slot:activator="{ isActive, props }">
+                            <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
+                            <v-icon v-bind="props">mdi-lock</v-icon>
+                        </template>
+                        <span>
+                            Select Business Summary and Filing History Documents above 
+                            and complete payment to access documents.
+                        </span>
+                    </v-tooltip>
                     <v-icon v-else class="app-blue">mdi-file-pdf-box</v-icon>
                     <span v-bind:class="[isLocked ? '' : 'app-blue']">{{ document.title }}</span>
                 </v-btn>
@@ -14,7 +23,16 @@
             <v-list-item v-if="filing.documents.length > 1">
                 <v-btn variant="text" class="download-all-btn" @click="downloadAll()"
                     :disabled="props.loadingOne || props.loadingAll || isLocked" :loading="props.loadingAll">
-                    <v-icon v-if="isLocked">mdi-lock</v-icon>
+                    <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
+                        <template v-slot:activator="{ isActive, props }">
+                            <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
+                            <v-icon v-bind="props">mdi-lock</v-icon>
+                        </template>
+                        <span>
+                            Select Business Summary and Filing History Documents above 
+                            and complete payment to access documents.
+                        </span>
+                    </v-tooltip>
                     <v-icon class="app-blue" v-else>mdi-download</v-icon>
                     <span v-bind:class="[isLocked ? '' : 'app-blue']">Download All</span>
                 </v-btn>
