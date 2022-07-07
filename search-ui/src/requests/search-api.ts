@@ -14,10 +14,7 @@ import { Document } from '@/types'
 const AUTO_SUGGEST_RESULT_SIZE = 10
 
 const getSearchConfig = () => {
-  const { auth, loadAuth } = useAuth()
-  if(!auth.currentAccount){
-      loadAuth()
-  }
+  const { auth } = useAuth()
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const apiKey = window['searchApiKey']
   if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')

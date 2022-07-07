@@ -41,10 +41,12 @@
 
 <script setup lang="ts">
 // local
-import { onMounted } from 'vue'
+import { watch } from 'vue'
 import { PurchaseHistoryView, SearchView } from '@/views'
 import { useDocumentAccessRequest } from '@/composables'
 import { ref, computed } from 'vue'
+
+const props = defineProps({ appReady: { type: Boolean } })
 
 const tab = ref('')
 
@@ -52,9 +54,10 @@ const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessReq
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
 
-
-onMounted(async () => {
-    await loadAccessRequestHistory()
+watch(() => props.appReady, (ready: boolean) => {
+  if (ready) {
+    loadAccessRequestHistory()
+  }
 })
 
 
