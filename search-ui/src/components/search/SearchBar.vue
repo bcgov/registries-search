@@ -1,12 +1,12 @@
 <template>
-  <v-container fluid no-gutters class="white-background mt-8 soft-corners">    
-    <v-row no-gutters class="pt-6">
+  <v-container fluid no-gutters class="white-background mt-4 soft-corners">    
+    <v-row no-gutters class="pt-2">
       <v-col class="ml-n6 pl-6" cols="11">
         <v-text-field
           id="search-bar-field"
           autocomplete="off"
           filled
-          label="Business Name, Registration Number or CRA Business Number"
+          label="Business Name, Incorporation/Registration Number, CRA Business Number or Firm Owner Name"
           :hint="searchHint"
           persistent-hint
           :hide-details="suggestActive"

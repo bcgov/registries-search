@@ -3,5 +3,6 @@ export enum RouteNames {
   SIGN_OUT = 'signout',
   SEARCH = 'search',
   LOGIN = 'login',
-  BUSINESS_INFO = 'businessinfo'
+  BUSINESS_INFO = 'businessinfo',
+  DASHBOARD = 'dashboard'
 }

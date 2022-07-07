@@ -8,30 +8,41 @@
                 <v-table fixed-header class="table">
                     <thead>
                         <tr>
-                            <th width="33%" class="bg-grey-lighten-4">Submitted on</th>
-                            <th width="33%" class="bg-grey-lighten-4">Expires on</th>
-                            <th width="34%" class="bg-grey-lighten-4 opaque-header">Documents</th>
+                            <th width="10%" class="bg-grey-lighten-4">Incorporation/<br />Registration<br /> Number</th>
+                            <th width="15%" class="bg-grey-lighten-4">Business Name</th>
+                            <th width="21%" class="bg-grey-lighten-4">Purchased Items</th>
+                            <th width="17%" class="bg-grey-lighten-4">Search Date/Time<br />(Pacific time)</th>
+                            <th width="17%" class="bg-grey-lighten-4 opaque-header">Expiry Date/Time <br />(Pacific
+                                time)</th>
+                            <th width="10%" class="bg-grey-lighten-4 opaque-header">User Name</th>
+                            <th width="10%" class="bg-grey-lighten-4 opaque-header"></th>
                         </tr>
                     </thead>
                     <tbody v-if="totalResultsLength > 0">
                         <tr v-for="item in documentAccessRequest.requests" :key="item.id">
+                            <td>{{ item.businessIdentifier }}</td>
+                            <td class="wrap-word">{{ item.businessName }}</td>
+                            <td>
+                                <ul class="py-0 doc-list">
+                                    <li v-for="(document, index) in item.documents" :key="index" class="doc-list-item">
+                                        <span>{{ documentDescription(document.documentType) }}</span>
+                                    </li>
+                                </ul>
+                            </td>
                             <td>{{ dateTimeString(item.submissionDate) }}</td>
                             <td>{{ dateTimeString(item.expiryDate) }}</td>
+                            <td  class="wrap-word">{{ item.submitter }}</td>
                             <td>
-                                <v-list class="py-0" density="compact">
-                                    <v-list-item v-for="(document, index) in item.documents" :key="index">
-                                        <span class="app-blue doc-link" @click="downloadDoc(document)">
-                                            {{ documentDescription(document.documentType) }}
-                                        </span>
-                                    </v-list-item>
-                                </v-list>
+                                <v-btn large id="open-business-btn" class="search-bar-btn primary">
+                                    View
+                                </v-btn>
                             </td>
                         </tr>
                     </tbody>
                     <tbody v-else>
                         <tr>
                             <td colspan="6">
-                                <p class="pt-4 pb-2"><b>No purchase history</b></p>
+                                <p class="pt-4 pb-2"><b>No purchases in the last 14 days.</b></p>
                             </td>
                         </tr>
                     </tbody>
@@ -44,30 +55,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 // local
-import { useDocumentAccessRequest, useEntity } from '@/composables'
-import { dateToPacificDateTime } from '@/utils'
-
+import { useDocumentAccessRequest } from '@/composables'
+import { dateToPacificDateTimeShort } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
-import { DocumentI } from '@/interfaces'
+ 
 
 // composables
-const { documentAccessRequest, downloadDocument } = useDocumentAccessRequest()
-const { entity } = useEntity()
+const { documentAccessRequest } = useDocumentAccessRequest()
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
 
 const dateTimeString = (val: string): string => {
-    return (dateToPacificDateTime(new Date(val)) || 'Unknown')
+    return (dateToPacificDateTimeShort(new Date(val)) || 'Unknown')
 }
 
 const documentDescription = (type: string): string => {
     return DocumentTypeDescriptions[type]
 }
-
-const downloadDoc = (document: DocumentI): void => {
-   downloadDocument(entity.identifier, document)
-}
-
 </script>
 
 <style lang="scss" scoped>
@@ -100,10 +104,16 @@ th {
     color: $app-dk-blue  !important;
 }
 
-.table {
-    max-width: calc(100% - 48px);
-    max-height: calc(50vh - 85px);
+.table {    
+    max-height: calc(100vh - 85px);
+    table-layout: fixed;
 }
+
+table td {
+word-wrap:break-word;
+white-space: normal;
+}
+ 
 
 .v-table {
     overflow: auto;
@@ -113,15 +123,24 @@ th {
     overflow: unset;
 }
 
-.opaque-header {
-    z-index: 1;
-}
-
-.doc-link{
+.doc-link {
     cursor: pointer;
 }
 
 .opaque-header {
-  z-index: 1;
+    z-index: 1;
+}
+
+.wrap-word {
+    word-wrap: break-word;
+}
+ 
+.doc-list{
+    list-style: none;
+}
+
+.doc-list-item {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
 }
 </style>

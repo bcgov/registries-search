@@ -1,10 +1,5 @@
 <template>
-  <div class="main-results-div white-background soft-corners-top soft-corners-bottom pb-2">
-    <v-row class="result-info pt-30px pl-8" no-gutters v-if="totalResultsLength > 0">   
-        <v-col cols="12">
-        <b>{{ totalResultsLength }}</b> results found
-        </v-col>           
-    </v-row>
+  <div class="main-results-div white-background soft-corners-top soft-corners-bottom pb-2">    
     <v-row class="pt-3 pl-4" no-gutters>
       <v-col cols="12">
           <v-table

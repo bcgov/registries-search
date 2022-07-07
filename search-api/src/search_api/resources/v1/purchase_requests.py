@@ -12,26 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Document Access Requests."""
-from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
 from search_api.models import DocumentAccessRequest
-from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
-from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
 
 
-bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint: disable=invalid-name
+bp = Blueprint('PURCHASE_REQUESTS', __name__, url_prefix='/purchases')  # pylint: disable=invalid-name
 
 
 @bp.get('')
 @bp.get('/<int:request_id>')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def get(business_identifier, request_id=None):
+def get(request_id=None):
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
         account_id = request.headers.get('Account-Id', None)
@@ -47,39 +44,10 @@ def get(business_identifier, request_id=None):
             return jsonify(documentAccessRequest=access_request.json)
 
         access_requests_list = []
-        access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
+        access_requests = DocumentAccessRequest.find_active_requests(account_id)
         for access_request in access_requests:
             access_requests_list.append(access_request.json)
 
         return jsonify(documentAccessRequests=access_requests_list)
     except Exception as default_exception:  # noqa: B902
-        return resource_utils.default_exception_response(default_exception)
-
-
-@bp.post('')
-@cross_origin(origin='*')
-@jwt.requires_auth
-def post(business_identifier):
-    """Create a new request for the business."""
-    try:
-        account_id = request.headers.get('Account-Id', None)
-        if not account_id:
-            return resource_utils.account_required_response()
-
-        token = jwt.get_token_auth_header()
-        request_json = request.get_json()
-
-        errors = RequestValidator.validate_document_access_request(request_json, account_id, token)
-        if errors:
-            return resource_utils.bad_request_response(errors)
-
-        document_access_request = save_request(account_id, business_identifier, request_json)
-        pay_message, pay_code = create_invoice(document_access_request, jwt, request_json)
-        reply = document_access_request.json
-        if pay_code != HTTPStatus.CREATED:
-            reply['errors'] = [pay_message]
-
-        return jsonify(reply), pay_code
-
-    except Exception as default_exception:   # noqa: B902
         return resource_utils.default_exception_response(default_exception)

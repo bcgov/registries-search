@@ -37,8 +37,9 @@ def save_request(account_id, business_identifier, request_json) -> DocumentAcces
     document_access_request: DocumentAccessRequest = DocumentAccessRequest(
         business_identifier=business_identifier,
         account_id=account_id,
-        submitter=user,
-        submission_date=datetime.utcnow()
+        _submitter_id=user.id,
+        submission_date=datetime.utcnow(),
+        business_name=request_json.get('business', {}).get('businessName')
     )
     for doc in request_json.get('documentAccessRequest', {}).get('documents', []):
         document_type = DocumentType.get_enum_by_name(doc.get('type'))
@@ -58,17 +59,15 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
         filing_types = []
         for document in document_access_request.documents:
             filing_types.append({'filingTypeCode': DOCUMENT_TYPE_TO_FILING_TYPE.get(document.document_type.name)})
-
         payment_response = create_payment(str(document_access_request.account_id), filing_types, user_jwt,
                                           request_json.get('header', {}))
-
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             payment_completion_date = datetime.utcnow()
             pid = payment_response.json().get('id')
             document_access_request.payment_token = pid
             document_access_request.payment_status_code = payment_response.json().get('statusCode', '')
             document_access_request.payment_completion_date = payment_completion_date
-            validity_in_days = current_app.config.get('DOCUMENT_REQUEST_VALIDITY_DURATION', 7)
+            validity_in_days = current_app.config.get('DOCUMENT_REQUEST_VALIDITY_DURATION', 14)
             document_access_request.expiry_date = payment_completion_date + relativedelta(days=validity_in_days)
             document_access_request.status = DocumentAccessRequest.Status.PAID
             document_access_request.save()

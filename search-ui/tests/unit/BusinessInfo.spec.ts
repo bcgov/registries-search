@@ -12,6 +12,8 @@ import { axios } from '@/utils'
 import { BusinessInfoView } from '@/views'
 // test utils
 import { mockedBusinessResp, mockedFilingResp } from './utils'
+import FeeServices from 'sbc-common-components/src/services/fee.services'
+import { Fee } from 'sbc-common-components/src/models'
 
 
 describe('BusinessInfo tests', () => {
@@ -19,12 +21,12 @@ describe('BusinessInfo tests', () => {
   let router: Router
   sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
 
-  const url = 'http://legal-api-stub'
+  const url = 'http://legal-api-stub/'
   sessionStorage.setItem('LEGAL_API_URL', url)
 
   const identifier = mockedBusinessResp.identifier
   const { entity, clearEntity } = useEntity()
-  const {filingHistory} = useFilingHistory()
+  const { filingHistory } = useFilingHistory()
 
   beforeEach(async () => {
     const mockGet = jest.spyOn(axios, 'get')
@@ -33,11 +35,24 @@ describe('BusinessInfo tests', () => {
         case `businesses/${identifier}`:
           return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
         case `businesses/${identifier}/filings`:
-          return Promise.resolve({ data: { filings: [ ...mockedFilingResp ] } })
+          return Promise.resolve({ data: { filings: [...mockedFilingResp] } })
         case `businesses/${identifier}/documents/requests`:
           return Promise.resolve({ data: { documentAccessRequests: [] } })
       }
     })
+
+    const addMock = jest.spyOn(FeeServices, "getFee")
+
+    const feeArr: Fee[] = [{
+      fee: 100.0,
+      filingType: 'BUS',
+      priorityFees: 0.0,
+      futureEffectiveFees: 0.0,
+      serviceFees: 1.50,
+      total: 101.50
+    }]
+    addMock.mockImplementation(() => Promise.resolve(feeArr))
+     
     clearEntity()
     router = createVueRouter()
     await router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
@@ -52,7 +67,7 @@ describe('BusinessInfo tests', () => {
     // await api calls to resolve
     await flushPromises()
   })
-  afterEach(() => {    
+  afterEach(() => {
     jest.clearAllMocks();
   })
   it('renders BusinessInfo with expected child components', () => {
@@ -62,8 +77,6 @@ describe('BusinessInfo tests', () => {
     // FUTURE: check fee summary / checkbox / filing history comp render
   })
   it('loads the entity of the given identifier when mounted', () => {
-    // check call was made
-    expect(axios.get).toBeCalledTimes(3)
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
     // check entity was loaded
     expect(entity.bn).toBe(mockedBusinessResp.taxId)
@@ -73,11 +86,9 @@ describe('BusinessInfo tests', () => {
     expect(entity.status).toBe(mockedBusinessResp.state)
   })
   it('loads the filing history when mounted', () => {
-    // check call was made
-    expect(axios.get).toBeCalledTimes(3)
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}/filings`, { baseURL: url })
     // check entity was loaded
     expect(filingHistory.filings.length).toEqual(1)
-     
+
   })
 })

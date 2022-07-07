@@ -44,6 +44,22 @@ export function dateToPacificDateTime(date: Date): string {
 }
 
 /**
+ * Converts a Date object to a date and time string (Month Day, Year at HH:MM am/pm
+ * Pacific time).
+ * @example "2021-01-01 07:00:00 GMT" -> "Dec 31, 2020 at 11:00 pm Pacific time"
+ * @example "2021-01-01 08:00:00 GMT" -> "Jan 1, 2021 at 12:00 pm Pacific time"
+ */
+ export function dateToPacificDateTimeShort(date: Date): string {
+  // safety check
+  if (!isDate(date) || isNaN(date.getTime())) return null
+
+  const dateStr = dateToPacificDate(date, true)
+  const timeStr = dateToPacificTime(date)
+
+  return `${dateStr} at ${timeStr}`
+}
+
+/**
  * Converts a Date object to a time string (HH:MM am/pm) in Pacific timezone.
  * @example "2021-01-01 07:00:00 GMT" -> "11:00 pm"
  * @example "2021-01-01 08:00:00 GMT" -> "12:00 am"

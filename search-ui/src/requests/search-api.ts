@@ -80,6 +80,7 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 
 export async function createDocumentAccessRequest(
   business_identifier: string,
+  business_name: string,
   documentList: any,
   headerInfo: any
 ): Promise<CreateDocumentResponseI> {
@@ -89,7 +90,10 @@ export async function createDocumentAccessRequest(
   documentList.value.forEach((doc) => { docs.push({ 'type': doc }) })
 
   const createRequest = {  
-    header: headerInfo,   
+    header: headerInfo,
+    business:{ 
+      businessName: business_name, 
+    },
     documentAccessRequest: {
       documents: docs
     }
@@ -117,9 +121,9 @@ export async function createDocumentAccessRequest(
 }
 
 
-export async function getActiveAccessRequests(business_identifier: string): Promise<AccessRequestsHistoryI> {
+export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI> {
   const config = getSearchConfig()
-  return axios.get<AccessRequestsHistoryI>(`businesses/${business_identifier}/documents/requests`,
+  return axios.get<AccessRequestsHistoryI>(`purchases`,
     config)
     .then(response => {
       const data: AccessRequestsHistoryI = response?.data

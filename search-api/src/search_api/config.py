@@ -119,6 +119,10 @@ class _Config():  # pylint: disable=too-few-public-methods
     except (TypeError, ValueError):
         JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
 
+    JWT_OIDC_USERNAME = os.getenv('JWT_OIDC_USERNAME', 'username')
+    JWT_OIDC_FIRSTNAME = os.getenv('JWT_OIDC_FIRSTNAME', 'firstname')
+    JWT_OIDC_LASTNAME = os.getenv('JWT_OIDC_LASTNAME', 'lastname')
+
     # service accounts
     ACCOUNT_SVC_AUTH_URL = os.getenv('ACCOUNT_SVC_AUTH_URL')
     ACCOUNT_SVC_CLIENT_ID = os.getenv('ACCOUNT_SVC_CLIENT_ID')

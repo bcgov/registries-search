@@ -43,6 +43,7 @@ class DocumentAccessRequest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     business_identifier = db.Column('business_identifier', db.String(10), index=True)
+    business_name = db.Column('business_name', db.String(1000))
     status = db.Column('status', db.Enum(Status), default=Status.CREATED.value)
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
@@ -119,11 +120,13 @@ class DocumentAccessRequest(db.Model):
         document_access_request = {
             'id': self.id,
             'businessIdentifier': self.business_identifier,
+            'businessName': self.business_name,
             'status': self.status.name,
             'paymentStatus': self.payment_status_code,
             'submissionDate': self.submission_date.isoformat(),
             'expiryDate': self.expiry_date.isoformat() if self.expiry_date else None,
-            'outputFileKey': self._output_file_key
+            'outputFileKey': self._output_file_key,
+            'submitter': self.submitter.display_name if self.submitter else None
         }
 
         documents = []
@@ -136,15 +139,18 @@ class DocumentAccessRequest(db.Model):
         return document_access_request
 
     @classmethod
-    def find_active_requests(cls, account_id: int, business_identifier: str):
+    def find_active_requests(cls, account_id: int, business_identifier: str = None):
         """Return all active requests matching specified account id and business identifier."""
-        return db.session.query(DocumentAccessRequest).\
+        query = db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
-            filter(DocumentAccessRequest.business_identifier == business_identifier).\
             filter(DocumentAccessRequest.is_active).\
             filter(DocumentAccessRequest.status.in_([DocumentAccessRequest.Status.PAID,
-                                                     DocumentAccessRequest.Status.COMPLETED])). \
-            order_by(DocumentAccessRequest.id.desc()).all()
+                                                     DocumentAccessRequest.Status.COMPLETED]))
+        if business_identifier:
+            query = query.filter(DocumentAccessRequest.business_identifier == business_identifier)
+
+        query = query.order_by(DocumentAccessRequest.id.desc())
+        return query.all()
 
     @classmethod
     def find_by_id(cls, request_id: int) -> DocumentAccessRequest:
