@@ -97,9 +97,10 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
         extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
+    query = query.upper()  # NOTE: needed for bn/identifier processing too
     # highlight
     if highlight:
-        name_suggestions = Solr.highlight_names(query.upper(), name_suggestions)
+        name_suggestions = Solr.highlight_names(query, name_suggestions)
 
     # 3rd solr query (bns + identifiers)
     identifier_suggestions = []

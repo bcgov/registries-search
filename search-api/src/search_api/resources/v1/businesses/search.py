@@ -40,30 +40,37 @@ def facets():
 
         # TODO: validate legal_type + state
         legal_types = None
-        with suppress(AttributeError):
-            legal_types = (request.args.get(SolrField.TYPE, None)).split(',')
         states = None
-        with suppress(AttributeError):
-            states = (request.args.get(SolrField.STATE, None)).split(',')
+        if categories := request.args.get('categories', '').split('::'):
+            for category in categories:
+                with suppress(AttributeError):
+                    if SolrField.TYPE in category:
+                        legal_types = category.replace(f'{SolrField.TYPE}:', '').split(',')
+                    elif SolrField.STATE in category:
+                        states = category.replace(f'{SolrField.STATE}:', '').split(',')
         # TODO: add parties filter
 
         start = None
         with suppress(TypeError):
-            start = int(request.args.get('start_row', None))
+            start = int(request.args.get('start', None))
         rows = None
         with suppress(TypeError):
-            rows = int(request.args.get('num_of_rows', None))
+            rows = int(request.args.get('rows', None))
 
         params = SearchParams(query, start, rows, legal_types, states)
         results = business_search(params)
         response = {
             'facets': Solr.parse_facets(results),
-            'searchResults': {'queryInfo': {
-                'num_of_rows': rows or solr.default_rows,
-                'query': query,
-                'start_row': results.get('response', {}).get('start'),
-                'total_rows': results.get('response', {}).get('numFound')}},
-            'results': results.get('response', {}).get('docs')}
+            'searchResults': {
+                'queryInfo': {
+                    'rows': rows or solr.default_rows,
+                    'query': query,
+                    'categories': {
+                        SolrField.TYPE: legal_types or '',
+                        SolrField.STATE: states or ''},
+                    'start': results.get('response', {}).get('start')},
+                'totalResults': results.get('response', {}).get('numFound'),
+                'results': results.get('response', {}).get('docs')}}
 
         return jsonify(response), HTTPStatus.OK
 
@@ -84,38 +91,52 @@ def parties():
 
         party_roles = None
         with suppress(AttributeError):
-            party_roles = (request.args.get('roles', None)).split(',')
-        if not party_roles:
-            return jsonify({'message': "Expected url param 'roles'."}), HTTPStatus.BAD_REQUEST
-        if [x for x in party_roles if x not in ['partner', 'proprietor']]:
-            return jsonify(
-                {'message': "Expected url param 'roles' to be 'partner' and/or 'proprietor'."}
-            ), HTTPStatus.BAD_REQUEST
+            party_roles = (request.args.get(SolrField.PARTY_ROLE, None)).split(',')
 
         # TODO: validate legal_type + state
         legal_types = None
-        with suppress(AttributeError):
-            legal_types = (request.args.get(SolrField.TYPE, None)).split(',')
         states = None
-        with suppress(AttributeError):
-            states = (request.args.get(SolrField.STATE, None)).split(',')
+        party_roles = None
+        if categories := request.args.get('categories', '').split('::'):
+            for category in categories:
+                with suppress(AttributeError):
+                    if SolrField.PARENT_TYPE in category:
+                        legal_types = category.replace(f'{SolrField.PARENT_TYPE}:', '').split(',')
+                    elif SolrField.PARENT_STATE in category:
+                        states = category.replace(f'{SolrField.PARENT_STATE}:', '').split(',')
+                    elif SolrField.PARTY_ROLE in category:
+                        party_roles = category.replace(f'{SolrField.PARTY_ROLE}:', '').split(',')
+
+        # validate party roles
+        if not party_roles:
+            return jsonify(
+                {'message': f"Expected url param 'categories={SolrField.PARTY_ROLE}:...'."}), HTTPStatus.BAD_REQUEST
+        if [x for x in party_roles if x not in ['partner', 'proprietor']]:
+            return jsonify({'message': f"Expected '{SolrField.PARTY_ROLE}:' with values 'partner' and/or " +
+                                       "'proprietor'. Other partyRoles are not implemented."}), HTTPStatus.BAD_REQUEST
+
         start = None
         with suppress(TypeError):
-            start = int(request.args.get('start_row', None))
+            start = int(request.args.get('start', None))
         rows = None
         with suppress(TypeError):
-            rows = int(request.args.get('num_of_rows', None))
+            rows = int(request.args.get('rows', None))
 
         params = SearchParams(query, start, rows, legal_types, states, party_roles)
         results = parties_search(params)
         response = {
             'facets': Solr.parse_facets(results),
-            'searchResults': {'queryInfo': {
-                'num_of_rows': rows or solr.default_rows,
-                'query': query,
-                'start_row': results.get('response', {}).get('start'),
-                'total_rows': results.get('response', {}).get('numFound')}},
-            'results': results.get('response', {}).get('docs')}
+            'searchResults': {
+                'queryInfo': {
+                    'rows': rows or solr.default_rows,
+                    'query': query,
+                    'categories': {
+                        SolrField.PARENT_TYPE: legal_types or '',
+                        SolrField.PARENT_STATE: states or '',
+                        SolrField.PARTY_ROLE: party_roles or ''},
+                    'start': results.get('response', {}).get('start')},
+                'totalResults': results.get('response', {}).get('numFound'),
+                'results': results.get('response', {}).get('docs')}}
 
         return jsonify(response), HTTPStatus.OK
 
@@ -136,12 +157,13 @@ def suggest():
 
         rows = None
         with suppress(TypeError):
-            rows = int(request.args.get('max_results', None))
+            rows = int(request.args.get('rows', None))
 
         highlight = bool(request.args.get('highlight', False))
 
         suggestions = business_suggest(query, highlight, rows)
-        return jsonify({'results': suggestions}), HTTPStatus.OK
+        return jsonify({'queryInfo': {'rows': rows, 'highlight': highlight, 'query': query},
+                        'results': suggestions}), HTTPStatus.OK
 
     except SolrException as solr_exception:
         return resource_utils.solr_exception_response(solr_exception)
