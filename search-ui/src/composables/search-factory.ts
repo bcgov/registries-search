@@ -20,7 +20,7 @@ export const useSearch = () => {
         search.results = []
         search._error = searchResp.error
       } else {
-        search.results = searchResp.results
+        search.results = searchResp.searchResults.results
       }
     } else {
       search.results = []

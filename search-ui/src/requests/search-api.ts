@@ -29,7 +29,7 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 
   const config = getSearchConfig()
   return axios.get<SuggestionResponseI>
-    (`businesses/search/suggest?query=${searchValue}&max_results=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
+    (`businesses/search/suggest?query=${searchValue}&max=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
       config)
     .then(response => {
       const data: SuggestionResponseI = response?.data
@@ -54,7 +54,7 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
   if (!searchValue) return
 
   const config = getSearchConfig()
-  return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start_row=0&num_of_rows=100`,
+  return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start=0&rows=100`,
     config)
     .then(response => {
       const data: SearchResponseI = response?.data
@@ -64,7 +64,7 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
       return data
     }).catch(error => {
       return {
-        results: [],
+        searchResults: null,
         error: {
           statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
           message: error?.response?.data?.message,

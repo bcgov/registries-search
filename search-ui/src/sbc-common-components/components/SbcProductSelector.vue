@@ -6,14 +6,15 @@
     transition="slide-y-transition"
     attach="#appHeader"
     v-model="dialog">
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-btn
         large
         text
         dark
         class="mobile-icon-only px-2"
         aria-label="products and services"
-        v-on="on"
+        v-bind="props"
+        variant="text"
         data-test="product-selector-btn">
         <v-icon>mdi-apps</v-icon>
         <span> Products and Services </span>

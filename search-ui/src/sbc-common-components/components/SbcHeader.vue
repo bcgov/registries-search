@@ -1,285 +1,300 @@
 <template>
   <div>
     <header class="app-header" id="appHeader">
-      <v-container class="container justify-space-between">
-        <a @click="goToHome()" class="brand">
-          <picture>
-            <source media="(min-width: 601px)"
-              srcset="~sbc-common-components/src/assets/img/gov_bc_logo_horiz.png">
-            <source media="(max-width: 600px)"
-              srcset="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png">
-            <img class="brand__image"
-              src="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png"
-              alt="Government of British Columbia Logo"
-              title="Government of British Columbia">
-          </picture>
-          <span class="brand__title">BC Registries <span class="brand__title--wrap">and Online Services</span></span>
-        </a>
-        <div v-if="showActions" class="app-header__actions">
-
-          <!-- Product Selector -->
-          <sbc-product-selector v-if="showProductSelector" />
-
-          <!-- What's New -->
-          <v-btn
-            text
-            dark
-            large
-            width="150"
-            aria-label="whatsnew"
-            attach="#appHeader"
-            @click.stop="notificationPanel=true"
-            v-if="!isAuthenticated && notificationCount > 0 && isWhatsNewOpen">
-            <v-badge
-              dot
-              overlap
-              offset-y="-5"
-              offset-x="10"
-              :color="notificationUnreadPriorityCount > 0 ? 'error' : 'blue'"
-              v-if="notificationUnreadCount > 0">
-            </v-badge>
-            What's New
-          </v-btn>
-
-          <!-- Login Menu -->
-          <v-menu
-            fixed
-            bottom
-            left
-            width="330"
-            transition="slide-y-transition"
-            attach="#appHeader"
-            v-if="!isAuthenticated && showLoginMenu">
-            <template v-slot:activator="{ props }">
-              <v-btn
-                large
-                text
-                dark
-                class="mx-1 pr-2 pl-3"
-                aria-label="log in"
-                id="loginBtn"
-                v-bind="props">
-                <span>Log in</span>
-                <v-icon class="ml-1">mdi-menu-down</v-icon>
-              </v-btn>
-            </template>
-            <v-card>
-              <div>
-                <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
-                <v-divider></v-divider>
-              </div>
-              <v-list tile dense>
-                <v-list-item
-                  v-for="loginOption in loginOptions"
-                  :key="loginOption.idpHint"
-                  @click="login(loginOption.idpHint)"
-                  class="pr-6">
-                  <v-list-item-avatar left>
-                    <v-icon>{{loginOption.icon}}</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>{{loginOption.option}}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
-
-          <!-- Notifications -->
-          <v-menu
-            anchor="bottom"             
-            transition="slide-y-transition"            
-            v-if="isAuthenticated"
-             >
-            <template v-slot:activator="{ props }">
-              <v-btn variant="text"            
-                size="large" class="mobile-icon-only mx-1 px-2"
-                aria-label="notifications" v-bind="props">
-                <v-icon>mdi-bell-outline</v-icon>
-                <v-badge
-                  dot
-                  overlap
-                  offset-y="-5"
-                  offset-x="10"
-                  color="error"
-                  v-if="pendingApprovalCount > 0">
-                </v-badge>
-                <span>Notifications</span>
-                <v-icon class="ml-1">mdi-menu-down</v-icon>
-              </v-btn>
-            </template>
-            <v-card>
-              <div class="menu-header">
-                <v-card-title class="body-1">Notifications</v-card-title>
-                <v-divider></v-divider>
-              </div>
-              <v-list tile dense>
-                <!-- No Items -->
-                <v-list-item v-if="pendingApprovalCount === 0">
-                  <v-list-item-title class="text-center">No notifications</v-list-item-title>
-                </v-list-item>
-
-                <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
-                  <v-list-item>
-                    <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ pendingApprovalCount }}
-                      <span>{{pendingApprovalCount == '1' ? 'team member' : 'team members'}}</span>
-                      require approval to access this account
-                    </v-list-item-subtitle>
-                  </v-list-item>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
-
-          <!-- Account -->
-          <v-menu
-            bottom
-            left
-            transition="slide-y-transition"
-            attach="#appHeader"
-            v-if="isAuthenticated">
-            <template v-slot:activator="{ props }">
-              <v-btn variant="text"            
-            size="large" class="user-account-btn" aria-label="my account" v-bind="props">
-                <v-avatar
-                  tile
+      <v-container class="container">
+        <v-row justify="end" no-gutters style="align-items: center">
+          <v-col>
+            <a @click="goToHome()" class="brand">
+              <picture>
+                <source media="(min-width: 601px)"
+                  srcset="~sbc-common-components/src/assets/img/gov_bc_logo_horiz.png">
+                <source media="(max-width: 600px)"
+                  srcset="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png">
+                <img class="brand__image"
+                  src="~sbc-common-components/src/assets/img/gov_bc_logo_vert.png"
+                  alt="Government of British Columbia Logo"
+                  title="Government of British Columbia">
+              </picture>
+              <span class="brand__title">
+                BC Registries <span class="brand__title--wrap">and Online Services</span>
+              </span>
+            </a>
+          </v-col>
+          <v-col align-self="end" cols="auto">
+            <v-row v-if="showActions" class="app-header__actions" no-gutters style="align-items: center">
+              <v-col cols="auto">
+                <!-- Product Selector -->
+                <sbc-product-selector v-if="showProductSelector" />
+              </v-col>
+              <v-col cols="auto">
+                <!-- What's New -->
+                <v-btn
+                  text
+                  dark
+                  large
+                  width="150"
+                  aria-label="whatsnew"
+                  attach="#appHeader"
+                  variant="text"
+                  @click.stop="notificationPanel=true"
+                  v-if="!isAuthenticated && notificationCount > 0 && isWhatsNewOpen">
+                  <v-badge
+                    dot
+                    overlap
+                    offset-y="-5"
+                    offset-x="10"
+                    :color="notificationUnreadPriorityCount > 0 ? 'error' : 'blue'"
+                    v-if="notificationUnreadCount > 0">
+                  </v-badge>
+                  What's New
+                </v-btn>
+              </v-col>
+              <v-col cols="auto">
+                <!-- Login Menu -->
+                <v-menu
+                  fixed
+                  bottom
                   left
-                  color="#4d7094"
-                  size="32"
-                  class="user-avatar white-text">
-                  {{ username.slice(0,1) }}
-                </v-avatar>
-                <div class="user-info">
-                  <div class="user-name" data-test="user-name">{{ username }}</div>
-                  <div class="account-name" v-if="!isStaff" data-test="account-name">{{ accountName }}</div>
-                </div>
-                <v-icon class="ml-1">mdi-menu-down</v-icon>
-              </v-btn>
-            </template>
+                  width="330"
+                  transition="slide-y-transition"
+                  attach="#appHeader"
+                  v-if="!isAuthenticated && showLoginMenu">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      large
+                      text
+                      dark
+                      class="mx-1 pr-2 pl-3"
+                      aria-label="log in"
+                      id="loginBtn"
+                      variant="text"
+                      v-bind="props">
+                      <span>Log in</span>
+                      <v-icon class="ml-1">mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <div>
+                      <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
+                      <v-divider></v-divider>
+                    </div>
+                    <v-list tile dense>
+                      <v-list-item
+                        v-for="loginOption in loginOptions"
+                        :key="loginOption.idpHint"
+                        @click="login(loginOption.idpHint)"
+                        class="pr-6">
+                        <v-list-item-avatar left>
+                          <v-icon>{{loginOption.icon}}</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>{{loginOption.option}}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-menu>
+                </v-col>
+              <!-- Notifications -->
+              <v-col cols="auto">
+                <v-menu
+                  anchor="bottom"             
+                  transition="slide-y-transition"            
+                  v-if="isAuthenticated"
+                  >
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="text"            
+                      size="large" class="mobile-icon-only mx-1 px-2"
+                      aria-label="notifications" v-bind="props">
+                      <v-icon>mdi-bell-outline</v-icon>
+                      <v-badge
+                        dot
+                        overlap
+                        offset-y="-5"
+                        offset-x="10"
+                        color="error"
+                        v-if="pendingApprovalCount > 0">
+                      </v-badge>
+                      <span>Notifications</span>
+                      <v-icon class="ml-1">mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <div class="menu-header">
+                      <v-card-title class="body-1">Notifications</v-card-title>
+                      <v-divider></v-divider>
+                    </div>
+                    <v-list tile dense>
+                      <!-- No Items -->
+                      <v-list-item v-if="pendingApprovalCount === 0">
+                        <v-list-item-title class="text-center">No notifications</v-list-item-title>
+                      </v-list-item>
 
-            <v-card>
-              <!-- User Profile -->
-              <v-list tile dense>
-                <v-list-item two-line>
-                  <v-avatar
-                    tile
-                    left
-                    color="#4d7094"
-                    size="36"
-                    class="user-avatar white-text">
-                    {{ username.slice(0,1) }}
-                  </v-avatar>
-                  <v-list-item class="user-info">
-                    <v-list-item-title class="user-name" data-test="menu-user-name">
-                      {{ username }}
-                      <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
-                        {{ accountName }}
-                      </v-list-item-subtitle>
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list-item>
-                <!-- BEGIN: Hide if authentication is IDIR -->
-                <v-list-item @click="goToUserProfile()" v-if="isBcscOrBceid">
-                  <v-list-item-avatar left>
-                    <v-icon>mdi-account-outline</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>Edit Profile</v-list-item-title>
-                </v-list-item>
-                <!-- END -->
-                <v-list-item @click="logout()">
-                  <v-list-item-avatar left>
-                    <v-icon>mdi-logout-variant</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>Log out</v-list-item-title>
-                </v-list-item>
-              </v-list>
+                      <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
+                        <v-list-item>
+                          <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
+                          <v-list-item-subtitle>
+                            {{ pendingApprovalCount }}
+                            <span>{{pendingApprovalCount == 1 ? 'team member' : 'team members'}}</span>
+                            require approval to access this account
+                          </v-list-item-subtitle>
+                        </v-list-item>
+                      </v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-menu>
+              </v-col>
+              <v-col cols="auto">
+                <!-- Account -->
+                <v-menu
+                  bottom
+                  left
+                  transition="slide-y-transition"
+                  attach="#appHeader"
+                  v-if="isAuthenticated">
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="text"            
+                  size="large" class="user-account-btn" aria-label="my account" v-bind="props">
+                      <v-avatar
+                        tile
+                        left
+                        color="#4d7094"
+                        size="32"
+                        class="user-avatar white-text">
+                        {{ username.slice(0,1) }}
+                      </v-avatar>
+                      <div class="user-info">
+                        <div class="user-name" data-test="user-name">{{ username }}</div>
+                        <div class="account-name" v-if="!isStaff" data-test="account-name">{{ accountName }}</div>
+                      </div>
+                      <v-icon class="ml-1">mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
 
-              <v-divider></v-divider>
+                  <v-card>
+                    <!-- User Profile -->
+                    <v-list tile dense>
+                      <v-list-item two-line>
+                        <v-avatar
+                          tile
+                          left
+                          color="#4d7094"
+                          size="36"
+                          class="user-avatar white-text">
+                          {{ username.slice(0,1) }}
+                        </v-avatar>
+                        <v-list-item class="user-info">
+                          <v-list-item-title class="user-name" data-test="menu-user-name">
+                            {{ username }}
+                            <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
+                              {{ accountName }}
+                            </v-list-item-subtitle>
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list-item>
+                      <!-- BEGIN: Hide if authentication is IDIR -->
+                      <v-list-item @click="goToUserProfile()" v-if="isBcscOrBceid">
+                        <v-list-item-avatar left>
+                          <v-icon>mdi-account-outline</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>Edit Profile</v-list-item-title>
+                      </v-list-item>
+                      <!-- END -->
+                      <v-list-item @click="logout()">
+                        <v-list-item-avatar left>
+                          <v-icon>mdi-logout-variant</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>Log out</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
 
-              <!-- Account Settings -->
-              <v-list tile dense v-if="currentAccount && !isStaff">
-                <v-list-subheader>ACCOUNT SETTINGS</v-list-subheader>
-                <v-list-item @click="goToAccountInfo(currentAccount)">
-                  <v-list-item-avatar left>
-                    <v-icon>mdi-information-outline</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>Account Info</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="goToTeamMembers()">
-                  <v-list-item-avatar left>
-                    <v-icon>mdi-account-group-outline</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>Team Members</v-list-item-title>
-                </v-list-item>
-                <v-list-item
-                  v-if="showTransactions"
-                  @click="goToTransactions()">
-                  <v-list-item-avatar left>
-                    <v-icon>mdi-file-document-outline</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>Transactions</v-list-item-title>
-                </v-list-item>
-              </v-list>
+                    <v-divider></v-divider>
 
-              <v-divider></v-divider>
+                    <!-- Account Settings -->
+                    <v-list tile dense v-if="currentAccount && !isStaff">
+                      <v-list-subheader>ACCOUNT SETTINGS</v-list-subheader>
+                      <v-list-item @click="goToAccountInfo(currentAccount)">
+                        <v-list-item-avatar left>
+                          <v-icon>mdi-information-outline</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>Account Info</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="goToTeamMembers()">
+                        <v-list-item-avatar left>
+                          <v-icon>mdi-account-group-outline</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>Team Members</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item
+                        v-if="showTransactions"
+                        @click="goToTransactions()">
+                        <v-list-item-avatar left>
+                          <v-icon>mdi-file-document-outline</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-title>Transactions</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
 
-              <!-- Switch Account -->
-              <div v-if="!isStaff ">
-                <v-list
-                  tile
-                  dense
-                  v-if="switchableAccounts.length > 1"
-                  class="switch-account">
-                  <v-list-subheader>SWITCH ACCOUNT</v-list-subheader>
-                  <v-list-item
-                    color="primary"
-                    :class="{'v-list-item--active' : settings.id === currentAccount.id}"
-                    v-for="(settings, id) in switchableAccounts"
-                    :key="id"
-                    @click="switchAccount(settings, inAuth)"
-                    :two-line="settings.additionalLabel">
+                    <v-divider></v-divider>
 
-                    <v-list-item-avatar left>
-                      <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item>
-                    <v-list-item-title>{{ settings.label }}</v-list-item-title>
-                    <v-list-item-subtitle
-                    class="font-italic"
-                    :class="{'primary--text' : settings.id === currentAccount.id}"
-                    v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
-                    </v-list-item>
-                  </v-list-item>
-                </v-list>
+                    <!-- Switch Account -->
+                    <div v-if="!isStaff ">
+                      <v-list
+                        tile
+                        dense
+                        v-if="switchableAccounts.length > 1"
+                        class="switch-account">
+                        <v-list-subheader>SWITCH ACCOUNT</v-list-subheader>
+                        <v-list-item
+                          color="primary"
+                          :class="{'v-list-item--active' : settings.id === currentAccount.id}"
+                          v-for="(settings, id) in switchableAccounts"
+                          :key="id"
+                          @click="switchAccount(settings, inAuth)"
+                          :two-line="settings.additionalLabel">
 
-                <v-divider></v-divider>
+                          <v-list-item-avatar left>
+                            <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
+                          </v-list-item-avatar>
+                          <v-list-item>
+                          <v-list-item-title>{{ settings.label }}</v-list-item-title>
+                          <v-list-item-subtitle
+                          class="font-italic"
+                          :class="{'primary--text' : settings.id === currentAccount.id}"
+                          v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
+                          </v-list-item>
+                        </v-list-item>
+                      </v-list>
 
-                <!-- Create a New Account -->
-                <v-list
-                  tile
-                  dense
-                  v-if="canCreateAccount">
-                  <v-list-item @click="goToCreateBCSCAccount()">
-                    <v-list-item-avatar left>
-                      <v-icon>mdi-plus</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-title>
-                      Create account
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </div>
-            </v-card>
-          </v-menu>
+                      <v-divider></v-divider>
 
-          <v-btn
-            variant="text"            
-            size="large"
-            @click="goToCreateAccount()"
-            v-if="!isAuthenticated">
-            Create Account
-          </v-btn>
-        </div>
+                      <!-- Create a New Account -->
+                      <v-list
+                        tile
+                        dense
+                        v-if="canCreateAccount">
+                        <v-list-item @click="goToCreateBCSCAccount()">
+                          <v-list-item-avatar left>
+                            <v-icon>mdi-plus</v-icon>
+                          </v-list-item-avatar>
+                          <v-list-item-title>
+                            Create account
+                          </v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </div>
+                  </v-card>
+                </v-menu>
+
+                <v-btn
+                  variant="text"            
+                  size="large"
+                  @click="goToCreateAccount()"
+                  v-if="!isAuthenticated">
+                  Create Account
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-container>
     </header>
     <div id="warning-bar">
