@@ -16,7 +16,9 @@
           <v-card-text>
             <v-menu anchor="center">
               <template v-slot:activator="{ props }">
-                <v-btn color="primary"
+                <v-btn
+                  class="mt-2 mx-auto"
+                  color="primary"
                   size="large"
                   aria-label="log in"
                   id="loginBtn"
