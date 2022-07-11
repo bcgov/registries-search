@@ -81,6 +81,7 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
         """Return the dict representation of a SolrDoc."""
         doc_json = {
             SolrField.IDENTIFIER: self.identifier,
+            SolrField.IDENTIFIER_Q: self.identifier,
             SolrField.NAME: self.name,
             SolrField.STATE: self.state,
             SolrField.TYPE: self.legal_type
