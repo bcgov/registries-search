@@ -152,12 +152,12 @@ def test_parties_search(session, client, requests_mock, test_name, query, mock_d
 
 
 @pytest.mark.parametrize('test_name,query,mocks,highlight,expected', [
-    ('test-single-result', '123', ['123 test name'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}]}),
-    ('test-single-result-highlight', '123', ['123 test name'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}]}),
-    ('test-two-results', '123', ['123 test name', 'BC0001234'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}]}),
-    ('test-two-results-highlight', '123', ['123 test name', 'BC0001234'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}]}),
-    ('test-three-results', '123', ['123 test name', 'BC0001234', '123456789BC0001'], False, {'results':[{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}, {'type':SolrField.BN,'value':'123456789BC0001'}]}),
-    ('test-three-results-highlight', '123', ['123 test name', 'BC0001234', '123456789BC0001'], True, {'results':[{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}, {'type':SolrField.BN,'value':'<b>123</b>456789BC0001'}]}),
+    ('test-single-result', '123', ['123 test name'], False, [{'type':SolrField.NAME,'value':'123 TEST NAME'}]),
+    ('test-single-result-highlight', '123', ['123 test name'], True, [{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}]),
+    ('test-two-results', '123', ['123 test name', 'BC0001234'], False, [{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}]),
+    ('test-two-results-highlight', '123', ['123 test name', 'BC0001234'], True, [{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}]),
+    ('test-three-results', '123', ['123 test name', 'BC0001234', '123456789BC0001'], False, [{'type':SolrField.NAME,'value':'123 TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC0001234'}, {'type':SolrField.BN,'value':'123456789BC0001'}]),
+    ('test-three-results-highlight', '123', ['123 test name', 'BC0001234', '123456789BC0001'], True, [{'type':SolrField.NAME,'value':'<b>123</b> TEST NAME'}, {'type':SolrField.IDENTIFIER,'value':'BC000<b>123</b>4'}, {'type':SolrField.BN,'value':'<b>123</b>456789BC0001'}]),
 ])
 def test_endpoint_suggest(session, client, requests_mock, test_name, query, mocks, highlight, expected):
     """Assert that search suggest endpoint works as expected."""
@@ -168,13 +168,13 @@ def test_endpoint_suggest(session, client, requests_mock, test_name, query, mock
     elif len(mocks) > 1:
         requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query",json={'response':{'docs':[{SolrField.IDENTIFIER:mocks[1]}]}})
     # call endpoint
-    url = f'/api/v1/businesses/search/suggest?query={query}&max_results={len(mocks)}'
+    url = f'/api/v1/businesses/search/suggest?query={query}&rows={len(mocks)}'
     if highlight:
         url += f'&highlight={highlight}'
     resp = client.get(url)
     # check response
     assert resp.status_code == HTTPStatus.OK
-    assert resp.json == expected
+    assert resp.json['results'] == expected
 
 
 @pytest.mark.parametrize('test_name,query_params,mock_names,mock_ids,mock_bns,expected_docs', [
@@ -195,15 +195,15 @@ def test_endpoint_facets(session, client, requests_mock, test_name, query_params
     query = query_params['query']
     start = query_params['start']
     rows = query_params['rows']
-    resp = client.get(f'/api/v1/businesses/search/facets?query={query}&start_row={start}&num_of_rows={rows}')
+    resp = client.get(f'/api/v1/businesses/search/facets?query={query}&start={start}&rows={rows}')
     # check response
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['facets'] == Solr.parse_facets(facets_mock)
-    assert resp.json['searchResults']['queryInfo']['num_of_rows'] == rows
+    assert resp.json['searchResults']['queryInfo']['rows'] == rows
     assert resp.json['searchResults']['queryInfo']['query'] == query
-    assert resp.json['searchResults']['queryInfo']['start_row'] == start
-    assert resp.json['searchResults']['queryInfo']['total_rows'] == num_found
-    assert resp.json['results'] == expected_docs
+    assert resp.json['searchResults']['queryInfo']['start'] == start
+    assert resp.json['searchResults']['totalResults'] == num_found
+    assert resp.json['searchResults']['results'] == expected_docs
 
 
 @pytest.mark.parametrize('test_name,query_params,mock_docs', [
@@ -224,13 +224,14 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
     query = query_params['query']
     start = query_params['start']
     rows = query_params['rows']
-    resp = client.get(f'/api/v1/businesses/search/parties?query={query}&start_row={start}&num_of_rows={rows}&roles=proprietor,partner')
+    resp = client.get(f'/api/v1/businesses/search/parties?query={query}&start={start}&rows={rows}&categories=partyRoles:partner,proprietor')
     # check response
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['facets'] == Solr.parse_facets(facets_mock)
-    assert resp.json['searchResults']['queryInfo']['num_of_rows'] == rows
+    assert resp.json['searchResults']['queryInfo']['rows'] == rows
     assert resp.json['searchResults']['queryInfo']['query'] == query
-    assert resp.json['searchResults']['queryInfo']['start_row'] == start
-    assert resp.json['searchResults']['queryInfo']['total_rows'] == num_found
-    assert resp.json['results'] == parties_docs
+    assert resp.json['searchResults']['queryInfo']['start'] == start
+    assert resp.json['searchResults']['queryInfo']['categories']['partyRoles'] == ['partner', 'proprietor']
+    assert resp.json['searchResults']['totalResults'] == num_found
+    assert resp.json['searchResults']['results'] == parties_docs
     
