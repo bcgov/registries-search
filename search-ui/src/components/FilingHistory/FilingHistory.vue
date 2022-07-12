@@ -187,7 +187,7 @@
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
                   :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll"
-                  :isFilingLocked=isLocked />
+                  :isLocked=isLocked />
               </template>
 
               <!-- the details (comments) section -->
@@ -234,29 +234,20 @@ import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
 import { ref, computed, watch } from 'vue'
-import { ErrorCategories, ErrorCodes, FilingTypes, DocumentType } from '@/enums'
+import { ErrorCategories, ErrorCodes, FilingTypes } from '@/enums'
 import { Document, FilingHistoryItem } from '@/types'
 import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ErrorI } from '@/interfaces'
 import { StatusCodes } from 'http-status-codes'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps<{ isLocked: boolean }>()
+
 const { entity, isBComp } = useEntity()
 const { filingHistory } = useFilingHistory()
-const { documentAccessRequest, downloadFilingDocument } = useDocumentAccessRequest()
+const { downloadFilingDocument } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
-
-const isLocked = computed(() => {
-  let locked = true
-  documentAccessRequest.requests.forEach((request) => {
-    request.documents.forEach((document) => {
-      if (document.documentType === DocumentType.BUSINESS_SUMMARY_FILING_HISTORY) {         
-        locked = false
-      }
-    })
-  })
-  return locked
-})
  
 const panel = ref(-1) // currently expanded panel
 const historyItems = ref([])

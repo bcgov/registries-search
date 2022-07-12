@@ -115,7 +115,7 @@ describe('Documents List', () => {
         }
 
         const wrapper = mount(DocumentsList, { props: { filing: filing, 
-            loadingOne: false, loadingAll: false, isFilingLocked: true } })
+            loadingOne: false, loadingAll: false, isLocked: true } })
 
         const documentBtns = wrapper.findAll('.download-one-btn')
 

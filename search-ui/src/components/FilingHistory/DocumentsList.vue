@@ -44,18 +44,17 @@
 <script setup lang="ts">
 import { Document } from '@/types'
 import { FilingHistoryItem } from '@/types'
-import { computed, toRef } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
     filing: FilingHistoryItem,
     loadingOne: boolean,
     loadingAll: boolean,
-    loadingOneIndex: number
-    isFilingLocked: boolean,
+    loadingOneIndex: number,
+    isLocked: boolean,
 }>()
 
 const emit = defineEmits(['downloadOne', 'downloadAll'])
-const isLocked = toRef(props, 'isFilingLocked')
 
 const filteredDocuments = computed(() => props.filing.documents.filter(document =>
     (document.title.toLowerCase() != 'receipt')))
