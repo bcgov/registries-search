@@ -80,7 +80,7 @@ describe('Filing History List - misc functionality', () => {
         setEntity(cp_entity)
         filingHistory.filings = []
 
-        const wrapper = mount(FilingHistoryList)
+        const wrapper = mount(FilingHistoryList, { isLocked: true })
         const vm = wrapper.vm as any
 
 
@@ -96,7 +96,7 @@ describe('Filing History List - misc functionality', () => {
         setEntity(cp_entity)
         filingHistory.filings = []
 
-        const wrapper = mount(FilingHistoryList)
+        const wrapper = mount(FilingHistoryList, { isLocked: true })
         filingHistory.filings = SAMPLE_FILINGS
 
         const vm = wrapper.vm as any
@@ -142,7 +142,7 @@ describe('Filing History List - misc functionality', () => {
             }
         ]
 
-        const wrapper = mount(FilingHistoryList)
+        const wrapper = mount(FilingHistoryList, { isLocked: true })
         const vm = wrapper.vm as any
 
         vm.loadData()
@@ -199,14 +199,13 @@ describe('Filing History List - misc functionality', () => {
             }
         ]
 
-        const wrapper = mount(FilingHistoryList)
+        const wrapper = mount(FilingHistoryList, { isLocked: true })
         const vm = wrapper.vm as any
         jest.spyOn(vm, 'loadDocuments').mockImplementation(() => (
             Promise.resolve([])
         ))
         vm.loadData()
         await vm.$nextTick()
-        console.log(wrapper.html())
         // verify View Documents button
         const button = wrapper.find('.expand-btn')
         expect(button.text()).toContain('View Documents')

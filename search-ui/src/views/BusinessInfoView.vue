@@ -74,7 +74,7 @@
         </div>       
         <v-divider class="my-10" />
         <div>
-          <filing-history />
+          <filing-history isLocked />
         </div>
       </v-col>
       <v-col cols="12" sm="auto">
