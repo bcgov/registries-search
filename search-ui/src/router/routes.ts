@@ -64,7 +64,7 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/request',
+    path: '/open/request',
     name: RouteNames.DOCUMENT_REQUEST,
     component: DocumentRequestView,    
     meta: {

@@ -15,7 +15,13 @@
                     Your documents are now available to view and download.
                     You will be able to access these documents for up to 14 days from the business search dashboard.
                 </p>
-                <p class="pt-6">
+                <div class="pa-6 mt-8 warning-message" v-if="hasNewFilings">
+                    <b>Important:</b> There have been changes to this business since your purchase.
+                    To view the updated list of filings and to purchase up-to-date documents,
+                    <span class="app-blue new-search-link" @click="gotoSearch()">
+                        conduct a new search for this business</span>
+                </div>
+                <p class="pt-6" v-else>
                     If you wish to purchase additional documents, <span class="app-blue new-search-link"
                         @click="gotoSearch()">
                         conduct a new search for this business</span>
@@ -69,6 +75,12 @@ const submissionDate = computed(() => (documentAccessRequest.currentRequest?.sub
     dateToPacificDateTime(new Date(documentAccessRequest.currentRequest.submissionDate)) : '')
 const showFilingHistory = computed(() => documents.value.find(doc => (
     doc.documentType == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY)) != null)
+const hasNewFilings = computed(() => {
+    if (filingHistory.latestFiling && filingHistory.latestFiling.filingId != filingHistory.filings[0].filingId) {
+        return true
+    }
+    return false
+})
 
 const documentDescription = (type: string): string => {
     return DocumentTypeDescriptions[type]
@@ -104,5 +116,11 @@ const gotoSearch = (): void => {
 
 .new-search-link {
     text-decoration: underline;
+}
+
+.warning-message {
+    width: 100%;
+    background-color: #FFF7C4;
+    border: solid 1px #F9C90C
 }
 </style>

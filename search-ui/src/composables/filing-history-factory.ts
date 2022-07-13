@@ -7,6 +7,7 @@ import { FilingI } from '@/interfaces'
 
 const filingHistory = reactive({
     filings: [] as ApiFiling[],
+    latestFiling: null,
     _error: null,
     _loading: false
 }) as FilingI
@@ -16,6 +17,7 @@ export const useFilingHistory = () => {
     const clearFilingHistory = () => {
         filingHistory._error = null
         filingHistory.filings = []
+        filingHistory.latestFiling = null
     }
 
 
@@ -23,6 +25,13 @@ export const useFilingHistory = () => {
         filingHistory._loading = true
         clearFilingHistory()
         const filings = await getFilings(identifier, effective_date)
+        if (effective_date) {
+            const all_filings = await getFilings(identifier, null)
+            if (!all_filings.error) {                 
+                filingHistory.latestFiling = all_filings[0]
+                console.log(filingHistory.latestFiling.displayName)
+            }
+        }
         if (filings.error) {
             filingHistory._error = filings.error
         }
