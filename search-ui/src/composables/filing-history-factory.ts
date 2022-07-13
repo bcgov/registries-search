@@ -19,10 +19,10 @@ export const useFilingHistory = () => {
     }
 
 
-    const loadFilingHistory = async (identifier: string) => {
+    const loadFilingHistory = async (identifier: string, effective_date: string) => {
         filingHistory._loading = true
         clearFilingHistory()
-        const filings = await getFilings(identifier)
+        const filings = await getFilings(identifier, effective_date)
         if (filings.error) {
             filingHistory._error = filings.error
         }

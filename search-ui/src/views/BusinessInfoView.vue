@@ -173,7 +173,7 @@ onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   await loadEntity(props.identifier)
   await loadPurchasableDocs()
-  await loadFilingHistory(props.identifier)   
+  await loadFilingHistory(props.identifier, null)   
   clearFees()
 })
 

@@ -96,7 +96,7 @@ const breadcrumbs = computed((): Array<BreadcrumbIF> => {
 })
 
 const showEntityInfo = computed((): boolean => {
-  return [RouteNames.BUSINESS_INFO].includes(route.name as RouteNames)
+  return [RouteNames.BUSINESS_INFO, RouteNames.DOCUMENT_REQUEST].includes(route.name as RouteNames)
 })
 
 onMounted(async () => {

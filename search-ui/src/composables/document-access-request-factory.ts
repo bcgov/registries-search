@@ -8,6 +8,7 @@ import {  useFeeCalculator, useEntity } from '@/composables'
 
 const documentAccessRequest = reactive({
     requests: [],
+    currentRequest: null,
     _error: null,
     _loading: false,
     _saving: false,

@@ -1,9 +1,10 @@
 <template>
   <div id="filing-history-list">
-    <h2 data-test-id="dashboard-filing-history-subtitle">
-      <span>Recent Filing History</span>&nbsp;
+    <h2 data-test-id="dashboard-filing-history-subtitle">      
+      <span v-if="props.isLocked">Recent Filing History</span>
+      <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
-      <span v-else class="gray6">({{ filings.length }})</span>
+      <span v-else class="gray6 ml-1">({{ filings.length }})</span>
     </h2>    
     <div class="scrollable-container mt-3">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
