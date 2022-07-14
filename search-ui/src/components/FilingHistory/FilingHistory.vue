@@ -1,11 +1,11 @@
 <template>
   <div id="filing-history-list">
-    <h2 data-test-id="dashboard-filing-history-subtitle">      
+    <h2 data-test-id="dashboard-filing-history-subtitle">
       <span v-if="props.isLocked">Recent Filing History</span>
       <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
       <span v-else class="gray6 ml-1">({{ filings.length }})</span>
-    </h2>    
+    </h2>
     <div class="scrollable-container mt-3">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
@@ -152,8 +152,7 @@
 
               <!-- is this a completed dissolution -->
               <template v-else-if="filing.isCompletedDissolution">
-                <CompletedDissolution
-                  :filing="filing" class="mt-6" />
+                <CompletedDissolution :filing="filing" class="mt-6" />
               </template>
 
               <template
@@ -234,7 +233,7 @@ import { fetchDocumentList, fetchComments } from '@/requests'
 import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { ErrorCategories, ErrorCodes, FilingTypes } from '@/enums'
 import { Document, FilingHistoryItem } from '@/types'
 import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
@@ -249,7 +248,7 @@ const { filingHistory } = useFilingHistory()
 const { downloadFilingDocument } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
- 
+
 const panel = ref(-1) // currently expanded panel
 const historyItems = ref([])
 const loadingOne = ref(false)
@@ -388,7 +387,7 @@ const loadFiling = (filing: ApiFiling): void => {
     }
 
     historyItems.value.push(item)
-  } catch (error) {     
+  } catch (error) {
     console.error('Error loading filing =', error)
   }
 }
@@ -414,7 +413,7 @@ const downloadAll = async (event): Promise<void> => {
     const filteredDocuments = event.filing.documents.filter(document => (document.title.toLowerCase() != 'receipt'))
 
     for (const document of filteredDocuments) {
-      await downloadFilingDocument(entity.identifier,  event.filing.filingId, document).catch(error => {
+      await downloadFilingDocument(entity.identifier, event.filing.filingId, document).catch(error => {
         console.error('fetchFilingDocument() error =', error)
         emit('error', documentDownloadError)
       })
@@ -504,6 +503,11 @@ watch(() => filings.value, () => {
   loadData()
 })
 
+onMounted(async () => {
+  if (filingHistory.filings.length > 0) {
+    loadData()
+  }
+})
 </script>
 
 <style lang="scss" scoped>

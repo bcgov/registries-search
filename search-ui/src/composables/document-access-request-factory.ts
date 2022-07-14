@@ -47,6 +47,8 @@ export const useDocumentAccessRequest = () => {
              selectedDocs, header)
         if (response.error) {
             documentAccessRequest._error = response.error
+        } else {
+            documentAccessRequest.currentRequest = response.createDocumentResponse
         }        
         documentAccessRequest._saving = false
     }

@@ -1,7 +1,7 @@
 <template>
     <v-container id="business-info" class="container" fluid>
         <v-fade-transition>
-            <div class="loading-container  grayed-out" v-if="documentAccessRequest._downloading">
+            <div class="loading-container grayed-out" v-if="documentAccessRequest._downloading">
                 <div class="loading__content">
                     <v-progress-circular color="primary" size="50" indeterminate />
                     <div class="loading-msg" v-if="documentAccessRequest._downloading">Downloading document</div>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { DocumentDetailsI, DocumentI } from '@/interfaces'
@@ -58,16 +58,17 @@ import { DocumentTypeDescriptions } from '@/resources'
 import { DocumentType } from '@/enums'
 import { useRouter } from 'vue-router'
 
-const { entity, loadEntity } = useEntity()
-const { loadFilingHistory, filingHistory } = useFilingHistory()
+const { entity } = useEntity()
+const { filingHistory } = useFilingHistory()
 const { documentAccessRequest, downloadDocument } = useDocumentAccessRequest()
 
 const router = useRouter()
 
 onMounted(async () => {
     const currentRequest: DocumentDetailsI = documentAccessRequest.currentRequest
-    await loadEntity(currentRequest.businessIdentifier)
-    await loadFilingHistory(currentRequest.businessIdentifier, currentRequest.submissionDate)
+    if (currentRequest == null) {
+        router.push('/')
+    }
 })
 
 const documents = computed(() => documentAccessRequest.currentRequest?.documents || [])

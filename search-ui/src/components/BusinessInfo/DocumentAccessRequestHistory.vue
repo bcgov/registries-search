@@ -1,4 +1,12 @@
 <template>
+    <v-fade-transition>
+        <div class="loading-container" v-if="loading">
+            <div class="loading__content">
+                <v-progress-circular color="primary" size="50" indeterminate />
+                <div class="loading-msg" v-if="loading">Loading</div>
+            </div>
+        </div>
+    </v-fade-transition>
     <div class="main-results-div white-background soft-corners pb-2 mt-4 justify-center">
         <v-row class="pt-3 pl-4" justify="center" no-gutters>
             <v-col v-if="documentAccessRequest._loading" cols="auto">
@@ -31,9 +39,9 @@
                             </td>
                             <td>{{ dateTimeString(item.submissionDate) }}</td>
                             <td>{{ dateTimeString(item.expiryDate) }}</td>
-                            <td  class="wrap-word">{{ item.submitter }}</td>
+                            <td class="wrap-word">{{ item.submitter }}</td>
                             <td>
-                                <v-btn large id="open-business-btn" class="search-bar-btn primary">
+                                <v-btn large id="open-business-btn" class="search-bar-btn primary" @click="openRequest(item)">
                                     View
                                 </v-btn>
                             </td>
@@ -53,15 +61,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 // local
-import { useDocumentAccessRequest } from '@/composables'
+import { useDocumentAccessRequest, useEntity, useFilingHistory } from '@/composables'
 import { dateToPacificDateTimeShort } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
- 
+import { useRouter } from 'vue-router'
+import { DocumentDetailsI } from '@/interfaces'
+import { RouteNames } from '@/enums'
+
 
 // composables
 const { documentAccessRequest } = useDocumentAccessRequest()
+const { loadEntity } = useEntity()
+const { clearFilingHistory, loadFilingHistory } = useFilingHistory()
+const router = useRouter()
+
+const loading = ref(false)
 
 const totalResultsLength = computed(() => documentAccessRequest.requests?.length || 0)
 
@@ -71,6 +87,16 @@ const dateTimeString = (val: string): string => {
 
 const documentDescription = (type: string): string => {
     return DocumentTypeDescriptions[type]
+}
+
+const openRequest = async (item: DocumentDetailsI) => {
+    loading.value = true
+    clearFilingHistory()
+    documentAccessRequest.currentRequest = item
+    await loadEntity(item.businessIdentifier)
+    await loadFilingHistory(item.businessIdentifier, item.submissionDate)
+    router.push({ name: RouteNames.DOCUMENT_REQUEST })
+    loading.value = false
 }
 </script>
 
@@ -104,16 +130,16 @@ th {
     color: $app-dk-blue  !important;
 }
 
-.table {    
+.table {
     max-height: calc(100vh - 85px);
     table-layout: fixed;
 }
 
 table td {
-word-wrap:break-word;
-white-space: normal;
+    word-wrap: break-word;
+    white-space: normal;
 }
- 
+
 
 .v-table {
     overflow: auto;
@@ -134,8 +160,8 @@ white-space: normal;
 .wrap-word {
     word-wrap: break-word;
 }
- 
-.doc-list{
+
+.doc-list {
     list-style: none;
 }
 
