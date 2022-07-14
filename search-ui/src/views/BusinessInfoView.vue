@@ -1,10 +1,10 @@
 <template>
   <v-container id="business-info" class="container" fluid>
     <v-fade-transition>
-      <div class="loading-container" v-if="documentAccessRequest._saving">
+      <div class="loading-container" v-if="loading">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
+          <div class="loading-msg" v-if="loading">Completing Payment</div>
         </div>
       </div>
     </v-fade-transition>
@@ -95,6 +95,7 @@ const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
 
+const loading = ref(false)
 const router = useRouter()
 
 
@@ -125,18 +126,20 @@ const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
 const payForDocuments = async () => {
+  loading.value = true
   await createAccessRequest(selectedDocs)
   if (!documentAccessRequest._error) {
     selectedDocs.value = []
     clearFees()
     // refresh checkboxes
     checkBoxesKey.value += 1
-    
+
     clearFilingHistory()
     await loadEntity(entity.identifier)
     await loadFilingHistory(entity.identifier, documentAccessRequest.currentRequest.submissionDate)
     router.push({ name: RouteNames.DOCUMENT_REQUEST })
   }
+  loading.value = false
 }
 
 const feeActions: FeeAction[][] = [

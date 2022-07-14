@@ -23,6 +23,7 @@ onMounted(async () => {
 @import '@/assets/styles/theme.scss';
 .info-text {
   font-size: 0.875rem;
-  color: $gray7
+  color: $gray7;
+  text-align: center;
 }
 </style>

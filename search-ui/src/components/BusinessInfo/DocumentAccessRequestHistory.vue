@@ -41,7 +41,8 @@
                             <td>{{ dateTimeString(item.expiryDate) }}</td>
                             <td class="wrap-word">{{ item.submitter }}</td>
                             <td>
-                                <v-btn large id="open-business-btn" class="search-bar-btn primary" @click="openRequest(item)">
+                                <v-btn large id="open-business-btn" class="search-bar-btn primary" 
+                                @click="openRequest(item)">
                                     View
                                 </v-btn>
                             </td>
