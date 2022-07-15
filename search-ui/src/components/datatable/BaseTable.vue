@@ -1,0 +1,314 @@
+<template>
+  <v-container class="container pa-0 ma-0" :style="[{ height: height || '540px' }, { overflow: 'scroll' }]">
+    <table class="base-table">
+      <thead class="base-table__header">
+        <slot name="header" :headers="headers">
+          <tr v-if="title || pagination" :style="{ 'background-color': titleBg }">
+            <slot name="header-title" :headers="headers">
+              <th class="base-table__title" :colspan="pagination ? headers.length / 2 : headers.length">
+                <slot name="title">
+                  <h2 class="ml-3 py-6">{{ title }} ({{ totalItems || setItems.length }})</h2>
+                </slot>
+              </th>
+              <th v-if="pagination" :colspan="title? headers.length / 2 : headers.length">
+                <slot name="pagination">
+                  <BasePagination />
+                </slot>
+              </th>
+            </slot>
+          </tr>
+          <tr :style="{ 'background-color': headerBg }">
+            <slot name="header-items" :headers="headers">
+              <th
+                v-for="header, i in headers"
+                :key="header.col + i"
+                :class="[header.class, 'base-table__header__item']"
+                :width="header.width"
+              >
+                <slot :name="'header-item-slot-' + header.customHeaderSlot" :header="header">
+                  <v-btn
+                    v-if="header.value"
+                    class="base-table__header__item__title"
+                    :text="true"
+                    @click="toggleSort(header)"
+                  >
+                    <span v-html="header.value" />
+                    <v-icon v-if="header.hasSort && sortBy === header.col" class="ml-1">
+                      {{ sortIcon }}
+                    </v-icon>
+                  </v-btn>
+                </slot>
+                <slot :name="'header-filter-slot-' + header.customHeaderSlot" :header="header">
+                  <v-select
+                    v-if="header.hasFilter && header.filter.type === 'select'"
+                    :class="[filterClass, 'base-table__header__item__filter']"
+                    hide-details
+                    :items="header.filter.items"
+                    v-model="header.filter.value"
+                    @update:modelValue="filter(header)"
+                  />
+                  <v-text-field
+                    v-else-if="header.hasFilter && header.filter.type === 'text'"
+                    :class="[filterClass, 'base-table__header__item__filter']"
+                    hide-details
+                    v-model="header.filter.value"
+                    @update:modelValue="filter(header)"
+                  />
+                  <v-btn
+                    v-if="header.hasFilter && header.filter.value && header.filter.clearable"
+                    class="base-table__header__item__clear-btn"
+                    icon
+                    @click="header.filter.value=''; filter(header)"
+                  >
+                    <v-icon small>mdi-close</v-icon>
+                  </v-btn>
+                </slot>
+              </th>
+            </slot>
+          </tr>
+        </slot>
+      </thead>
+      <tbody v-if="loading" class="base-table__body">
+        <tr>
+          <td :colspan="headers.length">
+            <v-row class="my-15" justify="center" no-gutters>
+              <v-col cols="auto">
+                <v-progress-circular color="primary" size="50" indeterminate />
+              </v-col>
+            </v-row>
+          </td>
+        </tr>
+      </tbody>
+      <tbody v-else class="base-table__body">
+        <slot name="body" :headers="headers" :items="sortedItems">
+          <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row">
+            <slot name="body-row">
+              <td
+                v-for="header in headers" :key="'item-' + header.col"
+                :class="[header.itemClass, 'base-table__body__item']"
+              >
+                <slot :item="item" :name="'item-slot-' + header.customItemSlot">
+                  <span v-if="header.itemFn">{{ header.itemFn(item[header.col]) }}</span>
+                  <span v-else>{{ item[header.col] }}</span>
+                </slot>
+              </td>
+            </slot>
+          </tr>
+          <tr v-if="setItems.length === 0">
+            <slot name="body-empty">
+              <td colspan="12">
+                <v-row class="my-15" justify="center" no-gutters>
+                  <v-col cols="auto">
+                    <p class="ma-0" v-html="emptyText" />
+                  </v-col>
+                </v-row>
+              </td>
+            </slot>
+          </tr>
+        </slot>
+      </tbody>
+    </table>
+  </v-container>
+</template>
+
+<script setup lang="ts">
+import { computed, reactive, ref, watch } from 'vue';
+import _ from 'lodash'
+// local
+import { BaseTableColorsI, BaseTableHeaderI } from '@/interfaces/base-table'
+import { BaseSelectFilter, BaseTextFilter } from './resources'
+import { BasePagination } from './slot-templates'
+
+const props = defineProps<{
+  colors?: BaseTableColorsI,
+  setHeaders: BaseTableHeaderI[],
+  filterClass?: string,
+  height?: string,
+  itemKey: string,
+  loading?: boolean,
+  setItems: object[],
+  pagination?: boolean,
+  noResultsText?: string,
+  title?: string
+  totalItems?: number
+}>()
+
+const headers = reactive(_.cloneDeep(props.setHeaders))
+const sortedItems = ref([...props.setItems])
+
+const emptyText = computed(() => props.noResultsText || '<b>No results found</p>')
+const headerBg = computed(() => props.colors?.backgrounds?.header || 'white')
+const titleBg = computed(() => props.colors?.backgrounds?.title || '#e0e7ed')
+
+const sortBy = ref('')
+const sortDirection = ref('desc')
+const sortIcon = computed(() => {
+  if (sortDirection.value === 'desc') return 'mdi-chevron-down'
+  return 'mdi-chevron-up'
+})
+
+const sort = (itemFn: (val: any) => string) => {
+  const compareFn = (item1: object, item2: object) => {
+    let val1 = item1[sortBy.value] || ''
+    let val2 = item2[sortBy.value] || ''
+    if (itemFn) {
+      val1 = itemFn(val1)
+      val2 = itemFn(val2)
+    }
+    if (sortDirection.value === 'asc') return val1.localeCompare(val2)
+    return val2.localeCompare(val1)
+  }
+  sortedItems.value = sortedItems.value.sort(compareFn)
+}
+
+const toggleSort = (header: BaseTableHeaderI) => {
+  if (sortBy.value === header.col) sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+  else {
+    sortBy.value = header.col
+    sortDirection.value = 'desc'
+  }
+  sort(header.itemFn)
+}
+
+const filter = _.debounce((header: BaseTableHeaderI) => {
+  sortedItems.value = props.setItems.filter((item) => {
+    if (header.filter.filterFn) return header.filter.filterFn(item[header.col], header.filter.value)
+    else {
+      if (header.filter.type === 'select') return BaseSelectFilter(item[header.col], header.filter.value)
+      else return BaseTextFilter(item[header.col], header.filter.value)
+    }
+  })
+  // clear sort
+  sortBy.value = ''
+  sortDirection.value = 'desc'
+}, 200)
+
+watch(() => props.setItems, () => {
+  // reset sort
+  sortBy.value = ''
+  sortDirection.value = 'desc'
+  sortedItems.value = [...props.setItems]
+  // reset filters
+  for (const i in headers) {
+    if (headers[i]?.filter?.value) headers[i].filter.value = ''
+  }
+}, { deep: true })
+</script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+td,
+th {
+  min-width: 40px;
+  max-width: 40px;
+  white-space: normal;
+}
+.base-table {
+  border-spacing: 0px;
+  width: calc(100%);
+  table-layout: auto;
+
+  &__title {
+    text-align: start;
+  }
+
+  &__pagination {
+
+    &__btn {
+      background-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    &__item {
+      border-bottom: 1px solid $gray5;
+      padding: 12px 0 12px 12px;
+      position: relative;
+      text-align: start;
+
+      &__clear-btn {
+        background-color: transparent;
+        box-shadow: none;
+        height: 30px;
+        position: absolute;
+        right: 30px;
+        bottom: 15px;
+        width: 30px;
+      }
+
+      &__title,
+      &__title::after,
+      &__title::before,
+      &__title:hover {
+        background-color: transparent;
+        box-shadow: none;
+        color: $gray9; 
+        font-size: 0.875rem;
+        font-weight: 700;
+        justify-content: start;
+        padding: 0;
+        text-align: start;
+      }
+    }
+  }
+
+  &__body {
+
+    &__row {
+      background-color: white;
+      transition: linear 0.5s;
+    }
+    &__row:hover {
+      background-color: $gray1 !important;
+      transition: linear 0.5s;
+    }
+
+    &__item {
+      border-bottom: 1px solid $gray3;
+      color: $gray7 !important;
+      font-size: 0.875rem !important;
+      height: 65px;
+      padding: 12px 0 12px 12px;
+      position: relative;
+    }
+  }
+}
+// preset optional itemClasses
+.small-cell {
+  min-width: 115px !important;
+}
+.large-cell {
+  padding: 12px 8px;
+  min-width: 156px !important;
+}
+:deep(.v-btn__content) {
+  display: block;
+  white-space: normal;
+}
+:deep(.v-btn__overlay),
+:deep(.v-btn__overlay::before),
+:deep(.v-btn__overlay::after) {
+  background-color: transparent !important;
+}
+:deep(.v-field__field) {
+  min-height: 40px;
+  min-width: 60px;
+  overflow: hidden;
+  padding: 0;
+}
+:deep(.v-field__input) {
+  align-items: end;
+  flex-wrap: nowrap;
+  font-size: 0.875rem;
+  padding: 0 0 8px 8px;
+}
+:deep(.v-field__append-inner) {
+  margin: auto;
+  padding: 0;
+}
+</style>

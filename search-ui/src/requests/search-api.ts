@@ -29,7 +29,7 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 
   const config = getSearchConfig()
   return axios.get<SuggestionResponseI>
-    (`businesses/search/suggest?query=${searchValue}&max=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
+    (`businesses/search/suggest?query=${searchValue}&rows=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
       config)
     .then(response => {
       const data: SuggestionResponseI = response?.data
@@ -55,6 +55,32 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 
   const config = getSearchConfig()
   return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start=0&rows=100`,
+    config)
+    .then(response => {
+      const data: SearchResponseI = response?.data
+      if (!data) {
+        throw new Error('Invalid API response')
+      }
+      return data
+    }).catch(error => {
+      return {
+        searchResults: null,
+        error: {
+          statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
+          message: error?.response?.data?.message,
+          category: ErrorCategories.SEARCH,
+          type: error?.parsed?.rootCause?.type
+        }
+      }
+    })
+}
+
+export async function searchParties(searchValue: string): Promise<SearchResponseI> {
+  if (!searchValue) return
+
+  const config = getSearchConfig()
+  return axios.get<SearchResponseI>(
+    `businesses/search/parties?query=${searchValue}&categories=partyRoles:partner,proprietor&start=0&rows=100`,
     config)
     .then(response => {
       const data: SearchResponseI = response?.data

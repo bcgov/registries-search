@@ -35,7 +35,6 @@
         <div class="document-list  mt-3 pa-3 pr-5 pt-7" :key="checkBoxesKey">
           <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
             <v-col>
-              <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top"></v-tooltip>
               <v-row no-gutters>
                 <v-col cols="auto" style="position: relative;">
                   <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top">

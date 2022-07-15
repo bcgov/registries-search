@@ -424,7 +424,7 @@ span.invalid-color {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 999;
+  z-index: 9999;
   background: rgba(255, 255, 255, 1);
 }
 
@@ -469,28 +469,30 @@ span.invalid-color {
   border-color: rgb(33, 33, 33); // grey darken-4
 }
 
-// No Results
-.no-results {
-  text-align: center;
-}
-
-.no-results__title {
-  color: $gray8;
-  @extend .font-16;
-  font-weight: 700;
-}
-
-.no-results__subtitle {
-  margin-top: 0.25rem;
-  color: $gray6;
-  @extend .font-14;
-  font-weight: 500;
-}
-
 .font-16 {
   font-size: $px-16;
 }
 
 .font-14 {
   font-size: $px-14;
+}
+
+.font-normal {
+  color: $gray7;
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+
+// buttons
+.btn-basic {
+  background-color: $primary-blue;
+  box-shadow: none;
+  color: white;
+  font-size: 0.875rem !important;
+  font-weight: normal !important;
+}
+
+// lists
+.basic-list {
+  list-style: none;
 }
