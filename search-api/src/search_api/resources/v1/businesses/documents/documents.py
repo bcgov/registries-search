@@ -48,10 +48,14 @@ def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
             return resource_utils.account_required_response()
         # check access
         active_access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
+        has_filing_history_access = False
         for access_req in active_access_requests:
-            if not [x for x in access_req.documents if x.document_type == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY]:
-                # account doesn't have an active access request with a business summary/history doc
-                return resource_utils.unauthorized_error_response(account_id)
+            if [x for x in access_req.documents if x.document_type == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY]:
+                has_filing_history_access = True
+
+        if not has_filing_history_access:
+            # account doesn't have an active access request with a business summary/history doc
+            return resource_utils.unauthorized_error_response(account_id)
 
         # get pdf
         resp = get_business_filing_document(business_identifier, filing_id, filing_name)
