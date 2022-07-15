@@ -74,6 +74,13 @@ tbody {
   font-weight: normal;
 }
 
+.v-icon.outlined {
+  color: $primary-blue !important;
+  background-color: white !important;
+  border: 1px solid $primary-blue !important;
+  border-radius: 50%;
+}
+
 // sbc-common-components
 .sbc-header {
   .v-btn {
@@ -227,7 +234,7 @@ tbody {
 }
 
 // list items
-.theme--light.v-list-item .registration-list-item {
+.theme--light.v-list-item {
   font-size: 0.875rem;
   padding-left: 16px;
 }
@@ -258,6 +265,12 @@ tbody {
 
 .theme--light.v-list-item .v-list-item__mask {
   color: inherit;
+}
+
+.v-list-item-title {
+  color: #495057 !important;
+  font-family: "BCSans", Verdana, Arial, sans-serif !important;
+  font-size: 0.875rem !important;
 }
 
 // v-snackbar

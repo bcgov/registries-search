@@ -2,8 +2,11 @@ import { ErrorI } from '@/interfaces'
 import { BusinessStatuses, BusinessTypes, CorpTypeCd } from '@/enums'
 
 // UI models
+
 export interface SearchI {
-  results: SearchResultI[]
+  results: (SearchResultI | SearchPartyResultI)[]
+  searchType: 'business' | 'partner'
+  totalResults: number
   _error: ErrorI
   _loading: boolean
   _value: string
@@ -17,10 +20,21 @@ export interface SearchResultI {
   legalType: BusinessTypes | CorpTypeCd
 }
 
+export interface SearchPartyResultI {
+  parentBN: string
+  parentIdentifier: string
+  parentLegalType: BusinessTypes | CorpTypeCd
+  parentName: string
+  parentStatus: BusinessStatuses
+  partyName: string
+  partyRoles: string[]
+  partyType: 'person' | 'organization'
+}
+
 // api responses
 export interface SearchResponseI {
   searchResults: {
-    results: Array<SearchResultI>
+    results: (SearchResultI | SearchPartyResultI)[]
     totalResults: number
   }
   error?: ErrorI

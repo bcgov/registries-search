@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid no-gutters class="white-background mt-4 soft-corners">    
+  <v-container no-gutters class="container pa-0 white-background soft-corners">    
     <v-row no-gutters class="pt-2">
       <v-col class="ml-n6 pl-6" cols="11">
         <v-text-field
@@ -32,18 +32,32 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row no-gutters>
+      <v-col cols="auto" style="padding-top: 2px;">
+        <input type="radio" value="business" v-model="search.searchType">
+      </v-col>
+      <v-col class="ml-2" cols="auto">
+        <label class="font-normal">Businesses</label>
+      </v-col>
+      <v-col class="ml-4" cols="auto" style="padding-top: 2px;">
+        <input type="radio" value="partner" v-model="search.searchType">
+      </v-col>
+      <v-col class="ml-2" cols="auto">
+        <label class="font-normal">Firm Owners</label>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 // local
 import { useSearch, useSuggest } from '@/composables';
 import { SuggestList } from '.'
 
 // Composables
 const { suggest, suggestActive } = useSuggest()
-const { getSearchResults } = useSearch()
+const { search, getSearchResults } = useSearch()
 
 const searchHint = 'Example: "Test Construction Inc.", "BC0000123", "987654321"'
 
@@ -58,6 +72,12 @@ const submitSearch = () => {
   suggest.disabled = true
   getSearchResults(suggest.query)
 }
+
+watch(() => search.searchType, () => {
+  if (search._value) {
+    getSearchResults(search._value)
+  }
+})
 </script>
 
 <style lang="scss" module>

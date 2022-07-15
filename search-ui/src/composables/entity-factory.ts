@@ -1,6 +1,6 @@
 import { computed, reactive } from 'vue'
 // Local
-import { CorpTypeCd } from '@/enums'
+import { BusinessTypes, ColinStateTypes, CorpTypeCd } from '@/enums'
 import { getEntity } from '@/requests'
 import { CorpInfoArray } from '@/resources'
 import { EntityI } from '@/interfaces/entity'
@@ -93,6 +93,18 @@ export const useEntity = () => {
     return isCoop.value || isBComp.value ? 'Incorporation Number' : 'Registration Number'
   })
 
+  const corpTypes = computed(() => {
+    return [...new Set(CorpInfoArray.map((corp) => corp.fullDesc))]
+  })
+
+  const corpStatusTypes = computed(() => {
+    return Object.keys(ColinStateTypes).map((key) => ColinStateTypes[key])
+  })
+
+  const learBusinessTypes = computed(() => {
+    return Object.keys(BusinessTypes).map((key) => BusinessTypes[key])
+  })
+
   return {
     entity,
     clearEntity,
@@ -105,6 +117,9 @@ export const useEntity = () => {
     isFirm,
     entityTitle,
     actTitle,
-    entityNumberLabel
+    entityNumberLabel,
+    corpStatusTypes,
+    corpTypes,
+    learBusinessTypes
   }
 }
