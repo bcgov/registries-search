@@ -4,5 +4,6 @@ export enum RouteNames {
   SEARCH = 'search',
   LOGIN = 'login',
   BUSINESS_INFO = 'businessinfo',
-  DASHBOARD = 'dashboard'
+  DASHBOARD = 'dashboard',
+  DOCUMENT_REQUEST = 'request'
 }

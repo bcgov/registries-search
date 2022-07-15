@@ -4,6 +4,7 @@ import { RouteRecordRaw } from 'vue-router'
 import {
   BusinessInfoView,
   DashboardView,
+  DocumentRequestView,
   Login,
   Signin,
   Signout
@@ -57,6 +58,15 @@ export const routes: RouteRecordRaw[] = [
     name: RouteNames.BUSINESS_INFO,
     component: BusinessInfoView,
     props: true,
+    meta: {
+      requiresAuth: true,
+      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+    },
+  },
+  {
+    path: '/open/request',
+    name: RouteNames.DOCUMENT_REQUEST,
+    component: DocumentRequestView,    
     meta: {
       requiresAuth: true,
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]

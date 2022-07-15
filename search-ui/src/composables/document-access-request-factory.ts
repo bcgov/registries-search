@@ -8,6 +8,7 @@ import {  useFeeCalculator, useEntity } from '@/composables'
 
 const documentAccessRequest = reactive({
     requests: [],
+    currentRequest: null,
     _error: null,
     _loading: false,
     _saving: false,
@@ -46,6 +47,8 @@ export const useDocumentAccessRequest = () => {
              selectedDocs, header)
         if (response.error) {
             documentAccessRequest._error = response.error
+        } else {
+            documentAccessRequest.currentRequest = response.createDocumentResponse
         }        
         documentAccessRequest._saving = false
     }

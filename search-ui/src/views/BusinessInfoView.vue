@@ -1,10 +1,10 @@
 <template>
   <v-container id="business-info" class="container" fluid>
     <v-fade-transition>
-      <div class="loading-container" v-if="documentAccessRequest._saving">
+      <div class="loading-container" v-if="loading">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg" v-if="documentAccessRequest._saving">Completing Payment</div>
+          <div class="loading-msg" v-if="loading">Completing Payment</div>
         </div>
       </div>
     </v-fade-transition>
@@ -20,14 +20,14 @@
       <v-col>
         <h2>How to Access Business Documents</h2>
         <p class="pt-3">
-          1. Determine if the filing documents that you want are available for 
+          1. Determine if the filing documents that you want are available for
           download or are on paper only.*
         </p>
         <p class="pt-1">2. Select from Available Documents to Download.</p>
         <p class="pt-1">3. Pay the appropriate fee.</p>
         <p class="pt-1">4. Download the individual files you require.</p>
         <p class="pt-3">
-          * Some documents are available on paper only and not available to download. 
+          * Some documents are available on paper only and not available to download.
           To request copies of paper documents, contact BC Registries staff.
         </p>
         <v-divider class="my-10" />
@@ -64,14 +64,10 @@
                 <v-col />
               </v-row>
             </v-col>
-            <v-col
-              :class="['document-list__fee', item.active ? '' : 'disabled-text']"
-              align-self="end"
-              cols="auto"
-              v-html="item.fee"
-            />
+            <v-col :class="['document-list__fee', item.active ? '' : 'disabled-text']" align-self="end" cols="auto"
+              v-html="item.fee" />
           </v-row>
-        </div>       
+        </div>
         <v-divider class="my-10" />
         <div>
           <filing-history isLocked />
@@ -99,11 +95,12 @@ const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
 })
 
+const loading = ref(false)
 const router = useRouter()
 
 
 const { entity, clearEntity, loadEntity, isFirm } = useEntity()
-const { loadFilingHistory, filingHistory } = useFilingHistory()
+const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest } = useDocumentAccessRequest()
 
@@ -117,24 +114,32 @@ const feePreSelectItem: FeeI = {
 }
 
 const checkBoxesKey = ref(0)
-const purchasableDocs = ref([]) as Ref<{ 
+const purchasableDocs = ref([]) as Ref<{
   code: FeeCodes,
   fee: string,
   label: string,
   documentType: DocumentType,
   active: boolean,
-  tooltip: string }[]>
+  tooltip: string
+}[]>
 const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
 
 const payForDocuments = async () => {
+  loading.value = true
   await createAccessRequest(selectedDocs)
   if (!documentAccessRequest._error) {
-    selectedDocs.value = []     
+    selectedDocs.value = []
     clearFees()
     // refresh checkboxes
     checkBoxesKey.value += 1
+
+    clearFilingHistory()
+    await loadEntity(entity.identifier)
+    await loadFilingHistory(entity.identifier, documentAccessRequest.currentRequest.submissionDate)
+    router.push({ name: RouteNames.DOCUMENT_REQUEST })
   }
+  loading.value = false
 }
 
 const feeActions: FeeAction[][] = [
@@ -173,7 +178,7 @@ onMounted(async () => {
   if (entity.identifier !== props.identifier) clearEntity()
   await loadEntity(props.identifier)
   await loadPurchasableDocs()
-  await loadFilingHistory(props.identifier)   
+  await loadFilingHistory(props.identifier, null)
   clearFees()
 })
 
@@ -190,7 +195,7 @@ const loadPurchasableDocs = async () => {
     tooltip: ''
   })
 
-  if(isCogsAvailable()){
+  if (isCogsAvailable()) {
     purchasableDocs.value.push({
       code: FeeCodes.COGS,
       fee: feeCOGS,
@@ -203,7 +208,7 @@ const loadPurchasableDocs = async () => {
   }
 }
 
-const isCogsAvailable = () => {   
+const isCogsAvailable = () => {
   return !isFirm.value
 }
 

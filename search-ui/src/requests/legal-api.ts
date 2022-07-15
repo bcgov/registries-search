@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 // local
 import { ErrorCategories, ErrorCodes } from '@/enums'
-import { CommentIF, EntityRespI } from '@/interfaces' 
+import { CommentIF, EntityRespI } from '@/interfaces'
 import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
@@ -26,10 +26,15 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
     })
 }
 
-export async function getFilings(identifier: string): Promise<any> {
+export async function getFilings(identifier: string, effective_date: string): Promise<any> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
   const config = { baseURL: url }
-  return axios.get<any>(`businesses/${identifier}/filings`, config)
+  let filings_url = `businesses/${identifier}/filings`
+  if (effective_date) {
+
+    filings_url = filings_url + `?effective_date=${effective_date.split('.')[0]}`
+  }
+  return axios.get<any>(filings_url, config)
     .then(response => {
       const data = response?.data
       if (!data) {
