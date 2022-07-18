@@ -54,7 +54,7 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
   if (!searchValue) return
 
   const config = getSearchConfig()
-  return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start=0&rows=100`,
+  return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start=0&rows=1000`,
     config)
     .then(response => {
       const data: SearchResponseI = response?.data
