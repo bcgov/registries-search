@@ -1,4 +1,4 @@
-import { AccountStatus, AccountTypes, StaffRoles } from '@/enums'
+import { AccountStatus, AccountTypes, StaffRoles, UserRoles } from '@/enums'
 import { AuthApiProductI } from './auth-api-responses'
 import { ErrorI } from './error'
 
@@ -7,6 +7,7 @@ export interface AuthI {
   currentAccount: CurrentAccountI
   staffRoles: StaffRoles[]
   tokenInitialized: boolean
+  userRoles: UserRoles[]
   _error: ErrorI
 }
 

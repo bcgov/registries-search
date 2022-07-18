@@ -75,7 +75,7 @@ const submitSearch = () => {
 
 watch(() => search.searchType, () => {
   if (search._value) {
-    getSearchResults(search._value)
+    getSearchResults(suggest.query)
   }
 })
 </script>

@@ -13,6 +13,7 @@ const auth = reactive({
   currentAccount: null,
   staffRoles: [],
   tokenInitialized: false,
+  userRoles: [],
   _error: null
 } as AuthI)
 
@@ -20,16 +21,25 @@ export const useAuth = () => {
   // manager for auth + common functions etc.
   const hasProductAccess = (code: ProductCode) => {
     // check if product code in activeProducts or if staff access enables product code
+    if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) return true
     const product = auth.activeProducts.find(product => product.code === code)
     if (!product) return false
     return true
   }
-  const isStaff = computed(() => auth.staffRoles.length > 0)
+  const isStaff = computed(() => auth.staffRoles.includes(StaffRoles.STAFF))
+  const isStaffHelpDesk = computed(() => auth.staffRoles.includes(StaffRoles.HELP_DESK))
+  const isStaffPPR = computed(() => auth.staffRoles.includes(StaffRoles.PPR))
+  const isStaffSBC = computed(() => auth.staffRoles.includes(StaffRoles.SBC))
   const loadAuth = async () => {
     // set current account / set staff roles / get active products
-    _loadCurrentAccount() 
     await _loadRoles()
-    await _loadProducts()
+    await _loadCurrentAccount()
+    // check sbc
+    if (auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
+      const isSbc = await getSbcFromAuth()
+      if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
+    }
+    if (!isStaff.value && !isStaffHelpDesk.value && !isStaffPPR.value) await _loadProducts()
   }
   /** Starts token service that refreshes KC token periodically. */
   const startTokenService = async () => {
@@ -59,7 +69,11 @@ export const useAuth = () => {
     auth._error = null
   }
   const _loadCurrentAccount = async () => {
-    const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+    let currentAccount = ''
+    // TODO: need to change '0' to something recognized as staff by auth
+    // and agreed upon within search / gateway and validate on the backend accordingly
+    if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) currentAccount = '{"id":"0"}'
+    else currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
     if (!currentAccount) console.error(`Error: session ${SessionStorageKeys.CurrentAccount} expected, but not found.`)
     auth.currentAccount = JSON.parse(currentAccount) as CurrentAccountI
   }
@@ -82,10 +96,9 @@ export const useAuth = () => {
     // get/set staff roles (add in user roles here if needed)
     try {
       const roles = getKeycloakRoles()
-      if (roles.includes(UserRoles.GOV_ACCOUNT)) {
-        const isSbc = await getSbcFromAuth()
-        if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
-      }
+      const userRoleList = Object.values(UserRoles)
+      const userRoles = roles.filter(role => userRoleList.includes(role as UserRoles))
+      auth.userRoles = userRoles as UserRoles[]
       const staffRoleList = Object.values(StaffRoles)
       const staffRoles = roles.filter(role => staffRoleList.includes(role as StaffRoles))
       auth.staffRoles = staffRoles as StaffRoles[]
@@ -103,6 +116,9 @@ export const useAuth = () => {
     auth,
     hasProductAccess,
     isStaff,
+    isStaffHelpDesk,
+    isStaffPPR,
+    isStaffSBC,
     loadAuth,
     startTokenService
   }

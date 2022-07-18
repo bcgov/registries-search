@@ -27,7 +27,7 @@
               >
                 <slot :name="'header-item-slot-' + header.customHeaderSlot" :header="header">
                   <v-btn
-                    v-if="header.hasSort && header.value"
+                    v-if="header.value"
                     class="base-table__header__item__title"
                     :text="true"
                     @click="toggleSort(header)"
@@ -37,7 +37,6 @@
                       {{ sortIcon }}
                     </v-icon>
                   </v-btn>
-                  <span v-else-if="header.value" class="base-table__header__item__title" v-html="header.value" />
                 </slot>
                 <slot :name="'header-filter-slot-' + header.customHeaderSlot" :header="header">
                   <v-select
@@ -163,6 +162,7 @@ const sort = (itemFn: (val: any) => string) => {
 }
 
 const toggleSort = (header: BaseTableHeaderI) => {
+  if (!header.hasSort) return
   if (sortBy.value === header.col) sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
   else {
     sortBy.value = header.col

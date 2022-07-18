@@ -119,10 +119,7 @@ onMounted(async () => {
       // check every second for up to 10 seconds
       for (let i=0; i<10; i++) {
         await new Promise(resolve => setTimeout(resolve, 1000))
-        if (
-          sessionStorage.getItem(SessionStorageKeys.SessionSynced) === 'true' &&
-          sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
-        ) {
+        if (sessionStorage.getItem(SessionStorageKeys.SessionSynced) === 'true') {
           break
         }
       }
