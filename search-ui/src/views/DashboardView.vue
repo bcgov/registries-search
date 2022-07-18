@@ -9,11 +9,11 @@
     </div>
 
     <v-tabs class="mt-8" v-model="tab">
-      <v-tab class="tab-item-default" v-bind:class="[tab == '0' ? 'tab-item-active' : 'tab-item-inactive']">
+      <v-tab id="search-tab" class="tab-item-default" :class="[tab == '0' ? 'tab-item-active' : 'tab-item-inactive']">
         <v-icon>mdi-magnify</v-icon>
         <span class="ml-1">Find a Business</span>
       </v-tab>
-      <v-tab class="tab-item-default" v-bind:class="[tab == '1' ? 'tab-item-active' : 'tab-item-inactive']">
+      <v-tab id="documents-tab" class="tab-item-default" :class="[tab == '1' ? 'tab-item-active' : 'tab-item-inactive']">
         <v-icon>mdi-file-document-edit-outline</v-icon>
         <span class="ml-1">View Recently Purchased Documents ({{totalDocAccessLength}})</span>
       </v-tab>
@@ -55,7 +55,7 @@ import { useDocumentAccessRequest, useSearch } from '@/composables'
 
 const props = defineProps({ appReady: { type: Boolean } })
 
-const tab = ref('')
+const tab = ref('0')
 
 const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 const { search } = useSearch()

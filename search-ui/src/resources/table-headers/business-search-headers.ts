@@ -1,3 +1,4 @@
+import { BaseSelectFilter } from '@/components/datatable/resources'
 import { useEntity } from '@/composables'
 import { ColinStateTypes, CorpTypeCd } from '@/enums'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
@@ -56,7 +57,16 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'status',
-    filter: { clearable: true, items: corpStatusTypes.value.sort(), type: 'select', value: '' },
+    filter: {
+      clearable: true,
+      filterFn: (colVal: string, filterVal: string) => {
+        if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(colVal)) return BaseSelectFilter(colVal, filterVal)
+        return BaseSelectFilter(ColinStateTypes[colVal], filterVal)
+      },
+      items: corpStatusTypes.value.sort(),
+      type: 'select',
+      value: ''
+    },
     itemFn: (val: string) => {
       if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(val)) return val.charAt(0) + val.slice(1).toLowerCase()
       return ColinStateTypes[val]
