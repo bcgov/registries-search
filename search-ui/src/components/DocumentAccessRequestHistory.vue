@@ -16,6 +16,7 @@
     :setHeaders="PurchaseHistoryHeaders"
     :setItems="documentAccessRequest.requests"
     :totalItems="totalRequestsLength"
+    :noResultsText="noResultsText"
   >
     <template v-slot:item-slot-documents="{ item }">
       <ul class="basic-list">
@@ -58,6 +59,8 @@ const router = useRouter()
 const loading = ref(false)
 
 const totalRequestsLength = computed(() => documentAccessRequest.requests?.length || 0)
+
+const noResultsText = "No purchases in the last 14 days"
 
 const documentDescription = (type: string): string => {
   return DocumentTypeDescriptions[type]
