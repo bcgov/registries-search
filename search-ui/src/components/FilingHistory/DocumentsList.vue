@@ -3,8 +3,7 @@
         <v-list class="py-0" density="compact">
             <v-list-item v-for="(document, index) in filteredDocuments" :key="index">
                 <v-btn variant="text" class="download-one-btn" @click="downloadOne(document, index)"
-                    :disabled="props.loadingOne || props.loadingAll || isLocked"
-                    :loading="props.loadingOne && (index === props.loadingOneIndex)">
+                    :disabled="props.loadingOne || props.loadingAll || isLocked">
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
@@ -22,7 +21,7 @@
 
             <v-list-item v-if="filing.documents.length > 1">
                 <v-btn variant="text" class="download-all-btn" @click="downloadAll()"
-                    :disabled="props.loadingOne || props.loadingAll || isLocked" :loading="props.loadingAll">
+                    :disabled="props.loadingOne || props.loadingAll || isLocked">
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
