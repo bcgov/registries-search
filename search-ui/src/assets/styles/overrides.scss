@@ -6,26 +6,14 @@
 }
 
 // tables
-table {
-  table-layout: fixed;
-}
+td,
 th {
   color: $gray9 !important;
   font-size: 0.875rem !important;
 }
 td {
-  color: $gray7 !important;
-  font-size: 0.875rem !important;
-  min-width: 9rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-tbody {
-  tr:hover {
-    background-color: transparent !important;
-  }
 }
 
 // Buttons
@@ -72,13 +60,6 @@ tbody {
 
 .v-btn--outlined, .v-btn--text {
   font-weight: normal;
-}
-
-.v-icon.outlined {
-  color: $primary-blue !important;
-  background-color: white !important;
-  border: 1px solid $primary-blue !important;
-  border-radius: 50%;
 }
 
 // sbc-common-components

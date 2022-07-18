@@ -1,3 +1,4 @@
+import { BaseTextFilter } from '@/components/datatable/resources'
 import { useDatetime } from '@/composables'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 import { DocumentTypeDescriptions } from '@/resources'
@@ -43,7 +44,12 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'submissionDate',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterFn: (colVal: string, filterVal: string) => BaseTextFilter(dateTimeString(colVal), filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: dateTimeString,
@@ -52,7 +58,12 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'expiryDate',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterFn: (colVal: string, filterVal: string) => BaseTextFilter(dateTimeString(colVal), filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: dateTimeString,

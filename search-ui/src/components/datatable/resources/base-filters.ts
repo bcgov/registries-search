@@ -3,5 +3,6 @@ export const BaseTextFilter = (colVal: string, filterVal: string) => {
 }
 
 export const BaseSelectFilter = (colVal: string, filterVal: string) => {
-  return colVal.toUpperCase() === filterVal.toUpperCase()
+  if (filterVal) return colVal.toUpperCase() === filterVal.toUpperCase()
+  return true
 }
