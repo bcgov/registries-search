@@ -89,6 +89,5 @@ describe('BusinessInfo tests', () => {
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}/filings`, { baseURL: url })
     // check entity was loaded
     expect(filingHistory.filings.length).toEqual(1)
-
   })
 })

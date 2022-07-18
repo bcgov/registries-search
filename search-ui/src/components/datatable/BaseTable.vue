@@ -5,7 +5,7 @@
         <slot name="header" :headers="headers">
           <tr v-if="title || pagination" :style="{ 'background-color': titleBg }">
             <slot name="header-title" :headers="headers">
-              <th class="base-table__title" :colspan="pagination ? headers.length / 2 : headers.length">
+              <th v-if="title" class="base-table__title" :colspan="pagination ? headers.length / 2 : headers.length">
                 <slot name="title">
                   <h2 class="ml-3 py-6">{{ title }} ({{ totalItems || setItems.length }})</h2>
                 </slot>
@@ -27,16 +27,17 @@
               >
                 <slot :name="'header-item-slot-' + header.customHeaderSlot" :header="header">
                   <v-btn
-                    v-if="header.value"
+                    v-if="header.hasSort && header.value"
                     class="base-table__header__item__title"
                     :text="true"
                     @click="toggleSort(header)"
                   >
                     <span v-html="header.value" />
-                    <v-icon v-if="header.hasSort && sortBy === header.col" class="ml-1">
+                    <v-icon v-if="sortBy === header.col" class="ml-1">
                       {{ sortIcon }}
                     </v-icon>
                   </v-btn>
+                  <span v-else-if="header.value" class="base-table__header__item__title" v-html="header.value" />
                 </slot>
                 <slot :name="'header-filter-slot-' + header.customHeaderSlot" :header="header">
                   <v-select
@@ -69,7 +70,7 @@
         </slot>
       </thead>
       <tbody v-if="loading" class="base-table__body">
-        <tr>
+        <tr class="base-table__body__loader">
           <td :colspan="headers.length">
             <v-row class="my-15" justify="center" no-gutters>
               <v-col cols="auto">
@@ -94,7 +95,7 @@
               </td>
             </slot>
           </tr>
-          <tr v-if="setItems.length === 0">
+          <tr v-if="setItems.length === 0" class="base-table__body__empty">
             <slot name="body-empty">
               <td colspan="12">
                 <v-row class="my-15" justify="center" no-gutters>
@@ -121,14 +122,14 @@ import { BasePagination } from './slot-templates'
 
 const props = defineProps<{
   colors?: BaseTableColorsI,
-  setHeaders: BaseTableHeaderI[],
   filterClass?: string,
   height?: string,
   itemKey: string,
   loading?: boolean,
-  setItems: object[],
-  pagination?: boolean,
   noResultsText?: string,
+  pagination?: boolean,
+  setHeaders: BaseTableHeaderI[],
+  setItems: object[],
   title?: string
   totalItems?: number
 }>()

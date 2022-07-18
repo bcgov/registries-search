@@ -9,7 +9,7 @@ const search = reactive({
   totalResults: null,
   _error: null,
   _loading: false,
-  _value: '', // not used for anything yet
+  _value: '',
 } as SearchI)
 
 export const useSearch = () => {
@@ -37,8 +37,17 @@ export const useSearch = () => {
     }
     search._loading = false
   }
+  const resetSearch = () => {
+    search.results = null
+    search.searchType = 'business'
+    search.totalResults = null
+    search._error = null
+    search._loading = false
+    search._value = ''
+  }
   return {
     search,
-    getSearchResults
+    getSearchResults,
+    resetSearch
   }
 }
