@@ -102,7 +102,7 @@ export const useEntity = () => {
   })
 
   const learBusinessTypes = computed(() => {
-    return Object.keys(BusinessTypes).map((key) => BusinessTypes[key])
+    return Object.keys(BusinessTypes).map((key) => { if (key != 'BC') BusinessTypes[key] })
   })
 
   return {
