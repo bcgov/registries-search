@@ -37,7 +37,7 @@
     class="mt-10"
     height="100%"
     :itemKey="'parentIdentifier'"
-    :setLoading="search._loading"
+    :loading="search._loading"
     :setHeaders="PartySearchHeaders"
     :setItems="search.results"
     title="Search Results"
