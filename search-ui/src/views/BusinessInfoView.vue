@@ -101,7 +101,7 @@ const router = useRouter()
 const { entity, clearEntity, loadEntity, isFirm } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
-const { documentAccessRequest, createAccessRequest } = useDocumentAccessRequest()
+const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 
 // fee summary
 const feePreSelectItem: FeeI = {
@@ -136,6 +136,7 @@ const payForDocuments = async () => {
     clearFilingHistory()
     await loadEntity(entity.identifier)
     await loadFilingHistory(entity.identifier, documentAccessRequest.currentRequest.submissionDate)
+    await loadAccessRequestHistory()
     router.push({ name: RouteNames.DOCUMENT_REQUEST })
   }
   loading.value = false
