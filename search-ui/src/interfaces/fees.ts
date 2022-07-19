@@ -1,4 +1,4 @@
-import { ActionComps } from '@/enums'
+import { ActionComps, FeeEntities } from '@/enums'
 import { FeeCodes } from '@/enums/fee-codes'
 import { ErrorI } from '@/interfaces'
 import { ComputedRef } from 'vue'
@@ -11,8 +11,17 @@ export interface FeeI {
   serviceFee: number
 }
 
+export interface FeeDataI {
+  entityType: FeeEntities
+  filingDescription?: string
+  filingTypeCode: FeeCodes
+  futureEffective?: boolean
+  priority?: boolean
+  waiveFees?: boolean
+}
+
 export interface FeesI {
-  folioNumber: string,
+  folioNumber: string
   items: Array<FeeI>
   preSelection: FeeI
   _error: ErrorI

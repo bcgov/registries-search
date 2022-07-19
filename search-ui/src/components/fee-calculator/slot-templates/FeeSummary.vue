@@ -13,9 +13,13 @@
       <div>
         <slot v-if="fees.items.length === 0 && fees.preSelection" name="preSelection">
           <fee-line-item :line-item="fees.preSelection" :no-fee="false" />
+          <fee-line-item :no-fee="false" :service-fee="fees.preSelection.serviceFee" />
         </slot>
         <slot v-for="lineItem, i in fees.items" :key="`${lineItem.code}-${i}`" name="lineItem">
           <fee-line-item :line-item="lineItem" no-fee />
+        </slot>
+        <slot name="serviceFee" :fees="fees">
+          <fee-line-item no-fee :service-fee="totalServiceFee" />
         </slot>
       </div>
     </v-slide-y-transition>
@@ -36,7 +40,7 @@
 import { useFeeCalculator } from '@/composables'
 import { FeeLineItem } from '.'
 
-const { fees, displayFee, totalFees } = useFeeCalculator()
+const { fees, displayFee, totalFees, totalServiceFee } = useFeeCalculator()
 </script>
 
 <style lang="scss" scoped>
