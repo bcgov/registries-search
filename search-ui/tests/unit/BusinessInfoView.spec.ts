@@ -45,11 +45,18 @@ describe('BusinessInfo tests', () => {
 
     const feeArr: Fee[] = [{
       fee: 100.0,
-      filingType: 'BUS',
+      filingType: 'BSRCH',
       priorityFees: 0.0,
       futureEffectiveFees: 0.0,
       serviceFees: 1.50,
       total: 101.50
+    },{
+      fee: 25.0,
+      filingType: 'CGOOD',
+      priorityFees: 0.0,
+      futureEffectiveFees: 0.0,
+      serviceFees: 1.50,
+      total: 26.50
     }]
     addMock.mockImplementation(() => Promise.resolve(feeArr))
      
