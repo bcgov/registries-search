@@ -1,12 +1,12 @@
 <template>
-  <div v-if="lineItem">
-    <v-row class="fee-list__item py-4" no-gutters>
+  <div v-if="lineItem || serviceFee" class="fee-list__item">
+    <v-row v-if="!serviceFee" class="py-4" no-gutters>
       <v-col class="fee-list__item-name" cols="8">{{ lineItem.label }}</v-col>
       <v-col class="fee-list__item-value" align-self="end" v-html="displayFee(lineItem.fee, noFee)" />
     </v-row>
-    <v-row v-if="lineItem.serviceFee" class="fee-list__item ml-3 py-4" no-gutters>
+    <v-row v-else class="ml-3 py-4" no-gutters>
       <v-col class="fee-list__item-name">Service Fee</v-col>
-      <v-col class="fee-list__item-value" v-html="displayFee(lineItem.serviceFee, noFee)" />
+      <v-col class="fee-list__item-value" v-html="displayFee(serviceFee, noFee)" />
     </v-row>
   </div>  
 </template>
@@ -20,7 +20,8 @@ import { FeeI } from '@/interfaces';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
   lineItem: null as PropType<FeeI>,
-  noFee: Boolean
+  noFee: Boolean,
+  serviceFee: Number
 })
 
 const { displayFee } = useFeeCalculator()

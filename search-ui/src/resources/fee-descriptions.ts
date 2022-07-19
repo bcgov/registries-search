@@ -1,5 +1,6 @@
 import { FeeCodes } from '@/enums'
 
 export const FeeDescriptions = {
-  [FeeCodes.SRCH_BASE_DOCS]: 'Business Summary and Filing History Documents'
+  [FeeCodes.BSRCH]: 'Business Summary and Filing History Documents',
+  [FeeCodes.CGOOD]: 'Certificate of Good Standing'
 }

@@ -4,7 +4,7 @@
       <div class="loading-container" v-if="loading">
         <div class="loading__content">
           <v-progress-circular color="primary" size="50" indeterminate />
-          <div class="loading-msg" v-if="loading">Completing Payment</div>
+          <div class="loading-msg">Completing Payment</div>
         </div>
       </div>
     </v-fade-transition>
@@ -87,8 +87,8 @@ import { BaseFeeCalculator } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
-import { ActionComps, FeeCodes, RouteNames, DocumentType } from '@/enums'
-import { FeeAction, FeeI } from '@/interfaces'
+import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
+import { FeeAction, FeeI, FeeDataI } from '@/interfaces'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
@@ -105,7 +105,7 @@ const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } =
 
 // fee summary
 const feePreSelectItem: FeeI = {
-  code: FeeCodes.SRCH_BASE_DOCS,
+  code: null,
   fee: 0,
   label: 'Select From Available Documents',
   quantity: 0,
@@ -166,29 +166,33 @@ const feeActions: FeeAction[][] = [
 ]
 
 // checkbox
-const getDocFee = async (code: FeeCodes) => {
-  const feeInfo = await getFeeInfo(code)
-  if (feeInfo) return displayFee(feeInfo.fee, true)
-  return 'Not Available'
+const getDocFees = async (codes: FeeCodes[]) => {
+  const feeData: FeeDataI[] = []
+  for (const i in codes) {
+    feeData.push({
+      entityType: FeeEntities.BSRCH,
+      filingTypeCode: codes[i]
+    })
+  }
+  return await getFeeInfo(feeData)
 }
 
 
 // load entity data, clear any previous fees
 onMounted(async () => {
-  if (entity.identifier !== props.identifier) clearEntity()
-  await loadEntity(props.identifier)
-  await loadPurchasableDocs()
-  await loadFilingHistory(props.identifier, null)
   clearFees()
+  if (entity.identifier !== props.identifier) clearEntity()
+  loadEntity(props.identifier)
+  loadPurchasableDocs()
+  loadFilingHistory(props.identifier, null)
 })
 
 const loadPurchasableDocs = async () => {
-  const feeBaseDocs = await getDocFee(FeeCodes.SRCH_BASE_DOCS)
-  const feeCOGS = await getDocFee(FeeCodes.COGS)
+  const feeData = await getDocFees([FeeCodes.BSRCH, FeeCodes.CGOOD])
 
   purchasableDocs.value.push({
-    code: FeeCodes.SRCH_BASE_DOCS,
-    fee: feeBaseDocs,
+    code: FeeCodes.BSRCH,
+    fee: displayFee(feeData[0].fee, false),
     label: 'Business Summary and Filing History Documents (paper-only copies are not included)',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
     active: true,
@@ -197,8 +201,8 @@ const loadPurchasableDocs = async () => {
 
   if (isCogsAvailable()) {
     purchasableDocs.value.push({
-      code: FeeCodes.COGS,
-      fee: feeCOGS,
+      code: FeeCodes.CGOOD,
+      fee: displayFee(feeData[1].fee, false),
       label: 'Certificate of Good Standing',
       documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
       active: entity.goodStanding,

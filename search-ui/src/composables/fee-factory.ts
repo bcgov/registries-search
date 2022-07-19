@@ -4,8 +4,8 @@ import { StatusCodes } from 'http-status-codes'
 import FeeServices from 'sbc-common-components/src/services/fee.services'
 import { FilingData } from 'sbc-common-components/src/models'
 // local
-import { ErrorCategories, FeeCodes } from '@/enums'
-import { CachedFeeItem, FeeI, FeesI } from '@/interfaces'
+import { ErrorCategories, FeeCodes, FeeEntities } from '@/enums'
+import { CachedFeeItem, FeeDataI, FeeI, FeesI } from '@/interfaces'
 import { FeeDescriptions } from '@/resources/fee-descriptions'
 
 const fees = reactive({
@@ -21,9 +21,10 @@ export const useFeeCalculator = () => {
   const addFeeItem = async (code: FeeCodes, quantity: number) => {
     const itemAdded = _addCachedFeeItem(code, quantity)
     if (!itemAdded) {
-      const feeInfo = await getFeeInfo(code)
-      if (feeInfo) fees.items.push(feeInfo)
+      const feeInfo = await getFeeInfo([{ entityType: FeeEntities.BSRCH, filingTypeCode: code }])
+      if (feeInfo) fees.items.push(feeInfo[0])
     }
+
   }
   const clearFees = () => {
     // keeps preselection
@@ -40,23 +41,25 @@ export const useFeeCalculator = () => {
     // return formatted fee
     return `$${feeParts[0]}.${feeParts[1].padEnd(2, '0')}`
   }
-  const getFeeInfo = async (code: FeeCodes): Promise<FeeI> => {
-    // FUTURE support multiple fees
-    // FUTURE make entity type an enum and pass it in
-    const filingDataItem = { filingTypeCode: code, entityType: 'BUS' } as FilingData
+  const getFeeInfo = async (feeData: FeeDataI[]): Promise<FeeI[]> => {
     const url = sessionStorage.getItem('PAY_API_URL')
-    const payResp = await FeeServices.getFee([filingDataItem], url)
+    const payResp = await FeeServices.getFee(feeData as FilingData[], url)
     if (payResp && payResp.length > 0) {
       // future get description from fee code
-      const item = {
-        code: code,
-        fee: payResp[0].fee,
-        label: FeeDescriptions[code] || payResp[0].filingType,
-        quantity: 1,
-        serviceFee: payResp[0].serviceFees 
+      const feeInfo: FeeI[] = []
+      for (const i in payResp) {
+        const code = feeData[i].filingTypeCode
+        const item = {
+          code: code,
+          fee: payResp[i].fee,
+          label: FeeDescriptions[code] || payResp[i].filingType,
+          quantity: 1,
+          serviceFee: payResp[i].serviceFees 
+        }
+        _cachedFeeItems.push({ [code]: item })
+        feeInfo.push(item)
       }
-      _cachedFeeItems.push({ [code]: item })
-      return item
+      return feeInfo
     }
     // only get here if call err'd
     fees._error = {
@@ -81,9 +84,13 @@ export const useFeeCalculator = () => {
     return totalFee + totalServiceFee.value
   })
   const totalServiceFee = computed(() => {
-    let totalServiceFee = 0
-    for (const i in fees.items) totalServiceFee += fees.items[i].serviceFee
-    return totalServiceFee
+    let serviceFee = 0
+    for (const i in fees.items) {
+      if (fees.items[i].serviceFee > serviceFee) {
+        serviceFee = fees.items[i].serviceFee
+      }
+    }
+    return serviceFee
   })
   const _addCachedFeeItem = (code: FeeCodes, quantity: number) => {
     const itemSelectedAlready = fees.items.find(item => item.code === code)
@@ -106,6 +113,7 @@ export const useFeeCalculator = () => {
     displayFee,
     getFeeInfo,
     removeFeeItem,
-    totalFees
+    totalFees,
+    totalServiceFee
   }
 }
