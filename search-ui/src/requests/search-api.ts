@@ -12,25 +12,25 @@ import { DocumentTypeDescriptions } from '@/resources'
 import { Document } from '@/types'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
+const SEARCH_RESULT_SIZE = 1000
 
-const getSearchConfig = () => {
+const getSearchConfig = (params: object = null) => {
   const { auth } = useAuth()
   const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
   const apiKey = window['searchApiKey']
   if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
   if (!apiKey) console.error('Error: REGISTRY_SEARCH_API_KEY expected, but not found.')
   if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-
-  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey } }
+  
+  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey }, params: params }
 }
 
 export async function getAutoComplete(searchValue: string): Promise<SuggestionResponseI> {
   if (!searchValue) return
 
-  const config = getSearchConfig()
-  return axios.get<SuggestionResponseI>
-    (`businesses/search/suggest?query=${searchValue}&rows=${AUTO_SUGGEST_RESULT_SIZE}&highlight=true`,
-      config)
+  const params = { query: searchValue, highlight: true, rows: AUTO_SUGGEST_RESULT_SIZE }
+  const config = getSearchConfig(params)
+  return axios.get<SuggestionResponseI>('businesses/search/suggest', config)
     .then(response => {
       const data: SuggestionResponseI = response?.data
       if (!data) {
@@ -53,9 +53,9 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 export async function searchBusiness(searchValue: string): Promise<SearchResponseI> {
   if (!searchValue) return
 
-  const config = getSearchConfig()
-  return axios.get<SearchResponseI>(`businesses/search/facets?query=${searchValue}&start=0&rows=1000`,
-    config)
+  const params = { query: searchValue, start: 0, rows: SEARCH_RESULT_SIZE }
+  const config = getSearchConfig(params)
+  return axios.get<SearchResponseI>('businesses/search/facets', config)
     .then(response => {
       const data: SearchResponseI = response?.data
       if (!data) {
@@ -78,10 +78,9 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
 export async function searchParties(searchValue: string): Promise<SearchResponseI> {
   if (!searchValue) return
 
-  const config = getSearchConfig()
-  return axios.get<SearchResponseI>(
-    `businesses/search/parties?query=${searchValue}&categories=partyRoles:partner,proprietor&start=0&rows=100`,
-    config)
+  const params = { query: searchValue, categories: 'partyRoles:partner,proprietor', start: 0, rows: SEARCH_RESULT_SIZE }
+  const config = getSearchConfig(params)
+  return axios.get<SearchResponseI>('businesses/search/parties', config)
     .then(response => {
       const data: SearchResponseI = response?.data
       if (!data) {

@@ -40,7 +40,7 @@ class SearchParams:  # pylint: disable=too-few-public-methods
 def business_search(params: SearchParams):
     """Return the list of businesses from Solr that match the query."""
     # build base query
-    solr_query = Solr.build_split_query(
+    solr_query_params = Solr.build_split_query(
         params.query,
         [
             SolrField.NAME_Q,
@@ -64,21 +64,30 @@ def business_search(params: SearchParams):
     # child_query += solr.nest_fields_party.format(filter=child_filter)
 
     # facets
-    solr_query += solr.base_facets
+    solr_query_params['facet'] = 'on'
+    solr_query_params['json.facet'] = solr.base_facets
     # filter queries
+    filter_q = ''
     if params.legal_types:
-        solr_query += Solr.build_filter_query(SolrField.TYPE, [x.upper() for x in params.legal_types])
+        filter_q = '(' + Solr.build_filter_query(SolrField.TYPE, [x.upper() for x in params.legal_types])
     if params.states:
-        solr_query += Solr.build_filter_query(SolrField.STATE, [x.upper() for x in params.states])
+        filter_str = Solr.build_filter_query(SolrField.STATE, [x.upper() for x in params.states])
+        filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
 
+    filter_q = filter_q + ')' if filter_q else ''
+    if solr_query_params.get('fq'):
+        solr_query_params['fq'] += ' AND ' + filter_q
+    else:
+        solr_query_params['fq'] = filter_q
     # boosts for result ordering
-    solr_bq_params = f'&bq={SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
+    solr_query_params['defType'] = 'edismax'
+    solr_query_params['bq'] = f'{SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
         f' AND {SolrField.NAME_STEM_AGRO}:("{params.query}"~10)^20.0' + \
         f' AND {SolrField.NAME_Q}:({params.query.split()[0]}*)^10.0' + \
         f' AND {SolrField.NAME_SUGGEST}:({params.query.split()[0]}*)^5.0'
-    solr_query += solr.boost_params.format(boost_params=solr_bq_params)
 
-    return solr.query(solr_query, solr.base_fields, params.start, params.rows)
+    solr_query_params['fl'] = solr.base_fields
+    return solr.query(solr_query_params, params.start, params.rows)
 
 
 def business_suggest(query: str, highlight: bool, rows: int) -> List:
@@ -93,7 +102,8 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
         name_select_params = Solr.build_split_query(query, [SolrField.NAME_SINGLE], [])
-        name_docs = solr.query(name_select_params, solr.base_fields, 0, rows).get('response', {}).get('docs', [])
+        name_select_params['fl'] = solr.base_fields
+        name_docs = solr.query(name_select_params, rows).get('response', {}).get('docs', [])
         extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
@@ -106,8 +116,10 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     identifier_suggestions = []
     bn_suggestions = []
     if len(name_suggestions) < rows:
-        bn_id_params = f'q={SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}'
-        bn_id_docs = solr.query(bn_id_params, solr.base_fields, 0, rows).get('response', {}).get('docs', [])
+        bn_id_params = {
+            'q': f'{SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}',
+            'fl': solr.base_fields}
+        bn_id_docs = solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
         if highlight:
             # return list of identifier strings with highlighted query
             identifier_suggestions = [
@@ -132,24 +144,34 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
 def parties_search(params: SearchParams):
     """Return the list of parties from Solr that match the query."""
     # build base query
-    solr_query = Solr.build_split_query(params.query,
-                                        [SolrField.PARTY_NAME_Q, SolrField.PARTY_NAME_STEM_AGRO],
-                                        [SolrField.PARTY_NAME_Q])
+    solr_query_params = Solr.build_split_query(params.query,
+                                               [SolrField.PARTY_NAME_Q, SolrField.PARTY_NAME_STEM_AGRO],
+                                               [SolrField.PARTY_NAME_Q])
     # facets
-    solr_query += solr.party_facets
+    solr_query_params['facet'] = 'on'
+    solr_query_params['json.facet'] = solr.party_facets
     # filters
+    filter_q = ''
     if params.party_roles:
-        solr_query += Solr.build_filter_query(SolrField.PARTY_ROLE, [x.lower() for x in params.party_roles])
+        filter_q = '(' + Solr.build_filter_query(SolrField.PARTY_ROLE, [x.lower() for x in params.party_roles])
     if params.legal_types:
-        solr_query += Solr.build_filter_query(SolrField.PARENT_TYPE, [x.upper() for x in params.legal_types])
+        filter_str = Solr.build_filter_query(SolrField.PARENT_TYPE, [x.upper() for x in params.legal_types])
+        filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
     if params.states:
-        solr_query += Solr.build_filter_query(SolrField.PARENT_STATE, [x.upper() for x in params.states])
+        filter_str = Solr.build_filter_query(SolrField.PARENT_STATE, [x.upper() for x in params.states])
+        filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
+
+    filter_q = filter_q + ')' if filter_q else ''
+    if solr_query_params.get('fq'):
+        solr_query_params['fq'] += ' AND ' + filter_q
+    else:
+        solr_query_params['fq'] = filter_q
 
     # boosts for result ordering
-    solr_bq_params = f'&bq={SolrField.PARTY_NAME_Q}:("{params.query}"~10)^30.0' + \
+    solr_query_params['defType'] = 'edismax'
+    solr_query_params['bq'] = f'{SolrField.PARTY_NAME_Q}:("{params.query}"~10)^30.0' + \
         f' AND {SolrField.PARTY_NAME_STEM_AGRO}:("{params.query}"~10)^20.0' + \
         f' AND {SolrField.PARTY_NAME_Q}:({params.query.split()[0]}*)^10.0' + \
         f' AND {SolrField.PARTY_NAME_SUGGEST}:({params.query.split()[0]}*)^5.0'
-    solr_query += solr.boost_params.format(boost_params=solr_bq_params)
 
-    return solr.query(solr_query, solr.party_fields, params.start, params.rows)
+    return solr.query(solr_query_params, params.start, params.rows)

@@ -56,7 +56,8 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     assert added.status_code == HTTPStatus.OK
     time.sleep(2) # takes up to 1 second for solr to register update
     # search new doc
-    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', solr.base_fields, 0, 10)
+    params = {'q': f'{SolrField.IDENTIFIER_Q}:{identifier}', 'fl': solr.base_fields}
+    resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert docs[0][SolrField.IDENTIFIER] == identifier
     assert docs[0][SolrField.BN] == bn
@@ -68,25 +69,26 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     assert deleted.status_code == HTTPStatus.OK
     time.sleep(1) # takes up to 1 second for solr to register update
     # test search returns nothing
-    resp = solr.query(f'q={SolrField.IDENTIFIER_Q}:{identifier}', solr.base_fields, 0, 10)
+    params = {'q': f'{SolrField.IDENTIFIER_Q}:{identifier}', 'fl': solr.base_fields}
+    resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
 
 
 @pytest.mark.parametrize('test_name,params,expected', [
-    ('test-basic-basic', {'query': 'name', 'fields': [SolrField.NAME_Q], 'wild': []}, f'q={SolrField.NAME_Q}:name'),
-    ('test-basic-basic-wild', {'query': 'name', 'fields': [SolrField.NAME_Q], 'wild': [SolrField.NAME_Q]}, f'q={SolrField.NAME_Q}:name*'),
-    ('test-basic-multi', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': []}, f'q={SolrField.NAME_Q}:name OR {SolrField.NAME_STEM_AGRO}:name'),
-    ('test-basic-multi-wild-1', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q]}, f'q={SolrField.NAME_Q}:name* OR {SolrField.NAME_STEM_AGRO}:name'),
-    ('test-basic-multi-wild-2', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_STEM_AGRO]}, f'q={SolrField.NAME_Q}:name OR {SolrField.NAME_STEM_AGRO}:name*'),
-    ('test-basic-multi-wild-3', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO]}, f'q={SolrField.NAME_Q}:name* OR {SolrField.NAME_STEM_AGRO}:name*'),
-    ('test-multi-basic', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q], 'wild': []}, f'q={SolrField.NAME_Q}:name1&fq={SolrField.NAME_Q}:name2&fq={SolrField.NAME_Q}:name3'),
-    ('test-multi-basic-wild', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q], 'wild': [SolrField.NAME_Q]}, f'q={SolrField.NAME_Q}:name1*&fq={SolrField.NAME_Q}:name2*&fq={SolrField.NAME_Q}:name3*'),
-    ('test-multi-multi', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': []}, f'q={SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1&fq={SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2&fq={SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3'),
-    ('test-multi-multi-wild-1', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q]}, f'q={SolrField.NAME_Q}:name1* OR {SolrField.NAME_STEM_AGRO}:name1&fq={SolrField.NAME_Q}:name2* OR {SolrField.NAME_STEM_AGRO}:name2&fq={SolrField.NAME_Q}:name3* OR {SolrField.NAME_STEM_AGRO}:name3'),
-    ('test-multi-multi-wild-2', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_STEM_AGRO]}, f'q={SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1*&fq={SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2*&fq={SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3*'),
-    ('test-multi-multi-wild-3', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO]}, f'q={SolrField.NAME_Q}:name1* OR {SolrField.NAME_STEM_AGRO}:name1*&fq={SolrField.NAME_Q}:name2* OR {SolrField.NAME_STEM_AGRO}:name2*&fq={SolrField.NAME_Q}:name3* OR {SolrField.NAME_STEM_AGRO}:name3*'),
-    ('test-complex-1', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO, SolrField.IDENTIFIER_Q, SolrField.BN_Q], 'wild': [SolrField.IDENTIFIER_Q, SolrField.BN_Q]}, f'q={SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1 OR {SolrField.IDENTIFIER_Q}:name1* OR {SolrField.BN_Q}:name1*&fq={SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2 OR {SolrField.IDENTIFIER_Q}:name2* OR {SolrField.BN_Q}:name2*&fq={SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3 OR {SolrField.IDENTIFIER_Q}:name3* OR {SolrField.BN_Q}:name3*'),
+    ('test-basic-basic', {'query': 'name', 'fields': [SolrField.NAME_Q], 'wild': []}, {'q':f'{SolrField.NAME_Q}:name'}),
+    ('test-basic-basic-wild', {'query': 'name', 'fields': [SolrField.NAME_Q], 'wild': [SolrField.NAME_Q]}, {'q':f'{SolrField.NAME_Q}:name*'}),
+    ('test-basic-multi', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': []}, {'q':f'{SolrField.NAME_Q}:name OR {SolrField.NAME_STEM_AGRO}:name'}),
+    ('test-basic-multi-wild-1', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q]}, {'q':f'{SolrField.NAME_Q}:name* OR {SolrField.NAME_STEM_AGRO}:name'}),
+    ('test-basic-multi-wild-2', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_STEM_AGRO]}, {'q':f'{SolrField.NAME_Q}:name OR {SolrField.NAME_STEM_AGRO}:name*'}),
+    ('test-basic-multi-wild-3', {'query': 'name', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO]}, {'q':f'{SolrField.NAME_Q}:name* OR {SolrField.NAME_STEM_AGRO}:name*'}),
+    ('test-multi-basic', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q], 'wild': []}, {'q':f'{SolrField.NAME_Q}:name1','fq':f'({SolrField.NAME_Q}:name2 AND {SolrField.NAME_Q}:name3)'}),
+    ('test-multi-basic-wild', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q], 'wild': [SolrField.NAME_Q]}, {'q':f'{SolrField.NAME_Q}:name1*','fq':f'({SolrField.NAME_Q}:name2* AND {SolrField.NAME_Q}:name3*)'}),
+    ('test-multi-multi', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': []}, {'q':f'{SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1','fq':f'({SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2 AND {SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3)'}),
+    ('test-multi-multi-wild-1', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q]}, {'q':f'{SolrField.NAME_Q}:name1* OR {SolrField.NAME_STEM_AGRO}:name1','fq':f'({SolrField.NAME_Q}:name2* OR {SolrField.NAME_STEM_AGRO}:name2 AND {SolrField.NAME_Q}:name3* OR {SolrField.NAME_STEM_AGRO}:name3)'}),
+    ('test-multi-multi-wild-2', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_STEM_AGRO]}, {'q':f'{SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1*','fq':f'({SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2* AND {SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3*)'}),
+    ('test-multi-multi-wild-3', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO], 'wild': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO]}, {'q':f'{SolrField.NAME_Q}:name1* OR {SolrField.NAME_STEM_AGRO}:name1*','fq':f'({SolrField.NAME_Q}:name2* OR {SolrField.NAME_STEM_AGRO}:name2* AND {SolrField.NAME_Q}:name3* OR {SolrField.NAME_STEM_AGRO}:name3*)'}),
+    ('test-complex-1', {'query': 'name1 name2 name3', 'fields': [SolrField.NAME_Q, SolrField.NAME_STEM_AGRO, SolrField.IDENTIFIER_Q, SolrField.BN_Q], 'wild': [SolrField.IDENTIFIER_Q, SolrField.BN_Q]}, {'q':f'{SolrField.NAME_Q}:name1 OR {SolrField.NAME_STEM_AGRO}:name1 OR {SolrField.IDENTIFIER_Q}:name1* OR {SolrField.BN_Q}:name1*','fq':f'({SolrField.NAME_Q}:name2 OR {SolrField.NAME_STEM_AGRO}:name2 OR {SolrField.IDENTIFIER_Q}:name2* OR {SolrField.BN_Q}:name2* AND {SolrField.NAME_Q}:name3 OR {SolrField.NAME_STEM_AGRO}:name3 OR {SolrField.IDENTIFIER_Q}:name3* OR {SolrField.BN_Q}:name3*)'}),
 ])
 def test_build_split_query(test_name, params, expected):
     """Assert that the build_split_query function works as expected."""
@@ -106,7 +108,7 @@ def test_highlight_names(test_name, query, names, expected):
 
 @pytest.mark.parametrize('test_name,facet_data,expected', [
     ('test-1',
-     {'facet_counts':{'facet_fields': {SolrField.TYPE:['BEN',23,'CP',10,'SP',102],SolrField.STATE:['ACTIVE',23,'HISTORICAL',10]}}},
+     {'facets':{SolrField.TYPE:{'buckets':[{'val':'BEN','count':23},{'val':'CP','count':10},{'val':'SP','count':102}]},SolrField.STATE:{'buckets':[{'val':'ACTIVE','count':23},{'val':'HISTORICAL','count':10}]}}},
      {'fields':{SolrField.TYPE:[{'value':'BEN','count':23},{'value':'CP','count':10},{'value':'SP','count':102}],SolrField.STATE:[{'value':'ACTIVE','count':23},{'value':'HISTORICAL','count':10}]}}),
 ])
 def test_parse_facets(test_name, facet_data, expected):

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages solr classes for search."""
+import json
+import re
 from contextlib import suppress
 from enum import Enum
 from http import HTTPStatus
@@ -107,22 +109,24 @@ class Solr:
         self.default_start = 0
         self.default_rows = 10
         # facets
-        self.base_facets = f'&facet=on&facet.field={SolrField.STATE}&facet.field={SolrField.TYPE}'
-        self.party_facets = f'&facet=on&facet.field={SolrField.PARTY_ROLE}' + \
-            f'&facet.field={SolrField.PARENT_STATE}&facet.field={SolrField.PARENT_TYPE}'
+        self.base_facets = json.dumps({
+            SolrField.TYPE: {'type': 'terms', 'field': SolrField.TYPE},
+            SolrField.STATE: {'type': 'terms', 'field': SolrField.STATE}})
+        self.party_facets = json.dumps({
+            SolrField.PARTY_ROLE: {'type': 'terms', 'field': SolrField.PARTY_ROLE},
+            SolrField.PARENT_STATE: {'type': 'terms', 'field': SolrField.PARENT_STATE},
+            SolrField.PARENT_TYPE: {'type': 'terms', 'field': SolrField.PARENT_TYPE}})
         # fields
-        self.base_fields = f'&fl={SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
+        self.base_fields = f'{SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
             f'{SolrField.TYPE},{SolrField.SCORE}'
-        self.nest_fields_party = f'&fl={SolrField.PARTIES},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
+        self.nest_fields_party = f'{SolrField.PARTIES},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
             f'{SolrField.PARTY_TYPE},[child childFilter=' + '{filter}]'
-        self.party_fields = f'&fl={SolrField.PARENT_BN},{SolrField.PARENT_IDENTIFIER},{SolrField.PARENT_NAME},' + \
+        self.party_fields = f'{SolrField.PARENT_BN},{SolrField.PARENT_IDENTIFIER},{SolrField.PARENT_NAME},' + \
             f'{SolrField.PARENT_STATE},{SolrField.PARENT_TYPE},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
             f'{SolrField.PARTY_TYPE}'
-        # boost
-        self.boost_params = '{boost_params}&defType=edismax'
         # query urls
-        self.search_query = '{url}/{core}/query?{search_params}{fields}&start={start}&rows={rows}'
-        self.suggest_query = '{url}/{core}/suggest?{suggest_params}&suggest.count={rows}&suggest.build={build}'
+        self.search_query = '{url}/{core}/query'
+        self.suggest_query = '{url}/{core}/suggest'
         self.update_query = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
 
         if app:
@@ -137,14 +141,14 @@ class Solr:
         """Create or replace solr docs in the core."""
         update_json = [doc.json for doc in docs]
         url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', url, json=update_json)
+        response = Solr.call_solr('POST', url, json_data=update_json)
         return response
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
         delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', delete_url, data=payload)
+        response = Solr.call_solr('POST', delete_url, xml_data=payload)
         return response
 
     def delete_docs(self, identifiers: List[str]):
@@ -157,111 +161,103 @@ class Solr:
         payload += '</query></delete>'
 
         delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', delete_url, data=payload)
+        response = Solr.call_solr('POST', delete_url, xml_data=payload)
         return response
 
-    def query(self, params: str, fields, start: int, rows: int) -> List:
+    def query(self, params: str, start: int = None, rows: int = None) -> List:
         """Return a list of solr docs from the solr query handler for the given params."""
-        if not start:
-            start = self.default_start
-        if not rows:
-            rows = self.default_rows
+        params['start'] = start if start else self.default_start
+        params['rows'] = rows if rows else self.default_rows
 
-        query = self.search_query.format(
-            url=self.solr_url,
-            core=self.core,
-            search_params=params,
-            fields=fields,
-            start=start,
-            rows=rows)
-
-        response = Solr.call_solr('GET', query)
+        url = self.search_query.format(url=self.solr_url, core=self.core)
+        response = Solr.call_solr('GET', url, params=params)
         return response.json()
 
     def suggest(self, query: str, rows: int, build: bool = False) -> List[str]:
         """Return a list of suggestions from the solr suggest handler for the given query."""
-        if not rows:
-            rows = self.default_rows
-
-        suggest_params = f'suggest.q={query}'
-        # build solr query
-        suggest_query = self.suggest_query.format(
-            url=self.solr_url,
-            core=self.core,
-            suggest_params=suggest_params,
-            rows=rows,
-            build=str(build).lower())
+        suggest_params = {
+            'suggest.q': query,
+            'suggest.count': rows if rows else self.default_rows,
+            'suggest.build': str(build).lower()
+        }
+        url = self.suggest_query.format(url=self.solr_url, core=self.core)
         # call solr
-        response = Solr.call_solr('GET', suggest_query)
+        response = Solr.call_solr('GET', url, suggest_params)
         # parse response
         suggestions = response.json() \
             .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions', [])
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
 
-    @staticmethod
-    def build_child_query(query: str,
-                          nest_field: SolrField,
-                          boost_fields: List[SolrField],
-                          search_field: SolrField) -> str:
-        """Return a solr child query with fqs for each subsequent term."""
-        terms = query.split()
-        params = 'q={!parent which="*:* -_nest_path_:\\\\/' + f'{nest_field}' + '" score=Max}'
-        params += f'(+_nest_path_:"/{nest_field}"'
-        # add boosters
-        for field in boost_fields:
-            params += f' +{field}: "{query}"'
-            params += f' +{field}: "{query}"~1'
-            params += f' +{field}: "{query}"~2'
-            params += f' +{field}: "{query}"~3'
-            params += f' +{field}: "{query}"~10'
-        # add main search match (should be less specific than booster fields in most cases)
-        params += f' +{search_field}:{terms[0]}'
-        for term in terms[1:]:
-            params += f' AND {search_field}:{term}'
-        return params + ')'
+    # NB: to be used later for child doc searching enhancements.
+    # @staticmethod
+    # def build_child_query(query: str,
+    #                       nest_field: SolrField,
+    #                       boost_fields: List[SolrField],
+    #                       search_field: SolrField) -> str:
+    #     """Return a solr child query with fqs for each subsequent term."""
+    #     terms = query.split()
+    #     params = 'q={!parent which="*:* -_nest_path_:\\\\/' + f'{nest_field}' + '" score=Max}'
+    #     params += f'(+_nest_path_:"/{nest_field}"'
+    #     # add boosters
+    #     for field in boost_fields:
+    #         params += f' +{field}: "{query}"'
+    #         params += f' +{field}: "{query}"~1'
+    #         params += f' +{field}: "{query}"~2'
+    #         params += f' +{field}: "{query}"~3'
+    #         params += f' +{field}: "{query}"~10'
+    #     # add main search match (should be less specific than booster fields in most cases)
+    #     params += f' +{search_field}:{terms[0]}'
+    #     for term in terms[1:]:
+    #         params += f' AND {search_field}:{term}'
+    #     return params + ')'
 
     @staticmethod
     def build_filter_query(field: SolrField, values: List[str]):
         """Return the solr filter clause for the given params."""
-        filter_q = f'&fq={field}:("{values[0]}"'
+        filter_q = f'{field}:("{values[0]}"'
         for val in values[1:]:
             filter_q += f' OR "{val}"'
         return filter_q + ')'
 
     @staticmethod
-    def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> str:
+    def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> Dict:
         """Return a solr query with fqs for each subsequent term."""
         terms = query.split()
-        params = f'q={fields[0]}:{terms[0]}'
+        params = {'q': f'{fields[0]}:{terms[0]}'}
         if fields[0] in wild_card_fields:
-            params += '*'
+            params['q'] += '*'
         for field in fields[1:]:
-            params += f' OR {field}:{terms[0]}'
+            params['q'] += f' OR {field}:{terms[0]}'
             if field in wild_card_fields:
-                params += '*'
+                params['q'] += '*'
         # add filter query for each subsequent term
         for term in terms[1:]:
-            params += f'&fq={fields[0]}:{term}'
+            if params.get('fq'):
+                params['fq'] += f' AND {fields[0]}:{term}'
+            else:
+                params['fq'] = f'({fields[0]}:{term}'
             if fields[0] in wild_card_fields:
-                params += '*'
+                params['fq'] += '*'
             for field in fields[1:]:
-                params += f' OR {field}:{term}'
+                params['fq'] += f' OR {field}:{term}'
                 if field in wild_card_fields:
-                    params += '*'
+                    params['fq'] += '*'
+        if params.get('fq'):
+            params['fq'] += ')'
         return params
 
     @staticmethod
-    def call_solr(method: str, url: str, json: dict = None, data: str = None) -> Response:
+    def call_solr(method: str, url: str, params: dict = None, json_data: dict = None, xml_data: str = None) -> Response:
         """Call solr instance with given params."""
         try:
             response = None
             if method == 'GET':
-                response = requests.get(url)
-            elif method == 'POST' and json:
-                response = requests.post(url=url, json=json)
-            elif method == 'POST' and data:
+                response = requests.get(url, params=params)
+            elif method == 'POST' and json_data:
+                response = requests.post(url=url, json=json_data)
+            elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
-                response = requests.post(url=url, data=data, headers=headers)
+                response = requests.post(url=url, data=xml_data, headers=headers)
             else:
                 raise Exception('Invalid params given.')
             # check for error
@@ -294,15 +290,20 @@ class Solr:
     @staticmethod
     def parse_facets(facet_data: Dict) -> Dict:
         """Return formatted solr facet response data."""
-        facet_info = facet_data.get('facet_counts', {}).get('facet_fields')
+        facet_info = facet_data.get('facets', {})
         facets = {}
         for category in facet_info:
+            if category == 'count':
+                continue
             facets[category] = []
-            for i in range(len(facet_info[category])):
-                # even indexes are values, odd indexes are counts - i.e. category = ['BEN',12,'CP',100]
-                if i % 2 == 0:
-                    facets[category].append({
-                        'value': facet_info[category][i],
-                        'count': facet_info[category][i+1]})
+            for item in facet_info[category]['buckets']:
+                facets[category].append({'value': item['val'], 'count': item['count']})
 
         return {'fields': facets}
+
+    @staticmethod
+    def prep_query_str(query: str) -> str:
+        """Return query string prepped for solr call."""
+        # replace solr specific special chars
+        solr_special_chars_regex = r'([+\-!()\"~*?:/\\&={}^%`#|<>,.@$;_]|&&|\|\|)'
+        return re.sub(solr_special_chars_regex, '', query)
