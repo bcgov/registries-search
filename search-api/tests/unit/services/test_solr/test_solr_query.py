@@ -27,15 +27,15 @@ from . import SOLR_TEST_DOCS
 
 @integration_solr
 @pytest.mark.parametrize('test_name,query,expected', [
-    # ('test-doesnt-match-identifier', 'CP00', []),
-    # ('test-doesnt-match-bn', 'BN00012334', []),
-    # ('test-name-exact', 'tests 2222', ['tests 2222']),
-    # ('test-case', 'not case sensitive', ['NOt Case SENSitive']),
-    # ('test-partial-1', 'tester', ['tester 1111']),
-    # ('test-partial-2', 'tester 11', ['tester 1111']),
-    # ('test-partial-3', 'lots of wor', ['lots of words in here']),
-    # ('test-all-words-match', 'tests oops 2222', []),
-    # ('test-stem-matches', 'test 2222', ['tests 2222']),
+    ('test-doesnt-match-identifier', 'CP00', []),
+    ('test-doesnt-match-bn', 'BN00012334', []),
+    ('test-name-exact', 'tests 2222', ['tests 2222']),
+    ('test-case', 'not case sensitive', ['NOt Case SENSitive']),
+    ('test-partial-1', 'tester', ['tester 1111']),
+    ('test-partial-2', 'tester 11', ['tester 1111']),
+    ('test-partial-3', 'lots of wor', ['lots of words in here']),
+    ('test-all-words-match', 'tests oops 2222', []),
+    ('test-stem-matches', 'test 2222', ['tests 2222']),
     ('test-multiple-matches', 'test', ['test 1234', 'tester 1111', 'tests 2222', 'test 3333', '4444 test']),
 ])
 def test_solr_suggest_name(app, test_name, query, expected):
