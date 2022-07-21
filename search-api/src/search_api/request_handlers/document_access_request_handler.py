@@ -29,6 +29,7 @@ from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.payment import DOCUMENT_TYPE_TO_FILING_TYPE, create_payment
+from search_api.services import get_role, STAFF_ROLE
 
 
 def save_request(account_id, business_identifier, request_json) -> DocumentAccessRequest:
@@ -57,10 +58,18 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
     """Create the invoice in SBC Payments and updates the access request record with payment details."""
     try:
         filing_types = []
+        header = request_json.get('header', {})
+        waive_fees = False
+        role = get_role(user_jwt, document_access_request.account_id)
+        if role in [STAFF_ROLE] and header.get('waiveFees', False):
+            waive_fees = True
         for document in document_access_request.documents:
-            filing_types.append({'filingTypeCode': DOCUMENT_TYPE_TO_FILING_TYPE.get(document.document_type.name)})
+            filing_types.append({
+                'filingTypeCode': DOCUMENT_TYPE_TO_FILING_TYPE.get(document.document_type.name).get(role),
+                'waiveFees': waive_fees})
         payment_response = create_payment(str(document_access_request.account_id), filing_types, user_jwt,
-                                          request_json.get('header', {}))
+                                          header)
+        print(payment_response)
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             payment_completion_date = datetime.utcnow()
             pid = payment_response.json().get('id')

@@ -13,7 +13,7 @@
 # limitations under the License.
 """This module wraps the calls to external services used by the API."""
 
-from .authz import BASIC_USER, STAFF_ROLE, SYSTEM_ROLE, authorized, is_staff
+from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, authorized, get_role, is_staff
 from .document_storage.storage_service import GoogleStorageService
 from .flags import Flags
 from .queue import GoogleQueueService

@@ -14,6 +14,7 @@
 """The class manages methods to validate a request."""
 import search_api.services.authz as auth_svc
 from search_api.enums import DocumentType
+from search_api.services import SBC_STAFF, STAFF_ROLE
 
 
 class RequestValidator():  # pylint: disable=too-few-public-methods
@@ -23,16 +24,19 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
                        DocumentType.CERTIFICATE_OF_GOOD_STANDING.name]
 
     @staticmethod
-    def validate_document_access_request(document_access_request_json: dict, account_id: str, token):
+    def validate_document_access_request(document_access_request_json: dict, account_id: str, token,
+                                         role: str = 'basic'):
         """Validate a document access request."""
         validation_errors = []
 
-        account_org = auth_svc.account_org(token, account_id)
-        if not account_org:
-            validation_errors.append({'error': 'Invalid Account'})
+        if role not in [STAFF_ROLE, SBC_STAFF]:
+            account_org = auth_svc.account_org(token, account_id)
+            if not account_org:
+                validation_errors.append({'error': 'Invalid Account'})
 
-        if account_org.get('orgType') != 'PREMIUM':
-            validation_errors.append({'error': 'Document Access Request can be created only by a premium account user'})
+            if account_org.get('orgType') != 'PREMIUM':
+                validation_errors.append({
+                    'error': 'Document Access Request can be created only by a premium account user'})
 
         documents = document_access_request_json.get('documentAccessRequest', {}).get('documents', [])
         if not documents:

@@ -15,7 +15,7 @@
 """This exports all of the models and schemas used by the application."""
 # flake8: noqa I001
 from .db import db
-from .user import User
+from .user import User, UserRoles
 from .document_access_request import DocumentAccessRequest
 from .document import Document
 

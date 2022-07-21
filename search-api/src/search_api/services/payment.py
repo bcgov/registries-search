@@ -17,18 +17,27 @@ from http import HTTPStatus
 from typing import Tuple
 
 import requests
-from requests import exceptions
 from flask import current_app
 from flask_jwt_oidc import JwtManager
 
 from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
+from search_api.models import UserRoles
+from search_api.services import BASIC_USER, SBC_STAFF, STAFF_ROLE, is_staff
 
 
 # Maps Document Type to Pay API Filing Type
 DOCUMENT_TYPE_TO_FILING_TYPE = {
-    DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: 'BSRCH',
-    DocumentType.CERTIFICATE_OF_GOOD_STANDING.name: 'CGOOD'
+    DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: {
+        BASIC_USER: 'BSRCH',
+        STAFF_ROLE: 'SBSRCH',
+        SBC_STAFF: 'SBSRCH'
+    },
+    DocumentType.CERTIFICATE_OF_GOOD_STANDING.name: {
+        BASIC_USER: 'CGOOD',
+        STAFF_ROLE: 'CGOOD',
+        SBC_STAFF: 'CGOOD'
+    }
 }
 
 PAYMENT_REQUEST_TEMPLATE = {
@@ -50,17 +59,34 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
     payload = PAYMENT_REQUEST_TEMPLATE
     payload['filingInfo']['filingTypes'] = filing_types
 
-    folio_number = header.get('folioNumber', None)
-    if folio_number:
-        payload['filingInfo']['folioNumber'] = folio_number
+    if header.get('folioNumber', None):
+        payload['filingInfo']['folioNumber'] = header.get('folioNumber')
+
+    if is_staff(user_jwt):
+        special_role = UserRoles.STAFF
+    else:
+        special_role = None
+
+    if special_role:
+        account_info = {}
+        if header.get('routingSlipNumber', None):
+            account_info['routingSlip'] = header.get('routingSlipNumber')
+        if header.get('bcolAccountNumber', None):
+            account_info['bcolAccountNumber'] = header.get('bcolAccountNumber')
+        if header.get('datNumber', None):
+            account_info['datNumber'] = header.get('datNumber')
+
+        if account_info:
+            payload['accountInfo'] = account_info
 
     try:
         token = user_jwt.get_token_auth_header()
         headers = {'Authorization': 'Bearer ' + token,
-                   'Content-Type': 'application/json',
-                   'Account-Id': account_id}
+                   'Content-Type': 'application/json'}
+        if not is_staff(user_jwt):
+            headers = {**headers, 'Account-Id': account_id}
         payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=20.0)
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:
         current_app.logger.error('Payment connection failure:', err)
         raise ApiConnectionException(HTTPStatus.PAYMENT_REQUIRED,
                                      [{'message': 'Unable to create invoice for payment.'}])
