@@ -233,7 +233,7 @@ class Solr:
         # add filter query for each subsequent term
         for term in terms[1:]:
             if params.get('fq'):
-                params['fq'] += f' AND {fields[0]}:{term}'
+                params['fq'] += f') AND ({fields[0]}:{term}'
             else:
                 params['fq'] = f'({fields[0]}:{term}'
             if fields[0] in wild_card_fields:
