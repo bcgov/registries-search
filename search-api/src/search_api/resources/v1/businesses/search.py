@@ -37,7 +37,7 @@ def facets():
         query = request.args.get('query', None)
         if not query:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
-
+        query = Solr.prep_query_str(query)
         # TODO: validate legal_type + state
         legal_types = None
         states = None
@@ -88,6 +88,7 @@ def parties():
         query = request.args.get('query', None)
         if not query:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
+        query = Solr.prep_query_str(query)
 
         party_roles = None
         with suppress(AttributeError):
@@ -154,6 +155,7 @@ def suggest():
         query = request.args.get('query', None)
         if not query:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
+        query = Solr.prep_query_str(query)
 
         rows = None
         with suppress(TypeError):

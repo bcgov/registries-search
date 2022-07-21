@@ -181,10 +181,11 @@ const getDocFees = async (codes: FeeCodes[]) => {
 // load entity data, clear any previous fees
 onMounted(async () => {
   clearFees()
-  if (entity.identifier !== props.identifier) clearEntity()
-  loadEntity(props.identifier)
-  loadPurchasableDocs()
   loadFilingHistory(props.identifier, null)
+  if (entity.identifier !== props.identifier) clearEntity()
+  await loadEntity(props.identifier)
+  // NB: some logic depends on entity info
+  loadPurchasableDocs()
 })
 
 const loadPurchasableDocs = async () => {

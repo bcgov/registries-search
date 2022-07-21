@@ -32,9 +32,9 @@ def test_business_suggest_identifier(session, client, requests_mock, test_name, 
     # setup solr mock
     mocked_docs = [create_solr_doc(x, 'test doc', 'ACTIVE', 'BEN').json for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}:{query}",json={})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}%3A{query}",json={})
     requests_mock.get(
-        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " + \
+        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}%3A{query} " + \
         f'OR {SolrField.BN_Q}:{query}',json={'response': {'docs': mocked_docs}})
     # call select
     suggestions = business_suggest(query, True, None)
