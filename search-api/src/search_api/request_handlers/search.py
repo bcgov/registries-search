@@ -75,10 +75,11 @@ def business_search(params: SearchParams):
         filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
 
     filter_q = filter_q + ')' if filter_q else ''
-    if solr_query_params.get('fq'):
-        solr_query_params['fq'] += ' AND ' + filter_q
-    else:
-        solr_query_params['fq'] = filter_q
+    if filter_q:
+        if solr_query_params.get('fq'):
+            solr_query_params['fq'] += ' AND ' + filter_q
+        else:
+            solr_query_params['fq'] = filter_q
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
     solr_query_params['bq'] = f'{SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
@@ -162,10 +163,11 @@ def parties_search(params: SearchParams):
         filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
 
     filter_q = filter_q + ')' if filter_q else ''
-    if solr_query_params.get('fq'):
-        solr_query_params['fq'] += ' AND ' + filter_q
-    else:
-        solr_query_params['fq'] = filter_q
+    if filter_q:
+        if solr_query_params.get('fq'):
+            solr_query_params['fq'] += ' AND ' + filter_q
+        else:
+            solr_query_params['fq'] = filter_q
 
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
