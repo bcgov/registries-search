@@ -28,7 +28,7 @@ from search_api.exceptions import ApiConnectionException
 # Maps Document Type to Pay API Filing Type
 DOCUMENT_TYPE_TO_FILING_TYPE = {
     DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: 'BSRCH',
-    DocumentType.CERTIFICATE_OF_GOOD_STANDING.name: 'COGS1'
+    DocumentType.CERTIFICATE_OF_GOOD_STANDING.name: 'CGOOD'
 }
 
 PAYMENT_REQUEST_TEMPLATE = {
