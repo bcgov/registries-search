@@ -69,7 +69,6 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
                 'waiveFees': waive_fees})
         payment_response = create_payment(str(document_access_request.account_id), filing_types, user_jwt,
                                           header)
-        print(payment_response)
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             payment_completion_date = datetime.utcnow()
             pid = payment_response.json().get('id')
