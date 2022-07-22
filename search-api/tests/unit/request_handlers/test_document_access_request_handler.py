@@ -14,16 +14,13 @@
 
 """Tests to verify the request handler works as expected."""
 
-import copy
 from datetime import datetime
 from http import HTTPStatus
 
-import pytest
 from flask import current_app, g
 
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
-from search_api.services.payment import create_payment
 
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
@@ -55,18 +52,23 @@ def test_create_invoice(client, session, jwt, mocker):
         account_id=123,
         submission_date=datetime.utcnow()
     )
+
+    document_access_request.save()
+
     request_json = {
         'header': {
             'folioNumber': '1234'
         },
-        'documentAccessRequest': document_access_request
+        'documentAccessRequest': {
+            'businessIdentifier': document_access_request.business_identifier
+        }
     }
-
-    document_access_request.save()
 
     mock_response = MockResponse({'id': 123},HTTPStatus.CREATED)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
+    mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',
+                 return_value='basic')
 
     create_invoice(document_access_request, jwt, request_json)
 
@@ -95,6 +97,8 @@ def test_create_invoice_failure(client, session, jwt, mocker):
     mock_response = MockResponse({'type': 'BAD_REQUEST'},HTTPStatus.BAD_REQUEST)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
+    mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',
+                 return_value='basic')
 
     create_invoice(document_access_request, jwt, request_json)
 

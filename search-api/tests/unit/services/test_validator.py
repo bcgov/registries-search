@@ -59,7 +59,7 @@ def test_document_access_request_valid(client, session, jwt, requests_mock):
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}orgs/{org['id']}", json=org)
 
-    err =RequestValidator.validate_document_access_request(DOCUMENT_ACCESS_REQUEST_TEMPLATE, org['id'], token)
+    err =RequestValidator.validate_document_access_request(DOCUMENT_ACCESS_REQUEST_TEMPLATE, org['id'], token, 'basic')
     # check
 
     assert org['orgType'] == 'PREMIUM'
@@ -79,7 +79,7 @@ def test_document_access_request_invalid_basic_account(client, session, jwt, req
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG_COPY)
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}orgs/{org['id']}", json=org)
 
-    err =RequestValidator.validate_document_access_request(DOCUMENT_ACCESS_REQUEST_TEMPLATE, org['id'], token)
+    err =RequestValidator.validate_document_access_request(DOCUMENT_ACCESS_REQUEST_TEMPLATE, org['id'], token, 'basic')
     # check
 
     assert err[0]['error'] == 'Document Access Request can be created only by a premium account user'
@@ -104,7 +104,7 @@ def test_document_access_request_invalid(client, session, jwt, requests_mock, te
     if test_name == 'invalid_document_type':
         request_template_copy['documentAccessRequest']['documents'][0]['type'] = 'test'
 
-    err =RequestValidator.validate_document_access_request(request_template_copy, org['id'], token)
+    err =RequestValidator.validate_document_access_request(request_template_copy, org['id'], token, 'basic')
     # check
 
     assert err[0]['error'] == error_message

@@ -27,7 +27,7 @@ from search_api.exceptions import ApiConnectionException
 
 # TODO: identify what roles we need for search
 SYSTEM_ROLE = 'system'
-STAFF_ROLE = 'ppr_staff'
+STAFF_ROLE = 'staff'
 COLIN_ROLE = 'colin'
 PPR_ROLE = 'ppr'
 BASIC_USER = 'basic'
@@ -36,6 +36,7 @@ PUBLIC_USER = 'public_user'
 USER_ORGS_PATH = 'users/orgs'
 GOV_ACCOUNT_ROLE = 'gov_account_user'
 BCOL_HELP = 'helpdesk'
+SBC_STAFF = 'sbc_staff'
 
 
 def get_bearer_token():
@@ -257,3 +258,14 @@ def is_gov_account(jwt: JwtManager) -> bool:  # pylint: disable=too-many-return-
 def is_all_staff_account(account_id: str) -> bool:
     """Return True if the account id is any staff role."""
     return account_id is not None and account_id in (STAFF_ROLE, BCOL_HELP)
+
+
+def get_role(jwt, account_id) -> str:
+    """Return the role."""
+    role = BASIC_USER
+    if is_staff(jwt):
+        role = STAFF_ROLE
+    elif is_sbc_office_account(jwt, account_id):
+        role = SBC_STAFF
+
+    return role

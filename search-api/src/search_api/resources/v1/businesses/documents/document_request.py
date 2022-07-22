@@ -22,6 +22,7 @@ from search_api.models import DocumentAccessRequest
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
+from search_api.services import get_role
 
 
 bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint: disable=invalid-name
@@ -68,12 +69,14 @@ def post(business_identifier):
 
         token = jwt.get_token_auth_header()
         request_json = request.get_json()
+        role = get_role(jwt, account_id)
 
-        errors = RequestValidator.validate_document_access_request(request_json, account_id, token)
+        errors = RequestValidator.validate_document_access_request(request_json, account_id, token, role)
         if errors:
             return resource_utils.bad_request_response(errors)
 
         document_access_request = save_request(account_id, business_identifier, request_json)
+
         pay_message, pay_code = create_invoice(document_access_request, jwt, request_json)
         reply = document_access_request.json
         if pay_code != HTTPStatus.CREATED:
