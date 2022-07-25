@@ -8,4 +8,5 @@ export interface StaffPaymentIF {
   datNumber: string
   folioNumber: string
   isPriority: boolean
+  waiveFees?: boolean
 }

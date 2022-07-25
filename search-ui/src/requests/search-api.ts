@@ -1,7 +1,7 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 // local
-import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+import { StaffPaymentIF } from '@/bcrs-common-components/interfaces'
 import { useAuth } from '@/composables'
 import {
   SearchResponseI, SuggestionResponseI, DocumentDetailsI,
@@ -11,6 +11,7 @@ import {
 import { DocumentType, ErrorCategories, ErrorCodes } from '@/enums'
 import { DocumentTypeDescriptions } from '@/resources'
 import { Document } from '@/types'
+import { StaffPaymentOptions } from '@/bcrs-common-components/enums'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
 const SEARCH_RESULT_SIZE = 1000
@@ -111,6 +112,8 @@ export async function createDocumentAccessRequest(
 
   const docs = []
   documentList.forEach((doc) => { docs.push({ 'type': doc }) })
+
+  headerInfo.waiveFees = headerInfo.option === StaffPaymentOptions.NO_FEE
 
   const createRequest = {  
     header: headerInfo,

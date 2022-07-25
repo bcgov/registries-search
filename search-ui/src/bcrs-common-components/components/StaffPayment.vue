@@ -201,6 +201,7 @@ const emitStaffPaymentData = ({
 
 /** Called when payment option (radio group item) has changed. */
 watch(() => paymentOption.value, (val: StaffPaymentOptions) => {
+  staffPaymentData.option = val
   switch (val) {
     case StaffPaymentOptions.FAS:
       // reset other form
