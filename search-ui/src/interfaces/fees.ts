@@ -1,3 +1,4 @@
+import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
 import { ActionComps, FeeEntities } from '@/enums'
 import { FeeCodes } from '@/enums/fee-codes'
 import { ErrorI } from '@/interfaces'
@@ -24,6 +25,7 @@ export interface FeesI {
   folioNumber: string
   items: Array<FeeI>
   preSelection: FeeI
+  staffPaymentData: StaffPaymentIF
   _error: ErrorI
 }
 

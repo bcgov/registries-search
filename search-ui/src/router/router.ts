@@ -35,7 +35,7 @@ export function createVueRouter (): Router {
           // this route is to login
           next({ name: RouteNames.SEARCH })
         } else {
-          if (isBusinessInfo(to)) {
+          if (isBusinessInfo(to) || isDocumentRequest(to)) {
             // update meta info
             const breadcrumb = to.meta.breadcrumb as Array<BreadcrumbIF>
             if (breadcrumb.length < 3) {
@@ -98,6 +98,11 @@ export function createVueRouter (): Router {
   /** Returns True if route is BusinessInfo, else False. */
   function isBusinessInfo(route: RouteLocationNormalized): boolean {
     return Boolean(route.name === RouteNames.BUSINESS_INFO)
+  }
+
+  /** Returns True if route is BusinessInfo, else False. */
+  function isDocumentRequest(route: RouteLocationNormalized): boolean {
+    return Boolean(route.name === RouteNames.DOCUMENT_REQUEST)
   }
 
   return router

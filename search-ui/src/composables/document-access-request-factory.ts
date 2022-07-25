@@ -1,9 +1,11 @@
 import { reactive } from 'vue'
 
+import { DocumentType } from '@/enums'
+import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
 import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
+import { EntityI } from '@/interfaces/entity'
 import { getActiveAccessRequests, createDocumentAccessRequest, getDocument, fetchFilingDocument } from '@/requests'
 import {  Document } from '@/types'
-import {  useFeeCalculator, useEntity } from '@/composables'
 
 
 const documentAccessRequest = reactive({
@@ -36,13 +38,8 @@ export const useDocumentAccessRequest = () => {
         documentAccessRequest._loading = false
     }
 
-    const createAccessRequest = async (selectedDocs: any) => {
+    const createAccessRequest = async (selectedDocs: DocumentType[], entity: EntityI, header: StaffPaymentIF) => {
         documentAccessRequest._saving = true
-        const { fees } = useFeeCalculator()
-        const {entity} = useEntity()
-        const header =  {
-            folioNumber: fees.folioNumber
-        }
         const response: CreateDocumentResponseI = await createDocumentAccessRequest(entity.identifier, entity.name,
              selectedDocs, header)
         if (response.error) {
