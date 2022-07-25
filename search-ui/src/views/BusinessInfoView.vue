@@ -42,39 +42,46 @@
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
         <div class="document-list  mt-3 pa-3 pr-5 pt-7" :key="checkBoxesKey">
-          <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
-            <v-col>
-              <v-row no-gutters>
-                <v-col cols="auto" style="position: relative;">
-                  <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top">
-                    <template v-slot:activator="{ isActive, props }">
-                      <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
-                      <v-row v-bind="props" no-gutters>
-                        <v-col v-bind="props" cols="auto">
-                          <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
-                        </v-col>
-                        <v-col v-bind="props" class="document-list__label">
-                          <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
-                        </v-col>
-                      </v-row>
-                    </template>
-                    <span>{{ item.tooltip }}</span>
-                  </v-tooltip>
-                  <v-row v-else no-gutters>
-                    <v-col cols="auto">
-                      <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
-                    </v-col>
-                    <v-col class="document-list__label">
-                      <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col />
-              </v-row>
+          <v-row v-if="!pageLoaded" class="my-15" justify="center" no-gutters>
+            <v-col cols="auto">
+              <v-progress-circular color="primary" size="50" indeterminate />
             </v-col>
-            <v-col :class="['document-list__fee', item.active ? '' : 'disabled-text']" align-self="end" cols="auto"
-              v-html="item.fee" />
           </v-row>
+          <div v-else>
+            <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
+              <v-col>
+                <v-row no-gutters>
+                  <v-col cols="auto" style="position: relative;">
+                    <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top">
+                      <template v-slot:activator="{ isActive, props }">
+                        <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
+                        <v-row v-bind="props" no-gutters>
+                          <v-col v-bind="props" cols="auto">
+                            <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
+                          </v-col>
+                          <v-col v-bind="props" class="document-list__label">
+                            <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                          </v-col>
+                        </v-row>
+                      </template>
+                      <span>{{ item.tooltip }}</span>
+                    </v-tooltip>
+                    <v-row v-else no-gutters>
+                      <v-col cols="auto">
+                        <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
+                      </v-col>
+                      <v-col class="document-list__label">
+                        <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col />
+                </v-row>
+              </v-col>
+              <v-col :class="['document-list__fee', item.active ? '' : 'disabled-text']" align-self="end" cols="auto"
+                v-html="item.fee" />
+            </v-row>
+          </div>
         </div>
         <v-divider class="my-10" />
         <div>
@@ -106,6 +113,7 @@ const props = defineProps({
 })
 
 const loading = ref(false)
+const pageLoaded = ref(false)
 const router = useRouter()
 
 const { isStaff } = useAuth()
@@ -217,12 +225,14 @@ const getDocFees = async (codes: FeeCodes[]) => {
 
 // load entity data, clear any previous fees
 onMounted(async () => {
+  pageLoaded.value = false
   clearFees()
   loadFilingHistory(props.identifier, null)
   if (entity.identifier !== props.identifier) clearEntity()
   await loadEntity(props.identifier)
   // NB: some logic depends on entity info
-  loadPurchasableDocs()
+  await loadPurchasableDocs()
+  pageLoaded.value = true
 })
 
 const loadPurchasableDocs = async () => {

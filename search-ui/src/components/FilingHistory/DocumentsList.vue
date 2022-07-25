@@ -8,14 +8,17 @@
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
                             <v-icon v-bind="props">mdi-lock</v-icon>
+                            <span v-bind="props" class="doc-title">{{ document.title }}</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
                             and complete payment to access documents.
                         </span>
                     </v-tooltip>
-                    <v-icon v-else class="app-blue">mdi-file-pdf-box</v-icon>
-                    <span v-bind:class="[isLocked ? '' : 'app-blue']">{{ document.title }}</span>
+                    <div v-else>
+                        <v-icon class="app-blue">mdi-file-pdf-box</v-icon>
+                        <span class="app-blue">{{ document.title }}</span>
+                    </div>
                 </v-btn>
             </v-list-item>
 
@@ -26,14 +29,17 @@
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
                             <v-icon v-bind="props">mdi-lock</v-icon>
+                            <span v-bind="props" class="doc-title">Download All</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
                             and complete payment to access documents.
                         </span>
                     </v-tooltip>
-                    <v-icon class="app-blue" v-else>mdi-download</v-icon>
-                    <span v-bind:class="[isLocked ? '' : 'app-blue']">Download All</span>
+                    <div v-else>
+                        <v-icon class="app-blue">mdi-download</v-icon>
+                        <span>Download All</span>
+                    </div>
                 </v-btn>
             </v-list-item>
         </v-list>
@@ -76,6 +82,11 @@ const downloadAll = (): void => {
 </script>
 
 <style lang="scss" scoped>
+.doc-title {
+    overflow-y: visible;
+    text-align: start;
+    width: 100px;
+}
 .v-list-item {
     padding-left: 0;
     min-height: 1rem;
