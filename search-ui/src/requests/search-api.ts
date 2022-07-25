@@ -1,13 +1,14 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 // local
+import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
 import { useAuth } from '@/composables'
 import {
   SearchResponseI, SuggestionResponseI, DocumentDetailsI,
   CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI, ApiDocuments
 } from '@/interfaces'
 
-import { ErrorCategories, ErrorCodes } from '@/enums'
+import { DocumentType, ErrorCategories, ErrorCodes } from '@/enums'
 import { DocumentTypeDescriptions } from '@/resources'
 import { Document } from '@/types'
 
@@ -103,13 +104,13 @@ export async function searchParties(searchValue: string): Promise<SearchResponse
 export async function createDocumentAccessRequest(
   business_identifier: string,
   business_name: string,
-  documentList: any,
-  headerInfo: any
+  documentList: DocumentType[],
+  headerInfo: StaffPaymentIF
 ): Promise<CreateDocumentResponseI> {
   const config = getSearchConfig()
 
   const docs = []
-  documentList.value.forEach((doc) => { docs.push({ 'type': doc }) })
+  documentList.forEach((doc) => { docs.push({ 'type': doc }) })
 
   const createRequest = {  
     header: headerInfo,

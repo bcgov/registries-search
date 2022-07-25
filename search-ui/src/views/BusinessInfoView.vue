@@ -1,5 +1,14 @@
 <template>
   <v-container id="business-info" class="container" fluid>
+    <base-dialog :display="showStaffPayment" :options="staffDialogOptions" @proceed="staffPaymentHandler($event)">
+      <template v-slot:content>
+        <staff-payment
+          :staff-payment-data="staffPaymentData"
+          @update:staffPaymentData="fees.staffPaymentData = $event"
+          @valid="staffPaymentValid = $event"
+        />
+      </template>
+    </base-dialog>
     <v-fade-transition>
       <div class="loading-container" v-if="loading">
         <div class="loading__content">
@@ -83,12 +92,14 @@
 import { onMounted, ref, Ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 // local
-import { BaseFeeCalculator } from '@/components'
+import { StaffPayment } from '@/bcrs-common-components'
+import { BaseFeeCalculator, BaseDialog } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-import { useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
+import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
-import { FeeAction, FeeI, FeeDataI } from '@/interfaces'
+import { FeeAction, FeeI, FeeDataI, DialogOptionsIF } from '@/interfaces'
+import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
 
 const props = defineProps({
   identifier: { type: String }  // passed with param value in route.push
@@ -97,7 +108,7 @@ const props = defineProps({
 const loading = ref(false)
 const router = useRouter()
 
-
+const { isStaff } = useAuth()
 const { entity, clearEntity, loadEntity, isFirm } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
@@ -111,6 +122,25 @@ const feePreSelectItem: FeeI = {
   quantity: 0,
   serviceFee: 1.5
 }
+
+// staff payment
+const showStaffPayment = ref(false)
+const staffDialogOptions: DialogOptionsIF = {
+  acceptText: 'Submit Access Request',
+  cancelText: 'Back',
+  text: '',
+  title: 'Staff Payment'
+}
+const staffPaymentData = { ...fees.staffPaymentData }
+const staffPaymentHandler = (proceed: boolean) => {
+  if (!proceed) showStaffPayment.value = false
+  else if (staffPaymentValid.value) {
+    // entry is valid, submit payment
+    showStaffPayment.value = false
+    payForDocuments()
+  }
+}
+const staffPaymentValid = ref(false)
 
 const checkBoxesKey = ref(0)
 const purchasableDocs = ref([]) as Ref<{
@@ -126,7 +156,9 @@ const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 
 
 const payForDocuments = async () => {
   loading.value = true
-  await createAccessRequest(selectedDocs)
+  let header = { folioNumber: fees.folioNumber } as StaffPaymentIF
+  if (isStaff.value) header = fees.staffPaymentData
+  await createAccessRequest(selectedDocs.value, entity, header)
   if (!documentAccessRequest._error) {
     selectedDocs.value = []
     clearFees()
@@ -137,9 +169,14 @@ const payForDocuments = async () => {
     await loadEntity(entity.identifier)
     await loadFilingHistory(entity.identifier, documentAccessRequest.currentRequest.submissionDate)
     await loadAccessRequestHistory()
-    router.push({ name: RouteNames.DOCUMENT_REQUEST })
+    router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier: entity.identifier } })
   }
   loading.value = false
+}
+
+const submitSelected = () => {
+  if (isStaff.value) showStaffPayment.value = true
+  else payForDocuments()
 }
 
 const feeActions: FeeAction[][] = [
@@ -156,7 +193,7 @@ const feeActions: FeeAction[][] = [
     outlined: true, text: 'Back to Search Results'
   }],
   [{
-    action: payForDocuments,
+    action: submitSelected,
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
     outlined: false,
@@ -290,6 +327,10 @@ const toggleFee = (event: any, item: any) => {
   font-weight: 700;
   white-space: normal;
   --v-medium-emphasis-opacity: 1;
+}
+
+:deep(.v-overlay__content) {
+  width: 100%;
 }
 
 .disabled-text {

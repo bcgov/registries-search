@@ -72,7 +72,7 @@ const openRequest = async (item: DocumentDetailsI) => {
   documentAccessRequest.currentRequest = item
   await loadEntity(item.businessIdentifier)
   await loadFilingHistory(item.businessIdentifier, item.submissionDate)
-  router.push({ name: RouteNames.DOCUMENT_REQUEST })
+  router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier: item.businessIdentifier } })
   loading.value = false
 }
 </script>

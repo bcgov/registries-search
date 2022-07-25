@@ -12,6 +12,7 @@ const fees = reactive({
   folioNumber: '',
   items: [],
   preSelection: null,
+  staffPaymentData: null,
   _error: null
 } as FeesI)
 

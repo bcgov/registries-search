@@ -29,7 +29,6 @@ export const useFilingHistory = () => {
             const all_filings = await getFilings(identifier, null)
             if (!all_filings.error) {                 
                 filingHistory.latestFiling = all_filings[0]
-                console.log(filingHistory.latestFiling.displayName)
             }
         }
         if (filings.error) {
