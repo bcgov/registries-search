@@ -1,9 +1,7 @@
-import { BaseSelectFilter } from '@/components/datatable/resources'
-import { useEntity } from '@/composables'
-import { ColinStateTypes } from '@/enums'
+import { useSearch } from '@/composables'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 
-const { corpStatusTypes } = useEntity()
+const { highlightMatch } = useSearch()
 
 export const PartySearchHeaders: BaseTableHeaderI[] = [
   {
@@ -19,6 +17,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     filter: { clearable: true, type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
+    itemFn: highlightMatch,
     value: 'Owner Name',
     width: '19%'
   },
@@ -68,18 +67,11 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     col: 'parentStatus',
     filter: {
       clearable: true,
-      filterFn: (colVal: string, filterVal: string) => {
-        if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(colVal)) return BaseSelectFilter(colVal, filterVal)
-        return BaseSelectFilter(ColinStateTypes[colVal], filterVal)
-      },
-      items: corpStatusTypes.value.sort(),
+      items: ['Active', 'Historical'],
       type: 'select',
       value: ''
     },
-    itemFn: (val: string) => {
-      if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(val)) return val.charAt(0) + val.slice(1).toLowerCase()
-      return ColinStateTypes[val]
-    },
+    itemFn: (val: string) => val.charAt(0) + val.slice(1).toLowerCase(),
     hasFilter: true,
     hasSort: true,
     value: 'Status',

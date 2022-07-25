@@ -1,9 +1,9 @@
-import { BaseSelectFilter } from '@/components/datatable/resources'
-import { useEntity } from '@/composables'
-import { ColinStateTypes, CorpTypeCd } from '@/enums'
+import { useEntity, useSearch } from '@/composables'
+import { CorpTypeCd } from '@/enums'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 
-const { corpStatusTypes, corpTypes, getEntityDescription } = useEntity()
+const { corpTypes, getEntityDescription } = useEntity()
+const { highlightMatch } = useSearch()
 
 export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   {
@@ -19,6 +19,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     filter: { clearable: true, type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
+    itemFn: highlightMatch,
     value: 'Business Name',
     width: '25%'
   },
@@ -27,6 +28,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     filter: { clearable: true, type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
+    itemFn: highlightMatch,
     value: 'Incorporation/<br />Registration',
     width: '10%'
   },
@@ -35,6 +37,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     filter: { clearable: true, type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
+    itemFn: highlightMatch,
     value: 'CRA Business Number',
     width: '15%'
   },
@@ -59,18 +62,11 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     col: 'status',
     filter: {
       clearable: true,
-      filterFn: (colVal: string, filterVal: string) => {
-        if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(colVal)) return BaseSelectFilter(colVal, filterVal)
-        return BaseSelectFilter(ColinStateTypes[colVal], filterVal)
-      },
-      items: corpStatusTypes.value.sort(),
+      items: ['Active', 'Historical'],
       type: 'select',
       value: ''
     },
-    itemFn: (val: string) => {
-      if (['ACTIVE','HISTORICAL','LIQUIDATION'].includes(val)) return val.charAt(0) + val.slice(1).toLowerCase()
-      return ColinStateTypes[val]
-    },
+    itemFn: (val: string) => val.charAt(0) + val.slice(1).toLowerCase(),
     hasFilter: true,
     hasSort: true,
     value: 'Status',

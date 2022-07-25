@@ -37,6 +37,11 @@ export const useSearch = () => {
     }
     search._loading = false
   }
+  const highlightMatch = (match: string) => {
+    if (!search._value) return match
+    if (!match) return ''
+    return match.replaceAll(search._value.toUpperCase(), `<b>${search._value.toUpperCase()}</b>`)
+  }
   const resetSearch = () => {
     search.results = null
     search.searchType = 'business'
@@ -48,6 +53,7 @@ export const useSearch = () => {
   return {
     search,
     getSearchResults,
+    highlightMatch,
     resetSearch
   }
 }

@@ -1,6 +1,6 @@
 import { computed, reactive } from 'vue'
 // Local
-import { BusinessTypes, ColinStateTypes, CorpTypeCd } from '@/enums'
+import { BusinessTypes, CorpTypeCd } from '@/enums'
 import { getEntity } from '@/requests'
 import { CorpInfoArray } from '@/resources'
 import { EntityI } from '@/interfaces/entity'
@@ -97,10 +97,6 @@ export const useEntity = () => {
     return [...new Set(CorpInfoArray.map((corp) => corp.fullDesc))]
   })
 
-  const corpStatusTypes = computed(() => {
-    return Object.keys(ColinStateTypes).map((key) => ColinStateTypes[key])
-  })
-
   const learBusinessTypes = computed(() => {
     return Object.keys(BusinessTypes).map((key) => {
       if (BusinessTypes[key] !== BusinessTypes.BC_LIMITED_COMPANY) return BusinessTypes[key]
@@ -120,7 +116,6 @@ export const useEntity = () => {
     entityTitle,
     actTitle,
     entityNumberLabel,
-    corpStatusTypes,
     corpTypes,
     learBusinessTypes
   }
