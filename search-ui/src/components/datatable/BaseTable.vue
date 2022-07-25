@@ -88,7 +88,7 @@
                 :class="[header.itemClass, 'base-table__body__item']"
               >
                 <slot :item="item" :name="'item-slot-' + header.customItemSlot">
-                  <span v-if="header.itemFn">{{ header.itemFn(item[header.col]) }}</span>
+                  <span v-if="header.itemFn" v-html="header.itemFn(item[header.col])" />
                   <span v-else>{{ item[header.col] }}</span>
                 </slot>
               </td>

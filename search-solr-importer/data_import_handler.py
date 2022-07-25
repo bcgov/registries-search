@@ -38,11 +38,12 @@ def collect_colin_data():
         SELECT c.corp_num as identifier, c.corp_typ_cd as legal_type, c.bn_15 as tax_id,
             cn.corp_nme as legal_name, cp.business_nme as organization_name, cp.first_nme as first_name,
             cp.last_nme as last_name, cp.middle_nme as middle_initial, cp.party_typ_cd, cp.corp_party_id as party_id,
-            CASE cs.state_typ_cd
-                when 'ACT' then 'ACTIVE' when 'HIS' then 'HISTORICAL' when 'HLD' then 'LIQUIDATION'
-                else cs.state_typ_cd END as state
+            CASE cos.state_typ_cd
+                when 'ACT' then 'ACTIVE' when 'HIS' then 'HISTORICAL'
+                else 'ACTIVE' END as state
         FROM corporation c
         join corp_state cs on cs.corp_num = c.corp_num
+        join corp_op_state cos on cos.state_typ_cd = cs.state_typ_cd
         join corp_name cn on cn.corp_num = c.corp_num
         left join (select business_nme, first_nme, last_nme, middle_nme, corp_num, party_typ_cd, corp_party_id
                 from corp_party
@@ -67,8 +68,9 @@ def collect_lear_data():
     cur = conn.cursor()
     current_app.logger.debug('Collecting LEAR data...')
     cur.execute("""
-        SELECT b.identifier,b.legal_name,b.legal_type,b.state,b.tax_id, pr.role, p.first_name,
-            p.middle_initial, p.last_name, p.organization_name, p.party_type, p.id as party_id
+        SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id, pr.role, p.first_name,
+            p.middle_initial, p.last_name, p.organization_name, p.party_type, p.id as party_id,
+            CASE when b.state = 'LIQUIDATION' then 'ACTIVE' else b.state END state
         FROM businesses b
             JOIN party_roles pr on pr.business_id = b.id
             JOIN parties p on p.id = pr.party_id

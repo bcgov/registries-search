@@ -22,8 +22,10 @@
       </v-btn>
       <v-tooltip v-else location="top" content-class="tooltip">
         <template v-slot:activator="{ isActive, props }">
-          <div v-if="isActive" class="top-tooltip-arrow" style="margin-top: -25px !important; left: 48%; !important;" />
-          <v-icon class="table-icon" color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
+          <div class="table-icon-div">
+            <div v-if="isActive" class="top-tooltip-arrow table-tooltip-arrow" />
+            <v-icon color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
+          </div>
         </template>
         <span>
           You can access this business through BC Online or by contacting BC Registries.
@@ -55,8 +57,10 @@
       </v-btn>
       <v-tooltip v-else location="top" content-class="tooltip">
         <template v-slot:activator="{ isActive, props }">
-          <div v-if="isActive" class="top-tooltip-arrow" style="margin-top: -22px !important; left: 48%; !important;" />
-          <v-icon class="table-icon" color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
+          <div class="table-icon-div">
+            <div v-if="isActive" class="top-tooltip-arrow table-tooltip-arrow" />
+            <v-icon color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
+          </div>
         </template>
         <span>
           You can access this business through BC Online or by contacting BC Registries.
@@ -116,9 +120,14 @@ const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.slice(
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-.table-icon {
-  left: 45%;
-  position: absolute;
-  top: 18px;
+.table-icon-div {
+  height: 28px;
+  margin: auto;
+  position: relative;
+  width: 28px;
+}
+.table-tooltip-arrow {
+  left: 4px;
+  margin-top: -10px !important;
 }
 </style>
