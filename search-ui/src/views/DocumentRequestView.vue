@@ -55,7 +55,7 @@ import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composa
 import { DocumentDetailsI, DocumentI } from '@/interfaces'
 import { dateToPacificDateTime } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
-import { DocumentType } from '@/enums'
+import { DocumentType, RouteNames } from '@/enums'
 import { useRouter } from 'vue-router'
 
 const { entity } = useEntity()
@@ -92,7 +92,8 @@ const downloadDoc = (document: DocumentI): void => {
 }
 
 const gotoSearch = (): void => {
-    router.push('/')
+     const identifier = entity.identifier
+     router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
 }
 </script>
 
@@ -117,6 +118,7 @@ const gotoSearch = (): void => {
 
 .new-search-link {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .warning-message {
