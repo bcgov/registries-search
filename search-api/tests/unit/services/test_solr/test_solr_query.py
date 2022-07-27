@@ -90,7 +90,7 @@ def test_solr_query(app, test_name, query, query_field, base_fields, expected_fi
     solr.delete_all_docs()
     solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(1) # wait for solr to register update
-    query = Solr.prep_query_str(query)
+    query = {'value': Solr.prep_query_str(query)}
     search_params = Solr.build_split_query(query, [query_field], [SolrField.NAME_SINGLE])
     search_params['fl'] = solr.base_fields if base_fields else solr.party_fields
     # call select

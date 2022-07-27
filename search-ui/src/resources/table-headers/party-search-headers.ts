@@ -1,7 +1,7 @@
 import { useSearch } from '@/composables'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 
-const { highlightMatch } = useSearch()
+const { filterSearch, highlightMatch } = useSearch()
 
 export const PartySearchHeaders: BaseTableHeaderI[] = [
   {
@@ -14,7 +14,12 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'partyName',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('partyName', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
@@ -26,10 +31,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     customItemSlot: 'roles',
     filter: {
       clearable: true,
-      filterFn: (colVal: any[], filterVal: string) => {
-        if (filterVal === '') return true
-        return (colVal.map((role) => role.toUpperCase()).includes(filterVal.toUpperCase()))
-      },
+      filterApiFn: (filterVal: string) => filterSearch('partyRoles', filterVal),
       items: ['Partner', 'Proprietor'],
       type: 'select',
       value: ''
@@ -41,7 +43,12 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'parentIdentifier',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('parentIdentifier', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     value: 'Firm Number',
@@ -49,7 +56,12 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'parentName',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('parentName', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     value: 'Firm Name',
@@ -57,7 +69,12 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'parentBN',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('parentBN', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     value: 'CRA Business Number',
@@ -67,6 +84,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     col: 'parentStatus',
     filter: {
       clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('parentStatus', filterVal),
       items: ['Active', 'Historical'],
       type: 'select',
       value: ''

@@ -60,6 +60,11 @@ class SolrField(str, Enum):
     PARTY_NAME_SINGLE = 'partyName_single_term'
     PARTY_NAME_STEM_AGRO = 'partyName_stem_agro'
     PARTY_NAME_SUGGEST = 'partyName_suggest'
+    PARENT_NAME_Q = 'parentName_q'
+    PARENT_NAME_SINGLE = 'parentName_single_term'
+    PARENT_NAME_STEM_AGRO = 'parentName_stem_agro'
+    PARENT_BN_Q = 'parentBN_q'
+    PARENT_IDENTIFIER_Q = 'parentIdentifier_q'
 
 
 class SolrDoc:  # pylint: disable=too-few-public-methods
@@ -220,30 +225,53 @@ class Solr:
         return filter_q + ')'
 
     @staticmethod
-    def build_split_query(query: str, fields: List[SolrField], wild_card_fields: List[SolrField]) -> Dict:
+    def build_split_query(query: Dict[str, str], fields: List[SolrField], wild_card_fields: List[SolrField]) -> Dict:
         """Return a solr query with fqs for each subsequent term."""
-        terms = query.split()
-        params = {'q': f'{fields[0]}:{terms[0]}'}
-        if fields[0] in wild_card_fields:
-            params['q'] += '*'
-        for field in fields[1:]:
-            params['q'] += f' OR {field}:{terms[0]}'
-            if field in wild_card_fields:
-                params['q'] += '*'
-        # add filter query for each subsequent term
-        for term in terms[1:]:
-            if params.get('fq'):
-                params['fq'] += f') AND ({fields[0]}:{term}'
+        def add_to_q(q: str, fields: List[SolrField], term: str):
+            """Return an updated solr q param with extra clauses."""
+            if not q:
+                q = f'({fields[0]}:{term}'
             else:
-                params['fq'] = f'({fields[0]}:{term}'
+                q += f' AND ({fields[0]}:{term}'
             if fields[0] in wild_card_fields:
-                params['fq'] += '*'
+                q += '*'
             for field in fields[1:]:
-                params['fq'] += f' OR {field}:{term}'
+                q += f' OR {field}:{term}'
                 if field in wild_card_fields:
-                    params['fq'] += '*'
-        if params.get('fq'):
-            params['fq'] += ')'
+                    q += '*'
+            return q + ')'
+
+        def add_to_fq(fq: str, terms: str, fields: List[SolrField]):  # pylint: disable=invalid-name
+            """Return an updated solr fq param with extra clauses."""
+            for term in terms:
+                if fq:
+                    fq += f' AND ({fields[0]}:{term}'
+                else:
+                    fq = f'({fields[0]}:{term}'
+                if fields[0] in wild_card_fields:
+                    fq += '*'
+                for field in fields[1:]:
+                    fq += f' OR {field}:{term}'
+                    if field in wild_card_fields:
+                        fq += '*'
+                fq += ')'
+            return fq
+        terms = query['value'].split()
+        # add initial q param
+        params = {'q': add_to_q('', fields, terms[0])}
+        # add initial filter param for subsequent terms
+        params['fq'] = add_to_fq('', terms[1:], fields)
+
+        # add query clause and subsequent filter clauses for extra query items
+        for key in query:
+            if key == 'value' or not query[key]:
+                continue
+            extra_terms = query[key].split()
+            # add query clause for key
+            params['q'] = add_to_q(params['q'], [key], extra_terms[0])
+            # add filter clause for key
+            params['fq'] = add_to_fq(params['fq'], extra_terms[1:], [key])
+
         return params
 
     @staticmethod

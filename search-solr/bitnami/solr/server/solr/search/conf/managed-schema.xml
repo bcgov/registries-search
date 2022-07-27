@@ -79,7 +79,7 @@
       <filter name="lowercase"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
-      <filter class="solr.NGramFilterFactory" maxGramSize="15" minGramSize="3"/>
+      <filter class="solr.NGramFilterFactory" maxGramSize="15" minGramSize="1"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="keyword"/>
@@ -534,22 +534,27 @@
   <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
-  <field name="bn" type="string" indexed="true" stored="true"/>
+  <field name="bn" type="string" indexed="false" stored="true"/>
   <field name="bn_q" type="phrase_ngram" indexed="true" stored="false"/>
   <field name="identifier" type="string" indexed="true" required="true" stored="true"/>
   <field name="identifier_q" type="phrase_ngram" indexed="true" stored="false"/>
   <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
-  <field name="name" type="string" indexed="true" stored="true"/>
+  <field name="name" type="string" indexed="false" stored="true"/>
   <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>
   <field name="name_single_term" type="text_ngram" indexed="true" stored="false"/>
   <field name="name_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
   <field name="name_suggest" type="phrase_basic" indexed="true" stored="false"/>
   <field name="parties" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="parentBN" type="string" indexed="false" stored="true"/>
+  <field name="parentBN_q" type="phrase_ngram" indexed="true" stored="true"/>
   <field name="parentIdentifier" type="string" indexed="false" stored="true"/>
-  <field name="parentLegalType" type="string" indexed="false" stored="true"/>
+  <field name="parentIdentifier_q" type="phrase_ngram" indexed="true" stored="true"/>
+  <field name="parentLegalType" type="string" docValues="true" indexed="true" stored="true"/>
   <field name="parentName" type="string" indexed="false" stored="true"/>
-  <field name="parentStatus" type="string" indexed="false" stored="true"/>
+  <field name="parentName_q" type="text_stemmed" indexed="true" stored="false"/>
+  <field name="parentName_single_term" type="text_ngram" indexed="true" stored="false"/>
+  <field name="parentName_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
+  <field name="parentStatus" type="string" docValues="true" indexed="true" stored="true"/>
   <field name="partyName" type="string" indexed="true" stored="true"/>
   <field name="partyName_q" type="text_stemmed" indexed="true" stored="false"/>
   <field name="partyName_single_term" type="text_ngram" indexed="true" stored="false"/>
@@ -636,5 +641,10 @@
   <copyField source="partyName" dest="partyName_single_term"/>
   <copyField source="partyName" dest="partyName_stem_agro"/>
   <copyField source="partyName" dest="partyName_suggest"/>
+  <copyField source="parentName" dest="parentName_q"/>
+  <copyField source="parentName" dest="parentName_single_term"/>
+  <copyField source="parentName" dest="parentName_stem_agro"/>
+  <copyField source="parentBN" dest="parentBN_q"/>
   <copyField source="_nest_parent_" dest="parentIdentifier"/>
+  <copyField source="_nest_parent_" dest="parentIdentifier_q"/>
 </schema>

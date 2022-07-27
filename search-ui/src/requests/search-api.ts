@@ -5,7 +5,7 @@ import { StaffPaymentIF } from '@/bcrs-common-components/interfaces'
 import { useAuth } from '@/composables'
 import {
   SearchResponseI, SuggestionResponseI, DocumentDetailsI,
-  CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI, ApiDocuments
+  CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI, ApiDocuments, SearchFilterI, SearchPartyFilterI
 } from '@/interfaces'
 
 import { DocumentType, ErrorCategories, ErrorCodes } from '@/enums'
@@ -14,7 +14,38 @@ import { Document } from '@/types'
 import { StaffPaymentOptions } from '@/bcrs-common-components/enums'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
-const SEARCH_RESULT_SIZE = 1000
+const SEARCH_RESULT_SIZE = 100
+
+const addSearchBusFilters = (filters: SearchFilterI) => {
+  const filterParams = { query: '', categories: '' }
+  // filters
+  if (filters?.bn) filterParams.query += `::bn:${filters.bn}`
+  if (filters?.identifier) filterParams.query += `::identifier:${filters.identifier}`
+  if (filters?.name) filterParams.query += `::name:${filters.name}`
+  // categories
+  if (filters?.legalType) filterParams.categories += `legalType:${filters.legalType}`
+  if (filters?.status) {
+    console.log(`status:${filters.status}`)
+    filterParams.categories += filters?.legalType ? `::` : ''
+    filterParams.categories += `status:${filters.status}`
+  }
+  return filterParams
+}
+
+const addSearchPartyFilters = (filters: SearchPartyFilterI) => {
+  const filterParams = { query: '', categories: '' }
+  // filters
+  if (filters.parentBN) filterParams.query += `::parentBN:${filters.parentBN}`
+  if (filters.parentIdentifier) filterParams.query += `::parentIdentifier:${filters.parentIdentifier}`
+  if (filters.parentName) filterParams.query += `::parentName:${filters.parentName}`
+  if (filters.partyName) filterParams.query += `::partyName:${filters.partyName}`
+  // categories
+  if (filters.partyRoles) filterParams.categories += `partyRoles:${filters.partyRoles}`
+  else filterParams.categories += 'partyRoles:partner,proprietor'
+  if (filters.parentStatus) filterParams.categories += `::parentStatus:${filters.parentStatus}`
+
+  return filterParams
+}
 
 const getSearchConfig = (params: object = null) => {
   const { auth } = useAuth()
@@ -52,10 +83,15 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
     })
 }
 
-export async function searchBusiness(searchValue: string): Promise<SearchResponseI> {
+export async function searchBusiness(searchValue: string, filters: SearchFilterI): Promise<SearchResponseI> {
   if (!searchValue) return
-
-  const params = { query: searchValue, start: 0, rows: SEARCH_RESULT_SIZE }
+  // basic params
+  const params = { query: `value:${searchValue}`, start: 0, rows: SEARCH_RESULT_SIZE }
+  // add filters
+  const filterParams = addSearchBusFilters(filters)
+  if (filterParams.query) params.query += filterParams.query
+  if (filterParams.categories) params['categories'] = filterParams.categories
+  // add search-api config stuff
   const config = getSearchConfig(params)
   return axios.get<SearchResponseI>('businesses/search/facets', config)
     .then(response => {
@@ -77,10 +113,21 @@ export async function searchBusiness(searchValue: string): Promise<SearchRespons
     })
 }
 
-export async function searchParties(searchValue: string): Promise<SearchResponseI> {
+export async function searchParties(searchValue: string, filters: SearchPartyFilterI): Promise<SearchResponseI> {
   if (!searchValue) return
 
-  const params = { query: searchValue, categories: 'partyRoles:partner,proprietor', start: 0, rows: SEARCH_RESULT_SIZE }
+  // basic params
+  const params = {
+    query: `value:${searchValue}`,
+    categories: 'partyRoles:partner,proprietor',
+    start: 0,
+    rows: SEARCH_RESULT_SIZE
+  }
+  // add filters
+  const filterParams = addSearchPartyFilters(filters)
+  if (filterParams.query) params.query += filterParams.query
+  if (filterParams.categories) params.categories = filterParams.categories
+  // add search-api config stuff
   const config = getSearchConfig(params)
   return axios.get<SearchResponseI>('businesses/search/parties', config)
     .then(response => {
