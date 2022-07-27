@@ -134,8 +134,8 @@ const feePreSelectItem: FeeI = {
 // staff payment
 const showStaffPayment = ref(false)
 const staffDialogOptions: DialogOptionsIF = {
-  acceptText: 'Submit Access Request',
-  cancelText: 'Back',
+  acceptText: 'Continue to Payment',
+  cancelText: 'Cancel',
   text: '',
   title: 'Staff Payment'
 }
