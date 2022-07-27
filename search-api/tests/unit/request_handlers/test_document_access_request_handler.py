@@ -70,7 +70,8 @@ def test_create_invoice(client, session, jwt, mocker):
     mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',
                  return_value='basic')
 
-    create_invoice(document_access_request, jwt, request_json)
+    business_json = {'identifier': 'BC1234567', 'legalType': 'BC', 'legalName': 'Test - 1234567'}
+    create_invoice(document_access_request, jwt, request_json, business_json)
 
     document_access_request = DocumentAccessRequest.find_by_id(document_access_request.id)
     assert document_access_request.payment_token
@@ -99,8 +100,8 @@ def test_create_invoice_failure(client, session, jwt, mocker):
                  return_value=mock_response)
     mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',
                  return_value='basic')
-
-    create_invoice(document_access_request, jwt, request_json)
+    business_json = {'identifier': 'BC1234567', 'legalType': 'BC', 'legalName': 'Test - 1234567'}
+    create_invoice(document_access_request, jwt, request_json, business_json)
 
     document_access_request = DocumentAccessRequest.find_by_id(document_access_request.id)
 
