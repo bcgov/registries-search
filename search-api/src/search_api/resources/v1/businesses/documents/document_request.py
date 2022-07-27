@@ -23,6 +23,7 @@ from search_api.request_handlers.document_access_request_handler import create_i
 from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
 from search_api.services import get_role
+from search_api.services.entity import get_business
 
 
 bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint: disable=invalid-name
@@ -67,6 +68,12 @@ def post(business_identifier):
         if not account_id:
             return resource_utils.account_required_response()
 
+        business_response = get_business(business_identifier)
+        if business_response.status_code not in [HTTPStatus.OK]:
+            return resource_utils.bad_request_response('Business not found.')
+
+        business_json = business_response.json().get('business')
+
         token = jwt.get_token_auth_header()
         request_json = request.get_json()
         role = get_role(jwt, account_id)
@@ -77,7 +84,7 @@ def post(business_identifier):
 
         document_access_request = save_request(account_id, business_identifier, request_json)
 
-        pay_message, pay_code = create_invoice(document_access_request, jwt, request_json)
+        pay_message, pay_code = create_invoice(document_access_request, jwt, request_json, business_json)
         reply = document_access_request.json
         if pay_code != HTTPStatus.CREATED:
             reply['errors'] = [pay_message]

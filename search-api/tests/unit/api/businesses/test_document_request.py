@@ -149,6 +149,11 @@ def test_post_business_document(session, client, jwt, mocker):
     mock_response = MockResponse({'id': 123}, HTTPStatus.CREATED)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
+    business_mock_response = MockResponse(
+        {'business': {'identifier': 'CP1234567', 'legalType': 'CP', 'legalName': 'Test - 1234567'}},
+        HTTPStatus.OK)
+    mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_business',
+                 return_value=business_mock_response)
     api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
                      data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',
@@ -175,6 +180,11 @@ def test_post_business_document_payment_failure(session, client, jwt, mocker):
     mock_response = MockResponse({'id': 123}, HTTPStatus.BAD_REQUEST)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
+    business_mock_response = MockResponse(
+        {'business': {'identifier': 'CP1234567', 'legalType': 'CP', 'legalName': 'Test - 1234567'}},
+        HTTPStatus.OK)
+    mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_business',
+                 return_value=business_mock_response)
     api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
                      data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Accept-Version': 'v1',

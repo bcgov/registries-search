@@ -53,8 +53,8 @@ def save_request(account_id, business_identifier, request_json) -> DocumentAcces
     return document_access_request
 
 
-def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: JwtManager, request_json: dict)\
-        -> Tuple[int, dict, int]:
+def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: JwtManager, request_json: dict,
+                   business_json: dict) -> Tuple[int, dict, int]:
     """Create the invoice in SBC Payments and updates the access request record with payment details."""
     try:
         filing_types = []
@@ -68,7 +68,7 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
                 'filingTypeCode': DOCUMENT_TYPE_TO_FILING_TYPE.get(document.document_type.name).get(role),
                 'waiveFees': waive_fees})
         payment_response = create_payment(str(document_access_request.account_id), filing_types, user_jwt,
-                                          header)
+                                          header, business_json)
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             payment_completion_date = datetime.utcnow()
             pid = payment_response.json().get('id')

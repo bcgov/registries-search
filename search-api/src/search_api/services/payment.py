@@ -52,7 +52,8 @@ PAYMENT_REQUEST_TEMPLATE = {
 }
 
 
-def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, header: dict) -> Tuple[int, dict, int]:
+def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, header: dict, business_json: str) -> \
+        Tuple[int, dict, int]:
     """Create the invoice for the document access request."""
     payment_svc_url = current_app.config.get('PAYMENT_SVC_URL')
 
@@ -78,6 +79,14 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
 
         if account_info:
             payload['accountInfo'] = account_info
+
+    legal_type = business_json.get('legalType')
+    label_name = 'Registration Number' if legal_type in ['SP', 'GP'] else 'Incorporation Number'
+
+    payload['details'] = [{
+        'label': f'{label_name}: ',
+        'value': business_json.get('identifier')
+    }]
 
     try:
         token = user_jwt.get_token_auth_header()
