@@ -236,7 +236,7 @@ onMounted(async () => {
 })
 
 const loadPurchasableDocs = async () => {
-  const feeData = await getDocFees([FeeCodes.BSRCH, FeeCodes.CGOOD])
+  const feeData = await getDocFees([FeeCodes.BSRCH, FeeCodes.CGOOD, FeeCodes.CSTAT])
 
   purchasableDocs.value.push({
     code: FeeCodes.BSRCH,
@@ -258,6 +258,15 @@ const loadPurchasableDocs = async () => {
         'can only be ordered if the business is in Good Standing.' : ''
     })
   }
+
+  purchasableDocs.value.push({
+      code: FeeCodes.CSTAT,
+      fee: displayFee(feeData[2].fee, false),
+      label: 'Certificate of Status',
+      documentType: DocumentType.CERTIFICATE_OF_STATUS,
+      active: true,
+      tooltip: ''
+    })
 }
 
 const isCogsAvailable = () => {

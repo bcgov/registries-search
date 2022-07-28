@@ -37,6 +37,11 @@ DOCUMENT_TYPE_TO_FILING_TYPE = {
         BASIC_USER: 'CGOOD',
         STAFF_ROLE: 'CGOOD',
         SBC_STAFF: 'CGOOD'
+    },
+    DocumentType.CERTIFICATE_OF_STATUS.name: {
+        BASIC_USER: 'CSTAT',
+        STAFF_ROLE: 'CSTAT',
+        SBC_STAFF: 'CSTAT'
     }
 }
 
