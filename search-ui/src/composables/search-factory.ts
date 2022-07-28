@@ -1,9 +1,10 @@
 import { reactive } from 'vue'
 // local
-import { SearchI, SearchResponseI } from '@/interfaces'
+import { SearchFilterI, SearchI, SearchPartyFilterI, SearchResponseI } from '@/interfaces'
 import { searchBusiness, searchParties } from '@/requests'
 
 const search = reactive({
+  filters: {},
   results: null,
   searchType: 'business',
   totalResults: null,
@@ -13,24 +14,35 @@ const search = reactive({
 } as SearchI)
 
 export const useSearch = () => {
+  const filterSearch = async (filterField: string, val: string) => {
+    // FUTURE: verify filterField is valid
+    search.filters[filterField] = val
+    await getSearchResults(search._value)
+  }
   const getSearchResults = async (val: string) => {
     search._loading = true
     search._value = val
-    search.results = []
-    search.totalResults = null
     let searchResp: SearchResponseI = null
-    if (search.searchType === 'business') searchResp = await searchBusiness(val)
-    else searchResp = await searchParties(val)
+    if (search.searchType === 'business') {
+      // business search
+      searchResp = await searchBusiness(val, search.filters as SearchFilterI)
+    } else {
+      // owner search
+      searchResp = await searchParties(val, search.filters as SearchPartyFilterI)
+    }
     if (searchResp) {
-      if (searchResp.error) {
+      if (!searchResp.error) {
+        // success
+        search.results = searchResp.searchResults.results
+        search.totalResults = searchResp.searchResults.totalResults
+      } else {
+        // response error with info
         search.results = []
         search.totalResults = null
         search._error = searchResp.error
-      } else {
-        search.results = searchResp.searchResults.results
-        search.totalResults = searchResp.searchResults.totalResults
       }
     } else {
+      // unhandled response error
       search.results = []
       search.totalResults = null
       console.error('Nothing returned from search request fn.')
@@ -52,6 +64,7 @@ export const useSearch = () => {
   }
   return {
     search,
+    filterSearch,
     getSearchResults,
     highlightMatch,
     resetSearch

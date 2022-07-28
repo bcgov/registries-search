@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API request handlers for Search."""
-from typing import List
+from typing import Dict, List
 
 from search_api.services import solr
 from search_api.services.solr import Solr, SolrField
@@ -22,7 +22,7 @@ class SearchParams:  # pylint: disable=too-few-public-methods
     """Class definition of search params."""
 
     def __init__(self,  # pylint: disable=too-many-arguments
-                 query: str,
+                 query: Dict[str, str],
                  start: int,
                  rows: int,
                  legal_types: List[str] = None,
@@ -82,10 +82,10 @@ def business_search(params: SearchParams):
             solr_query_params['fq'] = filter_q
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
-    solr_query_params['bq'] = f'{SolrField.NAME_Q}:("{params.query}"~10)^30.0' + \
-        f' AND {SolrField.NAME_STEM_AGRO}:("{params.query}"~10)^20.0' + \
-        f' AND {SolrField.NAME_Q}:({params.query.split()[0]}*)^10.0' + \
-        f' AND {SolrField.NAME_SUGGEST}:({params.query.split()[0]}*)^5.0'
+    solr_query_params['bq'] = f'{SolrField.NAME_Q}:("{params.query["value"]}"~10)^30.0' + \
+        f' AND {SolrField.NAME_STEM_AGRO}:("{params.query["value"]}"~10)^20.0' + \
+        f' AND {SolrField.NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
+        f' AND {SolrField.NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
 
     solr_query_params['fl'] = solr.base_fields
     return solr.query(solr_query_params, params.start, params.rows)
@@ -102,7 +102,7 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
-        name_select_params = Solr.build_split_query(query, [SolrField.NAME_SINGLE], [])
+        name_select_params = Solr.build_split_query({'value': query}, [SolrField.NAME_SINGLE], [])
         name_select_params['fl'] = solr.base_fields
         name_docs = solr.query(name_select_params, rows).get('response', {}).get('docs', [])
         extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
@@ -147,7 +147,7 @@ def parties_search(params: SearchParams):
     # build base query
     solr_query_params = Solr.build_split_query(params.query,
                                                [SolrField.PARTY_NAME_Q, SolrField.PARTY_NAME_STEM_AGRO],
-                                               [SolrField.PARTY_NAME_Q])
+                                               [SolrField.PARTY_NAME_Q, SolrField.PARENT_NAME_Q])
     # facets
     solr_query_params['facet'] = 'on'
     solr_query_params['json.facet'] = solr.party_facets
@@ -171,9 +171,11 @@ def parties_search(params: SearchParams):
 
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
-    solr_query_params['bq'] = f'{SolrField.PARTY_NAME_Q}:("{params.query}"~10)^30.0' + \
-        f' AND {SolrField.PARTY_NAME_STEM_AGRO}:("{params.query}"~10)^20.0' + \
-        f' AND {SolrField.PARTY_NAME_Q}:({params.query.split()[0]}*)^10.0' + \
-        f' AND {SolrField.PARTY_NAME_SUGGEST}:({params.query.split()[0]}*)^5.0'
+    solr_query_params['bq'] = f'{SolrField.PARTY_NAME_Q}:("{params.query["value"]}"~10)^30.0' + \
+        f' AND {SolrField.PARTY_NAME_STEM_AGRO}:("{params.query["value"]}"~10)^20.0' + \
+        f' AND {SolrField.PARTY_NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
+        f' AND {SolrField.PARTY_NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
+
+    solr_query_params['fl'] = solr.party_fields
 
     return solr.query(solr_query_params, params.start, params.rows)

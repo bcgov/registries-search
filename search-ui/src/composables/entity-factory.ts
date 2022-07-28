@@ -35,6 +35,10 @@ export const useEntity = () => {
     if (entityInfo) setEntity(entityInfo)
     entity._loading = false
   }
+  const getEntityCode = (description: string): CorpTypeCd => {
+    const item = CorpInfoArray.find(obj => (description === obj.fullDesc))
+    return (item && item.corpTypeCd) || null
+  }
   const getEntityDescription = (entityType: CorpTypeCd) => {
     const item = CorpInfoArray.find(obj => (entityType === obj.corpTypeCd))
     return (item && item.fullDesc) || ''
@@ -106,6 +110,7 @@ export const useEntity = () => {
   return {
     entity,
     clearEntity,
+    getEntityCode,
     getEntityDescription,
     getEntityInfo,
     loadEntity,

@@ -67,7 +67,7 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     itemFn: dateTimeString,
-    value: 'Expiry Date/Time<br />(Pacifictime)',
+    value: 'Expiry Date/Time<br />(Pacific time)',
     width: '17%'
   },
   {

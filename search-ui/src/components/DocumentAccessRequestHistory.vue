@@ -13,6 +13,7 @@
     height="100%"
     :itemKey="'submissionDate'"
     :loading="documentAccessRequest._loading"
+    resetOnItemChange
     :setHeaders="PurchaseHistoryHeaders"
     :setItems="documentAccessRequest.requests"
     :totalItems="totalRequestsLength"

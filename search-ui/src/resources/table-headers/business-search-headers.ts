@@ -1,9 +1,8 @@
 import { useEntity, useSearch } from '@/composables'
-import { CorpTypeCd } from '@/enums'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 
-const { corpTypes, getEntityDescription } = useEntity()
-const { highlightMatch } = useSearch()
+const { corpTypes, getEntityCode, getEntityDescription } = useEntity()
+const { filterSearch, highlightMatch } = useSearch()
 
 export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   {
@@ -16,7 +15,12 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'name',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('name', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
@@ -25,7 +29,12 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'identifier',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('identifier', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
@@ -34,7 +43,12 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'bn',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('bn', filterVal),
+      type: 'text',
+      value: ''
+    },
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
@@ -45,9 +59,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     col: 'legalType',
     filter: {
       clearable: true,
-      filterFn: (val: CorpTypeCd, filter: string) => {
-        return getEntityDescription(val).toUpperCase() === filter.toUpperCase() || filter === ''
-      },
+      filterApiFn: (filterVal: string) => filterSearch('legalType', getEntityCode(filterVal)),
       items: corpTypes.value.sort(),
       type: 'select',
       value: ''
@@ -62,6 +74,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     col: 'status',
     filter: {
       clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('status', filterVal),
       items: ['Active', 'Historical'],
       type: 'select',
       value: ''

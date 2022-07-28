@@ -32,7 +32,7 @@ def test_business_suggest_identifier(session, client, requests_mock, test_name, 
     # setup solr mock
     mocked_docs = [create_solr_doc(x, 'test doc', 'ACTIVE', 'BEN').json for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}%3A{query}",json={})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}%3A{query})",json={})
     requests_mock.get(
         f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}%3A{query} " + \
         f'OR {SolrField.BN_Q}:{query}',json={'response': {'docs': mocked_docs}})
@@ -52,7 +52,7 @@ def test_business_suggest_bn(session, client, requests_mock, test_name, query, m
     # setup solr mock
     mocked_docs = [create_solr_doc('BC1234567', 'test doc', 'ACTIVE', 'BEN', x).json for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}:{query}",json={})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})",json={})
     requests_mock.get(
         f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " + \
         f'OR {SolrField.BN_Q}:{query}',json={'response': {'docs': mocked_docs}})
@@ -72,7 +72,7 @@ def test_business_suggest_name(session, client, requests_mock, test_name, query,
     # setup solr mock
     mocked_docs = [create_solr_doc('BC1234567', x, 'ACTIVE', 'BEN').json for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={'suggest':{'name':{query:{'suggestions':[{'term':mocked_terms[0]}]}}}})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}:{query.split()[0]}",json={'response': {'docs': [mocked_docs[1]]}})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query.split()[0]})",json={'response': {'docs': [mocked_docs[1]]}})
     requests_mock.get(
         f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " + \
         f'OR {SolrField.BN_Q}:{query}',json={'response': {'docs': []}})
@@ -95,7 +95,7 @@ def test_business_suggest_all(session, client, requests_mock, test_name, query, 
     mocked_bn_docs = [create_solr_doc('BC0004567', 'test bn match', 'ACTIVE', 'BEN', x).json for x in mock_bns]
 
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest",json={'suggest':{'name':{query:{'suggestions':[]}}}})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.NAME_SINGLE}:{query}",json={'response': {'docs': mocked_name_docs}})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})",json={'response': {'docs': mocked_name_docs}})
     requests_mock.get(
         f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " + \
         f'OR {SolrField.BN_Q}:{query}',json={'response': {'docs': mocked_identifier_docs + mocked_bn_docs}})
@@ -121,7 +121,7 @@ def test_business_search(session, client, requests_mock, test_name, query, mock_
     num_found = len(expected)
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query",json={'response': {'docs':mock_names+mock_ids+mock_bns,'numFound':num_found,'start':0}})
     # call select
-    params = SearchParams(query, None, None)
+    params = SearchParams({'value': query}, None, None)
     results = business_search(params)
     # test
     assert results['response']['docs'] == expected
@@ -143,7 +143,7 @@ def test_parties_search(session, client, requests_mock, test_name, query, mock_d
     num_found = len(parties_docs)
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query",json={'response': {'docs':parties_docs,'numFound':num_found,'start':0}})
     # call select
-    params = SearchParams(query, None, None)
+    params = SearchParams({'value': query}, None, None)
     results = parties_search(params)
     # test
     assert results['response']['docs'] == parties_docs
@@ -195,12 +195,12 @@ def test_endpoint_facets(session, client, requests_mock, test_name, query_params
     query = query_params['query']
     start = query_params['start']
     rows = query_params['rows']
-    resp = client.get(f'/api/v1/businesses/search/facets?query={query}&start={start}&rows={rows}')
+    resp = client.get(f'/api/v1/businesses/search/facets?query=value:{query}&start={start}&rows={rows}')
     # check response
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['facets'] == Solr.parse_facets(facets_mock)
     assert resp.json['searchResults']['queryInfo']['rows'] == rows
-    assert resp.json['searchResults']['queryInfo']['query'] == query
+    assert resp.json['searchResults']['queryInfo']['query']['value'] == query
     assert resp.json['searchResults']['queryInfo']['start'] == start
     assert resp.json['searchResults']['totalResults'] == num_found
     assert resp.json['searchResults']['results'] == expected_docs
@@ -224,12 +224,12 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
     query = query_params['query']
     start = query_params['start']
     rows = query_params['rows']
-    resp = client.get(f'/api/v1/businesses/search/parties?query={query}&start={start}&rows={rows}&categories=partyRoles:partner,proprietor')
+    resp = client.get(f'/api/v1/businesses/search/parties?query=value:{query}&start={start}&rows={rows}&categories=partyRoles:partner,proprietor')
     # check response
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['facets'] == Solr.parse_facets(facets_mock)
     assert resp.json['searchResults']['queryInfo']['rows'] == rows
-    assert resp.json['searchResults']['queryInfo']['query'] == query
+    assert resp.json['searchResults']['queryInfo']['query']['value'] == query
     assert resp.json['searchResults']['queryInfo']['start'] == start
     assert resp.json['searchResults']['queryInfo']['categories']['partyRoles'] == ['partner', 'proprietor']
     assert resp.json['searchResults']['totalResults'] == num_found

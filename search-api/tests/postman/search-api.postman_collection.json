@@ -331,16 +331,21 @@
 										"key": "Accept",
 										"type": "text",
 										"value": "application/json"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/business/search/suggest?query=001&max_results=20&highlight=true",
+									"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=001&rows=20&highlight=true",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"{{version}}",
-										"business",
+										"businesses",
 										"search",
 										"suggest"
 									],
@@ -350,7 +355,7 @@
 											"value": "001"
 										},
 										{
-											"key": "max_results",
+											"key": "rows",
 											"value": "20"
 										},
 										{
@@ -370,7 +375,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 09 May 2022 19:03:17 GMT"
+									"value": "Fri, 08 Jul 2022 00:08:42 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -378,7 +383,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "1013"
+									"value": "1163"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -386,7 +391,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/0.0.1"
+									"value": "search_api/1.0.0a2.dev1"
 								},
 								{
 									"key": "SCHEMAS",
@@ -398,7 +403,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"results\": [\n        {\n            \"type\": \"name\",\n            \"value\": \"AC BENEFITS 111000<b>001</b> INC.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>2 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>6 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>9 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"BC123<b>001</b>0\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>3 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>7 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>8 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"123<b>001</b>4 B.C. LTD.\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM1000<b>001</b>\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>0\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>7\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>8\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>9\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>1\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>2\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>3\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>5\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>6\"\n        },\n        {\n            \"type\": \"identifier\",\n            \"value\": \"FM100<b>001</b>4\"\n        }\n    ]\n}"
+							"body": "{\n    \"queryInfo\": {\n        \"highlight\": true,\n        \"query\": \"001\",\n        \"rows\": 20\n    },\n    \"results\": [\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8505 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8297 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8224 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>7127 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>6739 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>6429 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>4702 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3983 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3968 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3056 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3 INVESTMENTS LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>2480 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>2 HOLDINGS LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>18 ENTERPRISE LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>1303 B.C. UNLIMITED LIABILITY COMPANY\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>0914 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>0862 B.C. UNLIMITED LIABILITY COMPANY\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b> INK TONER CARTRIDGE LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b> ENTERPRISES INC.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \".<b>001</b> PAINTING CO. LTD.\"\n        }\n    ]\n}"
 						}
 					]
 				},
@@ -414,7 +419,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&categories=legalType:CP::status:ACTIVE&start=0&rows=15",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
 							"host": [
 								"{{base_url}}"
 							],
@@ -427,11 +432,11 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "test coop"
+									"value": "value:test coop::identifier:349"
 								},
 								{
 									"key": "categories",
-									"value": "legalType:CP::status:ACTIVE"
+									"value": "status:ACTIVE"
 								},
 								{
 									"key": "start",
@@ -458,7 +463,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test coop&categories=legalType:CP::status:ACTIVE&start=0&rows=15",
+									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
 									"host": [
 										"{{base_url}}"
 									],
@@ -471,11 +476,11 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "test coop"
+											"value": "value:test coop::identifier:349"
 										},
 										{
 											"key": "categories",
-											"value": "legalType:CP::status:ACTIVE"
+											"value": "status:ACTIVE"
 										},
 										{
 											"key": "start",
@@ -498,7 +503,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 08 Jul 2022 01:16:29 GMT"
+									"value": "Wed, 27 Jul 2022 00:52:19 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -506,7 +511,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "3480"
+									"value": "1205"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -514,7 +519,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0a3.dev1"
+									"value": "search_api/1.0.0b1.dev1"
 								},
 								{
 									"key": "SCHEMAS",
@@ -526,7 +531,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 35,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"B\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"C\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CCC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CUL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EPR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"FOR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LLC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"MF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QD\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"REG\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"S\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XCP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XS\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 35,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"AMA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EXR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAM\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCI\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDV\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HWT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQ\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQUIDATION\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LRS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"NST\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCO\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"CP\"\n                ],\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": \"test coop\",\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 423.3073,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490165\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP IA\",\n                \"score\": 423.3073,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002539\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP IA CORRECTION\",\n                \"score\": 380.40112,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490226\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST CONSENT COOP\",\n                \"score\": 288.30298,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490282\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST REMOVE NAME TRANSLATION CO-OP\",\n                \"score\": 135.96622,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490283\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST AGAIN FOR TRANSLATION REMOVE FROM COOP\",\n                \"score\": 82.15672,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002494\",\n                \"legalType\": \"CP\",\n                \"name\": \"NGINX TESTING CO-OP\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002485\",\n                \"legalType\": \"CP\",\n                \"name\": \"SEVERIN TESTING COD COOP\",\n                \"score\": 4.2483907,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002483\",\n                \"legalType\": \"CP\",\n                \"name\": \"TESTING COD DATE COOP\",\n                \"score\": 4.2483907,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490286\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST COOP 9270 COOP\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490287\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST 9270 2 COOP\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002502\",\n                \"legalType\": \"CP\",\n                \"name\": \"XYZ COOP 2022.JAN.21 7.00 TEST\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP9002491\",\n                \"legalType\": \"CP\",\n                \"name\": \"ARGUS COOP 2021.DEC.17 7.10 TEST\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002504\",\n                \"legalType\": \"CP\",\n                \"name\": \"XYZ COOP 2022.JAN.21 1.21 TEST\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002505\",\n                \"legalType\": \"CP\",\n                \"name\": \"XYZ COOP 2022.JAN.21 2.20 TEST\",\n                \"score\": 3.9388127,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 35\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 8,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 8,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": \"\",\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"349\",\n                \"name\": \"\",\n                \"value\": \"test coop\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 426.3002,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490165\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP IA\",\n                \"score\": 426.3002,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490226\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST CONSENT COOP\",\n                \"score\": 291.68088,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490282\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST REMOVE NAME TRANSLATION CO-OP\",\n                \"score\": 139.77156,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490283\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST AGAIN FOR TRANSLATION REMOVE FROM COOP\",\n                \"score\": 86.109634,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490286\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST COOP 9270 COOP\",\n                \"score\": 8.061411,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490287\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST 9270 2 COOP\",\n                \"score\": 8.061411,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490288\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST COOP 9270 3 COOP\",\n                \"score\": 7.806468,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 8\n    }\n}"
 						}
 					]
 				},
@@ -542,7 +547,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test c&start=0&rows=15&categories=legalType:CP,bc,ben::status:ACTIVE,historical",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:9::identifier:62::name:te equip stor&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
 							"host": [
 								"{{base_url}}"
 							],
@@ -555,7 +560,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "test c"
+									"value": "value:test::bn:9::identifier:62::name:te equip stor"
 								},
 								{
 									"key": "start",
@@ -567,7 +572,7 @@
 								},
 								{
 									"key": "categories",
-									"value": "legalType:CP,bc,ben::status:ACTIVE,historical"
+									"value": "legalType:sp,CP,bc,ben::status:ACTIVE,historical"
 								}
 							]
 						},
@@ -575,7 +580,7 @@
 					},
 					"response": [
 						{
-							"name": "facets cp,bc,ben / active,historical",
+							"name": "facets refined",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
@@ -586,7 +591,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=test c&start=0&rows=15&categories=legalType:CP,bc,ben::status:ACTIVE,historical",
+									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:9::identifier:62::name:te equip stor&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
 									"host": [
 										"{{base_url}}"
 									],
@@ -599,7 +604,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "test c"
+											"value": "value:test::bn:9::identifier:62::name:te equip stor"
 										},
 										{
 											"key": "start",
@@ -611,7 +616,7 @@
 										},
 										{
 											"key": "categories",
-											"value": "legalType:CP,bc,ben::status:ACTIVE,historical"
+											"value": "legalType:sp,CP,bc,ben::status:ACTIVE,historical"
 										}
 									]
 								}
@@ -626,7 +631,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 08 Jul 2022 01:16:46 GMT"
+									"value": "Wed, 27 Jul 2022 00:45:41 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -634,7 +639,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "3464"
+									"value": "501"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -642,7 +647,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0a3.dev1"
+									"value": "search_api/1.0.0b1.dev1"
 								},
 								{
 									"key": "SCHEMAS",
@@ -654,7 +659,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 58,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 21,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 17,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"B\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"C\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CCC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CUL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EPR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"FOR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LLC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"MF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QD\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"REG\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"S\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XCP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XS\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 81,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 15,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"AMA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EXR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAM\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCI\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDV\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HWT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQ\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQUIDATION\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LRS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"NST\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCO\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"CP\",\n                    \"bc\",\n                    \"ben\"\n                ],\n                \"status\": [\n                    \"ACTIVE\",\n                    \"historical\"\n                ]\n            },\n            \"query\": \"test c\",\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP1002397\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP\",\n                \"score\": 5.1154404,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"BC0870731\",\n                \"legalType\": \"BEN\",\n                \"name\": \"TESTING CONV CORP.\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490219\",\n                \"legalType\": \"CP\",\n                \"name\": \"ANOTHER COOP TEST\",\n                \"score\": 4.6308703,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"CP3490226\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST CONSENT COOP\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490165\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP IA\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002482\",\n                \"legalType\": \"CP\",\n                \"name\": \"REGRESSION TEST COOPERATIVE\",\n                \"score\": 4.6308703,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"CP1002494\",\n                \"legalType\": \"CP\",\n                \"name\": \"NGINX TESTING CO-OP\",\n                \"score\": 4.6308703,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP1002474\",\n                \"legalType\": \"CP\",\n                \"name\": \"MY COOP TEST\",\n                \"score\": 4.6308703,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"CP1002495\",\n                \"legalType\": \"CP\",\n                \"name\": \"CAMERONS COOPERATIVE TEST\",\n                \"score\": 4.6308703,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"BC1230075\",\n                \"legalType\": \"BEN\",\n                \"name\": \"KIAL'S TESTING COMPANY CORP.\",\n                \"score\": 4.2483907,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"BC0870710\",\n                \"legalType\": \"BEN\",\n                \"name\": \"TEST CON BEN INCORPORATED\",\n                \"score\": 4.2483907,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"BC0870729\",\n                \"legalType\": \"BEN\",\n                \"name\": \"TEST CONSUMED STATE LTD.\",\n                \"score\": 4.2483907,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"BC0870869\",\n                \"legalType\": \"BEN\",\n                \"name\": \"REGRESSION TEST BEN CORP.\",\n                \"score\": 4.2483907,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"identifier\": \"CP1002485\",\n                \"legalType\": \"CP\",\n                \"name\": \"SEVERIN TESTING COD COOP\",\n                \"score\": 4.2483907,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 96\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"sp\",\n                    \"CP\",\n                    \"bc\",\n                    \"ben\"\n                ],\n                \"status\": [\n                    \"ACTIVE\",\n                    \"historical\"\n                ]\n            },\n            \"query\": {\n                \"bn_q\": \"9\",\n                \"identifier_q\": \"62\",\n                \"name_q\": \"te equip stor\",\n                \"value\": \"test\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"824492631BC0001\",\n                \"identifier\": \"FM0623527\",\n                \"legalType\": \"SP\",\n                \"name\": \"TESLA TEST EQUIPMENT STORE - IMPORT_TEST\",\n                \"score\": 10.710747,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
 						}
 					]
 				},
@@ -670,7 +675,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=test p&categories=partyRoles:partner,proprietor&rows=100",
+							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test p&categories=partyRoles:partner,proprietor&rows=100",
 							"host": [
 								"{{base_url}}"
 							],
@@ -683,7 +688,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "test p"
+									"value": "value:test p"
 								},
 								{
 									"key": "categories",
@@ -710,7 +715,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=test p&categories=partyRoles:partner,proprietor&rows=100",
+									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test p&categories=partyRoles:partner,proprietor&rows=100",
 									"host": [
 										"{{base_url}}"
 									],
@@ -723,7 +728,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "test p"
+											"value": "value:test p"
 										},
 										{
 											"key": "categories",
@@ -746,7 +751,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 08 Jul 2022 01:17:19 GMT"
+									"value": "Wed, 27 Jul 2022 23:28:24 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -754,7 +759,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "2694"
+									"value": "1108"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -762,7 +767,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0a3.dev1"
+									"value": "search_api/1.0.0b1.dev1"
 								},
 								{
 									"key": "SCHEMAS",
@@ -774,7 +779,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"B\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"C\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CCC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CUL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EPR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"FOR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LLC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"MF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QD\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"REG\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"S\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XCP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XS\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 2,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"AMA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EXR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAM\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCI\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDV\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HWT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQ\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQUIDATION\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LRS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"NST\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCO\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"proprietor\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"completing_party\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"custodian\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"director\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"incorporator\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"partner\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"unknown\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": \"\",\n                \"parentStatus\": \"\",\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": \"test p\",\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993558808\",\n                \"parentIdentifier\": \"FM1000030\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO 1.5\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993538404\",\n                \"parentIdentifier\": \"FM1000036\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS SAVE 1.0\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP L PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 3\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 2,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": \"\",\n                \"parentStatus\": \"\",\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"\",\n                \"partyName\": \"\",\n                \"value\": \"test p\"\n            },\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993558808\",\n                \"parentIdentifier\": \"FM1000030\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO 1.5\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993538404\",\n                \"parentIdentifier\": \"FM1000036\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS SAVE 1.0\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP L PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 3\n    }\n}"
 						}
 					]
 				},
@@ -790,7 +795,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=test&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
+							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test::parentName:solo&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
 							"host": [
 								"{{base_url}}"
 							],
@@ -803,7 +808,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "test"
+									"value": "value:test::parentName:solo"
 								},
 								{
 									"key": "rows",
@@ -830,7 +835,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=test&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
+									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test::parentName:solo&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
 									"host": [
 										"{{base_url}}"
 									],
@@ -843,7 +848,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "test"
+											"value": "value:test::parentName:solo"
 										},
 										{
 											"key": "rows",
@@ -866,7 +871,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 08 Jul 2022 01:19:27 GMT"
+									"value": "Wed, 27 Jul 2022 23:29:36 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -874,7 +879,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "3007"
+									"value": "665"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -882,7 +887,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0a3.dev1"
+									"value": "search_api/1.0.0b1.dev1"
 								},
 								{
 									"key": "SCHEMAS",
@@ -894,7 +899,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 4,\n                    \"value\": \"SP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"B\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"C\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CCC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"CUL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EPR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"FOR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LLC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"MF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QD\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"QE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"REG\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"S\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"ULC\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XCP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XP\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"XS\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 5,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"AMA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D1T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2A\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2F\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"D2T\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"EXR\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAM\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HAO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCI\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HCO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDB\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDO\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HDV\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"HWT\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQ\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LIQUIDATION\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"LRS\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"NST\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCA\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCF\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCN\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"RCO\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 4,\n                    \"value\": \"proprietor\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"partner\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"completing_party\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"custodian\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"director\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"incorporator\"\n                },\n                {\n                    \"count\": 0,\n                    \"value\": \"unknown\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": [\n                    \"SP\",\n                    \"gp\"\n                ],\n                \"parentStatus\": [\n                    \"active\"\n                ],\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": \"test\",\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentIdentifier\": \"FM1000060\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLE PROPRIETORSHIP TEST\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"SP TEST\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"organization\"\n            },\n            {\n                \"parentIdentifier\": \"FM1001266\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"RECEIPTS SP\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"DEMO TEST\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentIdentifier\": \"FM1002992\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"GP REG\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"DEV TEST\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentIdentifier\": \"FM1003410\",\n                \"parentLegalType\": \"GP\",\n                \"parentName\": \"REG TFN GP\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"ALEX TEST\",\n                \"partyRoles\": [\n                    \"partner\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 5\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": [\n                    \"SP\",\n                    \"gp\"\n                ],\n                \"parentStatus\": [\n                    \"active\"\n                ],\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"solo\",\n                \"partyName\": \"\",\n                \"value\": \"test\"\n            },\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
 						}
 					]
 				}

@@ -42,7 +42,7 @@
         <v-divider class="my-10" />
         <h2>Available Documents to Download:</h2>
         <div class="document-list  mt-3 pa-3 pr-5 pt-7" :key="checkBoxesKey">
-          <v-row v-if="!pageLoaded" class="my-15" justify="center" no-gutters>
+          <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
             </v-col>

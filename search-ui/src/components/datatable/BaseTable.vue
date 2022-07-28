@@ -68,7 +68,7 @@
           </tr>
         </slot>
       </thead>
-      <tbody v-if="loading" class="base-table__body">
+      <tbody v-if="loading && !filtering" class="base-table__body">
         <tr class="base-table__body__loader">
           <td :colspan="headers.length">
             <v-row class="my-15" justify="center" no-gutters>
@@ -80,6 +80,11 @@
         </tr>
       </tbody>
       <tbody v-else class="base-table__body">
+        <tr v-if="filtering">
+          <td :colspan="headers.length">
+            <v-progress-linear color="primary" indeterminate />
+          </td>
+        </tr>
         <slot name="body" :headers="headers" :items="sortedItems">
           <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row">
             <slot name="body-row">
@@ -127,6 +132,7 @@ const props = defineProps<{
   loading?: boolean,
   noResultsText?: string,
   pagination?: boolean,
+  resetOnItemChange?: boolean,
   setHeaders: BaseTableHeaderI[],
   setItems: object[],
   title?: string
@@ -137,6 +143,7 @@ const headers = reactive(_.cloneDeep(props.setHeaders))
 const sortedItems = ref([...props.setItems])
 
 const emptyText = computed(() => props.noResultsText || '<b>No results found</p>')
+const filtering = ref(false)
 const headerBg = computed(() => props.colors?.backgrounds?.header || 'white')
 const titleBg = computed(() => props.colors?.backgrounds?.title || '#e0e7ed')
 
@@ -146,6 +153,16 @@ const sortIcon = computed(() => {
   if (sortDirection.value === 'desc') return 'mdi-chevron-down'
   return 'mdi-chevron-up'
 })
+
+const resetAll = () => {
+  // reset sort
+  sortBy.value = ''
+  sortDirection.value = 'desc'
+  // reset filters
+  for (const i in headers) {
+    if (headers[i]?.filter?.value) headers[i].filter.value = ''
+  }
+}
 
 const sort = (itemFn: (val: any) => string) => {
   const compareFn = (item1: object, item2: object) => {
@@ -171,28 +188,30 @@ const toggleSort = (header: BaseTableHeaderI) => {
   sort(header.itemFn)
 }
 
-const filter = _.debounce((header: BaseTableHeaderI) => {
-  sortedItems.value = props.setItems.filter((item) => {
-    if (header.filter.filterFn) return header.filter.filterFn(item[header.col], header.filter.value)
-    else {
-      if (header.filter.type === 'select') return BaseSelectFilter(item[header.col], header.filter.value)
-      else return BaseTextFilter(item[header.col], header.filter.value)
-    }
-  })
+const filter = _.debounce(async (header: BaseTableHeaderI) => {
+  // rely on custom filterApiFn to alter result set if given (meant for server side filtering)
+  if (header.filter.filterApiFn) {
+    filtering.value = true
+    await header.filter.filterApiFn(header.filter.value)
+    filtering.value = false
+  } else {
+    // client side custom or base filter
+    sortedItems.value = props.setItems.filter((item) => {
+      if (header.filter.filterFn) return header.filter.filterFn(item[header.col], header.filter.value)
+      else {
+        if (header.filter.type === 'select') return BaseSelectFilter(item[header.col], header.filter.value)
+        else return BaseTextFilter(item[header.col], header.filter.value)
+      }
+    })
+  }
   // clear sort
   sortBy.value = ''
   sortDirection.value = 'desc'
 }, 200)
 
 watch(() => props.setItems, () => {
-  // reset sort
-  sortBy.value = ''
-  sortDirection.value = 'desc'
   sortedItems.value = [...props.setItems]
-  // reset filters
-  for (const i in headers) {
-    if (headers[i]?.filter?.value) headers[i].filter.value = ''
-  }
+  if (props.resetOnItemChange) resetAll()
 }, { deep: true })
 </script>
 
