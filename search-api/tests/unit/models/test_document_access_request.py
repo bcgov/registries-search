@@ -59,9 +59,10 @@ def test_find_active_requests(session):
 
     document_1 = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test1')
     document_2 = Document(document_type=DocumentType.CERTIFICATE_OF_GOOD_STANDING.value, document_key='test2')
-    document_2 = Document(document_type=DocumentType.CERTIFICATE_OF_STATUS.value, document_key='test3')
+    document_3 = Document(document_type=DocumentType.CERTIFICATE_OF_STATUS.value, document_key='test3')
     document_access_request.documents.append(document_1)
     document_access_request.documents.append(document_2)
+    document_access_request.documents.append(document_3)
 
     document_access_request.save()
 
