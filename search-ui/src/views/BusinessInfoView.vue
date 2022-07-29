@@ -117,7 +117,7 @@ const pageLoaded = ref(false)
 const router = useRouter()
 
 const { isStaff } = useAuth()
-const { entity, clearEntity, loadEntity, isFirm } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
@@ -236,7 +236,7 @@ onMounted(async () => {
 })
 
 const loadPurchasableDocs = async () => {
-  const feeData = await getDocFees([FeeCodes.BSRCH, FeeCodes.CGOOD])
+  const feeData = await getDocFees([FeeCodes.BSRCH, FeeCodes.CGOOD, FeeCodes.CSTAT])
 
   purchasableDocs.value.push({
     code: FeeCodes.BSRCH,
@@ -258,10 +258,25 @@ const loadPurchasableDocs = async () => {
         'can only be ordered if the business is in Good Standing.' : ''
     })
   }
+
+  if (isCstatAvailable()) {
+    purchasableDocs.value.push({
+        code: FeeCodes.CSTAT,
+        fee: displayFee(feeData[2].fee, false),
+        label: 'Certificate of Status',
+        documentType: DocumentType.CERTIFICATE_OF_STATUS,
+        active: true,
+        tooltip: ''
+    })
+  }
 }
 
 const isCogsAvailable = () => {
-  return !isFirm.value
+  return !isFirm.value && isActive.value
+}
+
+const isCstatAvailable = () => {
+  return (isBC.value || isCoop.value) && isActive.value
 }
 
 const toggleFee = (event: any, item: any) => {
