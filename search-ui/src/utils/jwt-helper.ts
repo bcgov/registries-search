@@ -41,3 +41,11 @@ export function getKeycloakRoles(): Array<StaffRoles | UserRoles> {
   }
   throw new Error('Error getting Keycloak roles')
 }
+
+/** Gets Keycloak name from JWT. */
+export function getKeycloakName(): string {
+  const jwt = getJWT()
+  const name = jwt.name
+  if (name) return name
+  throw new Error('Error getting Keycloak name')
+}
