@@ -117,7 +117,7 @@ const pageLoaded = ref(false)
 const router = useRouter()
 
 const { isStaff } = useAuth()
-const { entity, clearEntity, loadEntity, isFirm } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
@@ -259,18 +259,24 @@ const loadPurchasableDocs = async () => {
     })
   }
 
-  purchasableDocs.value.push({
-      code: FeeCodes.CSTAT,
-      fee: displayFee(feeData[2].fee, false),
-      label: 'Certificate of Status',
-      documentType: DocumentType.CERTIFICATE_OF_STATUS,
-      active: true,
-      tooltip: ''
+  if (isCstatAvailable()) {
+    purchasableDocs.value.push({
+        code: FeeCodes.CSTAT,
+        fee: displayFee(feeData[2].fee, false),
+        label: 'Certificate of Status',
+        documentType: DocumentType.CERTIFICATE_OF_STATUS,
+        active: true,
+        tooltip: ''
     })
+  }
 }
 
 const isCogsAvailable = () => {
   return !isFirm.value
+}
+
+const isCstatAvailable = () => {
+  return (isBC.value || isCoop.value) && isActive.value
 }
 
 const toggleFee = (event: any, item: any) => {

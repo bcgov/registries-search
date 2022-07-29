@@ -1,6 +1,6 @@
 import { computed, reactive } from 'vue'
 // Local
-import { BusinessTypes, CorpTypeCd } from '@/enums'
+import { BusinessStatuses, BusinessTypes, CorpTypeCd } from '@/enums'
 import { getEntity } from '@/requests'
 import { CorpInfoArray } from '@/resources'
 import { EntityI } from '@/interfaces/entity'
@@ -71,12 +71,20 @@ export const useEntity = () => {
     entity.goodStanding = newEntity.goodStanding
   }
 
+  const isActive = computed(() => {
+    return entity.status == BusinessStatuses.ACTIVE
+  })
+
   const isBComp = computed(() => {
     return entity.legalType == CorpTypeCd.BENEFIT_COMPANY
   })
 
   const isCoop = computed(() => {
     return entity.legalType == CorpTypeCd.COOP
+  })
+
+  const isBC = computed(() => {
+    return entity.legalType == CorpTypeCd.BC_COMPANY
   })
 
   const isFirm = computed(() => {
@@ -115,9 +123,11 @@ export const useEntity = () => {
     getEntityInfo,
     loadEntity,
     setEntity,
+    isActive,
     isBComp,
     isCoop,
     isFirm,
+    isBC,
     entityTitle,
     actTitle,
     entityNumberLabel,
