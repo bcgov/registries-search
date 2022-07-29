@@ -272,7 +272,7 @@ const loadPurchasableDocs = async () => {
 }
 
 const isCogsAvailable = () => {
-  return !isFirm.value
+  return !isFirm.value && isActive.value
 }
 
 const isCstatAvailable = () => {
