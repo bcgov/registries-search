@@ -6,11 +6,14 @@ import { Router } from 'vue-router'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { DocumentAccessRequestHistory, SearchBar, SearchResults } from '@/components'
-import { useSearch } from '@/composables'
+import { useAuth, useSearch } from '@/composables'
 import { RouteNames } from '@/enums'
 import { createVueRouter } from '@/router'
 import store from '@/store'
+import { axios } from '@/utils'
 import { DashboardView } from '@/views'
+// test data
+import { testAccount } from './utils'
 
 
 describe('DashboardView tests', () => {
@@ -18,13 +21,22 @@ describe('DashboardView tests', () => {
   let router: Router
   sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
   const { search, resetSearch } = useSearch()
+  const { auth } = useAuth()
 
   beforeEach(async () => {
+    const mockGet = jest.spyOn(axios, 'get')
+    mockGet.mockImplementation((url) => {
+      switch (url) {
+        case 'purchases':
+          return Promise.resolve({ data: { documentAccessRequests: [] } })
+      }
+    })
+    auth.currentAccount = testAccount
     resetSearch()
     router = createVueRouter()
     await router.push({ name: RouteNames.SEARCH })
     wrapper = mount(DashboardView, {
-      props: { appReady: false },
+      props: { appReady: true },
       global: {
         plugins: [router],
         provide: { store: store },
@@ -39,7 +51,19 @@ describe('DashboardView tests', () => {
   })
   it('renders Dashboard with expected child components', async () => {
     // check header is there
-    expect(wrapper.html()).toContain('Business Search')
+    expect(wrapper.find('h1').text()).toContain('Business Search')
+    expect(wrapper.find('.beta-version').exists()).toBe(true)
+    expect(wrapper.find('.beta-version__close-btn').exists()).toBe(false)
+    expect(wrapper.find('.beta-version__info').exists()).toBe(false)
+    // check learn more is there
+    expect(wrapper.find('.learn-more').text()).toContain('Learn More')
+    expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.learnMoreURL)
+    // check subheader info is there
+    expect(wrapper.find('.account-label').text()).toContain(testAccount.label)
+    expect(wrapper.find('.account-name').text()).toContain(testAccount.name)
+    // check documents help
+    expect(wrapper.find('.doc-help').text()).toContain('Which Documents Can I Access?')
+    expect(wrapper.find('.doc-help__info').exists()).toBe(false)
     // check tab headers
     expect(wrapper.html()).toContain('Find a Business')
     expect(wrapper.html()).toContain('View Recently Purchased Documents')
@@ -54,6 +78,17 @@ describe('DashboardView tests', () => {
     expect(search.results).toBe(null)
     expect(search.totalResults).toBe(null)
     expect(wrapper.findComponent(SearchResults).exists()).toBe(false)
+  })
+  it('opens and closes document help', async () => {
+    wrapper.find('.doc-help').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.doc-help').text()).toContain('Hide Document Help')
+    expect(wrapper.find('.doc-help__info').exists()).toBe(true)
+    // clicking again sets it back
+    wrapper.find('.doc-help').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.doc-help').text()).toContain('Which Documents Can I Access?')
+    expect(wrapper.find('.doc-help__info').exists()).toBe(false)
   })
   it('shows the results table when results are populated', async () => {
     search.results = []

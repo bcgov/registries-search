@@ -36,8 +36,6 @@ describe('BusinessInfo tests', () => {
           return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
         case `businesses/${identifier}/filings`:
           return Promise.resolve({ data: { filings: [...mockedFilingResp] } })
-        case `businesses/${identifier}/documents/requests`:
-          return Promise.resolve({ data: { documentAccessRequests: [] } })
       }
     })
 

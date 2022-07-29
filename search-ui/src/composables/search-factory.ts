@@ -22,6 +22,7 @@ export const useSearch = () => {
   const getSearchResults = async (val: string) => {
     search._loading = true
     search._value = val
+    if (search.results === null) search.results = []
     let searchResp: SearchResponseI = null
     if (search.searchType === 'business') {
       // business search

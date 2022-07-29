@@ -6,7 +6,7 @@ import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, StaffRoles, Us
 import { AuthI, CurrentAccountI } from '@/interfaces'
 import { getAccountProducts, getSbcFromAuth } from '@/requests'
 import keycloakServices from '@/sbc-common-components/services/keycloak.services'
-import { getKeycloakRoles } from '@/utils'
+import { getKeycloakName, getKeycloakRoles } from '@/utils'
 
 const auth = reactive({
   activeProducts: [],
@@ -69,13 +69,24 @@ export const useAuth = () => {
     auth._error = null
   }
   const _loadCurrentAccount = async () => {
-    let currentAccount = ''
-    // TODO: need to change '0' to something recognized as staff by auth
-    // and agreed upon within search / gateway and validate on the backend accordingly
-    if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) currentAccount = '{"id":"0"}'
-    else currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
-    if (!currentAccount) console.error(`Error: session ${SessionStorageKeys.CurrentAccount} expected, but not found.`)
-    auth.currentAccount = JSON.parse(currentAccount) as CurrentAccountI
+    try {
+      let currentAccount = ''
+      // TODO: need to change '0' to something recognized as staff by auth
+      // and agreed upon within search / gateway and validate on the backend accordingly
+      if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) currentAccount = '{"id":"0"}'
+      else currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      if (!currentAccount) console.error(`Error: session ${SessionStorageKeys.CurrentAccount} expected, but not found.`)
+      auth.currentAccount = JSON.parse(currentAccount) as CurrentAccountI
+      auth.currentAccount.name = getKeycloakName()
+    } catch (error) {
+      console.log(error)
+      auth._error = {
+        category: ErrorCategories.ACCOUNT_SETTINGS,
+        message: 'Error getting/setting current account.',
+        statusCode: null,
+        type: ErrorCodes.ACCOUNT_SETUP_ERROR
+      }
+    }
   }
   const _loadProducts = async () => {
     // get/set active products

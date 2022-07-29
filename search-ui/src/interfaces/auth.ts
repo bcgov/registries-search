@@ -16,6 +16,7 @@ export interface CurrentAccountI {
   accountType: AccountTypes
   id: number
   label: string
+  name?: string  // currently added from jwt
   productSettings: string
   type: string
   urlorigin: string

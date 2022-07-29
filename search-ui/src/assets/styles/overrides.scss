@@ -43,6 +43,14 @@ td {
   font-weight: normal;
 }
 
+.v-btn.primary.text,
+.v-btn.primary.text::after,
+.v-btn.primary.text::before,
+.v-btn.primary.text:hover {
+  background-color: transparent !important;
+  color: $primary-blue !important;
+}
+
 .v-btn:not(.v-btn--round).v-size--default {
   height: 44px;
   min-width: 40px;
@@ -60,6 +68,10 @@ td {
 
 .v-btn--outlined, .v-btn--text {
   font-weight: normal;
+}
+
+.v-btn__overlay {
+  background-color: transparent !important;
 }
 
 // sbc-common-components
