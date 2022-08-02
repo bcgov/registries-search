@@ -4,8 +4,9 @@ import { Router } from 'vue-router'
 // bcregistry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
-import { FeeCodes, RouteNames, StaffRoles } from '@/enums'
-import { useAuth, useEntity, useFilingHistory } from '@/composables'
+import { DocumentType, FeeCodes, RouteNames, StaffRoles } from '@/enums'
+import { useAuth, useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
+import { DocumentTypeDescriptions } from '@/resources'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 import { axios } from '@/utils'
@@ -24,6 +25,7 @@ sessionStorage.setItem('LEGAL_API_URL', url)
 const identifier = mockedBusinessResp.identifier
 const { auth } = useAuth()
 const { entity, clearEntity } = useEntity()
+const { displayFee } = useFeeCalculator()
 const { filingHistory } = useFilingHistory()
 
 const feeArr: Fee[] = [{
@@ -42,11 +44,18 @@ const feeArr: Fee[] = [{
     total: 26.50
   },{
     fee: 25.0,
-    filingType: 'CSTAT',
+    filingType: FeeCodes.CSTAT,
     priorityFees: 0.0,
     futureEffectiveFees: 0.0,
     serviceFees: 1.50,
     total: 26.50
+},{
+  fee: 25.0,
+  filingType: FeeCodes.LSEAL,
+  priorityFees: 0.0,
+  futureEffectiveFees: 0.0,
+  serviceFees: 1.50,
+  total: 26.50
 }]
 
 const setupBusInfoTest = () => {
@@ -92,7 +101,20 @@ describe('BusinessInfo tests', () => {
     // check headers are there
     expect(wrapper.html()).toContain('How to Access Business Documents')
     expect(wrapper.html()).toContain('Available Documents to Download:')
-    // FUTURE: check fee summary / checkbox / filing history comp render
+    // check purchasable doc labels (checkboxes)
+    const checkboxLabels = wrapper.findAll('.document-list__label')
+    expect(checkboxLabels.length).toBe(4)
+    expect(checkboxLabels[0].text()).toContain(DocumentTypeDescriptions[DocumentType.BUSINESS_SUMMARY_FILING_HISTORY])
+    expect(checkboxLabels[1].text()).toContain(DocumentTypeDescriptions[DocumentType.CERTIFICATE_OF_GOOD_STANDING])
+    expect(checkboxLabels[2].text()).toContain(DocumentTypeDescriptions[DocumentType.CERTIFICATE_OF_STATUS])
+    expect(checkboxLabels[3].text()).toContain(DocumentTypeDescriptions[DocumentType.LETTER_UNDER_SEAL])
+    // check purchasable doc fees (checkboxes)
+    const checkboxFees = wrapper.findAll('.document-list__fee')
+    expect(checkboxFees.length).toBe(4)
+    for (const i in feeArr) {
+      expect(checkboxFees[i].text()).toContain(displayFee(feeArr[i].fee, false))
+    }
+    // FUTURE: check fee summary
   })
   it('loads the entity of the given identifier when mounted', () => {
     expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })

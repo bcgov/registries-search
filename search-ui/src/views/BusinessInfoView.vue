@@ -247,7 +247,7 @@ onMounted(async () => {
 })
 
 const loadPurchasableDocs = async () => {
-  const feeData = await getDocFees([bsrchCode.value, FeeCodes.CGOOD, FeeCodes.CSTAT])
+  const feeData = await getDocFees([bsrchCode.value, FeeCodes.CGOOD, FeeCodes.CSTAT, FeeCodes.LSEAL])
 
   purchasableDocs.value.push({
     code: bsrchCode.value,
@@ -280,6 +280,15 @@ const loadPurchasableDocs = async () => {
         tooltip: ''
     })
   }
+  // letter under seal is always available
+  purchasableDocs.value.push({
+    code: FeeCodes.LSEAL,
+    fee: displayFee(feeData[3].fee, false),
+    label: 'Letter Under Seal',
+    documentType: DocumentType.LETTER_UNDER_SEAL,
+    active: true,
+    tooltip: ''
+  })
 }
 
 const isCogsAvailable = () => {

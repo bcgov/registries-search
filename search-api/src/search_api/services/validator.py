@@ -22,7 +22,8 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
 
     valid_doc_types = [DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name,
                        DocumentType.CERTIFICATE_OF_GOOD_STANDING.name,
-                       DocumentType.CERTIFICATE_OF_STATUS.name]
+                       DocumentType.CERTIFICATE_OF_STATUS.name,
+                       DocumentType.LETTER_UNDER_SEAL.name]
 
     @staticmethod
     def validate_document_access_request(document_access_request_json: dict, account_id: str, token,

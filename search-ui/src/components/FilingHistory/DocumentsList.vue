@@ -27,7 +27,7 @@
                     :disabled="props.loadingOne || props.loadingAll || isLocked">
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
-                            <div v-if="isActive" class="ml-4 top-tooltip-arrow"></div>
+                            <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
                             <v-icon v-bind="props">mdi-file-lock-open</v-icon>
                             <span v-bind="props" class="doc-title">Download All</span>
                         </template>

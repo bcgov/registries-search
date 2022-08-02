@@ -33,7 +33,7 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
         if (filterVal === '') return true
         return colVal.map((item) => DocumentTypeDescriptions[item.documentType]).includes(filterVal)
       },
-      items:['Business Summary', 'Certificate of Good Standing'],
+      items: Object.values(DocumentTypeDescriptions),
       type: 'select',
       value: ''
     },
