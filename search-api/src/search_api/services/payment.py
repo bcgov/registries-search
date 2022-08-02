@@ -42,6 +42,11 @@ DOCUMENT_TYPE_TO_FILING_TYPE = {
         BASIC_USER: 'CSTAT',
         STAFF_ROLE: 'CSTAT',
         SBC_STAFF: 'CSTAT'
+    },
+    DocumentType.LETTER_UNDER_SEAL.name: {
+        BASIC_USER: 'LSEAL',
+        STAFF_ROLE: 'LSEAL',
+        SBC_STAFF: 'LSEAL'
     }
 }
 

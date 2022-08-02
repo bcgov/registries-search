@@ -27,7 +27,8 @@ from search_api.services.authz import get_bearer_token
 DOCUMENT_NAME = {
     DocumentType.BUSINESS_SUMMARY_FILING_HISTORY: 'summary',
     DocumentType.CERTIFICATE_OF_GOOD_STANDING: 'cogs',
-    DocumentType.CERTIFICATE_OF_STATUS: 'cstat'
+    DocumentType.CERTIFICATE_OF_STATUS: 'cstat',
+    DocumentType.LETTER_UNDER_SEAL: 'lseal'
 }
 
 
