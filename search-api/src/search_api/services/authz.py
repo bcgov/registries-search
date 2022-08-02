@@ -260,12 +260,12 @@ def is_all_staff_account(account_id: str) -> bool:
     return account_id is not None and account_id in (STAFF_ROLE, BCOL_HELP)
 
 
-def get_role(jwt, account_id) -> str:
+def get_role(jwt: JwtManager, account_id) -> str:
     """Return the role."""
     role = BASIC_USER
     if is_staff(jwt):
         role = STAFF_ROLE
-    elif is_sbc_office_account(jwt, account_id):
+    elif is_gov_account(jwt) and is_sbc_office_account(jwt.get_token_auth_header(), account_id):
         role = SBC_STAFF
 
     return role
