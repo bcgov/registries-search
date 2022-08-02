@@ -334,4 +334,4 @@ class Solr:
         """Return query string prepped for solr call."""
         # replace solr specific special chars
         solr_special_chars_regex = r'([+\-!()\"~*?:/\\&={}^%`#|<>,.@$;_]|&&|\|\|)'
-        return re.sub(solr_special_chars_regex, '', query)
+        return re.sub(solr_special_chars_regex, '', query.lower())

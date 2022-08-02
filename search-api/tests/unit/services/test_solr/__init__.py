@@ -67,4 +67,5 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0030012', '12 solr special? char', 'ACTIVE', 'BEN', '123456778BC0001'),
     create_solr_doc('BC0030013', '13 solr special / char', 'ACTIVE', 'BEN', '123456777BC0001'),
     create_solr_doc('BC0030014', 'special =&{}^%`#|<>,.@$;_chars', 'ACTIVE', 'BEN', '123456776BC0001'),
+    create_solr_doc('BC0030015', 'special OR AND NOT operators', 'ACTIVE', 'BEN', '123456775BC0001'),
 ]

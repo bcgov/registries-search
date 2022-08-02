@@ -82,6 +82,9 @@ def test_solr_suggest_name(app, test_name, query, expected):
     ('test-special-chars-name-?', '12 special? char', SolrField.NAME_SINGLE, True, SolrField.NAME, ['12 solr special? char']),
     ('test-special-chars-name-/', '13 special / char', SolrField.NAME_SINGLE, True, SolrField.NAME, ['13 solr special / char']),
     ('test-special-chars-name-X', 'special =&{}^%`#|<>,.@$;_chars', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special =&{}^%`#|<>,.@$;_chars']),
+    ('test_special_operators_OR', 'special OR operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
+    ('test_special_operators_AND', 'special AND operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
+    ('test_special_operators_NOT', 'special AND operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
 ])
 def test_solr_query(app, test_name, query, query_field, base_fields, expected_field, expected):
     """Assert that solr query call works as expected."""

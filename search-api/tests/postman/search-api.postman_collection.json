@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3aa452b8-d235-4879-a7b2-2bcb506e29a2",
+		"_postman_id": "c40e9905-7a5e-40c3-a55b-e0fa3fc2bc37",
 		"name": "SEARCH API Integration Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6835935"
@@ -660,6 +660,134 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"sp\",\n                    \"CP\",\n                    \"bc\",\n                    \"ben\"\n                ],\n                \"status\": [\n                    \"ACTIVE\",\n                    \"historical\"\n                ]\n            },\n            \"query\": {\n                \"bn_q\": \"9\",\n                \"identifier_q\": \"62\",\n                \"name_q\": \"te equip stor\",\n                \"value\": \"test\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"824492631BC0001\",\n                \"identifier\": \"FM0623527\",\n                \"legalType\": \"SP\",\n                \"name\": \"TESLA TEST EQUIPMENT STORE - IMPORT_TEST\",\n                \"score\": 10.710747,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "facets special operator",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test AND coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"businesses",
+								"search",
+								"facets"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "value:test AND coop::identifier:349"
+								},
+								{
+									"key": "categories",
+									"value": "status:ACTIVE"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								},
+								{
+									"key": "rows",
+									"value": "15"
+								}
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "facets special operator",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test AND coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"businesses",
+										"search",
+										"facets"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "value:test AND coop::identifier:349"
+										},
+										{
+											"key": "categories",
+											"value": "status:ACTIVE"
+										},
+										{
+											"key": "start",
+											"value": "0"
+										},
+										{
+											"key": "rows",
+											"value": "15"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 02 Aug 2022 22:18:39 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "408"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "API",
+									"value": "search_api/1.0.0b1.dev3"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": \"\",\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"349\",\n                \"name\": \"\",\n                \"value\": \"test and coop\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 8.75138,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
 						}
 					]
 				},
