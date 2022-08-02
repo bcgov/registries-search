@@ -14,7 +14,6 @@ import { BusinessInfoView } from '@/views'
 import { mockedBusinessResp, mockedFilingResp } from './utils'
 import FeeServices from 'sbc-common-components/src/services/fee.services'
 import { Fee } from 'sbc-common-components/src/models'
-import { CurrentAccountI } from '@/interfaces'
 
 // base unchanging setup for below test suites
 sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')

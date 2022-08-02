@@ -225,7 +225,7 @@ const getDocFees = async (codes: FeeCodes[]) => {
   return await getFeeInfo(feeData)
 }
 
-// load entity data, clear previous fees
+// load entity data / filing history, set fee data / selections
 onMounted(async () => {
   pageLoaded.value = false
   clearFees()
