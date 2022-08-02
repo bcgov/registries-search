@@ -21,14 +21,12 @@ export const useAuth = () => {
   // manager for auth + common functions etc.
   const hasProductAccess = (code: ProductCode) => {
     // check if product code in activeProducts or if staff access enables product code
-    if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) return true
+    if (isStaff.value) return true
     const product = auth.activeProducts.find(product => product.code === code)
     if (!product) return false
     return true
   }
   const isStaff = computed(() => auth.staffRoles.includes(StaffRoles.STAFF))
-  const isStaffHelpDesk = computed(() => auth.staffRoles.includes(StaffRoles.HELP_DESK))
-  const isStaffPPR = computed(() => auth.staffRoles.includes(StaffRoles.PPR))
   const isStaffSBC = computed(() => auth.staffRoles.includes(StaffRoles.SBC))
   const loadAuth = async () => {
     // set current account / set staff roles / get active products
@@ -39,7 +37,7 @@ export const useAuth = () => {
       const isSbc = await getSbcFromAuth()
       if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
     }
-    if (!isStaff.value && !isStaffHelpDesk.value && !isStaffPPR.value) await _loadProducts()
+    if (!isStaff.value) await _loadProducts()
   }
   /** Starts token service that refreshes KC token periodically. */
   const startTokenService = async () => {
@@ -71,12 +69,13 @@ export const useAuth = () => {
   const _loadCurrentAccount = async () => {
     try {
       let currentAccount = ''
-      // TODO: need to change '0' to something recognized as staff by auth
-      // and agreed upon within search / gateway and validate on the backend accordingly
-      if (isStaff.value || isStaffHelpDesk.value || isStaffPPR.value) currentAccount = '{"id":"0"}'
+      // FUTURE: auth is making orgs for registry staff + sbc staff - once done we need to update this based on that org
+      if (isStaff.value) currentAccount = '{"id":"0", "label":"BC Registry Staff"}'
       else currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      // parse/set current account info
       if (!currentAccount) console.error(`Error: session ${SessionStorageKeys.CurrentAccount} expected, but not found.`)
       auth.currentAccount = JSON.parse(currentAccount) as CurrentAccountI
+      // set user name
       auth.currentAccount.name = getKeycloakName()
     } catch (error) {
       console.log(error)
@@ -127,8 +126,6 @@ export const useAuth = () => {
     auth,
     hasProductAccess,
     isStaff,
-    isStaffHelpDesk,
-    isStaffPPR,
     isStaffSBC,
     loadAuth,
     startTokenService
