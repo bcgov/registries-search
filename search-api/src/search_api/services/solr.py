@@ -175,6 +175,7 @@ class Solr:
         params['rows'] = rows if rows else self.default_rows
 
         url = self.search_query.format(url=self.solr_url, core=self.core)
+        print(params)
         response = Solr.call_solr('GET', url, params=params)
         return response.json()
 
@@ -227,21 +228,40 @@ class Solr:
     @staticmethod
     def build_split_query(query: Dict[str, str], fields: List[SolrField], wild_card_fields: List[SolrField]) -> Dict:
         """Return a solr query with fqs for each subsequent term."""
+        def add_identifier(field: SolrField, term: str):
+            """Return a special identifier query."""
+            corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
+            if identifier := re.search(corp_prefix_regex, term):
+                prefix = identifier.group(1)
+                new_term = term.replace(prefix, '', 1)
+                return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
+            return f'{field}:{term}'
+            
+            
         def add_to_q(q: str, fields: List[SolrField], term: str):
             """Return an updated solr q param with extra clauses."""
+            identifier_fields = [SolrField.IDENTIFIER_Q, SolrField.PARENT_IDENTIFIER_Q]
+
+            first_clause = f'({fields[0]}:{term}'
+            if fields[0] in identifier_fields:
+                first_clause = f'({add_identifier(fields[0], term)}'
+
             if not q:
-                q = f'({fields[0]}:{term}'
+                q = f'{first_clause}'
             else:
-                q += f' AND ({fields[0]}:{term}'
-            if fields[0] in wild_card_fields:
+                q += f' AND {first_clause}'
+            if fields[0] in wild_card_fields and fields[0] not in identifier_fields:
                 q += '*'
             for field in fields[1:]:
-                q += f' OR {field}:{term}'
-                if field in wild_card_fields:
+                new_clause = f'{field}:{term}'
+                if field in identifier_fields:
+                    new_clause = f'{add_identifier(field, term)}'
+                q += f' OR {new_clause}'
+                if field in wild_card_fields and field not in identifier_fields:
                     q += '*'
             return q + ')'
 
-        def add_to_fq(fq: str, terms: str, fields: List[SolrField]):  # pylint: disable=invalid-name
+        def add_to_fq(fq: str, fields: List[SolrField], terms: str):  # pylint: disable=invalid-name
             """Return an updated solr fq param with extra clauses."""
             for term in terms:
                 if fq:
@@ -256,21 +276,22 @@ class Solr:
                         fq += '*'
                 fq += ')'
             return fq
+
         terms = query['value'].split()
         # add initial q param
         params = {'q': add_to_q('', fields, terms[0])}
         # add initial filter param for subsequent terms
-        params['fq'] = add_to_fq('', terms[1:], fields)
+        params['fq'] = add_to_fq('', fields, terms[1:])
 
         # add query clause and subsequent filter clauses for extra query items
         for key in query:
             if key == 'value' or not query[key]:
                 continue
             extra_terms = query[key].split()
-            # add query clause for key
+            # add query clause for 1st term in query[key]
             params['q'] = add_to_q(params['q'], [key], extra_terms[0])
-            # add filter clause for key
-            params['fq'] = add_to_fq(params['fq'], extra_terms[1:], [key])
+            # add filter clause for subsequent terms in query[key]
+            params['fq'] = add_to_fq(params['fq'], [key], extra_terms[1:])
 
         return params
 
