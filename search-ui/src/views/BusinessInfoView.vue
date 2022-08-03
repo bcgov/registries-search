@@ -118,7 +118,7 @@ const pageLoaded = ref(false)
 const router = useRouter()
 
 const { isStaff, isStaffSBC } = useAuth()
-const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
@@ -296,7 +296,7 @@ const isCogsAvailable = () => {
 }
 
 const isCstatAvailable = () => {
-  return (isBC.value || isCoop.value) && isActive.value
+  return (isBC.value || isCoop.value || isBComp) && isActive.value
 }
 
 const toggleFee = (event: any, item: any) => {
