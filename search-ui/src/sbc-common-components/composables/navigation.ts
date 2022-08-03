@@ -27,7 +27,7 @@ export const useNavigation = () => {
   }
 
   const getContextPath = (): string => {
-    let baseUrl = (router && (router)['history'] && (router)['history'].base) || ''
+    let baseUrl = (router?.options?.history?.base) || ''
     baseUrl += (baseUrl.length && baseUrl[baseUrl.length - 1] !== '/') ? '/' : ''
     return baseUrl
   }
