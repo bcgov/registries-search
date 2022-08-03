@@ -175,7 +175,6 @@ class Solr:
         params['rows'] = rows if rows else self.default_rows
 
         url = self.search_query.format(url=self.solr_url, core=self.core)
-        print(params)
         response = Solr.call_solr('GET', url, params=params)
         return response.json()
 
