@@ -235,8 +235,7 @@ class Solr:
                 new_term = term.replace(prefix, '', 1)
                 return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
             return f'{field}:{term}'
-            
-            
+
         def add_to_q(q: str, fields: List[SolrField], term: str):
             """Return an updated solr q param with extra clauses."""
             identifier_fields = [SolrField.IDENTIFIER_Q, SolrField.PARENT_IDENTIFIER_Q]
