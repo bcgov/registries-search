@@ -1,8 +1,10 @@
 // Vuetify Overrides
 @import 'theme.scss';
 
-.v-list-item--link:before {
-  background-color: inherit;
+// application
+.v-application .orange--text.text--darken-2 {
+  color: #f57c00 !important;
+  caret-color: #f57c00 !important;
 }
 
 // tables
@@ -264,6 +266,10 @@ td {
   color: #495057 !important;
   font-family: "BCSans", Verdana, Arial, sans-serif !important;
   font-size: 0.875rem !important;
+}
+
+.v-list-item--link:before {
+  background-color: inherit;
 }
 
 // v-snackbar
