@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 import { ApiFiling } from '@/interfaces/legal-api-responses'
 import { getFilings } from '@/requests'
@@ -40,9 +40,13 @@ export const useFilingHistory = () => {
         filingHistory._loading = false
     }
 
+    const hasCourtOrderFilings = computed(() => filingHistory.filings.filter(
+        filing => filing.displayName == 'Court Order').length > 0)
+
     return {
         filingHistory,
         clearFilingHistory,
-        loadFilingHistory
+        loadFilingHistory,
+        hasCourtOrderFilings
     }
 }
