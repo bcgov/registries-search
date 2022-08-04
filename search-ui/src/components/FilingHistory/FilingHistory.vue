@@ -33,15 +33,17 @@
                   <span>FILED AND PENDING
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-tooltip top content-class="pending-tooltip">
+                  <v-tooltip location="top" content-class="tooltip">
                     <template v-slot:activator="{ props }">
-                      <div class="pending-alert" v-on="props">
+                      <div class="pending-alert" v-bind="props">
                         <v-icon color="orange darken-2">mdi-alert</v-icon>
                       </div>
                     </template>
-                    The updated office addresses will be legally effective on
-                    {{ dateToPacificDateTime(filing.effectiveDate) }}.
-                    No other filings are allowed until then.
+                    <span>
+                      The updated office addresses will be legally effective on
+                      {{ dateToPacificDateTime(filing.effectiveDate) }}.
+                      No other filings are allowed until then.
+                    </span>
                   </v-tooltip>
                 </div>
 
@@ -65,8 +67,11 @@
                   <span>PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" outlined color="orange darken-2" :ripple=false
-                    @click.stop="togglePanel(index, filing)">
+                  <v-btn
+                    class="details-btn orange--text text--darken-2"
+                    :ripple=false
+                    @click.stop="togglePanel(index, filing)"
+                  >
                     <v-icon left>mdi-alert</v-icon>
                     <span>{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
                   </v-btn>
@@ -81,10 +86,9 @@
                   <span>PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" outlined color="blue darken-2" :ripple=false
-                    @click.stop="togglePanel(index, filing)">
-                    <v-icon left>mdi-information-outline</v-icon>
-                    <span>{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
+                  <v-btn class="details-btn" flat :ripple=false @click.stop="togglePanel(index, filing)">
+                    <v-icon left class="app-blue">mdi-information-outline</v-icon>
+                    <span class="app-blue">{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
                   </v-btn>
                 </div>
 
@@ -95,8 +99,11 @@
                   <span>PAID
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-btn class="details-btn" outlined color="orange darken-2" :ripple=false
-                    @click.stop="togglePanel(index, filing)">
+                  <v-btn
+                    class="details-btn orange--text text--darken-2"
+                    :ripple=false
+                    @click.stop="togglePanel(index, filing)"
+                  >
                     <v-icon left>mdi-alert</v-icon>
                     <span>{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
                   </v-btn>
@@ -531,10 +538,10 @@ onMounted(async () => {
 
 // specifically enable anchors, buttons, the pending alert icon and tooltips
 // for this page and sub-components
-::v-deep a,
-::v-deep .v-btn,
-::v-deep .pending-alert .v-icon,
-::v-deep .v-tooltip+div {
+:deep(a),
+:deep(.v-btn),
+:deep(.pending-alert .v-icon),
+:deep(.v-tooltip+div) {
   pointer-events: auto;
 }
 
@@ -600,22 +607,25 @@ onMounted(async () => {
 }
 
 .details-btn {
+  background-color: transparent !important;
+  box-shadow: none;
   margin-bottom: 0.25rem;
+  padding-left: 0;
 }
 
 .v-expansion-panel {
   box-shadow: none !important;
 }
 
-::v-deep .v-expansion-panel-text__wrapper {
+:deep(.v-expansion-panel-text__wrapper) {
   padding: 0;
 }
 
-::v-deep .v-expansion-panel-title__overlay {
+:deep(.v-expansion-panel-title__overlay) {
   background-color: white;
 }
 
-::v-deep .theme--light.v-list-item--disabled {
+:deep(.theme--light.v-list-item--disabled) {
   opacity: 0.38 !important;
 }
 

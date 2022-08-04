@@ -7,8 +7,10 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props">mdi-file-lock-open</v-icon>
-                            <span v-bind="props" class="doc-title">{{ document.title }}</span>
+                            <div v-bind="props">
+                                <v-icon >mdi-file-lock-open</v-icon>
+                                <span class="doc-title">{{ document.title }}</span>
+                            </div>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
@@ -28,8 +30,10 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props">mdi-file-lock-open</v-icon>
-                            <span v-bind="props" class="doc-title">Download All</span>
+                            <div v-bind="props">
+                                <v-icon>mdi-file-lock-open</v-icon>
+                                <span class="doc-title">Download All</span>
+                            </div>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
