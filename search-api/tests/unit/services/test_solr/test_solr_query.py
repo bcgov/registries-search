@@ -54,7 +54,8 @@ def test_solr_suggest_name(app, test_name, query, expected):
 
 @integration_solr
 @pytest.mark.parametrize('test_name,query,query_field,base_fields,expected_field,expected', [
-    ('test-identifier', 'CP00', SolrField.IDENTIFIER_Q, True, SolrField.IDENTIFIER, ['CP0034567']),
+    ('test_identifier_1', 'CP00', SolrField.IDENTIFIER_Q, True, SolrField.IDENTIFIER, ['CP0034567']),
+    ('test_identifier_2', 'CP567', SolrField.IDENTIFIER_Q, True, SolrField.IDENTIFIER, ['CP0034567', 'CP1234567', 'CP0234567']),
     ('test-bn', '0012334', SolrField.BN_Q, True, SolrField.BN, ['BN00012334']),
     ('test-name-exact', 'tests 2222', SolrField.NAME_SINGLE, True, SolrField.NAME, ['tests 2222']),
     ('test-case', 'not case sensitive', SolrField.NAME_SINGLE, True, SolrField.NAME, ['NOt Case SENSitive']),
