@@ -6,6 +6,11 @@
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
       <span v-else class="gray6 ml-1">({{ filings.length }})</span>
     </h2>
+    <div class="mt-4 mb-5 pa-4 court-order-section" v-if="hasCourtOrderFilings">
+      <v-icon class="ml-1">mdi-gavel</v-icon>
+      <span class="ml-2">Court order(s) have been filed on this company. Review the 
+        filing history for impacts to business information.</span>
+    </div>
     <div class="scrollable-container mt-3">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
@@ -244,10 +249,11 @@ import { StatusCodes } from 'http-status-codes'
 const props = defineProps<{ isLocked: boolean }>()
 
 const { entity, isBComp } = useEntity()
-const { filingHistory } = useFilingHistory()
+const { filingHistory, hasCourtOrderFilings } = useFilingHistory()
 const { downloadFilingDocument } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
+
 
 const panel = ref(-1) // currently expanded panel
 const historyItems = ref([])
@@ -611,5 +617,10 @@ onMounted(async () => {
 
 ::v-deep .theme--light.v-list-item--disabled {
   opacity: 0.38 !important;
+}
+
+.court-order-section {
+  width: 100%;
+  background-color: white;
 }
 </style>
