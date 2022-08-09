@@ -16,8 +16,8 @@
                         </span>
                     </v-tooltip>
                     <div v-else>
-                        <v-icon class="app-blue">mdi-file-pdf-box</v-icon>
-                        <span class="app-blue">{{ document.title }}</span>
+                        <img class="mb-n1" :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
+                        <span class="app-blue ml-1">{{ document.title }}</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -38,7 +38,7 @@
                     </v-tooltip>
                     <div v-else>
                         <v-icon class="app-blue">mdi-download</v-icon>
-                        <span>Download All</span>
+                        <span class="app-blue" style="margin-left: 2px;">Download All</span>
                     </div>
                 </v-btn>
             </v-list-item>

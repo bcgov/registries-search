@@ -82,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { BaseTable } from '@/components'
@@ -98,7 +99,7 @@ const { learBusinessTypes, setEntity } = useEntity()
 const { search } = useSearch()
 
 // const totalResultsLength = computed(() => search.totalResults || 0 )
-const goToBusinessFromParty  = (result: SearchPartyResultI)  => {
+const goToBusinessFromParty  = (result: SearchPartyResultI) => {
   const businessInfo: SearchResultI = {
     bn: result.parentBN,
     identifier: result.parentIdentifier,
@@ -108,13 +109,31 @@ const goToBusinessFromParty  = (result: SearchPartyResultI)  => {
   }
   goToBusinessInfo(businessInfo)
 }
-const goToBusinessInfo  = (result: SearchResultI)  => {
+const goToBusinessInfo  = (result: SearchResultI) => {
   const identifier = result.identifier
   setEntity(result as EntityI)
   router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
 }
 
 const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.slice(1)
+
+/** Update the base table header filters to display what the current filters are.
+ * (needed when leaving and coming back to the component)
+ */
+const updateTableHeaderFilters = () => {
+  const activeFilters = Object.keys(search.filters)
+  for (const i in activeFilters) {
+    // find header filter
+    let header = BusinessSearchHeaders.find((item) => item.col === activeFilters[i])
+    if (!header) header = PartySearchHeaders.find((item) => item.col === activeFilters[i])
+    // update filter value to match search composable
+    header.filter.value = search.filters[activeFilters[i]]
+  }
+}
+
+// set table filters to session saved ones
+onMounted(() => { updateTableHeaderFilters() })
+watch(() => search.searchType, () => { updateTableHeaderFilters() })
 
 </script>
 
