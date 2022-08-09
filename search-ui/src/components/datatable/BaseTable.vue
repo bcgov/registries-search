@@ -29,7 +29,7 @@
                   <v-btn
                     v-if="header.value"
                     class="base-table__header__item__title"
-                    :text="true"
+                    :ripple="false"
                     @click="toggleSort(header)"
                   >
                     <span v-html="header.value" />
