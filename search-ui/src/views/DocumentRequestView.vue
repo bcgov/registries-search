@@ -32,7 +32,7 @@
                     <v-list class="py-0" density="compact">
                         <v-list-item v-for="(document, index) in documents" :key="index">
                             <span class="app-blue doc-link pt-6" @click="downloadDoc(document)">
-                                <v-icon class="app-blue pr-1">mdi-file-pdf-box</v-icon>
+                                <img class="mb-n1" :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
                                 {{ documentDescription(document.documentType) }}
                             </span>
                         </v-list-item>
@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
@@ -56,7 +57,6 @@ import { DocumentDetailsI, DocumentI } from '@/interfaces'
 import { dateToPacificDateTime } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
 import { DocumentType, RouteNames } from '@/enums'
-import { useRouter } from 'vue-router'
 
 const { entity } = useEntity()
 const { filingHistory } = useFilingHistory()

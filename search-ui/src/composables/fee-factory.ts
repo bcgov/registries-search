@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import FeeServices from 'sbc-common-components/src/services/fee.services'
 import { FilingData } from 'sbc-common-components/src/models'
 // local
+import { useAuth } from '@/composables'
 import { ErrorCategories, FeeCodes, FeeEntities } from '@/enums'
 import { CachedFeeItem, FeeDataI, FeeI, FeesI } from '@/interfaces'
 import { FeeDescriptions } from '@/resources/fee-descriptions'
@@ -17,6 +18,9 @@ const fees = reactive({
 } as FeesI)
 
 const _cachedFeeItems = [] as CachedFeeItem[]
+
+// NB: will remove this and decouple auth composable once sbc agents return correct fee code info from pay
+const { isStaffSBC } = useAuth()
 
 export const useFeeCalculator = () => {
   const addFeeItem = async (code: FeeCodes, quantity: number) => {
@@ -55,7 +59,7 @@ export const useFeeCalculator = () => {
           fee: payResp[i].fee,
           label: FeeDescriptions[code] || payResp[i].filingType,
           quantity: 1,
-          serviceFee: payResp[i].serviceFees 
+          serviceFee: isStaffSBC.value ? 0 : payResp[i].serviceFees
         }
         _cachedFeeItems.push({ [code]: item })
         feeInfo.push(item)

@@ -56,6 +56,7 @@ export const useSearch = () => {
     return match.replaceAll(search._value.toUpperCase(), `<b>${search._value.toUpperCase()}</b>`)
   }
   const resetSearch = () => {
+    search.filters = {} as SearchFilterI
     search.results = null
     search.searchType = 'business'
     search.totalResults = null
