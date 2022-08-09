@@ -1,6 +1,6 @@
 {
   "name": "search-ui",
-  "version": "1.0.0b2.dev5",
+  "version": "1.0.0b2.dev6",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
