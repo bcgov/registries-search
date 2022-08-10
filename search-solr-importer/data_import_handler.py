@@ -47,7 +47,7 @@ def collect_colin_data():
         join corp_name cn on cn.corp_num = c.corp_num
         left join (select business_nme, first_nme, last_nme, middle_nme, corp_num, party_typ_cd, corp_party_id
                 from corp_party
-                where end_event_id is null and party_typ_cd in ('DIR','FIO','FBO','FCP','INC')
+                where end_event_id is null and party_typ_cd in ('FIO','FBO','FCP','INC')
             ) cp on cp.corp_num = c.corp_num
         WHERE c.corp_typ_cd not in ('BEN','CP','GP','SP')
             and cs.end_event_id is null
@@ -76,6 +76,7 @@ def collect_lear_data():
             JOIN parties p on p.id = pr.party_id
         WHERE legal_type in ('BEN', 'CP', 'SP', 'GP')
             AND pr.cessation_date is null
+            AND pr.role != 'director'
         """)
     return cur
 
