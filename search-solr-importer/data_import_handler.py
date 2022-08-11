@@ -149,7 +149,7 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                 'status': item_dict['state'],
                 'bn': item_dict['tax_id']
             }
-            if item_dict.get('party_id'):
+            if has_party:
                 # add party doc to base doc
                 prepped_data[item_dict['identifier']]['parties'] = {
                     item_dict['party_id']: {
@@ -162,9 +162,6 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                         'partyType': item_dict['party_type']
                     }
                 }
-        else:
-            # duplicate base doc found. Log and skip
-            current_app.logger.error(f'Duplicate entry found for: {item_dict["identifier"]}')
     # flatten the data to a list of solr docs (also flatten the parties to a list)
     solr_docs = []
     for identifier in prepped_data:
