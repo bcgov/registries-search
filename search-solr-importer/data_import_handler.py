@@ -72,11 +72,10 @@ def collect_lear_data():
             p.middle_initial, p.last_name, p.organization_name, p.party_type, p.id as party_id,
             CASE when b.state = 'LIQUIDATION' then 'ACTIVE' else b.state END state
         FROM businesses b
-            LEFT JOIN party_roles pr on pr.business_id = b.id
-            JOIN parties p on p.id = pr.party_id
+            LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
+                       AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
+            LEFT JOIN parties p on p.id = pr.party_id
         WHERE b.legal_type in ('BEN', 'CP', 'SP', 'GP')
-            AND pr.cessation_date is null
-            AND pr.role in ('partner', 'proprietor')
         """)
     return cur
 
@@ -114,33 +113,35 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
 
     for item in data:
         item_dict = dict(zip([x[0].lower() for x in cur.description], item))
-        already_added = False
-        if item_dict.get('party_typ_cd'):
+        base_doc_already_added = item_dict['identifier'] in prepped_data
+        has_party = item_dict.get('party_id')
+        if has_party:
+            # prep party fields
             if not item_dict.get('role'):
                 item_dict['role'] = get_party_role(item_dict.get('party_typ_cd'), item_dict['legal_type'])
             if not item_dict.get('party_type'):
                 item_dict['party_type'] = 'organization' if item_dict['organization_name'] else 'person'
-            if item_dict['identifier'] in prepped_data:
-                # base doc already added, add extra party doc
-                already_added = True
-                if item_dict['party_id'] in prepped_data[item_dict['identifier']]['parties']:
-                    # party doc already added, add extra role
-                    party_roles = prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']]['partyRoles']
-                    party_roles.append(item_dict['role'])
-                else:
-                    # add party doc to base doc
-                    prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']] = {
-                        'parentBN': item_dict['tax_id'],
-                        'parentLegalType': item_dict['legal_type'],
-                        'parentName': item_dict['legal_name'],
-                        'parentStatus': item_dict['state'],
-                        'partyName': get_party_name(item_dict),
-                        'partyRoles': [item_dict['role']],
-                        'partyType': item_dict['party_type']
-                    }
 
-        if not already_added:
-            # add base doc
+        if base_doc_already_added and has_party:
+            # base doc already added, add extra party doc
+            if item_dict['party_id'] in prepped_data[item_dict['identifier']]['parties']:
+                # party doc already added, add extra role
+                party_roles = prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']]['partyRoles']
+                party_roles.append(item_dict['role'])
+            else:
+                # add party doc to base doc
+                prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']] = {
+                    'parentBN': item_dict['tax_id'],
+                    'parentLegalType': item_dict['legal_type'],
+                    'parentName': item_dict['legal_name'],
+                    'parentStatus': item_dict['state'],
+                    'partyName': get_party_name(item_dict),
+                    'partyRoles': [item_dict['role']],
+                    'partyType': item_dict['party_type']
+                }
+
+        elif not base_doc_already_added:
+            # add new base doc
             prepped_data[item_dict['identifier']] = {
                 'identifier': item_dict['identifier'],
                 'name': item_dict['legal_name'],
@@ -149,6 +150,7 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                 'bn': item_dict['tax_id']
             }
             if item_dict.get('party_id'):
+                # add party doc to base doc
                 prepped_data[item_dict['identifier']]['parties'] = {
                     item_dict['party_id']: {
                         'parentBN': item_dict['tax_id'],
@@ -160,6 +162,9 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                         'partyType': item_dict['party_type']
                     }
                 }
+        else:
+            # duplicate base doc found. Log and skip
+            current_app.logger.error(f'Duplicate entry found for: {item_dict["identifier"]}')
     # flatten the data to a list of solr docs (also flatten the parties to a list)
     solr_docs = []
     for identifier in prepped_data:
@@ -183,7 +188,7 @@ def update_solr(base_docs: List[SolrDoc], data_name: str) -> int:
         # send batch to solr
         solr.create_or_replace_docs(base_docs[offset:count])
         offset = count
-        current_app.logger.debug(f'Total {data_name} records imported: {count}')
+        current_app.logger.debug(f'Total {data_name} base doc records imported: {count}')
     return count
 
 
