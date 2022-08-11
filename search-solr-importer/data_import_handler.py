@@ -221,15 +221,15 @@ def load_search_core():
         current_app.logger.debug('SOLR import finished successfully.')
 
     except SolrException as err:
-        current_app.logger.error(f'SOLR gave status code: {err.status_code}')
+        current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
         if err.status_code == HTTPStatus.BAD_GATEWAY:
-            current_app.logger.debug('SOLR timeout most likely due to suggester build. ' +
+            current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
                                      'Please wait a couple minutes and then verify import '
                                      'and suggester build manually in the solr admin UI.')
             sys.exit(0)
         else:
             current_app.logger.error(err.error)
-            current_app.logger.error('SOLR import failed.')
+            current_app.logger.debug('SOLR import failed.')
         sys.exit(1)
 
 

@@ -13,5 +13,11 @@
             "registries-search-api",
             "registries-search-solr-importer"
         ]
+    },
+    {
+        "vault": "sentry",
+        "application": [
+            "registries-search-backend"
+        ]
     }
 ]
