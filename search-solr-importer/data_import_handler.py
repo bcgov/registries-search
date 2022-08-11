@@ -47,7 +47,7 @@ def collect_colin_data():
         join corp_name cn on cn.corp_num = c.corp_num
         left join (select business_nme, first_nme, last_nme, middle_nme, corp_num, party_typ_cd, corp_party_id
                 from corp_party
-                where end_event_id is null and party_typ_cd in ('DIR','FIO','FBO','FCP','INC')
+                where end_event_id is null and party_typ_cd in ('FIO','FBO')
             ) cp on cp.corp_num = c.corp_num
         WHERE c.corp_typ_cd not in ('BEN','CP','GP','SP')
             and cs.end_event_id is null
@@ -72,10 +72,10 @@ def collect_lear_data():
             p.middle_initial, p.last_name, p.organization_name, p.party_type, p.id as party_id,
             CASE when b.state = 'LIQUIDATION' then 'ACTIVE' else b.state END state
         FROM businesses b
-            JOIN party_roles pr on pr.business_id = b.id
-            JOIN parties p on p.id = pr.party_id
-        WHERE legal_type in ('BEN', 'CP', 'SP', 'GP')
-            AND pr.cessation_date is null
+            LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
+                       AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
+            LEFT JOIN parties p on p.id = pr.party_id
+        WHERE b.legal_type in ('BEN', 'CP', 'SP', 'GP')
         """)
     return cur
 
@@ -97,7 +97,7 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
             person_name += ' ' + doc_info['last_name'].strip()
         return person_name.strip()
 
-    def get_party_role(type_cd: ColinPartyTypeCode, legal_type: str) -> Optional[str]:
+    def get_party_role(type_cd: str, legal_type: str) -> Optional[str]:
         """Return the lear party_type given the colin party type code."""
         if type_cd == ColinPartyTypeCode.DIRECTOR:
             return 'director'
@@ -105,7 +105,7 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
             return 'completing_party'
         if type_cd == ColinPartyTypeCode.INCORPORATOR:
             return 'incorporator'
-        if type_cd in [ColinPartyTypeCode.FIRM_BUS_OWNER, ColinPartyTypeCode.FIRM_IND_OWNER]:
+        if type_cd in [ColinPartyTypeCode.FIRM_BUS_OWNER.value, ColinPartyTypeCode.FIRM_IND_OWNER.value]:
             if legal_type == 'SP':
                 return 'proprietor'
             return 'partner'
@@ -113,11 +113,16 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
 
     for item in data:
         item_dict = dict(zip([x[0].lower() for x in cur.description], item))
-        if not item_dict.get('role'):
-            item_dict['role'] = get_party_role(item_dict.get('party_typ_cd'), item_dict['legal_type'])
-        if not item_dict.get('party_type'):
-            item_dict['party_type'] = 'organization' if item_dict['organization_name'] else 'person'
-        if item_dict['identifier'] in prepped_data:
+        base_doc_already_added = item_dict['identifier'] in prepped_data
+        has_party = item_dict.get('party_id')
+        if has_party:
+            # prep party fields
+            if not item_dict.get('role'):
+                item_dict['role'] = get_party_role(item_dict.get('party_typ_cd'), item_dict['legal_type'])
+            if not item_dict.get('party_type'):
+                item_dict['party_type'] = 'organization' if item_dict['organization_name'] else 'person'
+
+        if base_doc_already_added and has_party:
             # base doc already added, add extra party doc
             if item_dict['party_id'] in prepped_data[item_dict['identifier']]['parties']:
                 # party doc already added, add extra role
@@ -134,15 +139,19 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                     'partyRoles': [item_dict['role']],
                     'partyType': item_dict['party_type']
                 }
-        else:
-            # add base doc
+
+        elif not base_doc_already_added:
+            # add new base doc
             prepped_data[item_dict['identifier']] = {
                 'identifier': item_dict['identifier'],
                 'name': item_dict['legal_name'],
                 'legaltype': item_dict['legal_type'],
                 'status': item_dict['state'],
-                'bn': item_dict['tax_id'],
-                'parties': {
+                'bn': item_dict['tax_id']
+            }
+            if has_party:
+                # add party doc to base doc
+                prepped_data[item_dict['identifier']]['parties'] = {
                     item_dict['party_id']: {
                         'parentBN': item_dict['tax_id'],
                         'parentLegalType': item_dict['legal_type'],
@@ -153,15 +162,15 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
                         'partyType': item_dict['party_type']
                     }
                 }
-            }
     # flatten the data to a list of solr docs (also flatten the parties to a list)
     solr_docs = []
     for identifier in prepped_data:
         base_doc = prepped_data[identifier]
-        flattened_parties = []
-        for party_key in base_doc['parties']:
-            flattened_parties.append(base_doc['parties'][party_key])
-        base_doc['parties'] = flattened_parties
+        if base_doc.get('parties'):
+            flattened_parties = []
+            for party_key in base_doc['parties']:
+                flattened_parties.append(base_doc['parties'][party_key])
+            base_doc['parties'] = flattened_parties
         solr_docs.append(SolrDoc(base_doc))
     return solr_docs
 
@@ -176,7 +185,7 @@ def update_solr(base_docs: List[SolrDoc], data_name: str) -> int:
         # send batch to solr
         solr.create_or_replace_docs(base_docs[offset:count])
         offset = count
-        current_app.logger.debug(f'Total {data_name} records imported: {count}')
+        current_app.logger.debug(f'Total {data_name} base doc records imported: {count}')
     return count
 
 
