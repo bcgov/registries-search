@@ -296,7 +296,7 @@ const isCogsAvailable = () => {
 }
 
 const isCstatAvailable = () => {
-  return (isBC.value || isCoop.value || isBComp) && isActive.value
+  return (isBC.value || isCoop.value || isBComp.value) && isActive.value
 }
 
 const toggleFee = (event: any, item: any) => {

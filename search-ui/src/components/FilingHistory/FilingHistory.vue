@@ -1,17 +1,17 @@
 <template>
   <div id="filing-history-list">
     <h2 data-test-id="dashboard-filing-history-subtitle">
-      <span v-if="props.isLocked">Recent Filing History</span>
+      <span v-if="props.isLocked">Filing History</span>
       <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
       <span v-else class="gray6 ml-1">({{ filings.length }})</span>
     </h2>
-    <div class="mt-4 mb-5 pa-4 court-order-section" v-if="hasCourtOrderFilings">
+    <div class="mt-5 pa-5 court-order-section" v-if="hasCourtOrderFilings">
       <v-icon class="ml-1">mdi-gavel</v-icon>
       <span class="ml-2">Court order(s) have been filed on this company. Review the 
         filing history for impacts to business information.</span>
     </div>
-    <div class="scrollable-container mt-3">
+    <div class="scrollable-container mt-5">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">
@@ -19,7 +19,10 @@
             <div class="item-header d-flex">
               <!-- the filing label (left side) -->
               <div class="item-header__label">
-                <h3 class="item-header__title">{{ filing.displayName }}</h3>
+                <h3 class="item-header__title">
+                  <v-icon v-if="filing.displayName === 'Court Order'" class="mr-1 mt-n1">mdi-gavel</v-icon>
+                  {{ filing.displayName }}
+                </h3>
 
                 <!-- NB: blocks below are mutually exclusive, and order is important -->
 
@@ -630,7 +633,11 @@ onMounted(async () => {
 }
 
 .court-order-section {
+  color: $gray7;
   width: 100%;
   background-color: white;
+}
+.court-order-section .v-icon {
+  color: $gray9;
 }
 </style>
