@@ -100,7 +100,13 @@
       </v-tab>
       <v-tab id="documents-tab" :class="['tab-item-default', tab == '1' ? 'tab-item-active' : 'tab-item-inactive']">
         <v-icon>mdi-file-document-edit-outline</v-icon>
-        <span class="ml-1">View Recently Purchased Documents ({{totalDocAccessLength}})</span>
+        <span class="ml-1">
+          View Recently Purchased Documents
+          <span class="ml-1" v-if="documentAccessRequest._loading">
+            <v-progress-circular indeterminate size="22" />
+          </span>
+          <span v-else>({{ totalDocAccessLength }})</span>
+        </span>
       </v-tab>
     </v-tabs>
 
@@ -111,7 +117,7 @@
             Search for businesses registered or incorporated in B.C.&#42; or
             for owners of Firms registered in B.C.
           </p>
-          <search-bar class="mx-7" />
+          <search-bar class="px-7" />
           <p class="mx-7 my-10 info-text">
             &#42;Note: The beta version of business search will not retrieve Railways, Financial Institutions, or
             businesses incorporated under Private acts.

@@ -52,6 +52,7 @@ export interface SearchPartyResultI {
 // api responses
 export interface SearchResponseI {
   searchResults: {
+    queryInfo: { query: { value: string } } // partial def (other parts not used)
     results: (SearchResultI | SearchPartyResultI)[]
     totalResults: number
   }

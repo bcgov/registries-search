@@ -17,11 +17,10 @@ export const useSearch = () => {
   const filterSearch = async (filterField: string, val: string) => {
     // FUTURE: verify filterField is valid
     search.filters[filterField] = val
-    await getSearchResults(search._value)
+    if (search._value) await getSearchResults(search._value)
   }
   const getSearchResults = async (val: string) => {
     search._loading = true
-    search._value = val
     if (search.results === null) search.results = []
     let searchResp: SearchResponseI = null
     if (search.searchType === 'business') {
@@ -34,6 +33,7 @@ export const useSearch = () => {
     if (searchResp) {
       if (!searchResp.error) {
         // success
+        search._value = searchResp.searchResults.queryInfo.query.value
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults
       } else {
@@ -43,7 +43,7 @@ export const useSearch = () => {
         search._error = searchResp.error
       }
     } else {
-      // unhandled response error
+      // unhandled response error (should never get here)
       search.results = []
       search.totalResults = null
       console.error('Nothing returned from search request fn.')

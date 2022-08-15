@@ -7,7 +7,13 @@
             <slot name="header-title" :headers="headers">
               <th v-if="title" class="base-table__title" :colspan="pagination ? headers.length / 2 : headers.length">
                 <slot name="title">
-                  <h2 class="ml-3 py-6">{{ title }} ({{ totalItems || setItems.length }})</h2>
+                  <h2 class="ml-3 py-6">
+                    {{ title }}
+                    <span class="ml-1" v-if="loading">
+                      <v-progress-circular indeterminate size="22" />
+                    </span>
+                    <span v-else>({{ totalItems || setItems.length }})</span>
+                  </h2>
                 </slot>
               </th>
               <th v-if="pagination" :colspan="title? headers.length / 2 : headers.length">
@@ -207,7 +213,7 @@ const filter = _.debounce(async (header: BaseTableHeaderI) => {
   // clear sort
   sortBy.value = ''
   sortDirection.value = 'desc'
-}, 200)
+}, 500)
 
 watch(() => props.setItems, () => {
   sortedItems.value = [...props.setItems]
