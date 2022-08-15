@@ -1,15 +1,16 @@
-<template>
+<template>   
   <base-table
     v-if="search.searchType === 'business'"
-    class="mt-10"
+    class="mt-4"
     height="100%"
     :itemKey="'identifier'"
     :loading="search._loading"
     :setHeaders="BusinessSearchHeaders"
     :setItems="search.results"
     title="Search Results"
-    :totalItems="search.totalResults"
-  >
+    :subtitle="subtitle"
+    :totalItems="search.totalResults">
+
     <template v-slot:item-slot-button="{ item }">
       <v-btn
         v-if="learBusinessTypes.includes(item.legalType)"
@@ -84,6 +85,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 // local
 import { BaseTable } from '@/components'
 import { useEntity, useSearch } from '@/composables'
@@ -116,6 +118,9 @@ const goToBusinessInfo  = (result: SearchResultI) => {
 }
 
 const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.slice(1)
+const subtitle = computed(() => { return search.totalResults > 100 ? 
+'We only display the first 100 results of a large search. To see all results, refine your search ' +
+'terms to return fewer results.' : '' })
 
 /** Update the base table header filters to display what the current filters are.
  * (needed when leaving and coming back to the component)

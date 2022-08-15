@@ -89,14 +89,19 @@
         </div>
       </v-col>
       <v-col cols="12" sm="auto">
-        <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
+        <div>
+          <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
+          <div class="validation-messages pl-5 mt-2" v-if="!searchValidInput">
+            <div>{{ validationMsg }} </div>
+          </div>
+        </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref, computed, reactive } from 'vue'
+import { onMounted, ref, Ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { StaffPayment } from '@/bcrs-common-components'
@@ -116,6 +121,7 @@ const props = defineProps({
 const loading = ref(false)
 const pageLoaded = ref(false)
 const router = useRouter()
+const validationMsg = ref('')
 
 const { isStaff, isStaffSBC } = useAuth()
 const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp } = useEntity()
@@ -164,6 +170,7 @@ const purchasableDocs = ref([]) as Ref<{
 }[]>
 const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
+const searchValidInput = ref(true)
 
 const payForDocuments = async () => {
   loading.value = true
@@ -185,9 +192,17 @@ const payForDocuments = async () => {
   loading.value = false
 }
 
+
 const submitSelected = () => {
-  if (isStaff.value) showStaffPayment.value = true
-  else payForDocuments()
+  searchValidInput.value = true
+  validationMsg.value = ''
+  if (hasNoSelectedDocs.value) {
+      searchValidInput.value = false
+      validationMsg.value = "Select from Available Documents"
+  } else {
+    if (isStaff.value) showStaffPayment.value = true
+    else payForDocuments()
+  }
 }
 
 const feeActions: FeeAction[][] = [
@@ -207,8 +222,7 @@ const feeActions: FeeAction[][] = [
     action: submitSelected,
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
-    outlined: false,
-    disabled: reactive(hasNoSelectedDocs),
+    outlined: false,     
     text: 'Pay and Unlock Documents'
   }],
 ]
@@ -380,5 +394,14 @@ const toggleFee = (event: any, item: any) => {
 
 .disabled-text {
   color: $gray7;
+}
+
+.validation-messages{
+  color: red;  
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;    
+  width: 320px;
 }
 </style>
