@@ -1,7 +1,7 @@
-<template>   
+<template>
+<div class="mt-4">
   <base-table
-    v-if="search.searchType === 'business'"
-    class="mt-4"
+    v-if="search.searchType === 'business'"    
     height="100%"
     :itemKey="'identifier'"
     :loading="search._loading"
@@ -37,13 +37,13 @@
   </base-table>
   <base-table
     v-else
-    class="mt-10"
     height="100%"
     :itemKey="'parentIdentifier'"
     :loading="search._loading"
     :setHeaders="PartySearchHeaders"
     :setItems="search.results"
     title="Search Results"
+    :subtitle="subtitle"
     :totalItems="search.totalResults"
   >
     <template v-slot:item-slot-button="{ item }">
@@ -80,6 +80,7 @@
       </ul>
     </template>
   </base-table>
+  </div>
 </template>
 
 <script setup lang="ts">
