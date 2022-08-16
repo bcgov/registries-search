@@ -10,6 +10,7 @@
       persistent-hint
       v-model="searchVal"
       @keyup="submitSearch()"
+      :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
     <v-row no-gutters>
       <v-col cols="auto" style="padding-top: 2px;">

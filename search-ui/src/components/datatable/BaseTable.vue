@@ -15,6 +15,9 @@
                     <span v-else>({{ totalItems || setItems.length }})</span>
                   </h2>
                 </slot>
+                <slot name="subtitle">
+                  <h4 class="ml-3 mb-6" v-if="subtitle">{{ subtitle }}</h4>
+                </slot>
               </th>
               <th v-if="pagination" :colspan="title? headers.length / 2 : headers.length">
                 <slot name="pagination">
@@ -143,6 +146,7 @@ const props = defineProps<{
   setItems: object[],
   title?: string
   totalItems?: number
+  subtitle?: string
 }>()
 
 const headers = reactive(_.cloneDeep(props.setHeaders))
