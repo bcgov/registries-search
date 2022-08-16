@@ -12,7 +12,7 @@ module.exports = defineConfig({
     proxy: {
       // this is needed to prevent a CORS error when running locally
       '/local-keycloak-config-url/*': {
-        target: 'https://dev.bcregistry.ca/business/config/kc/',
+        target: 'https://dev.bcregistry.ca/business/search/config/kc/',
         pathRewrite: {
           '/local-keycloak-config-url': ''
         }

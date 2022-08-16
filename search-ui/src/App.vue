@@ -149,7 +149,8 @@ const handleError = (error: ErrorI) => {
   // FUTURE: add account info with error information, add dialog popups for specific errors
   switch (error.category) {
     case ErrorCategories.ACCOUNT_ACCESS:
-      navigate(sessionStorage.getItem('REGISTRY_URL'))
+      console.log('here')
+      // navigate(sessionStorage.getItem('REGISTRY_URL'))
   }
   Sentry.captureException(error)
 }
