@@ -86,6 +86,9 @@ def test_solr_suggest_name(app, test_name, query, expected):
     ('test_special_operators_OR', 'special OR operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
     ('test_special_operators_AND', 'special AND operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
     ('test_special_operators_NOT', 'special AND operator', SolrField.NAME_SINGLE, True, SolrField.NAME, ['special OR AND NOT operators']),
+    ('test_accented_character-1', 'EBENISTERIE', SolrField.NAME_SINGLE, True, SolrField.NAME, ['DIVINE ÉBÉNISTERIE INC.']),
+    ('test_accented_character-2', 'EBENISTERIE', SolrField.NAME_Q, True, SolrField.NAME, ['DIVINE ÉBÉNISTERIE INC.']),
+    ('test_accented_character-4', 'EBENISTERIE', SolrField.NAME_STEM_AGRO, True, SolrField.NAME, ['DIVINE ÉBÉNISTERIE INC.'])
 ])
 def test_solr_query(app, test_name, query, query_field, base_fields, expected_field, expected):
     """Assert that solr query call works as expected."""
