@@ -32,7 +32,7 @@ DOCUMENT_NAME = {
 }
 
 
-def get_business_document(identifier: str, document_type: DocumentType):
+def get_business_document(identifier: str, document_type: DocumentType, content_type: str):
     """Get the business document for the given identifier and type."""
     document_name = DOCUMENT_NAME[document_type]
     if not document_name:
@@ -42,12 +42,12 @@ def get_business_document(identifier: str, document_type: DocumentType):
     lear_svc_url = f"{current_app.config.get('LEAR_SVC_URL')}/businesses/{identifier}/documents/{document_name}"
     try:
         token = get_bearer_token()
-        headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/pdf'}
+        headers = {'Authorization': 'Bearer ' + token, 'Accept': content_type}
         lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get business document from lear.'}])
     return lear_response
 
 

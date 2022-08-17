@@ -24,7 +24,6 @@ from dateutil.relativedelta import relativedelta
 from flask import current_app, g
 from flask_jwt_oidc import JwtManager
 
-import search_api.resources.utils as resource_utils
 from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
 from search_api.models import Document, DocumentAccessRequest, User
@@ -69,6 +68,7 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
                 'waiveFees': waive_fees})
         payment_response = create_payment(str(document_access_request.account_id), filing_types, user_jwt,
                                           header, business_json)
+
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             payment_completion_date = datetime.utcnow()
             pid = payment_response.json().get('id')
@@ -89,7 +89,9 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             document_access_request.save()
             return {'error': payment_response.json().get('detail')}, HTTPStatus.PAYMENT_REQUIRED
 
-        return resource_utils.sbc_payment_required({'message': 'unable to create invoice for payment.'})
+        current_app.logger.error('Received unhandled pay-api error.')
+        current_app.logger.debug(f'status: {payment_response.status_code}, json: {payment_response.json()}.')
+        return {'message': 'Unable to create invoice for payment.'}, HTTPStatus.PAYMENT_REQUIRED
     except ApiConnectionException as connection_error:
         return {'error': connection_error.detail}, HTTPStatus.PAYMENT_REQUIRED
 
