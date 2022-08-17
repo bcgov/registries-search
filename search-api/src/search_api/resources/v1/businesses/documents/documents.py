@@ -13,7 +13,7 @@
 # limitations under the License.
 """API endpoints for Document json/pdfs."""
 # from http import HTTPStatus
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
@@ -78,6 +78,10 @@ def get_document_data(business_identifier, document_key):
         if not account_id:
             return resource_utils.account_required_response()
 
+        if (content_type := str(request.accept_mimetypes)) not in ['application/json', 'application/pdf']:
+            msg = f'Invalid Accept header. Expected application/json or application/pdf but received {content_type}'
+            return resource_utils.bad_request_response(msg)
+
         # get document
         document = Document.find_by_document_key(document_key)
         if not document:
@@ -90,15 +94,16 @@ def get_document_data(business_identifier, document_key):
         if not access_request.is_active:
             return resource_utils.authorization_expired_error_response(account_id)
 
-        # TODO: uncomment after testing with running gcp service
+        # TODO: uncomment after testing with running gcp service and provide json option from gcp
         # if document.file_name:
         #     # get from google cache
         #     raw_data = storage.get_document(document.file_name, document.document_type)
         #     return raw_data, HTTPStatus.OK, {'Content-Type': 'application/pdf'}
 
         # get from lear (cached doc not ready yet)
-        resp = get_business_document(business_identifier, document.document_type)
-        return resp.content, resp.status_code
+        resp = get_business_document(business_identifier, document.document_type, content_type)
+        content = resp.content if content_type == 'application/pdf' else jsonify(resp.json())
+        return content, resp.status_code
 
     except ApiConnectionException as api_exception:
         return resource_utils.default_exception_response(api_exception)
