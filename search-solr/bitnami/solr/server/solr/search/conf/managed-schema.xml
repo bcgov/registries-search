@@ -65,11 +65,13 @@
     <analyzer type="index">
       <tokenizer name="keyword"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="keyword"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
     </analyzer>
   </fieldType>
@@ -173,7 +175,7 @@
     <analyzer type="index">
       <tokenizer name="standard"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter name="lowercase"/>
+      <filter name="lowercase"/>       
       <filter name="englishPossessive"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="porterStem"/>
@@ -182,7 +184,7 @@
       <tokenizer name="standard"/>
       <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter name="lowercase"/>
+      <filter name="lowercase"/>       
       <filter name="englishPossessive"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="porterStem"/>
@@ -414,6 +416,7 @@
     <analyzer type="index">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
@@ -422,6 +425,7 @@
     <analyzer type="query">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
     </analyzer>
@@ -471,6 +475,7 @@
     <analyzer type="index">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
@@ -479,6 +484,7 @@
     <analyzer type="query">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="englishMinimalStem"/>
@@ -488,6 +494,7 @@
     <analyzer type="index">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
@@ -496,6 +503,7 @@
     <analyzer type="query">
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
+      <filter class="solr.ASCIIFoldingFilterFactory"/>
       <filter name="classic"/>
       <filter generateWordParts="0" splitOnNumerics="0" catenateAll="1" name="wordDelimiterGraph" generateNumberParts="0"/>
       <filter name="porterStem"/>
