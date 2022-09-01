@@ -6,7 +6,7 @@ import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, StaffRoles, Us
 import { AuthI, CurrentAccountI } from '@/interfaces'
 import { getAccountProducts, getSbcFromAuth } from '@/requests'
 import keycloakServices from '@/sbc-common-components/services/keycloak.services'
-import { getKeycloakName, getKeycloakRoles } from '@/utils'
+import { getKeycloakName, getKeycloakRoles, updateLdUser } from '@/utils'
 
 const auth = reactive({
   activeProducts: [],
@@ -38,6 +38,8 @@ export const useAuth = () => {
       if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
     }
     if (!isStaff.value) await _loadProducts()
+    // update ldarkly user
+    await updateLdUser(auth.currentAccount.name, '', '', '')
   }
   /** Starts token service that refreshes KC token periodically. */
   const startTokenService = async () => {

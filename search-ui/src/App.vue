@@ -55,7 +55,7 @@ import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { EntityInfo, ErrorDialog } from '@/components'
 import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest, 
 useDocumentAccessRequest } from '@/composables'
-import { navigate } from '@/utils'
+import { navigate, getFeatureFlag } from '@/utils'
 
 const aboutText: string = process.env.ABOUT_TEXT
 const appLoading = ref(false)
@@ -130,6 +130,14 @@ onMounted(async () => {
     console.info('Verifying user access...')
     // verify user has access to business search product
     if (!hasProductAccess(ProductCode.BUSINESS_SEARCH) && !isStaff.value) {
+      handleError({
+        category: ErrorCategories.ACCOUNT_ACCESS,
+        message: 'This account does not have access to Business Search',
+        statusCode: StatusCodes.UNAUTHORIZED,
+        type: ErrorCodes.AUTH_PRODUCTS_ERROR
+      })
+    }
+    if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
       handleError({
         category: ErrorCategories.ACCOUNT_ACCESS,
         message: 'This account does not have access to Business Search',
