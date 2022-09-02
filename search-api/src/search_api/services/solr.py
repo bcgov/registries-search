@@ -219,16 +219,11 @@ class Solr:
         timeout_start_weekday = self.app.config.get('SOLR_REINDEX_WEEKDAY')
         current_day = datetime.utcnow().strftime('%d')
         timeout_start_day = self.app.config.get('SOLR_REINDEX_DAY')
-        print(timeout_start_day)
-        print(current_day)
         if current_weekday == timeout_start_weekday or current_day == timeout_start_day:
             current_time = datetime.time(datetime.utcnow())
             timeout_start_time = datetime.strptime(self.app.config.get('SOLR_REINDEX_START_TIME'), '%H:%M:%S%z')
-            print(timeout_start_time)
             timeout_length = self.app.config.get('SOLR_REINDEX_LENGTH')  # in minutes
             timeout_end_time = timeout_start_time + timedelta(minutes=timeout_length)
-            print(timeout_end_time)
-            print(current_time)
             if timeout_start_time.time() < current_time < timeout_end_time.time():
                 return True
         return False
