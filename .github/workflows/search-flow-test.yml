@@ -16,7 +16,7 @@ jobs:
       - name: Run k6 flow test in TEST env
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: search_full_flow.js
+          filename: integration-test-scripts/search_full_flow.js
           flags: --vus 2 --duration 1m
         env:
           base_url: "https://bcregistry-test.apigee.net/registry-search"
