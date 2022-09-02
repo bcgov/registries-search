@@ -104,7 +104,8 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
                    'Content-Type': 'application/json'}
         if not is_staff(user_jwt):
             headers = {**headers, 'Account-Id': account_id}
-        payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=20.0)
+        pay_api_timeout = current_app.config.get('PAY_API_TIMEOUT')
+        payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=pay_api_timeout)
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:
         current_app.logger.error('Payment connection failure:', err)
         raise ApiConnectionException(HTTPStatus.PAYMENT_REQUIRED,

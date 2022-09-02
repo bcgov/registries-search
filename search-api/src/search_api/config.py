@@ -77,6 +77,20 @@ class _Config():  # pylint: disable=too-few-public-methods
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ALEMBIC_INI = 'migrations/alembic.ini'
 
+    # External API Timeouts
+    try:
+        AUTH_API_TIMEOUT = int(os.getenv('AUTH_API_TIMEOUT', '20'))
+    except:
+        AUTH_API_TIMEOUT = 20
+    try:
+        PAY_API_TIMEOUT = int(os.getenv('PAY_API_TIMEOUT', '20'))
+    except:
+        PAY_API_TIMEOUT = 20
+    try:
+        BUSINESS_API_TIMEOUT = int(os.getenv('BUSINESS_API_TIMEOUT', '20'))
+    except:
+        BUSINESS_API_TIMEOUT = 20
+
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
     DB_NAME = os.getenv('DATABASE_NAME', '')
