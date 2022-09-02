@@ -38,13 +38,13 @@ postman[Symbol.for("initial")]({
     base_url: "https://bcregistry-test.apigee.net/registry-search",
     version: "api/v1",
     kc_url: "https://test.oidc.gov.bc.ca",
-    realm: "",
+    realm: `${__ENV.realm}`,
     lear_url: "https://legal-api-test.apps.silver.devops.gov.bc.ca",
     lear_version: "api/v2",
-    client_id: "",
-    client_secret: "",
-    account_id: "",
-    api_key: "",
+    client_id: `${__ENV.client_id}`,
+    client_secret: `${__ENV.client_secret}`,
+    account_id: `${__ENV.account_id}`,
+    api_key: `${__ENV.api_key}`,
     default_identifier: "BC0890450",
     default_name: "SIENNA'S CONDITIONAL CONSULTING CORPORATION",
     excluded_identifiers: "BC0879188"
@@ -70,6 +70,7 @@ export default function() {
       },
       post(response) {
         pm.test("Facets status code is 200", function() {
+          console.log(pm.response.json())
           pm.response.to.have.status(200);
           var jsonData = pm.response.json();
           // set filing id + name
