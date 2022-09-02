@@ -80,15 +80,15 @@ class _Config():  # pylint: disable=too-few-public-methods
     # External API Timeouts
     try:
         AUTH_API_TIMEOUT = int(os.getenv('AUTH_API_TIMEOUT', '20'))
-    except:
+    except:  # pylint: disable=bare-except; # noqa: B901, E722
         AUTH_API_TIMEOUT = 20
     try:
         PAY_API_TIMEOUT = int(os.getenv('PAY_API_TIMEOUT', '20'))
-    except:
+    except:  # pylint: disable=bare-except; # noqa: B901, E722
         PAY_API_TIMEOUT = 20
     try:
         BUSINESS_API_TIMEOUT = int(os.getenv('BUSINESS_API_TIMEOUT', '20'))
-    except:
+    except:  # pylint: disable=bare-except; # noqa: B901, E722
         BUSINESS_API_TIMEOUT = 20
 
     DB_USER = os.getenv('DATABASE_USERNAME', '')
@@ -161,7 +161,10 @@ class _Config():  # pylint: disable=too-few-public-methods
 
     # reindex times
     SOLR_REINDEX_DAY = os.getenv('SOLR_REINDEX_DAY', None)
-    SOLR_REINDEX_WEEKDAY = int(os.getenv('SOLR_REINDEX_WEEKDAY')) if os.getenv('SOLR_REINDEX_WEEKDAY') else None  # 0-6 (0 = Sunday)
+    if os.getenv('SOLR_REINDEX_WEEKDAY'):
+        SOLR_REINDEX_WEEKDAY = int(os.getenv('SOLR_REINDEX_WEEKDAY'))
+    else:
+        SOLR_REINDEX_WEEKDAY = None
     SOLR_REINDEX_START_TIME = os.getenv('SOLR_REINDEX_START_TIME', '')
     SOLR_REINDEX_LENGTH = int(os.getenv('SOLR_REINDEX_LENGTH')) if os.getenv('SOLR_REINDEX_LENGTH', None) else 0
 

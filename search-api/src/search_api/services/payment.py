@@ -62,6 +62,7 @@ PAYMENT_REQUEST_TEMPLATE = {
 }
 
 
+# pylint: disable=too-many-locals
 def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, header: dict, business_json: str) -> \
         Tuple[int, dict, int]:
     """Create the invoice for the document access request."""
