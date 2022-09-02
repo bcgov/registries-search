@@ -128,3 +128,5 @@ search-solr/bitnami/solr/server/solr/search/data/*
 search-solr/test_solr
 
 .idea/
+
+.DS_Store

@@ -1,0 +1,31 @@
+name: REGISTRIES SEARCH FLOW TEST
+
+on: [workflow_dispatch]
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./integration-test-scripts
+
+jobs:
+  build:
+    name: Run k6 test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run k6 flow test in TEST env
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: search_full_flow.js
+          flags: --vus 2 --duration 1m
+        env:
+          base_url: "https://bcregistry-test.apigee.net/registry-search"
+          version: "api/v1"
+          kc_url: "https://test.oidc.gov.bc.ca"
+          realm: ${{ secrets.REALM }}
+          lear_url: "https://legal-api-test.apps.silver.devops.gov.bc.ca"
+          lear_version: "api/v2"
+          client_id: ${{ secrets.TEST_CLIENT_ID }}
+          client_secret: ${{ secrets.TEST_CLIENT_SECRET }}
+          account_id: ${{ secrets.TEST_ACCOUNT_ID }}
+          api_key: ${{ secrets.TEST_API_KEY }}
