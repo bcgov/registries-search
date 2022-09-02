@@ -70,7 +70,6 @@ export default function() {
       },
       post(response) {
         pm.test("Facets status code is 200", function() {
-          console.log(pm.response.json())
           pm.response.to.have.status(200);
           var jsonData = pm.response.json();
           // set filing id + name
