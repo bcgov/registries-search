@@ -44,6 +44,7 @@ def get_bearer_token():
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
     client_id = current_app.config.get('ACCOUNT_SVC_CLIENT_ID')
     client_secret = current_app.config.get('ACCOUNT_SVC_CLIENT_SECRET')
+    auth_api_timeout = current_app.config.get('AUTH_API_TIMEOUT')
 
     data = 'grant_type=client_credentials'
 
@@ -53,7 +54,7 @@ def get_bearer_token():
                             data=data,
                             headers={'content-type': 'application/x-www-form-urlencoded'},
                             auth=(client_id, client_secret),
-                            timeout=20.0)
+                            timeout=auth_api_timeout)
 
         return res.json().get('access_token')
     except (exceptions.ConnectionError, exceptions.Timeout) as err:

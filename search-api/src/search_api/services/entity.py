@@ -43,7 +43,8 @@ def get_business_document(identifier: str, document_type: DocumentType, content_
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Accept': content_type}
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
+        business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
+        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
@@ -59,7 +60,8 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/pdf'}
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
+        business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
+        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
@@ -75,7 +77,8 @@ def get_business_filing_document_list(identifier: str, filing_id: int):
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
+        business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
+        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
@@ -89,7 +92,8 @@ def get_business(identifier: str):
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=20.0)
+        business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
+        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
