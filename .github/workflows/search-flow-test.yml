@@ -19,12 +19,7 @@ jobs:
           filename: integration-test-scripts/search_full_flow.js
           flags: --vus 2 --duration 1m
         env:
-          base_url: "https://bcregistry-test.apigee.net/registry-search"
-          version: "api/v1"
-          kc_url: "https://test.oidc.gov.bc.ca"
           realm: ${{ secrets.REALM }}
-          lear_url: "https://legal-api-test.apps.silver.devops.gov.bc.ca"
-          lear_version: "api/v2"
           client_id: ${{ secrets.TEST_CLIENT_ID }}
           client_secret: ${{ secrets.TEST_CLIENT_SECRET }}
           account_id: ${{ secrets.TEST_ACCOUNT_ID }}
