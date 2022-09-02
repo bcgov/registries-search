@@ -8,6 +8,7 @@ export interface SearchI {
   results: (SearchResultI | SearchPartyResultI)[]
   searchType: 'business' | 'partner'
   totalResults: number
+  unavailable: boolean
   _error: ErrorI
   _loading: boolean
   _value: string

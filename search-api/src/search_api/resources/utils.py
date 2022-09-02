@@ -129,9 +129,12 @@ def business_exception_response(exception):
 
 def solr_exception_response(exception):
     """Build solr exception error response."""
-    current_app.logger.error(str(exception))
+    current_app.logger.debug(exception.with_traceback(None).error)
     message = SOLR.format(code=ResourceErrorCodes.SOLR_ERR, status=exception.status_code)
-    return jsonify({'message': message, 'detail': exception.error}), HTTPStatus.INTERNAL_SERVER_ERROR
+    status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    if exception.status_code == HTTPStatus.SERVICE_UNAVAILABLE:
+        status_code = HTTPStatus.SERVICE_UNAVAILABLE
+    return jsonify({'message': message, 'detail': exception.error}), status_code
 
 
 # def pay_exception_response(exception: SBCPaymentException, account_id: str = None):

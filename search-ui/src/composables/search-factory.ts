@@ -2,12 +2,14 @@ import { reactive } from 'vue'
 // local
 import { SearchFilterI, SearchI, SearchPartyFilterI, SearchResponseI } from '@/interfaces'
 import { searchBusiness, searchParties } from '@/requests'
+import { ErrorCategories } from '@/enums'
 
 const search = reactive({
   filters: {},
   results: null,
   searchType: 'business',
   totalResults: null,
+  unavailable: false,
   _error: null,
   _loading: false,
   _value: '',
@@ -21,7 +23,7 @@ export const useSearch = () => {
   }
   const getSearchResults = async (val: string) => {
     search._loading = true
-    if (search.results === null) search.results = []
+    if (search.results === null && !search.unavailable) search.results = []
     let searchResp: SearchResponseI = null
     if (search.searchType === 'business') {
       // business search
@@ -36,11 +38,16 @@ export const useSearch = () => {
         search._value = searchResp.searchResults.queryInfo.query.value
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults
+        search._error = null
+        search.unavailable = false
       } else {
         // response error with info
-        search.results = []
+        search.results = null
         search.totalResults = null
         search._error = searchResp.error
+        if (searchResp.error.category === ErrorCategories.SEARCH_UNAVAILABLE) {
+          search.unavailable = true
+        } else search.unavailable = false
       }
     } else {
       // unhandled response error (should never get here)
@@ -60,6 +67,7 @@ export const useSearch = () => {
     search.results = null
     search.searchType = 'business'
     search.totalResults = null
+    search.unavailable = false
     search._error = null
     search._loading = false
     search._value = ''
