@@ -1,17 +1,16 @@
 <template>
   <div id="filing-history-list">
-    <h2 data-test-id="dashboard-filing-history-subtitle">
+    <span data-test-id="dashboard-filing-history-subtitle" class="section-header">
       <span v-if="props.isLocked">Filing History</span>
       <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
-      <span v-else class="gray6 ml-1">({{ filings.length }})</span>
-    </h2>
+    </span>
     <div class="mt-5 pa-5 court-order-section" v-if="hasCourtOrderFilings">
       <v-icon class="ml-1">mdi-gavel</v-icon>
       <span class="ml-2">Court order(s) have been filed on this company. Review the 
         filing history for impacts to business information.</span>
     </div>
-    <div class="scrollable-container mt-5">
+    <div class="scrollable-container mt-4">
       <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">

@@ -7,7 +7,7 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props">mdi-file-lock-open</v-icon>
+                            <v-icon v-bind="props" color="#495057">mdi-file-lock</v-icon>
                             <span v-bind="props" class="doc-title">{{ document.title }}</span>
                         </template>
                         <span>
@@ -28,7 +28,7 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props">mdi-file-lock-open</v-icon>
+                            <v-icon v-bind="props" color="#495057">mdi-file-lock</v-icon>
                             <span v-bind="props" class="doc-title">Download All</span>
                         </template>
                         <span>
@@ -88,6 +88,7 @@ const downloadAll = (): void => {
     overflow-y: visible;
     text-align: start;
     width: 100px;
+    color: #495057;
 }
 .doc-tooltip-arrow {
     margin-top: -31px !important;

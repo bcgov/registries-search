@@ -36,15 +36,15 @@ const props = defineProps({
   background-color: $primary-blue;
   box-shadow: none;
   color: white;
+  font-size: 14px;
   font-weight: 700;
-  height: 45px;
   width: 100%;
   &__outlined {
     background-color: transparent !important;
     border: 1px solid $primary-blue !important;
     box-shadow: none;
-    color: $primary-blue;
-    height: 45px;
+    color: $primary-blue; 
+    font-size: 14px;    
     width: 100%;
   }
   &__icon {

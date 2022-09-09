@@ -506,3 +506,15 @@ span.invalid-color {
 .basic-list {
   list-style: none;
 }
+
+.section-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #212529
+}
+
+a.link {
+  font-size: $px-16;
+  color: #1669BB;
+  text-decoration: underline;
+}

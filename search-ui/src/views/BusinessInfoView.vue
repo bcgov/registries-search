@@ -27,7 +27,7 @@
     </v-fade-transition>
     <v-row no-gutters>
       <v-col>
-        <h2>How to Access Business Documents</h2>
+        <span class="section-header">How to Access Business Documents</span>
         <p class="pt-3">
           1. Determine if the filing documents that you want are available for
           download or are on paper only.*
@@ -36,12 +36,33 @@
         <p class="pt-1">3. Pay the appropriate fee.</p>
         <p class="pt-1">4. Download the individual files you require.</p>
         <p class="pt-3">
-          * Some documents are available on paper only and not available to download.
-          To request copies of paper documents, contact BC Registries staff.
+          <span class="more-info">
+            <span>*</span>
+            <span class="ml-1">To access paper-only documents, you will need to search through 
+              <a
+              color="primary"
+              class="link"
+              href="https://bconline.gov.bc.ca/"
+              target="_blank">
+              <span>BC Online</span>
+            </a>
+            <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon>, 
+            or contact BC Registries staff to 
+            <a
+              color="primary"
+              class="link"
+              :href="docSearchURL"
+              target="_blank">
+              <span>submit a document search request</span>
+            </a>
+            <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon> 
+           .</span>
+         </span>
         </p>
         <v-divider class="my-10" />
-        <h2>Available Documents to Download:</h2>
-        <div class="document-list  mt-3 pa-3 pr-5 pt-7" :key="checkBoxesKey">
+        <span class="section-header">Available Documents to Download:</span>
+        <div :class="searchValidInput ? 'document-list mt-3 pa-3 pr-5 pt-7' : 
+        'document-list-error  mt-3 pa-3 pr-5 pt-7'" :key="checkBoxesKey">
           <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
@@ -52,7 +73,7 @@
               <v-col>
                 <v-row no-gutters>
                   <v-col cols="auto" style="position: relative;">
-                    <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top">
+                    <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top center">
                       <template v-slot:activator="{ isActive, props }">
                         <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
                         <v-row v-bind="props" no-gutters>
@@ -60,7 +81,8 @@
                             <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
                           </v-col>
                           <v-col v-bind="props" class="document-list__label">
-                            <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                            <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
+                              {{ item.label }}</span><span>{{item.description}}</span>
                           </v-col>
                         </v-row>
                       </template>
@@ -71,15 +93,16 @@
                         <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
                       </v-col>
                       <v-col class="document-list__label">
-                        <span v-bind="props" :class="item.active ? '' : 'disabled-text'">{{ item.label }}</span>
+                        <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
+                          {{ item.label }}</span> <span>{{item.description}}</span>
                       </v-col>
                     </v-row>
                   </v-col>
                   <v-col />
                 </v-row>
               </v-col>
-              <v-col :class="['document-list__fee', item.active ? '' : 'disabled-text']" align-self="end" cols="auto"
-                v-html="item.fee" />
+              <v-col :class="['document-list__fee', item.active ? 'active-text' : 'disabled-text']" 
+              align-self="end" cols="auto" v-html="item.fee" />
             </v-row>
           </div>
         </div>
@@ -92,7 +115,7 @@
         <div>
           <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
           <div class="validation-messages pl-5 mt-2" v-if="!searchValidInput">
-            <div>{{ validationMsg }} </div>
+            <div>&lt; {{ validationMsg }} </div>
           </div>
         </div>
       </v-col>
@@ -128,6 +151,9 @@ const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
+
+const docSearchURL = "https://www2.gov.bc.ca/gov/content/employment-business/business/"+
+"managing-a-business/permits-licences/businesses-incorporated-companies/searches-certificates"
 
 // fee summary
 const feePreSelectItem: Ref<FeeI> = ref({
@@ -166,7 +192,8 @@ const purchasableDocs = ref([]) as Ref<{
   label: string,
   documentType: DocumentType,
   active: boolean,
-  tooltip: string
+  tooltip: string,
+  description: string
 }[]>
 const selectedDocs = ref([]) as Ref<DocumentType[]>
 const hasNoSelectedDocs = computed(() => { return selectedDocs.value.length === 0 })
@@ -198,7 +225,7 @@ const submitSelected = () => {
   validationMsg.value = ''
   if (hasNoSelectedDocs.value) {
       searchValidInput.value = false
-      validationMsg.value = "Select from Available Documents"
+      validationMsg.value = "Select documents to download"
   } else {
     if (isStaff.value) showStaffPayment.value = true
     else payForDocuments()
@@ -266,10 +293,11 @@ const loadPurchasableDocs = async () => {
   purchasableDocs.value.push({
     code: bsrchCode.value,
     fee: displayFee(feeData[0].fee, false),
-    label: 'Business Summary and Filing History Documents (paper-only copies are not included)',
+    label: 'Business Summary and Filing History Documents',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
     active: true,
-    tooltip: ''
+    tooltip: '',
+    description: '(paper-only copies are not included)'
   })
 
   if (isCogsAvailable()) {
@@ -280,7 +308,8 @@ const loadPurchasableDocs = async () => {
       documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
       active: entity.goodStanding,
       tooltip: !entity.goodStanding ? 'The Certificate of Good Standing ' +
-        'can only be ordered if the business is in Good Standing.' : ''
+        'is only available if the business is in Good Standing.' : '',
+      description: ''
     })
   }
 
@@ -291,7 +320,8 @@ const loadPurchasableDocs = async () => {
         label: 'Certificate of Status',
         documentType: DocumentType.CERTIFICATE_OF_STATUS,
         active: true,
-        tooltip: ''
+        tooltip: '',
+        description: ''
     })
   }
   // letter under seal is always available
@@ -301,7 +331,8 @@ const loadPurchasableDocs = async () => {
     label: 'Letter Under Seal',
     documentType: DocumentType.LETTER_UNDER_SEAL,
     active: true,
-    tooltip: ''
+    tooltip: '',
+    description: ''
   })
 }
 
@@ -323,6 +354,9 @@ const toggleFee = (event: any, item: any) => {
     removeFeeItem(item.code, 1)
     selectedDocs.value = selectedDocs.value.filter(doc => doc != item.documentType)
   }
+  if (selectedDocs.value.length > 0) {
+    searchValidInput.value = true
+  }
 }
 </script>
 
@@ -330,13 +364,46 @@ const toggleFee = (event: any, item: any) => {
 @import '@/assets/styles/theme.scss';
 
 .document-list {
-  background-color: white;
+  background-color: white;   
+  border-radius: 5px;
   width: 100%;
 
   &__label,
   &__fee {
-    color: $gray8;
-    font-weight: 700;
+    color: $gray8;    
+    height: 56px;
+  }
+
+  &__label {
+    padding-top: 5px !important;
+  }
+
+  &__fee {
+    padding-left: 8px !important;
+    padding-top: 3px !important;
+    text-align: right;
+  }
+
+  &__tooltip {
+    margin-top: 30px !important;
+  }
+
+  &__tooltip-arrow {
+    margin-left: 10px;
+    margin-top: -9px !important;
+  }
+}
+
+.document-list-error {
+  background-color: white;
+  border-left: solid 4px #D3272C;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  width: 100%;
+
+  &__label,
+  &__fee {
+    color: $gray8;    
     height: 56px;
   }
 
@@ -373,7 +440,7 @@ const toggleFee = (event: any, item: any) => {
 }
 
 :deep(.mdi-checkbox-blank-outline) {
-  color: $gray8;
+  color: #1669BB;
   --v-medium-emphasis-opacity: 1;
 }
 
@@ -393,15 +460,29 @@ const toggleFee = (event: any, item: any) => {
 }
 
 .disabled-text {
-  color: $gray7;
+  color: #757575;
+  font-weight: normal;
 }
 
 .validation-messages{
-  color: red;  
+  color: #D3272C;  
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: center;    
+  justify-content: center;   
+  font-size: 14px; 
   width: 320px;
+}
+
+.more-info{
+  display: flex;
+}
+
+.active-text {
+  font-weight: 700;
+}
+
+.small-icon{
+  font-size: 18px;
 }
 </style>

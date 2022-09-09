@@ -10,7 +10,7 @@
         </v-fade-transition>
         <v-row no-gutters>
             <v-col cols="9">
-                <span class="header">Purchased Documents as of {{ submissionDate }}</span>
+                <span class="section-header">Purchased Documents as of {{ submissionDate }}</span>
                 <p class="pt-6">
                     Your documents are now available to view and download.
                     You will be able to access these documents for up to 14 days from the business search dashboard.
@@ -27,7 +27,7 @@
                         conduct a new search for this business</span>
                 </p>
                 <v-divider class="my-10" />
-                <h2>Business Documents</h2>
+                <span class="section-header">Business Documents</span>
                 <div class="document-list  mt-3 pa-3 pr-5 pt-4 pb-8">
                     <v-list class="py-0" density="compact">
                         <v-list-item v-for="(document, index) in documents" :key="index">
@@ -37,10 +37,9 @@
                             </span>
                         </v-list-item>
                     </v-list>
-                </div>
-                <v-divider class="my-10" />
+                </div>                
                 <div>
-                    <filing-history :isLocked=false v-if="showFilingHistory" />
+                    <filing-history :isLocked=false v-if="showFilingHistory" class="mt-10"/>
                 </div>
             </v-col>
         </v-row>
@@ -100,20 +99,15 @@ const gotoSearch = (): void => {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
-.header {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #212529
-}
-
 .document-list {
     background-color: white;
     width: 100%;
+    border-radius: 5px;
 }
 
 .doc-link {
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 14px;
 }
 
 .new-search-link {
