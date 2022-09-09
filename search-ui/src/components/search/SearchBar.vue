@@ -50,6 +50,18 @@ onMounted(() => { searchVal.value = search._value })
 watch(() => search.searchType, () => {
   if (searchVal.value) getSearchResults(searchVal.value)
 })
+
+watch(() => search.unavailable, async (val) => {
+  if (val) {
+    // retry every 30s until search is available again
+    let count = 0
+    while (search.unavailable === true && count < 1000) {
+      await new Promise(resolve => setTimeout(resolve, 30000))
+      await getSearchResults(searchVal.value)
+      count++
+    }
+  }
+})
 </script>
 
 <style lang="scss" module>

@@ -71,12 +71,14 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
       }
       return data
     }).catch(error => {
+      let category = ErrorCategories.SEARCH
+      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
       return {
         results: [],
         error: {
           statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
           message: error?.response?.data?.message,
-          category: ErrorCategories.SEARCH,
+          category: category,
           type: error?.parsed?.rootCause?.type
         }
       }
@@ -101,12 +103,14 @@ export async function searchBusiness(searchValue: string, filters: SearchFilterI
       }
       return data
     }).catch(error => {
+      let category = ErrorCategories.SEARCH
+      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
       return {
         searchResults: null,
         error: {
           statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
           message: error?.response?.data?.message,
-          category: ErrorCategories.SEARCH,
+          category: category,
           type: error?.parsed?.rootCause?.type
         }
       }

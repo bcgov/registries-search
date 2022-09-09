@@ -113,16 +113,31 @@
     <v-window v-model="tab">
       <v-window-item class="ma-0">
         <v-card class="pa-0" flat>
-          <p class="mx-7 my-10 info-text">
-            Search for businesses registered or incorporated in B.C.&#42; or
-            for owners of Firms registered in B.C.
-          </p>
-          <search-bar class="px-7" />
-          <p class="mx-7 my-10 info-text">
-            &#42;Note: The beta version of business search will not retrieve Railways, Financial Institutions, or
-            businesses incorporated under Private acts.
-          </p>
-          <search-results v-if="search.results!=null" />
+          <v-fade-transition hide-on-leave>
+            <div v-if="search.unavailable">
+              <v-row class="my-16" justify="center" no-gutters>
+                <v-col cols="auto">
+                  <v-progress-circular color="primary" size="50" indeterminate />
+                </v-col>
+                <v-col class="mt-5" cols="12" style="text-align: center;">
+                  <v-icon class="ml-10 warning-icon" size="25">mdi-alert</v-icon>
+                  <span class="ml-1 info-text">{{ unavailableMsg }}</span>
+                </v-col>
+              </v-row>
+            </div>
+            <div v-else>
+              <p class="mx-7 my-10 info-text">
+                Search for businesses registered or incorporated in B.C.&#42; or
+                for owners of Firms registered in B.C.
+              </p>
+              <search-bar class="px-7" />
+              <p class="mx-7 my-10 info-text">
+                &#42;Note: The beta version of business search will not retrieve Railways, Financial Institutions, or
+                businesses incorporated under Private acts.
+              </p>
+              <search-results v-if="search.results!=null" />
+            </div>
+          </v-fade-transition>
         </v-card>
       </v-window-item>
       <v-window-item>
@@ -167,6 +182,9 @@ const triggerBetaTooltipOff = () => {
     betaTooltipOpen.value = false
   }
 }
+
+const unavailableMsg = 'Business Search is in the process of a scheduled ' +
+  ' update. Searching will be unavailable for up to 15 minutes.'
 
 watch(() => showBetaTooltip.value, async (val) => {
   if (val) {
@@ -261,5 +279,9 @@ watch(() => props.appReady, (ready: boolean) => {
 
 .v-list-item {
     padding-left: 0;    
+}
+
+.warning-icon {
+  color: $BCgovGold7;
 }
 </style>

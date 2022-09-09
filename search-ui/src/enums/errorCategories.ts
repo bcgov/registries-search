@@ -5,6 +5,7 @@ export enum ErrorCategories {
   FEE_INFO = 'fee-info',
   REPORT_GENERATION = 'report-generation',
   SEARCH = 'search',
+  SEARCH_UNAVAILABLE = 'search-unavailable',
   DOCUMENT_DOWNLOAD = 'document-download',
   CREATE_DOCUMENT_ACCESS_REQUEST = 'create-document-access-request'
 }

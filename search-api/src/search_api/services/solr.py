@@ -15,6 +15,7 @@
 import json
 import re
 from contextlib import suppress
+from datetime import datetime, timedelta
 from enum import Enum
 from http import HTTPStatus
 from typing import Dict, List
@@ -72,7 +73,6 @@ class SolrDoc:  # pylint: disable=too-few-public-methods
 
     # TODO: make enums for state and type
     def __init__(self, data: Dict):
-        # pylint: disable=too-many-arguments
         """Initialize this object."""
         self.identifier = data['identifier']
         self.name = data['name']
@@ -142,18 +142,63 @@ class Solr:
         self.app = app
         self.solr_url = app.config.get('SOLR_SVC_URL')
 
+    # pylint: disable=too-many-arguments
+    def call_solr(self,
+                  method: str,
+                  query: str,
+                  params: dict = None,
+                  json_data: dict = None,
+                  xml_data: str = None) -> Response:
+        """Call solr instance with given params."""
+        try:
+            if self.is_reindexing():
+                err_msg = 'This resource is undergoing scheduled maintenance and will be ' \
+                    f'unavailable for up to {self.app.config.get("SOLR_REINDEX_LENGTH")} minutes.'
+                raise SolrException(err_msg, HTTPStatus.SERVICE_UNAVAILABLE)
+
+            response = None
+            url = query.format(url=self.solr_url, core=self.core)
+            if method == 'GET':
+                response = requests.get(url, params=params)
+            elif method == 'POST' and json_data:
+                response = requests.post(url=url, json=json_data)
+            elif method == 'POST' and xml_data:
+                headers = {'Content-Type': 'application/xml'}
+                response = requests.post(url=url, data=xml_data, headers=headers)
+            else:
+                raise Exception('Invalid params given.')
+            # check for error
+            if response.status_code != HTTPStatus.OK:
+                error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
+                self.app.logger.error(f'{error}, {response.status_code}')
+                raise SolrException(
+                    error=error,
+                    status_code=response.status_code)
+            return response
+        except SolrException as err:
+            # pass along
+            raise err
+        except Exception as err:  # noqa B902
+            current_app.logger.error(err.with_traceback(None))
+            msg = 'Error handling Solr request.'
+            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+            with suppress(Exception):
+                status_code = response.status_code
+                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
+            raise SolrException(
+                error=msg,
+                status_code=status_code)
+
     def create_or_replace_docs(self, docs: List[SolrDoc]):
         """Create or replace solr docs in the core."""
         update_json = [doc.json for doc in docs]
-        url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', url, json_data=update_json)
+        response = self.call_solr('POST', self.update_query, json_data=update_json)
         return response
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
-        delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', delete_url, xml_data=payload)
+        response = self.call_solr('POST', self.update_query, xml_data=payload)
         return response
 
     def delete_docs(self, identifiers: List[str]):
@@ -165,17 +210,30 @@ class Solr:
             payload += f' OR {SolrField.IDENTIFIER}:{identifier.upper()}'
         payload += '</query></delete>'
 
-        delete_url = self.update_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('POST', delete_url, xml_data=payload)
+        response = self.call_solr('POST', self.update_query, xml_data=payload)
         return response
+
+    def is_reindexing(self) -> bool:
+        """Return True if this instance of solr is in the process of reindexing."""
+        current_weekday = datetime.utcnow().weekday()
+        timeout_start_weekday = self.app.config.get('SOLR_REINDEX_WEEKDAY')
+        current_day = datetime.utcnow().strftime('%d')
+        timeout_start_day = self.app.config.get('SOLR_REINDEX_DAY')
+        if current_weekday == timeout_start_weekday or current_day == timeout_start_day:
+            current_time = datetime.time(datetime.utcnow())
+            timeout_start_time = datetime.strptime(self.app.config.get('SOLR_REINDEX_START_TIME'), '%H:%M:%S%z')
+            timeout_length = self.app.config.get('SOLR_REINDEX_LENGTH')  # in minutes
+            timeout_end_time = timeout_start_time + timedelta(minutes=timeout_length)
+            if timeout_start_time.time() < current_time < timeout_end_time.time():
+                return True
+        return False
 
     def query(self, params: str, start: int = None, rows: int = None) -> List:
         """Return a list of solr docs from the solr query handler for the given params."""
         params['start'] = start if start else self.default_start
         params['rows'] = rows if rows else self.default_rows
 
-        url = self.search_query.format(url=self.solr_url, core=self.core)
-        response = Solr.call_solr('GET', url, params=params)
+        response = self.call_solr('GET', self.search_query, params=params)
         return response.json()
 
     def suggest(self, query: str, rows: int, build: bool = False) -> List[str]:
@@ -185,9 +243,8 @@ class Solr:
             'suggest.count': rows if rows else self.default_rows,
             'suggest.build': str(build).lower()
         }
-        url = self.suggest_query.format(url=self.solr_url, core=self.core)
         # call solr
-        response = Solr.call_solr('GET', url, suggest_params)
+        response = self.call_solr('GET', self.suggest_query, suggest_params)
         # parse response
         suggestions = response.json() \
             .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions', [])
@@ -292,37 +349,6 @@ class Solr:
             params['fq'] = add_to_fq(params['fq'], [key], extra_terms[1:])
 
         return params
-
-    @staticmethod
-    def call_solr(method: str, url: str, params: dict = None, json_data: dict = None, xml_data: str = None) -> Response:
-        """Call solr instance with given params."""
-        try:
-            response = None
-            if method == 'GET':
-                response = requests.get(url, params=params)
-            elif method == 'POST' and json_data:
-                response = requests.post(url=url, json=json_data)
-            elif method == 'POST' and xml_data:
-                headers = {'Content-Type': 'application/xml'}
-                response = requests.post(url=url, data=xml_data, headers=headers)
-            else:
-                raise Exception('Invalid params given.')
-            # check for error
-            if response.status_code != HTTPStatus.OK:
-                raise SolrException(
-                    error=response.json().get('error', {}).get('msg', 'Error handling Solr request.'),
-                    status_code=response.status_code)
-            return response
-        except Exception as err:  # noqa B902
-            current_app.logger.error(err.with_traceback(None))
-            msg = 'Error handling Solr request.'
-            status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-            with suppress(Exception):
-                status_code = response.status_code
-                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-            raise SolrException(
-                error=msg,
-                status_code=status_code)
 
     @staticmethod
     def highlight_names(query: str, names: List[str]) -> List[str]:
