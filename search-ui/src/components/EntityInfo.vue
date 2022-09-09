@@ -88,6 +88,7 @@ const name = computed(() => entity.name?.toUpperCase() || 'Name Unavailable')
   background-color: $primary-blue;
   color: white;
   height: 19px;
+  font-size: 10px;
 }
 // vertical lines between buttons:
 menu > span + span {
