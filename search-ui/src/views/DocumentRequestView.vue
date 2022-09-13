@@ -120,4 +120,8 @@ const gotoSearch = (): void => {
     background-color: #FFF7C4;
     border: solid 1px #F9C90C
 }
+
+.v-divider {
+    border-width: 1px;
+}
 </style>
