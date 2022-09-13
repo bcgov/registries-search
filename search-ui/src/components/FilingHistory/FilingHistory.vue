@@ -1,7 +1,7 @@
 <template>
   <div id="filing-history-list">
     <span data-test-id="dashboard-filing-history-subtitle" class="section-header">
-      <span v-if="props.isLocked">Filing History</span>
+      <span v-if="props.isLocked">Filing History <span style="color: #757575">({{historyItems.length}})</span></span>
       <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
     </span>

@@ -115,6 +115,14 @@ export const useEntity = () => {
     })
   })
 
+  const warnings = computed(() => {
+    const warnings = []
+    if (!entity.goodStanding) {
+      warnings.push('NOT_IN_GOOD_STANDING')
+    }
+    return warnings
+  })
+
   return {
     entity,
     clearEntity,
@@ -132,6 +140,7 @@ export const useEntity = () => {
     actTitle,
     entityNumberLabel,
     corpTypes,
-    learBusinessTypes
+    learBusinessTypes,
+    warnings
   }
 }
