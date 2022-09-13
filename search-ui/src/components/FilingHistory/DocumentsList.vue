@@ -7,17 +7,17 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props" color="#495057">mdi-file-lock</v-icon>
-                            <span v-bind="props" class="doc-title">{{ document.title }}</span>
+                            <img :src="require('@/assets/svgs/pdf-locked-gray.svg')" />
+                            <span v-bind="props" class="doc-title doc-title__disabled pl-2">{{ document.title }}</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
                             and complete payment to access documents.
                         </span>
                     </v-tooltip>
-                    <div v-else>
-                        <img class="mb-n1" :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
-                        <span class="app-blue ml-1">{{ document.title }}</span>
+                    <div v-else>                        
+                        <img :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
+                        <span class="app-blue doc-title pl-2">{{ document.title }}</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -28,8 +28,8 @@
                     <v-tooltip v-if="isLocked" location="top" content-class="tooltip">
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
-                            <v-icon v-bind="props" color="#495057">mdi-file-lock</v-icon>
-                            <span v-bind="props" class="doc-title">Download All</span>
+                            <img :src="require('@/assets/svgs/download-all-locked-gray.svg')" />
+                            <span v-bind="props" class="doc-title doc-title__disabled pl-2">Download All</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
@@ -37,8 +37,8 @@
                         </span>
                     </v-tooltip>
                     <div v-else>
-                        <v-icon class="app-blue">mdi-download</v-icon>
-                        <span class="app-blue" style="margin-left: 2px;">Download All</span>
+                        <v-icon class="app-blue download-all-active">mdi-download</v-icon>
+                        <span class="app-blue doc-title pl-2">Download All</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -82,13 +82,17 @@ const downloadAll = (): void => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
 .doc-title {
-    margin-left: 0 !important;
-    padding-left: 0.25rem;
+    margin-left: 0 !important;     
     overflow-y: visible;
     text-align: start;
-    width: 100px;
-    color: #495057;
+    width: 100px;  
+    font-size: 14px;
+
+    &__disabled {
+        color: $gray7;
+    }
 }
 .doc-tooltip-arrow {
     margin-top: -31px !important;
@@ -96,5 +100,9 @@ const downloadAll = (): void => {
 .v-list-item {
     padding-left: 0;
     min-height: 1rem;
+} 
+
+.download-all-active {
+    margin-left: -5px;
 }
 </style>

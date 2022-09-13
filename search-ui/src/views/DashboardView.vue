@@ -267,7 +267,7 @@ watch(() => props.appReady, (ready: boolean) => {
 }
 
 .tab-item-active {  
-  color: #495057;
+  color: $gray7;
   background-color: white;
 }
 

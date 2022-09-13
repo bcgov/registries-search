@@ -58,8 +58,11 @@ const feeArr: Fee[] = [{
   total: 26.50
 }]
 
-const setupBusInfoTest = () => {
+const setupBusInfoTest = (goodStanding: boolean = true) => {
   const mockGet = jest.spyOn(axios, 'get')
+  if(!goodStanding){
+    mockedBusinessResp.goodStanding = false
+  }
   mockGet.mockImplementation((url) => {
     switch (url) {
       case `businesses/${identifier}`:
@@ -193,5 +196,36 @@ describe('SBC Staff BusinessInfo tests', () => {
   it('sets the fee codes + pre service fee properly for bc reg staff', () => {
     expect(wrapper.vm.bsrchCode).toBe(FeeCodes.SBSRCH)
     expect(wrapper.vm.feePreSelectItem.serviceFee).toBe(0)
+  })
+})
+
+
+describe('Display Not in Good Standing', () => {
+  let wrapper: VueWrapper<any>
+  let router: Router
+
+  beforeEach(async () => {
+    setupBusInfoTest(false)
+    auth.staffRoles.push(StaffRoles.SBC)
+    router = createVueRouter()
+    await router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
+    wrapper = mount(BusinessInfoView, {
+      props: { identifier: identifier, appReady: true },
+      global: {
+        plugins: [router],
+        provide: { store: store },
+      },
+      shallow: true  // stubs out children components
+    })
+    // await api calls to resolve
+    await flushPromises()
+  })
+  afterEach(() => {
+    jest.clearAllMocks()
+    auth.staffRoles = []
+  })
+  it('has the correct warnings in the warnings list', () => {
+    expect(wrapper.vm.warnings.length).toBe(1)
+    expect(wrapper.vm.warnings[0]).toBe('NOT_IN_GOOD_STANDING')     
   })
 })

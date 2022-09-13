@@ -2,7 +2,7 @@
   <div id="entity-info">
     <v-container class="container justify-center py-0">
       <v-row no-gutters>
-        <v-col cols="12" md="9">
+        <v-col cols="9">
           <header>
             <!-- Entity Name -->
             <div id="entity-legal-name" aria-label="Business Legal Name">
@@ -22,7 +22,7 @@
           </menu>
         </v-col>
 
-        <v-col cols="12" md="3">
+        <v-col cols="3" class="pl-5">
           <dl>
             <template v-for="info in businessInfo" :key="info.term">
               <dt class="mr-2">{{ info.term }}:</dt>

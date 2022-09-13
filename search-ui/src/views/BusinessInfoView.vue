@@ -2,11 +2,8 @@
   <v-container id="business-info" class="container" fluid>
     <base-dialog :display="showStaffPayment" :options="staffDialogOptions" @proceed="staffPaymentHandler($event)">
       <template v-slot:content>
-        <staff-payment
-          :staff-payment-data="staffPaymentData"
-          @update:staffPaymentData="fees.staffPaymentData = $event"
-          @valid="staffPaymentValid = $event"
-        />
+        <staff-payment :staff-payment-data="staffPaymentData" @update:staffPaymentData="fees.staffPaymentData = $event"
+          @valid="staffPaymentValid = $event" />
       </template>
     </base-dialog>
     <v-fade-transition>
@@ -24,9 +21,40 @@
           <div class="loading-msg" v-if="documentAccessRequest._downloading">Downloading document</div>
         </div>
       </div>
-    </v-fade-transition>
+    </v-fade-transition>     
     <v-row no-gutters>
-      <v-col>
+      <v-col cols="9">
+        <div v-if="warnings.length > 0">
+          <span class="section-header">Alerts ({{warnings.length}})</span>
+          <div class="mt-4">
+            <v-expansion-panels class="warnings-list  pt-2 pb-2">
+              <v-expansion-panel v-for="(warning, index) in warnings" :key="index" class="expansion-panel">
+                <div v-if="warning == 'NOT_IN_GOOD_STANDING'">
+                  <v-expansion-panel-title class="expansion-panel__header">
+                    <template v-slot:actions="{ expanded }">
+                      <span class="expansion-panel-btn-text">View Details</span>
+                      <v-icon color="#1669BB" :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'">
+                      </v-icon>
+                    </template>
+                    <span>
+                      <v-icon color="#F8661A">mdi-alert</v-icon>
+                    </span>
+                    <span class="ml-2">This business is not in good standing</span>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text class="expansion-panel__text">
+                    The most common reason a business is not in good standing is an overdue annual report.
+                    Any outstanding annual reports must be filed to bring the business back into good standing.
+                    <div class="expansion-panel-txt">
+                      If further action is required, please contact BC Registries staff:
+                      <ContactInfo class="expansion-panel-txt"/>
+                    </div>
+                  </v-expansion-panel-text>
+                </div>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </div>
+        <v-divider class="mt-10 mb-8 divider" />
+        </div>
         <span class="section-header">How to Access Business Documents</span>
         <p class="pt-3">
           1. Determine if the filing documents that you want are available for
@@ -38,28 +66,21 @@
         <p class="pt-3">
           <span class="more-info">
             <span>*</span>
-            <span class="ml-1">To access paper-only documents, you will need to search through 
-              <a
-              color="primary"
-              class="link"
-              href="https://bconline.gov.bc.ca/"
-              target="_blank">
-              <span>BC Online</span>
-            </a>
-            <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon>, 
-            or contact BC Registries staff to 
-            <a
-              color="primary"
-              class="link"
-              :href="docSearchURL"
-              target="_blank">
-              <span>submit a document search request</span>
-            </a>
-            <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon> 
-           .</span>
-         </span>
+            <span class="ml-1">To access paper-only documents, you will need to search through
+              <a color="primary" class="link" href="https://bconline.gov.bc.ca/" target="_blank">
+                <span>BC OnLine</span>
+              </a>
+              <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon>,
+              or contact BC Registries staff to
+              <a color="primary" class="link" :href="docSearchURL" target="_blank">
+                <span>submit a document search request</span>
+              </a>
+              <v-icon dense color="primary" class="small-icon ml-1">mdi-open-in-new</v-icon>
+              .
+            </span>
+          </span>
         </p>
-        <v-divider class="my-10" />
+        <v-divider class="my-10"/>
         <span class="section-header">Available Documents to Download:</span>
         <div :class="searchValidInput ? 'document-list mt-3 pa-3 pr-5 pt-7' : 
         'document-list-error  mt-3 pa-3 pr-5 pt-7'" :key="checkBoxesKey">
@@ -69,7 +90,7 @@
             </v-col>
           </v-row>
           <div v-else>
-            <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters>
+            <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
               <v-col>
                 <v-row no-gutters>
                   <v-col cols="auto" style="position: relative;">
@@ -101,8 +122,8 @@
                   <v-col />
                 </v-row>
               </v-col>
-              <v-col :class="['document-list__fee', item.active ? 'active-text' : 'disabled-text']" 
-              align-self="end" cols="auto" v-html="item.fee" />
+              <v-col :class="['document-list__fee', item.active ? 'active-text' : 'disabled-text']" align-self="end"
+                cols="auto" v-html="item.fee" />
             </v-row>
           </div>
         </div>
@@ -111,8 +132,8 @@
           <filing-history isLocked />
         </div>
       </v-col>
-      <v-col cols="12" sm="auto">
-        <div>
+      <v-col cols="3">
+        <div class="pt-2">
           <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
           <div class="validation-messages pl-5 mt-2" v-if="!searchValidInput">
             <div>&lt; {{ validationMsg }} </div>
@@ -135,6 +156,7 @@ import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useDocumentAcce
 import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI, FeeDataI, DialogOptionsIF } from '@/interfaces'
 import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+import { ContactInfo } from '@/components/common'
 
 const props = defineProps({
   appReady: { default: false },
@@ -147,13 +169,13 @@ const router = useRouter()
 const validationMsg = ref('')
 
 const { isStaff, isStaffSBC } = useAuth()
-const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp, warnings } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 
-const docSearchURL = "https://www2.gov.bc.ca/gov/content/employment-business/business/"+
-"managing-a-business/permits-licences/businesses-incorporated-companies/searches-certificates"
+const docSearchURL = "https://www2.gov.bc.ca/gov/content/employment-business/business/" +
+  "managing-a-business/permits-licences/businesses-incorporated-companies/searches-certificates"
 
 // fee summary
 const feePreSelectItem: Ref<FeeI> = ref({
@@ -224,8 +246,8 @@ const submitSelected = () => {
   searchValidInput.value = true
   validationMsg.value = ''
   if (hasNoSelectedDocs.value) {
-      searchValidInput.value = false
-      validationMsg.value = "Select documents to download"
+    searchValidInput.value = false
+    validationMsg.value = "Select documents to download"
   } else {
     if (isStaff.value) showStaffPayment.value = true
     else payForDocuments()
@@ -249,7 +271,7 @@ const feeActions: FeeAction[][] = [
     action: submitSelected,
     compType: ActionComps.BUTTON,
     iconRight: 'mdi-chevron-right',
-    outlined: false,     
+    outlined: false,
     text: 'Pay and Unlock Documents'
   }],
 ]
@@ -275,7 +297,7 @@ onMounted(async () => {
   await loadEntity(props.identifier)
   // NB: some logic depends on entity info + auth info
   // check every second for up to 11s (1 more second than app.vue waits for auth)
-  for (let i=0; i<11; i++) {
+  for (let i = 0; i < 11; i++) {
     if (props.appReady) break
     await new Promise(resolve => setTimeout(resolve, 1000))
   }
@@ -315,13 +337,13 @@ const loadPurchasableDocs = async () => {
 
   if (isCstatAvailable()) {
     purchasableDocs.value.push({
-        code: FeeCodes.CSTAT,
-        fee: displayFee(feeData[2].fee, false),
-        label: 'Certificate of Status',
-        documentType: DocumentType.CERTIFICATE_OF_STATUS,
-        active: true,
-        tooltip: '',
-        description: ''
+      code: FeeCodes.CSTAT,
+      fee: displayFee(feeData[2].fee, false),
+      label: 'Certificate of Status',
+      documentType: DocumentType.CERTIFICATE_OF_STATUS,
+      active: true,
+      tooltip: '',
+      description: ''
     })
   }
   // letter under seal is always available
@@ -364,13 +386,13 @@ const toggleFee = (event: any, item: any) => {
 @import '@/assets/styles/theme.scss';
 
 .document-list {
-  background-color: white;   
+  background-color: white;
   border-radius: 5px;
   width: 100%;
 
   &__label,
   &__fee {
-    color: $gray8;    
+    color: $gray8;
     height: 56px;
   }
 
@@ -403,7 +425,7 @@ const toggleFee = (event: any, item: any) => {
 
   &__label,
   &__fee {
-    color: $gray8;    
+    color: $gray8;
     height: 56px;
   }
 
@@ -427,6 +449,7 @@ const toggleFee = (event: any, item: any) => {
   }
 }
 
+
 .v-divider {
   border-width: 1px;
 }
@@ -440,7 +463,7 @@ const toggleFee = (event: any, item: any) => {
 }
 
 :deep(.mdi-checkbox-blank-outline) {
-  color: #1669BB;
+  color: $primary-blue;
   --v-medium-emphasis-opacity: 1;
 }
 
@@ -464,17 +487,17 @@ const toggleFee = (event: any, item: any) => {
   font-weight: normal;
 }
 
-.validation-messages{
-  color: #D3272C;  
+.validation-messages {
+  color: #D3272C;
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: center;   
-  font-size: 14px; 
+  justify-content: center;
+  font-size: 14px;
   width: 320px;
 }
 
-.more-info{
+.more-info {
   display: flex;
 }
 
@@ -482,7 +505,49 @@ const toggleFee = (event: any, item: any) => {
   font-weight: 700;
 }
 
-.small-icon{
+.small-icon {
   font-size: 18px;
+}
+
+.warnings-list {
+  background: white;
+  border-radius: 5px;
+}
+
+:deep(.v-expansion-panel__shadow) {
+  box-shadow: none !important
+}
+
+.expansion-panel {
+  &__header {
+    font-size: 14px;
+    font-weight: bold;
+    color: $gray9
+  }
+
+  &__text {
+    font-size: 14px;
+    color: $gray7;
+    margin-top: -0.875rem
+  }
+}
+
+:deep(.v-expansion-panel-title__overlay) {
+  background-color: white;
+}
+
+.expansion-panel-btn-text{
+  color: $primary-blue;
+  padding-top: 3.5px;
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.expansion-panel-txt{
+  margin-top: 10px;
+}
+
+.document-row {
+  height: 35px
 }
 </style>

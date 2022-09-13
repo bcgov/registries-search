@@ -1,7 +1,7 @@
 <template>
   <div id="filing-history-list">
     <span data-test-id="dashboard-filing-history-subtitle" class="section-header">
-      <span v-if="props.isLocked">Filing History</span>
+      <span v-if="props.isLocked">Filing History <span style="color:#868e96">({{historyItems.length}})</span></span>
       <span v-else>Filing History Documents</span>
       <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
     </span>
@@ -531,6 +531,7 @@ onMounted(async () => {
 .scrollable-container {
   max-height: 60rem;
   overflow-y: auto;
+  margin-bottom: 50px;
 }
 
 .filing-history-item {

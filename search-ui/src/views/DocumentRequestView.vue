@@ -33,7 +33,7 @@
                         <v-list-item v-for="(document, index) in documents" :key="index">
                             <span class="app-blue doc-link pt-6" @click="downloadDoc(document)">
                                 <img class="mb-n1" :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
-                                {{ documentDescription(document.documentType) }}
+                                <span class="pl-2">{{ documentDescription(document.documentType) }}</span>
                             </span>
                         </v-list-item>
                     </v-list>
@@ -119,5 +119,9 @@ const gotoSearch = (): void => {
     width: 100%;
     background-color: #FFF7C4;
     border: solid 1px #F9C90C
+}
+
+.v-divider {
+    border-width: 1px;
 }
 </style>
