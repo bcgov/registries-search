@@ -8,7 +8,7 @@
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
                             <img :src="require('@/assets/svgs/pdf-locked-gray.svg')" />
-                            <span v-bind="props" class="doc-title doc-title__disabled">{{ document.title }}</span>
+                            <span v-bind="props" class="doc-title doc-title__disabled pl-2">{{ document.title }}</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
@@ -17,7 +17,7 @@
                     </v-tooltip>
                     <div v-else>                        
                         <img :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
-                        <span class="app-blue doc-title">{{ document.title }}</span>
+                        <span class="app-blue doc-title pl-2">{{ document.title }}</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -29,7 +29,7 @@
                         <template v-slot:activator="{ isActive, props }">
                             <div v-if="isActive" class="ml-4 top-tooltip-arrow doc-tooltip-arrow"></div>
                             <img :src="require('@/assets/svgs/download-all-locked-gray.svg')" />
-                            <span v-bind="props" class="doc-title doc-title__disabled">Download All</span>
+                            <span v-bind="props" class="doc-title doc-title__disabled pl-2">Download All</span>
                         </template>
                         <span>
                             Select Business Summary and Filing History Documents above 
@@ -38,7 +38,7 @@
                     </v-tooltip>
                     <div v-else>
                         <v-icon class="app-blue download-all-active">mdi-download</v-icon>
-                        <span class="app-blue doc-title">Download All</span>
+                        <span class="app-blue doc-title pl-2">Download All</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -84,8 +84,7 @@ const downloadAll = (): void => {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 .doc-title {
-    margin-left: 0 !important;
-    padding-left: 0.4rem;
+    margin-left: 0 !important;     
     overflow-y: visible;
     text-align: start;
     width: 100px;  
