@@ -463,7 +463,7 @@ const toggleFee = (event: any, item: any) => {
 }
 
 :deep(.mdi-checkbox-blank-outline) {
-  color: #1669BB;
+  color: $primary-blue;
   --v-medium-emphasis-opacity: 1;
 }
 
@@ -522,12 +522,12 @@ const toggleFee = (event: any, item: any) => {
   &__header {
     font-size: 14px;
     font-weight: bold;
-    color: #212529
+    color: $gray9
   }
 
   &__text {
     font-size: 14px;
-    color: #495057;
+    color: $gray7;
     margin-top: -0.875rem
   }
 }
@@ -537,7 +537,7 @@ const toggleFee = (event: any, item: any) => {
 }
 
 .expansion-panel-btn-text{
-  color: #1669bb;
+  color: $primary-blue;
   padding-top: 3.5px;
   font-weight: normal;
   font-size: 13px;

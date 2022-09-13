@@ -41,7 +41,7 @@
   }
 
   .contact-link {
-    color: #1669BB
+    color: $primary-blue
   }
 }
 </style>
