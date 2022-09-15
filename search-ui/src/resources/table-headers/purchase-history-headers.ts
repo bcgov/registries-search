@@ -7,22 +7,22 @@ const { dateTimeString } = useDatetime()
 
 export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   {
+    col: 'businessName',
+    filter: { clearable: true, label: 'Business Name', type: 'text', value: '' },
+    hasFilter: true,
+    hasSort: true,
+    value: 'Business Name',
+    width: '20%'
+  },
+  {
     class: 'pl-7',
     col: 'businessIdentifier',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: { clearable: true, label: 'Number', type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
     itemClass: 'pl-7 small-cell',
     value: 'Incorporation/<br />Registration Number',
-    width: '10%'
-  },
-  {
-    col: 'businessName',
-    filter: { clearable: true, type: 'text', value: '' },
-    hasFilter: true,
-    hasSort: true,
-    value: 'Business Name',
-    width: '15%'
+    width: '14%'
   },
   {
     col: 'documents',
@@ -34,19 +34,21 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
         return colVal.map((item) => DocumentTypeDescriptions[item.documentType]).includes(filterVal)
       },
       items: Object.values(DocumentTypeDescriptions),
+      label: 'Document Type',
       type: 'select',
       value: ''
     },
     hasFilter: true,
     hasSort: false,
     value: 'Purchased Items',
-    width: '19%'
+    width: '15%'
   },
   {
     col: 'submissionDate',
     filter: {
       clearable: true,
       filterFn: (colVal: string, filterVal: string) => BaseTextFilter(dateTimeString(colVal), filterVal),
+      label: 'Date/Time',
       type: 'text',
       value: ''
     },
@@ -56,37 +58,38 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
     value: 'Search Date/Time<br />(Pacific time)',
     width: '17%'
   },
-  {
-    col: 'expiryDate',
-    filter: {
-      clearable: true,
-      filterFn: (colVal: string, filterVal: string) => BaseTextFilter(dateTimeString(colVal), filterVal),
-      type: 'text',
-      value: ''
-    },
-    hasFilter: true,
-    hasSort: true,
-    itemFn: dateTimeString,
-    value: 'Expiry Date/Time<br />(Pacific time)',
-    width: '17%'
-  },
+  // {
+  //   col: 'expiryDate',
+  //   filter: {
+  //     clearable: true,
+  //     filterFn: (colVal: string, filterVal: string) => BaseTextFilter(dateTimeString(colVal), filterVal),
+  //     type: 'text',
+  //     value: ''
+  //   },
+  //   hasFilter: true,
+  //   hasSort: true,
+  //   itemFn: dateTimeString,
+  //   value: 'Expiry Date/Time<br />(Pacific time)',
+  //   width: '17%'
+  // },
   {
     col: 'submitter',
     customHeaderSlot: '',
     customItemSlot: '',
-    filter: { clearable: true, type: 'text', value: '' },
+    filter: { clearable: true, label: 'User Name', type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
     value: 'User Name',
-    width: '10%'
+    width: '12%'
   },
   {
     col: '',
-    customItemSlot: 'button',
+    customHeaderSlot: 'action',
+    customItemSlot: 'action',
     itemClass: 'large-cell',
     hasFilter: false,
     hasSort: false,
-    value: '',
+    value: 'Actions',
     width: '12%'
   }
 ]

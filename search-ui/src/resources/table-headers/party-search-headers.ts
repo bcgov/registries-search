@@ -5,18 +5,12 @@ const { filterSearch, highlightMatch } = useSearch()
 
 export const PartySearchHeaders: BaseTableHeaderI[] = [
   {
-    col: '',
-    customItemSlot: 'icon',
-    hasFilter: false,
-    hasSort: false,
-    value: '',
-    width: '1%'
-  },
-  {
     col: 'partyName',
+    customItemSlot: 'name',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('partyName', filterVal),
+      label: 'Owner Name',
       type: 'text',
       value: ''
     },
@@ -24,7 +18,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     hasSort: true,
     itemFn: highlightMatch,
     value: 'Owner Name',
-    width: '19%'
+    width: '20%'
   },
   {
     col: 'partyRoles',
@@ -33,6 +27,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('partyRoles', filterVal),
       items: ['Partner', 'Proprietor'],
+      label: 'Role',
       type: 'select',
       value: ''
     },
@@ -42,29 +37,31 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     width: '10%'
   },
   {
-    col: 'parentIdentifier',
-    filter: {
-      clearable: true,
-      filterApiFn: (filterVal: string) => filterSearch('parentIdentifier', filterVal),
-      type: 'text',
-      value: ''
-    },
-    hasFilter: true,
-    hasSort: true,
-    value: 'Firm Number',
-    width: '10%'
-  },
-  {
     col: 'parentName',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('parentName', filterVal),
+      label: 'Firm Name',
       type: 'text',
       value: ''
     },
     hasFilter: true,
     hasSort: true,
     value: 'Firm Name',
+    width: '14%'
+  },
+  {
+    col: 'parentIdentifier',
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch('parentIdentifier', filterVal),
+      label: 'Firm Number',
+      type: 'text',
+      value: ''
+    },
+    hasFilter: true,
+    hasSort: true,
+    value: 'Firm Registration Number',
     width: '10%'
   },
   {
@@ -72,13 +69,14 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('parentBN', filterVal),
+      label: 'CRA Business Number',
       type: 'text',
       value: ''
     },
     hasFilter: true,
     hasSort: true,
     value: 'CRA Business Number',
-    width: '10%'
+    width: '14%'
   },
   {
     col: 'parentStatus',
@@ -86,6 +84,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('parentStatus', filterVal),
       items: ['Active', 'Historical'],
+      label: 'Status',
       type: 'select',
       value: ''
     },
@@ -93,15 +92,15 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     value: 'Status',
-    width: '15%'
+    width: '10%'
   },
   {
     col: '',
-    customHeaderSlot: 'button',
-    customItemSlot: 'button',
+    customHeaderSlot: 'action',
+    customItemSlot: 'action',
     hasFilter: false,
     hasSort: false,
-    value: '',
-    width: '15%'
+    value: 'Actions',
+    width: '12%'
   }
 ]

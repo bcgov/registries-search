@@ -11,6 +11,8 @@ export interface SearchI {
   unavailable: boolean
   _error: ErrorI
   _loading: boolean
+  _loadingNext: boolean
+  _start: number,
   _value: string
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="appReady" id="dashboard" class="container px-5 py-7" fluid>
+  <v-container v-if="appReady" id="dashboard" class="container" fluid>
     <v-row>
       <v-col>
         <h1 style="display: flex;">
@@ -112,7 +112,7 @@
 
     <v-window v-model="tab">
       <v-window-item class="ma-0">
-        <v-card class="pa-0" flat>
+        <v-card class="window-item-card" flat>
           <v-fade-transition hide-on-leave>
             <div v-if="search.unavailable">
               <v-row class="my-16" justify="center" no-gutters>
@@ -126,12 +126,12 @@
               </v-row>
             </div>
             <div v-else>
-              <p class="mx-7 my-10 info-text">
+              <p class="my-10 info-text">
                 Search for businesses registered or incorporated in B.C.&#42; or
                 for owners of Firms registered in B.C.
               </p>
-              <search-bar class="px-7" />
-              <p class="mx-7 my-10 info-text">
+              <search-bar />
+              <p class="my-10 info-text">
                 &#42;Note: The beta version of business search will not retrieve Railways, Financial Institutions, or
                 businesses incorporated under Private acts.
               </p>
@@ -141,9 +141,9 @@
         </v-card>
       </v-window-item>
       <v-window-item>
-        <v-card class="pa-0" flat>
-          <p class="mx-7 my-10 info-text">
-            This table will display up to 1000 of the most recent document purchases in the last 14 days
+        <v-card class="window-item-card" flat>
+          <p class="info-text mt-50px">
+            This table will display up to 1000 of the most recent document purchases in the last 14 days.
           </p>
           <document-access-request-history />
         </v-card>
@@ -283,5 +283,9 @@ watch(() => props.appReady, (ready: boolean) => {
 
 .warning-icon {
   color: $BCgovGold7;
+}
+
+.window-item-card {
+  padding: 0 30px 30px 30px;
 }
 </style>
