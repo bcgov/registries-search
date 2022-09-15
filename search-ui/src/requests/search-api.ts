@@ -25,7 +25,6 @@ const addSearchBusFilters = (filters: SearchFilterI) => {
   // categories
   if (filters?.legalType) filterParams.categories += `legalType:${filters.legalType}`
   if (filters?.status) {
-    console.log(`status:${filters.status}`)
     filterParams.categories += filters?.legalType ? `::` : ''
     filterParams.categories += `status:${filters.status}`
   }
@@ -85,10 +84,14 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
     })
 }
 
-export async function searchBusiness(searchValue: string, filters: SearchFilterI): Promise<SearchResponseI> {
+export async function searchBusiness(
+  searchValue: string,
+  filters: SearchFilterI,
+  start: number
+): Promise<SearchResponseI> {
   if (!searchValue) return
   // basic params
-  const params = { query: `value:${searchValue}`, start: 0, rows: SEARCH_RESULT_SIZE }
+  const params = { query: `value:${searchValue}`, start: start, rows: SEARCH_RESULT_SIZE }
   // add filters
   const filterParams = addSearchBusFilters(filters)
   if (filterParams.query) params.query += filterParams.query
@@ -117,14 +120,18 @@ export async function searchBusiness(searchValue: string, filters: SearchFilterI
     })
 }
 
-export async function searchParties(searchValue: string, filters: SearchPartyFilterI): Promise<SearchResponseI> {
+export async function searchParties(
+  searchValue: string,
+  filters: SearchPartyFilterI,
+  start: number
+): Promise<SearchResponseI> {
   if (!searchValue) return
 
   // basic params
   const params = {
     query: `value:${searchValue}`,
     categories: 'partyRoles:partner,proprietor',
-    start: 0,
+    start: start,
     rows: SEARCH_RESULT_SIZE
   }
   // add filters

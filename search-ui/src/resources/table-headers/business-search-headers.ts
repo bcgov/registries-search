@@ -6,18 +6,12 @@ const { filterSearch, highlightMatch } = useSearch()
 
 export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   {
-    col: '',
-    customItemSlot: 'icon',
-    hasFilter: false,
-    hasSort: false,
-    value: '',
-    width: '1%'
-  },
-  {
     col: 'name',
+    customItemSlot: 'name',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('name', filterVal),
+      label: 'Business Name',
       type: 'text',
       value: ''
     },
@@ -25,27 +19,29 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasSort: true,
     itemFn: highlightMatch,
     value: 'Business Name',
-    width: '25%'
+    width: '26%'
   },
   {
     col: 'identifier',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('identifier', filterVal),
+      label: 'Number',
       type: 'text',
       value: ''
     },
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
-    value: 'Incorporation/<br />Registration',
-    width: '10%'
+    value: 'Incorporation/<br />Registration Number',
+    width: '15%'
   },
   {
     col: 'bn',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('bn', filterVal),
+      label: 'CRA Business Number',
       type: 'text',
       value: ''
     },
@@ -53,7 +49,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasSort: true,
     itemFn: highlightMatch,
     value: 'CRA Business Number',
-    width: '15%'
+    width: '16%'
   },
   {
     col: 'legalType',
@@ -61,6 +57,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('legalType', getEntityCode(filterVal)),
       items: corpTypes.value.sort(),
+      label: 'Business Type',
       type: 'select',
       value: ''
     },
@@ -68,7 +65,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasSort: true,
     itemFn: getEntityDescription,
     value: 'Type',
-    width: '20%'
+    width: '18%'
   },
   {
     col: 'status',
@@ -76,6 +73,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('status', filterVal),
       items: ['Active', 'Historical'],
+      label: 'Status',
       type: 'select',
       value: ''
     },
@@ -83,15 +81,15 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     value: 'Status',
-    width: '17%'
+    width: '12%'
   },
   {
     col: '',
-    customHeaderSlot: 'button',
-    customItemSlot: 'button',
+    customHeaderSlot: 'action',
+    customItemSlot: 'action',
     hasFilter: false,
     hasSort: false,
-    value: '',
-    width: '12%'
+    value: 'Actions',
+    width: '13%'
   }
 ]

@@ -301,7 +301,10 @@ span.invalid-color {
 // common tooltip styles
 .tooltip {
   background-color: RGBA(73, 80, 87, .9) !important;
-  width: 250px !important;
+  font-size: 14px !important;
+  line-height: 18px !important;
+  padding: 20px 16px !important;
+  width: 300px !important;
 
   &__beta-version {
     background-color: RGBA(73, 80, 87, .9) !important;
@@ -318,6 +321,7 @@ span.invalid-color {
 .left-tooltip-arrow {
   width: 20px;
   position: absolute;
+  transition: linear 0.1s !important;
 }
 
 .top-tooltip-arrow,
@@ -494,12 +498,20 @@ span.invalid-color {
 }
 
 // buttons
-.btn-basic {
-  background-color: $primary-blue;
-  box-shadow: none;
-  color: white;
+.btn-basic,
+.btn-basic-outlined {
   font-size: 0.875rem !important;
   font-weight: normal !important;
+  box-shadow: none;
+}
+.btn-basic {
+  background-color: $primary-blue;
+  color: white;
+}
+.btn-basic-outlined {
+  background-color: white;
+  border: 1px solid $primary-blue;
+  color: $primary-blue;
 }
 
 // lists

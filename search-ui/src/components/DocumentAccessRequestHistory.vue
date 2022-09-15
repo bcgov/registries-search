@@ -8,17 +8,32 @@
     </div>
   </v-fade-transition>
   <base-table
-    class="mt-10"
-    filterClass="mt-4"
+    id="doc-access-req-table"
+    class="mt-30px soft-corners-top"
     height="100%"
     :itemKey="'submissionDate'"
     :loading="documentAccessRequest._loading"
     resetOnItemChange
+    :resetFilters="resetFilters"
+    :resultsDescription="resultsDescription"
     :setHeaders="PurchaseHistoryHeaders"
     :setItems="documentAccessRequest.requests"
+    title="Documents"
     :totalItems="totalRequestsLength"
     :noResultsText="noResultsText"
+    @filterActive="filterActive = $event"
+    @resetFilters="resetFilters = false"
   >
+    <template v-slot:header-filter-slot-action>
+      <v-btn
+        v-if="filterActive"
+        class="btn-basic-outlined mx-auto clear-btn"
+        :append-icon="'mdi-window-close'"
+        @click="resetFilters = true"
+      >
+        Clear Filters
+      </v-btn>
+    </template>
     <template v-slot:item-slot-documents="{ item }">
       <ul class="basic-list">
         <li v-for="(document, index) in item.documents" :key="index" class="doc-list-item">
@@ -26,9 +41,9 @@
         </li>
       </ul>
     </template>
-    <template v-slot:item-slot-button="{ item }">
+    <template v-slot:item-slot-action="{ item }">
       <v-btn
-        class="btn-basic min-width-120 mx-auto"
+        class="btn-basic view-doc-btn"
         color="primary"
         large
         @click="openRequest(item)"
@@ -59,7 +74,11 @@ const router = useRouter()
 
 const loading = ref(false)
 
+const filterActive = ref(false)
+const resetFilters = ref(false)
+
 const totalRequestsLength = computed(() => documentAccessRequest.requests?.length || 0)
+const resultsDescription = computed(() => totalRequestsLength.value === 1 ? 'Purchase' : 'Purchases')
 
 const noResultsText = "No purchases in the last 14 days"
 
@@ -80,10 +99,30 @@ const openRequest = async (item: DocumentDetailsI) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-.min-width-120 {
-  min-width: 7.5rem !important;
+#doc-access-req-table {
+  border: solid 1px $gray2;
+
+  @media (max-width: 1242px) {
+    :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
+      height: 60px;
+    }
+  }
 }
-:deep(.v-btn__content) {
-  min-width: 7.5rem;
+
+.clear-btn {
+  font-size: 14px;
+  height: 36px;
+  padding: 0 12px !important;
+  width: 90%;
+}
+
+.view-doc-btn {
+  height: 36px;
+  margin-top: -9px;
+  width: 90%;
+
+  :deep(.v-btn__content) {
+    min-width: 7.5rem;
+  }
 }
 </style>

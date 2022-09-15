@@ -1,92 +1,105 @@
 <template>
-<div class="mt-4">
-  <base-table
-    v-if="search.searchType === 'business'"    
-    height="100%"
-    :itemKey="'identifier'"
-    :loading="search._loading"
-    :setHeaders="BusinessSearchHeaders"
-    :setItems="search.results"
-    title="Search Results"
-    :subtitle="subtitle"
-    :totalItems="search.totalResults">
-
-    <template v-slot:item-slot-button="{ item }">
-      <v-btn
-        v-if="learBusinessTypes.includes(item.legalType)"
-        class="btn-basic mx-auto"
-        color="primary"
-        large
-        @click="goToBusinessInfo(item)"
+  <div>
+    <div class="mt-4 search-table">
+      <base-table
+        v-if="search.searchType === 'business'"
+        id="businesses-table"
+        class="soft-corners-top"
+        height="100%"
+        :itemKey="'identifier'"
+        :loading="search._loading"
+        :resetFilters="resetFilters"
+        :resultsDescription="resultsDescBusiness"
+        :setHeaders="BusinessSearchHeaders"
+        :setItems="search.results"
+        title="Search Results"
+        :totalItems="search.totalResults"
+        @resetFilters="resetFilters = false"
       >
-        Open
-      </v-btn>
-      <v-tooltip v-else location="top" content-class="tooltip">
-        <template v-slot:activator="{ isActive, props }">
-          <div class="table-icon-div">
-            <div v-if="isActive" class="top-tooltip-arrow table-tooltip-arrow" />
-            <v-icon color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
-          </div>
+        <template v-slot:header-filter-slot-action>
+          <v-btn
+            v-if="filtering"
+            class="btn-basic-outlined search-table__clear"
+            :append-icon="'mdi-window-close'"
+            @click="clearFilters()"
+          >
+            Clear Filters
+          </v-btn>
         </template>
-        <span>
-          You can access this business through BC Online or by contacting BC Registries.
-        </span>
-      </v-tooltip>
-    </template>
-    <template v-slot:item-slot-icon><v-icon>mdi-domain</v-icon></template>
-  </base-table>
-  <base-table
-    v-else
-    height="100%"
-    :itemKey="'parentIdentifier'"
-    :loading="search._loading"
-    :setHeaders="PartySearchHeaders"
-    :setItems="search.results"
-    title="Search Results"
-    :subtitle="subtitle"
-    :totalItems="search.totalResults"
-  >
-    <template v-slot:item-slot-button="{ item }">
-      <v-btn
-        v-if="learBusinessTypes.includes(item.parentLegalType)"
-        class="btn-basic mx-auto"
-        color="primary"
-        large
-        @click="goToBusinessFromParty(item)"
+        <template v-slot:item-slot-name="{ header, item}">
+          <search-table-name icon="mdi-domain" :name="header.itemFn(item[header.col])" />
+        </template>
+        <template v-slot:item-slot-action="{ item }">
+          <search-table-action
+            :showBtn="learBusinessTypes.includes(item.legalType)"
+            :tooltipMsg="tooltipMsg"
+            @action="goToBusinessInfo(item)"
+          />
+        </template>
+      </base-table>
+      <base-table
+        v-else
+        id="owners-table"
+        class="soft-corners-top"
+        height="100%"
+        :itemKey="'parentIdentifier'"
+        :loading="search._loading"
+        :resetFilters="resetFilters"
+        :resultsDescription="resultsDescOwner"
+        :setHeaders="PartySearchHeaders"
+        :setItems="search.results"
+        title="Search Results"
+        :totalItems="search.totalResults"
+        @resetFilters="resetFilters = false"
       >
-        Open
-      </v-btn>
-      <v-tooltip v-else location="top" content-class="tooltip">
-        <template v-slot:activator="{ isActive, props }">
-          <div class="table-icon-div">
-            <div v-if="isActive" class="top-tooltip-arrow table-tooltip-arrow" />
-            <v-icon color="primary" size="28" v-bind="props">mdi-information-outline</v-icon>
-          </div>
+        <template v-slot:header-filter-slot-action>
+          <v-btn
+            v-if="filtering"
+            class="btn-basic-outlined search-table__clear"
+            :append-icon="'mdi-window-close'"
+            @click="clearFilters()"
+          >
+            Clear Filters
+          </v-btn>
         </template>
-        <span>
-          You can access this business through BC Online or by contacting BC Registries.
-        </span>
-      </v-tooltip>
-    </template>
-    <template v-slot:item-slot-icon="{ item }">
-      <v-icon v-if="item.partyType === 'person'">mdi-account</v-icon>
-      <v-icon v-else>mdi-domain</v-icon>
-    </template>
-    <template v-slot:item-slot-roles="{ item }">
-      <ul class="basic-list">
-        <li v-for="(role, index) in item.partyRoles" :key="index">
-          <span>{{ capFirstLetter(role) }}</span>
-        </li>
-      </ul>
-    </template>
-  </base-table>
+        <template v-slot:item-slot-name="{ header, item }">
+          <search-table-name
+            :icon="item.partyType === 'person' ? 'mdi-account' : 'mdi-domain'"
+            :name="header.itemFn(item[header.col])"
+          />
+        </template>
+        <template v-slot:item-slot-roles="{ item }">
+          <ul class="basic-list">
+            <li v-for="(role, index) in item.partyRoles" :key="index">
+              <span>{{ capFirstLetter(role) }}</span>
+            </li>
+          </ul>
+        </template>
+        <template v-slot:item-slot-action="{ item }">
+          <search-table-action
+            :showBtn="learBusinessTypes.includes(item.parentLegalType)"
+            :tooltipMsg="tooltipMsg"
+            @action="goToBusinessFromParty(item)"
+          />
+        </template>
+      </base-table>
+    </div>
+    <v-btn
+      v-if="hasMoreResults"
+      class="btn-basic-outlined mx-auto mt-30px"
+      :loading="search._loadingNext"
+      @click="getNextSearches()"
+    >
+      Load More Results
+    </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import _ from 'lodash'
 // local
 import { BaseTable } from '@/components'
 import { useEntity, useSearch } from '@/composables'
@@ -94,14 +107,31 @@ import { RouteNames } from '@/enums'
 import { SearchPartyResultI, SearchResultI } from '@/interfaces'
 import { EntityI } from '@/interfaces/entity'
 import { BusinessSearchHeaders, PartySearchHeaders } from '@/resources/table-headers'
+// internal
+import { SearchTableAction, SearchTableName } from './common'
 
 // Router
 const router = useRouter()
 // composables
 const { learBusinessTypes, setEntity } = useEntity()
-const { search } = useSearch()
+const { filtering, getNextResults, hasMoreResults, search } = useSearch()
 
-// const totalResultsLength = computed(() => search.totalResults || 0 )
+const resetFilters = ref(false)
+
+const resultsDescBusiness = computed(() => search.results?.length === 1 ? 'Business' : 'Businesses')
+const resultsDescOwner = computed(() => search.results?.length === 1 ? 'Firm Owner' : 'Firm Owners')
+
+const tooltipMsg = 'You can access this business through BC Online or by contacting BC Registries. ' +
+  'See "Help with Business Search" for details.'
+
+const clearFilters = () => {
+  for (const i in search.filters) { search.filters[i] = '' }
+  updateTableHeaderFilters()
+  resetFilters.value = true
+}
+
+const getNextSearches = _.debounce(async () => getNextResults(), 50)
+
 const goToBusinessFromParty  = (result: SearchPartyResultI) => {
   const businessInfo: SearchResultI = {
     bn: result.parentBN,
@@ -110,6 +140,7 @@ const goToBusinessFromParty  = (result: SearchPartyResultI) => {
     name: result.parentName,
     status: result.parentStatus
   }
+  setEntity(businessInfo as EntityI)
   goToBusinessInfo(businessInfo)
 }
 const goToBusinessInfo  = (result: SearchResultI) => {
@@ -119,9 +150,6 @@ const goToBusinessInfo  = (result: SearchResultI) => {
 }
 
 const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.slice(1)
-const subtitle = computed(() => { return search.totalResults > 100 ? 
-'We only display the first 100 results of a large search. To see all results, refine your search ' +
-'terms to return fewer results.' : '' })
 
 /** Update the base table header filters to display what the current filters are.
  * (needed when leaving and coming back to the component)
@@ -145,14 +173,37 @@ watch(() => search.searchType, () => { updateTableHeaderFilters() })
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-.table-icon-div {
-  height: 28px;
-  margin: auto;
-  position: relative;
-  width: 28px;
+#businesses-table {
+  border: solid 1px $gray2;
+
+  @media (max-width: 1160px) {
+    :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
+      height: 60px;
+    }
+  }
 }
-.table-tooltip-arrow {
-  left: 4px;
-  margin-top: -10px !important;
+
+#owners-table {
+  border: solid 1px $gray2;
+
+  @media (max-width: 1320px) {
+    :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
+      height: 60px;
+    }
+  }
+}
+
+.search-table {
+  &__clear {
+    font-size: 14px;
+    height: 36px;
+    margin: auto;
+    padding: 0 12px !important;
+    min-width: 108px;
+    width: 90%;
+  }
+  &__clear :deep(.v-btn__content) {
+    white-space: nowrap;
+  }
 }
 </style>

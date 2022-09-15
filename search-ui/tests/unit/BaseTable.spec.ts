@@ -57,7 +57,7 @@ describe('BaseTable tests', () => {
     expect(wrapper.find('.base-table__header').exists()).toBe(true)
     expect(wrapper.find('.base-table__title').exists()).toBe(false)
     const headerItems = wrapper.findAll('.base-table__header__item')
-    expect(headerItems.length).toBe(headers.length)
+    expect(headerItems.length).toBe(headers.length * 2) // two header rows (1 for title, 1 for filters)
     for (let i=0; i < headers.length; i++) {
       expect(headerItems[i].text()).toContain('Header ' + (i+1))
     }

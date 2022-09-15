@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 // local
 import { SearchFilterI, SearchI, SearchPartyFilterI, SearchResponseI } from '@/interfaces'
 import { searchBusiness, searchParties } from '@/requests'
@@ -12,25 +12,70 @@ const search = reactive({
   unavailable: false,
   _error: null,
   _loading: false,
+  _loadingNext: false,
+  _start: 0,
   _value: '',
 } as SearchI)
 
+const _searchErrorHandler = async (searchResp: SearchResponseI) => {
+  // response error with info
+  search.results = null
+  search.totalResults = null
+  search._error = searchResp.error
+  if (searchResp.error.category === ErrorCategories.SEARCH_UNAVAILABLE) {
+    search.unavailable = true
+  } else search.unavailable = false
+}
+
 export const useSearch = () => {
+  const filtering = computed(() => {
+    for (const i in search.filters) if (search.filters[i] !== '') return true
+    return false
+  })
+  const hasMoreResults = computed(() => {
+    return search.totalResults && search.results?.length < search.totalResults
+  })
   const filterSearch = async (filterField: string, val: string) => {
     // FUTURE: verify filterField is valid
     search.filters[filterField] = val
     if (search._value) await getSearchResults(search._value)
   }
+  const getNextResults = async () => {
+    if (!hasMoreResults.value) return
+    search._loadingNext = true
+    let searchResp: SearchResponseI = null
+    if (search.searchType === 'business') {
+      // business search
+      searchResp = await searchBusiness(search._value, search.filters as SearchFilterI, search._start + 1)
+    } else {
+      // owner search
+      searchResp = await searchParties(search._value, search.filters as SearchPartyFilterI, search._start + 1)
+    }
+    if (searchResp) {
+      if (!searchResp.error) {
+        // success
+        search._start += 1
+        search.results = [...search.results, ...searchResp.searchResults.results]
+        search._error = null
+        search.unavailable = false
+      } else _searchErrorHandler(searchResp)
+    } else console.error('Error getting getNextSearchResults') // should never get here
+    search._loadingNext = false
+  }
   const getSearchResults = async (val: string) => {
+    if (!val) {
+      resetSearch()
+      return
+    }
     search._loading = true
     if (search.results === null && !search.unavailable) search.results = []
     let searchResp: SearchResponseI = null
     if (search.searchType === 'business') {
       // business search
-      searchResp = await searchBusiness(val, search.filters as SearchFilterI)
+      searchResp = await searchBusiness(val, search.filters as SearchFilterI, 0)
     } else {
       // owner search
-      searchResp = await searchParties(val, search.filters as SearchPartyFilterI)
+      searchResp = await searchParties(val, search.filters as SearchPartyFilterI, 0)
     }
     if (searchResp) {
       if (!searchResp.error) {
@@ -40,15 +85,7 @@ export const useSearch = () => {
         search.totalResults = searchResp.searchResults.totalResults
         search._error = null
         search.unavailable = false
-      } else {
-        // response error with info
-        search.results = null
-        search.totalResults = null
-        search._error = searchResp.error
-        if (searchResp.error.category === ErrorCategories.SEARCH_UNAVAILABLE) {
-          search.unavailable = true
-        } else search.unavailable = false
-      }
+      } else _searchErrorHandler(searchResp)
     } else {
       // unhandled response error (should never get here)
       search.results = []
@@ -70,11 +107,15 @@ export const useSearch = () => {
     search.unavailable = false
     search._error = null
     search._loading = false
+    search._start = 0
     search._value = ''
   }
   return {
     search,
+    filtering,
+    hasMoreResults,
     filterSearch,
+    getNextResults,
     getSearchResults,
     highlightMatch,
     resetSearch

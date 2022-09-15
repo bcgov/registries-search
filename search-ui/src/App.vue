@@ -22,7 +22,7 @@
         <entity-info />
       </div>
     </v-expand-transition>
-    <div class="app-body py-4">
+    <div class="app-body pt-4 pb-16">
       <main>
         <router-view
           :appReady="appReady"
