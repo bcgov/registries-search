@@ -53,7 +53,7 @@
               </v-expansion-panel>
             </v-expansion-panels>
           </div>
-          <v-divider class="mt-10 mb-8 divider" />
+          <v-divider class="my-10" />
         </div>
         <span class="section-header">How to Access Business Documents</span>
         <p class="pt-3">
@@ -427,7 +427,7 @@ const toggleFee = (event: any, item: any) => {
 
 
 .v-divider {
-  border-width: 1px;
+  border-width: 1.25px !important;
 }
 
 :deep(.v-selection-control__input)::before {
