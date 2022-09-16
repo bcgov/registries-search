@@ -217,7 +217,8 @@
       <!-- No Results Message -->
       <v-card class="no-results" flat v-else>
         <v-card-text>
-          <div class="no-results__title">No filing history. Completed filings and transactions will appear here.</div>           
+          <div class="no-results__title">No filing history. Completed filings and 
+            transactions will appear here.</div>           
         </v-card-text>
       </v-card>
     </div>

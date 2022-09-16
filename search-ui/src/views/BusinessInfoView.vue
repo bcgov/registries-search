@@ -82,8 +82,9 @@
         </p>
         <v-divider class="my-10" />
         <span class="section-header">Available Documents to Download:</span>
-        <div :class="searchValidInput ? 'document-list mt-3 pa-3 pr-5 pt-7' : 
-        'document-list-error  mt-3 pa-3 pr-5 pt-7'" :key="checkBoxesKey">
+        <div :class="['document-list', 'mt-3', 'pa-3', 'pr-5', 'pt-7', 
+        searchValidInput ? ' ': 'document-list-error']"
+         :key="checkBoxesKey">
           <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
@@ -415,26 +416,12 @@ const toggleFee = (event: any, item: any) => {
   }
 }
 
-.document-list-error {
-  background-color: white;
+.document-list-error {  
   border-left: solid 4px #D3272C;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  width: 100%;
-
-  &__label,
-  &__fee {
-    color: $gray8;    
-  }   
-
-  &__fee {     
-    text-align: right;    
-  }
-
-  &__tooltip-arrow {
-    margin-top: -11px !important;
-    margin-left: 10px !important;
-  }
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
 }
 
 
