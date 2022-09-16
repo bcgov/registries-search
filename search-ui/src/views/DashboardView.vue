@@ -1,11 +1,16 @@
 <template>
   <v-container v-if="appReady" id="dashboard" class="container" fluid>
-    <v-row>
+    <v-row no-gutters>
       <v-col>
         <h1 style="display: flex;">
           Business Search
           <span class="beta-version">
-            <v-tooltip location="bottom" content-class="tooltip__beta-version px-2" :model-value="showBetaTooltip">
+            <v-tooltip
+              content-class="tooltip__beta-version px-2"
+              location="bottom"
+              :model-value="showBetaTooltip"
+              transition="fade-transition"
+            >
               <template v-slot:activator="{ isActive, props }">
                 <div v-if="isActive" class="bottom-tooltip-arrow beta-version__tooltip-arrow"></div>
                 <span v-bind="props" class="beta-version__text pl-2" @click="showBetaTooltip = true">BETA</span>
@@ -17,24 +22,24 @@
                 v-click-outside="triggerBetaTooltipOff"
               >
                 <v-btn class="beta-version__close-btn float-right" icon @click="triggerBetaTooltipOff">
-                  <v-icon siz="32">mdi-window-close</v-icon>
+                  <v-icon siz="24">mdi-window-close</v-icon>
                 </v-btn>
-                <div class="beta-version__info px-3 py-4">
-                  <p class="pt-1">
+                <div class="beta-version__info pb-5 pt-4 px-5">
+                  <p class="pt-2">
                     Business Search is available as a Beta version. The Business
                     Search Beta allows you to search for most businesses types
                     registered in B.C., but you can only retrieve full information
                     for Benefit Companies, active Cooperative Associations, Sole
                     proprietorships, and General partnerships.
                   </p>
-                  <p class="pt-3">
+                  <p class="pt-4">
                     Some features of this site may not function as intended,
                     and if you encounter this, please contact us:
                   </p>
-                  <p class="pt-3">Toll Free: 1-877-526-1526</p>
-                  <p>Victoria Office: 250-387-7848</p>
-                  <p>BCRegistries@gov.bc.ca</p>
-                  <p class="pt-3">
+                  <p class="pt-4"><b>Toll Free:</b> 1-877-526-1526</p>
+                  <p><b>Victoria Office:</b> 250-387-7848</p>
+                  <p><b>Email:</b> BCRegistries@gov.bc.ca</p>
+                  <p class="pt-4">
                     As part of a modern agile software development process the
                     Business Search website will be continually updated and improved
                     based on feedback from citizens and businesses in B.C.
@@ -45,14 +50,14 @@
           </span>
         </h1>
       </v-col>
-      <v-col cols="auto">
+      <v-col class="pt-3" cols="auto">
         <a class="learn-more" :href="learnMoreURL" target="_blank">
           Learn More
           <v-icon class="learn-more__icon">mdi-open-in-new</v-icon>
         </a>
       </v-col>
     </v-row>
-    <v-row class="mt-1 py-2" justify="start" no-gutters>
+    <v-row class="mt-1 pt-2" justify="start" no-gutters>
       <v-col class="account-label pr-5" cols="auto">
         {{ auth.currentAccount.label }}
       </v-col>
@@ -60,53 +65,75 @@
         {{ auth.currentAccount.name }}
       </v-col>
     </v-row>
-    <v-btn class="doc-help copy-normal primary mt-5 px-0 text" flat :ripple="false" @click="showDocHelp = !showDocHelp">
-      <v-icon class="mr-1">mdi-help-circle-outline</v-icon>
-      <span v-if="!showDocHelp">Which Documents Can I Access?</span>
-      <span v-else>Hide Document Help</span>
+    <v-btn class="doc-help-btn copy-normal primary px-0 text" flat :ripple="false" @click="showDocHelp = !showDocHelp">
+      <v-icon>mdi-help-circle-outline</v-icon>
+      <span v-if="!showDocHelp">Help with Business Search</span>
+      <span v-else>Hide Help</span>
     </v-btn>
     <v-fade-transition>
-      <div v-if="showDocHelp" class="doc-help__info mb-5 ml-7">
-        <p>The documents available through business search include</p>
-        <ul class="ml-4 mt-3">
-          <li>Business Summary</li>
-          <li>Filing History Documents (ledger filings)</li>
-          <li>Certificate of Status</li>
-          <li>Certificate of Good Standing</li>
-          <li>Letter Under Seal</li>
-        </ul>
-        <p class="mt-3">
-          In the beta version of Business Search you can access documents
-          for the following active and historical business types:
-        </p>
-        <ul class="ml-4 mt-3">
-          <li>Benefit Companies</li>
-          <li>Cooperative Associations (active only)</li>
-          <li>Sole Proprietorships and</li>
-          <li>General Partnerships.</li>
-        </ul>
-        <p class="mt-3">
-          To access documents for other business types, you will need to
-          search through <a class="doc-help__info__link" :href="bcOnlineURL" target="_blank">BC OnLine</a>, or
-          <a class="doc-help__info__link" :href="requestDocURL" target="_blank">request a document search</a>.
-        </p>
+      <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
+        <div class="doc-help-info__content mx-auto">
+          <h3 style="text-align: center;">Help with Business Search</h3>
+          <p class="mt-5">
+            In the Beta version of Business Search you can access documents for
+            the following active and historical business types:
+          </p>
+          <ul class="ml-4 mt-6">
+            <li>Benefit Companies</li>
+            <li>Cooperative Associations (active only)</li>
+            <li>Sole Proprietorships</li>
+            <li>General Partnerships</li>
+          </ul>
+          <p class="mt-6">
+            Documents that may be available through Business Search include:
+          </p>
+          <ul class="ml-4 mt-6">
+            <li>Business Summary</li>
+            <li>Filing History Documents (ledger filings)</li>
+            <li>Certificate of Status</li>
+            <li>Certificate of Good Standing</li>
+            <li>Letter Under Seal</li>
+          </ul>
+          <p class="mt-6">
+            <b>Note:</b> The Beta version of Business Search will not retrieve railways,
+            financial institutions, or businesses incorporated under Private Acts.
+          </p>
+          <p class="mt-6">
+            To access documents for other business types, you will need to search through
+            <a class="doc-help-info__content__link" :href="bcOnlineURL" target="_blank">
+              <span style="text-decoration: underline;">BC OnLine</span>
+              <v-icon class="doc-help-info__content__link__icon ml-1">mdi-open-in-new</v-icon>
+            </a>, or you may
+            <a class="doc-help-info__content__link" :href="requestDocURL" target="_blank">
+              <span style="text-decoration: underline;">submit a document search request</span>
+              <v-icon class="doc-help-info__content__link__icon ml-1">mdi-open-in-new</v-icon>
+            </a>.
+          </p>
+        </div>
+        <span class="doc-help-info__close-btn my-5" @click="showDocHelp = false">Hide help</span>
       </div>
     </v-fade-transition>
 
-    <v-tabs class="mt-2" v-model="tab">
-      <v-tab id="search-tab" :class="['tab-item-default', tab == '0' ? 'tab-item-active' : 'tab-item-inactive']">
+    <v-tabs v-model="tab" style="height: 65px; margin-top: 20px;">
+      <v-tab
+        id="search-tab"
+        :class="['tab-item-default', tab == '0' ? 'tab-item-active' : 'tab-item-inactive']"
+        :ripple="false"
+      >
         <v-icon>mdi-magnify</v-icon>
-        <span class="ml-1">Find a Business</span>
+        <b class="ml-1">Find a Business</b>
       </v-tab>
-      <v-tab id="documents-tab" :class="['tab-item-default', tab == '1' ? 'tab-item-active' : 'tab-item-inactive']">
-        <v-icon>mdi-file-document-edit-outline</v-icon>
-        <span class="ml-1">
-          View Recently Purchased Documents
-          <span class="ml-1" v-if="documentAccessRequest._loading">
-            <v-progress-circular indeterminate size="22" />
-          </span>
-          <span v-else>({{ totalDocAccessLength }})</span>
+      <v-tab
+        id="documents-tab"
+        :class="['tab-item-default', tab == '1' ? 'tab-item-active' : 'tab-item-inactive']"
+        :ripple="false"
+      >
+        <v-icon>mdi-file-document-outline</v-icon>
+        <b class="mx-1">View Recently Purchased Documents</b>
+        <span class="ml-1" v-if="documentAccessRequest._loading">
+          <v-progress-circular indeterminate size="22" />
         </span>
+        <span v-else>({{ totalDocAccessLength }})</span>
       </v-tab>
     </v-tabs>
 
@@ -126,16 +153,28 @@
               </v-row>
             </div>
             <div v-else>
-              <p class="my-10 info-text">
-                Search for businesses registered or incorporated in B.C.&#42; or
-                for owners of Firms registered in B.C.
+              <p class="mb-7 mt-12 info-text">
+                Search for businesses
+                <v-tooltip location="top" content-class="tooltip" transition="fade-transition">
+                  <template v-slot:activator="{ isActive, props }">
+                    <span class="tooltip-search-tab" style="position: relative;">
+                      <v-fade-transition>
+                        <div v-if="isActive" class="top-tooltip-arrow tooltip-search-tab__arrow" />
+                      </v-fade-transition>
+                      <span class="tooltip-search-tab__text" v-bind="props">
+                        registered or incorporated in B.C.</span>
+                    </span>
+                  </template>
+                  <span>
+                    <b>Note:</b> The Beta version of business search will not
+                    retrieve railways, financial institutions, or businesses
+                    incorporated under Private Acts.
+                  </span>
+                </v-tooltip>
+                or for owners of Firms registered in B.C.
               </p>
-              <search-bar />
-              <p class="my-10 info-text">
-                &#42;Note: The beta version of business search will not retrieve Railways, Financial Institutions, or
-                businesses incorporated under Private acts.
-              </p>
-              <search-results v-if="search.results!=null" />
+              <search-bar class="pb-5" />
+              <search-results class="mt-30px" v-if="search.results!=null" />
             </div>
           </v-fade-transition>
         </v-card>
@@ -165,9 +204,10 @@ const { auth } = useAuth()
 const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 const { search } = useSearch()
 
-const bcOnlineURL = 'https://www.bconline.gov.bc.ca'
+const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
 const learnMoreURL = 'https://www2.gov.bc.ca/gov/content?id=B75BE1375F084B138B60D62C0094D9E8'
-const requestDocURL = 'https://www2.gov.bc.ca/gov/content?id=B75BE1375F084B138B60D62C0094D9E8'
+const requestDocURL = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
+  '/permits-licences/businesses-incorporated-companies/searches-certificates#submit'
 const showDocHelp = ref(false)
 const tab = ref('0')
 
@@ -204,6 +244,13 @@ watch(() => props.appReady, (ready: boolean) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+#documents-tab {
+  border-left: 2.5px solid $gray1;
+}
+
+#search-tab {
+  border-right: 2.5px solid $gray1;
+}
 .account-label + .account-name {
   border-left: 1px solid $gray4;
 }
@@ -220,7 +267,7 @@ watch(() => props.appReady, (ready: boolean) => {
     line-height:10px;
     text-decoration: underline;
     font-weight: bold;
-    color: $BCgovBlue4;
+    color: $primary-blue;
     cursor: pointer;
     font-size: 0.9rem;
   }
@@ -228,24 +275,51 @@ watch(() => props.appReady, (ready: boolean) => {
   &__close-btn {
     background-color: transparent;
     box-shadow: none;
+    font-size: .875rem;
     height: 30px;
     pointer-events: all;
     width: 30px;
   }
-}
-
-.doc-help {
 
   &__info {
-    max-width: 50%;
-
-    &__link {
-      color: inherit;
-      white-space: nowrap;
-      text-decoration: underline;
-    }
+    font-size: 0.825rem;
+    line-height: 1.125rem;
   }
 }
+
+.doc-help-btn {
+  margin-top: 14px;
+}
+
+.doc-help-info {
+  border-bottom: 1px dashed $gray7;
+  border-top: 1px dashed $gray7;
+
+  &__content {
+    max-width: 60%;
+
+    &__link {
+      color: $primary-blue;
+      white-space: nowrap;
+      text-decoration: none;
+
+      &__icon {
+        font-size: 1rem;
+        color: $primary-blue;
+      }
+    }
+  }
+
+  &__close-btn {
+    color: $primary-blue;
+    cursor: pointer;
+    float: right;
+    font-size: .875rem;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+}
+
 .info-text {
   font-size: 1rem;
   color: $gray7
@@ -261,20 +335,45 @@ watch(() => props.appReady, (ready: boolean) => {
   }
 }
 
-.tab-item-inactive {  
+.tab-item-inactive {
   color: white;
-  background-color: #003366;
+  background-color: $BCgovBlue5;
+  box-shadow: inset 0 0 5px 1px $gray9;
+  margin-top: 5px;
+  transition: none !important;
+}
+.tab-item-inactive:hover {
+  background-color: $primary-blue;
+  box-shadow: none;
 }
 
-.tab-item-active {  
-  color: $gray7;
+.tab-item-active {
+  color: $gray8;
   background-color: white;
+  transition: none !important;
 }
 
 .tab-item-default {
+  border-radius: 5px 5px 0 0 !important;
+  height: 67px;
   width: 50%;
   min-width: 50%;
-  font-weight: bold;
+  font-size: 1.125rem;
+}
+
+.tooltip-search-tab {
+  position: relative;
+
+  &__arrow {
+    right: 119px;
+    top: -10px;
+  }
+
+  &__text {
+    // border-bottom: 1px dotted $gray7;
+    text-decoration: underline dotted 1.5px;
+    margin-right: 2px;
+  }
 }
 
 .v-list-item {

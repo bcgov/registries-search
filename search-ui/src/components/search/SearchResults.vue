@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mt-4 search-table">
+    <div class="search-table">
       <base-table
         v-if="search.searchType === 'business'"
         id="businesses-table"
