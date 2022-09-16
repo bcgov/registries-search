@@ -408,6 +408,7 @@ const toggleFee = (event: any, item: any) => {
   &__fee {       
     text-align: right;
     width: 15%;
+    margin-right: 5px;
   }
 
   &__tooltip-arrow {     
