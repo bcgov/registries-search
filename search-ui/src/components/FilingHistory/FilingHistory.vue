@@ -130,7 +130,7 @@
 
               <!-- the action button/menu (right side) -->
               <div class="item-header__actions">
-                <v-btn class="expand-btn" flat :ripple=false @click.stop="togglePanel(index, filing)"
+                <v-btn class="expand-btn" variant="flat" :ripple="false"  @click.stop="togglePanel(index, filing)"
                   v-show="displayAction(filing)">
                   <span v-if="filing.availableOnPaperOnly" class="app-blue">
                     {{ (panel === index) ? "Close" : "Request a Copy" }}
@@ -140,7 +140,7 @@
                   </span>
                   <span v-else-if="filing.documentsLink" class="app-blue">
                     {{ (panel === index) ? "Hide Documents" : "View Documents" }}
-                  </span>
+                  </span>                  
                 </v-btn>
               </div>
             </div>
@@ -217,8 +217,8 @@
       <!-- No Results Message -->
       <v-card class="no-results" flat v-else>
         <v-card-text>
-          <div class="no-results__title">You have no filing history</div>
-          <div class="no-results__subtitle">Your completed filings and transactions will appear here</div>
+          <div class="no-results__title">No filing history. Completed filings and 
+            transactions will appear here.</div>           
         </v-card-text>
       </v-card>
     </div>
@@ -558,14 +558,20 @@ onMounted(async () => {
   }
 
   &__actions {
+    padding-left: 3.5rem;     
     text-align: right;
     min-width: 12rem;
-
+    margin-right: -15px;
+    
     .expand-btn {
       letter-spacing: -0.01rem;
       font-size: $px-14;
       font-weight: 700;
     }
+
+    :deep(.v-btn__overlay) {
+        background-color: $gray9 !important;
+    }   
 
     // make menu button slightly smaller
     .menu-btn {
@@ -576,7 +582,9 @@ onMounted(async () => {
   }
 
   &__title {
-    font-weight: 700;
+    font-size: 16px;
+    color: $gray7;
+    font-weight: bold;
   }
 
   &__subtitle {
@@ -609,8 +617,7 @@ onMounted(async () => {
   border: none;
 }
 
-.details-btn {
-  background-color: transparent !important;
+.details-btn {   
   box-shadow: none;
   margin-bottom: 0.25rem;
   padding-left: 0;

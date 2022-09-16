@@ -86,7 +86,7 @@ describe('Filing History List - misc functionality', () => {
 
         expect(vm.historyItems.length).toEqual(0)
         expect(wrapper.findAll('.filing-history-item').length).toEqual(0)
-        expect(wrapper.find('.no-results').text()).toContain('You have no filing history')
+        expect(wrapper.find('.no-results').text()).toContain('No filing history')
 
         wrapper.unmount()
     })

@@ -21,7 +21,7 @@
           <div class="loading-msg" v-if="documentAccessRequest._downloading">Downloading document</div>
         </div>
       </div>
-    </v-fade-transition>     
+    </v-fade-transition>
     <v-row no-gutters>
       <v-col cols="9">
         <div v-if="warnings.length > 0">
@@ -46,14 +46,14 @@
                     Any outstanding annual reports must be filed to bring the business back into good standing.
                     <div class="expansion-panel-txt">
                       If further action is required, please contact BC Registries staff:
-                      <ContactInfo class="expansion-panel-txt"/>
+                      <ContactInfo class="expansion-panel-txt" />
                     </div>
                   </v-expansion-panel-text>
                 </div>
               </v-expansion-panel>
             </v-expansion-panels>
           </div>
-        <v-divider class="mt-10 mb-8 divider" />
+          <v-divider class="my-10" />
         </div>
         <span class="section-header">How to Access Business Documents</span>
         <p class="pt-3">
@@ -80,51 +80,52 @@
             </span>
           </span>
         </p>
-        <v-divider class="my-10"/>
+        <v-divider class="my-10" />
         <span class="section-header">Available Documents to Download:</span>
-        <div :class="searchValidInput ? 'document-list mt-3 pa-3 pr-5 pt-7' : 
-        'document-list-error  mt-3 pa-3 pr-5 pt-7'" :key="checkBoxesKey">
+        <div :class="['document-list', 'mt-3', 'pa-3', 'pr-5', 'pt-7', 
+        searchValidInput ? ' ': 'document-list-error']"
+         :key="checkBoxesKey">
           <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
             </v-col>
           </v-row>
-          <div v-else>
-            <v-row v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
-              <v-col>
-                <v-row no-gutters>
-                  <v-col cols="auto" style="position: relative;">
-                    <v-tooltip v-if="item.tooltip" content-class="tooltip" location="top center">
-                      <template v-slot:activator="{ isActive, props }">
-                        <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
-                        <v-row v-bind="props" no-gutters>
-                          <v-col v-bind="props" cols="auto">
-                            <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
-                          </v-col>
-                          <v-col v-bind="props" class="document-list__label">
-                            <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                              {{ item.label }}</span><span>{{item.description}}</span>
-                          </v-col>
-                        </v-row>
-                      </template>
-                      <span>{{ item.tooltip }}</span>
-                    </v-tooltip>
-                    <v-row v-else no-gutters>
-                      <v-col cols="auto">
+          <div v-else class="documents-section">
+            <div v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
+              <div class="document-list__label">
+                <div>
+                <v-tooltip v-if="item.tooltip" content-class="tooltip document-list__tooltip" location="top left"
+                  transition="fade-transition">
+                  <template v-slot:activator="{ isActive, props }">
+                    <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
+                    <v-row v-bind="props" no-gutters>
+                      <v-col v-bind="props" cols="auto">
                         <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
                       </v-col>
-                      <v-col class="document-list__label">
+                      <v-col v-bind="props">
                         <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                          {{ item.label }}</span> <span>{{item.description}}</span>
+                          {{ item.label }}</span><span>{{item.description}}</span>
                       </v-col>
                     </v-row>
+                  </template>
+                  <span>{{ item.tooltip }}</span>
+                </v-tooltip>
+                <v-row v-else no-gutters>
+                  <v-col cols="auto">
+                    <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
                   </v-col>
-                  <v-col />
+                  <v-col>
+                    <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
+                      {{ item.label }}</span> <span>{{item.description}}</span>
+                  </v-col>
                 </v-row>
-              </v-col>
-              <v-col :class="['document-list__fee', item.active ? 'active-text' : 'disabled-text']" align-self="end"
-                cols="auto" v-html="item.fee" />
-            </v-row>
+              </div>
+              </div>
+              <div class="document-list__fee">
+                <v-label :class="[item.active ? 'active-text' : 'disabled-text']" align-self="end"
+                  cols="auto" v-html="item.fee" />
+              </div>
+            </div>
           </div>
         </div>
         <v-divider class="my-10" />
@@ -385,6 +386,11 @@ const toggleFee = (event: any, item: any) => {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
+.documents-section {
+  padding-bottom: 20px;
+  margin-top: -5px;
+}
+
 .document-list {
   background-color: white;
   border-radius: 5px;
@@ -392,66 +398,36 @@ const toggleFee = (event: any, item: any) => {
 
   &__label,
   &__fee {
-    color: $gray8;
-    height: 56px;
+    color: $gray8;      
   }
 
-  &__label {
-    padding-top: 5px !important;
+  &__label {     
+    width: 85%;
   }
 
-  &__fee {
-    padding-left: 8px !important;
-    padding-top: 3px !important;
+  &__fee {       
     text-align: right;
+    width: 15%;
+    margin-right: 5px;
   }
 
-  &__tooltip {
-    margin-top: 30px !important;
-  }
-
-  &__tooltip-arrow {
-    margin-left: 10px;
-    margin-top: -9px !important;
+  &__tooltip-arrow {     
+    margin-top: -11px !important;
+    margin-left: 10px !important;
   }
 }
 
-.document-list-error {
-  background-color: white;
+.document-list-error {  
   border-left: solid 4px #D3272C;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  width: 100%;
-
-  &__label,
-  &__fee {
-    color: $gray8;
-    height: 56px;
-  }
-
-  &__label {
-    padding-top: 5px !important;
-  }
-
-  &__fee {
-    padding-left: 8px !important;
-    padding-top: 3px !important;
-    text-align: right;
-  }
-
-  &__tooltip {
-    margin-top: 30px !important;
-  }
-
-  &__tooltip-arrow {
-    margin-left: 10px;
-    margin-top: -9px !important;
-  }
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
 }
 
 
 .v-divider {
-  border-width: 1px;
+  border-width: 1.25px !important;
 }
 
 :deep(.v-selection-control__input)::before {
@@ -468,7 +444,7 @@ const toggleFee = (event: any, item: any) => {
 }
 
 :deep(.v-checkbox .v-selection-control) {
-  height: 32px;
+  height: 12px;
 }
 
 :deep(.v-label) {
@@ -536,18 +512,20 @@ const toggleFee = (event: any, item: any) => {
   background-color: white;
 }
 
-.expansion-panel-btn-text{
+.expansion-panel-btn-text {
   color: $primary-blue;
   padding-top: 3.5px;
   font-weight: normal;
   font-size: 13px;
 }
 
-.expansion-panel-txt{
+.expansion-panel-txt {
   margin-top: 10px;
 }
 
 .document-row {
-  height: 35px
+  display: flex;
+  width: 100%;
+  padding-top: 10px
 }
 </style>
