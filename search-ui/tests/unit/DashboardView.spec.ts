@@ -62,8 +62,8 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('.account-label').text()).toContain(testAccount.label)
     expect(wrapper.find('.account-name').text()).toContain(testAccount.name)
     // check documents help
-    expect(wrapper.find('.doc-help').text()).toContain('Which Documents Can I Access?')
-    expect(wrapper.find('.doc-help__info').exists()).toBe(false)
+    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business Search')
+    expect(wrapper.find('.doc-help-info').exists()).toBe(false)
     // check tab headers
     expect(wrapper.html()).toContain('Find a Business')
     expect(wrapper.html()).toContain('View Recently Purchased Documents')
@@ -80,15 +80,15 @@ describe('DashboardView tests', () => {
     expect(wrapper.findComponent(SearchResults).exists()).toBe(false)
   })
   it('opens and closes document help', async () => {
-    wrapper.find('.doc-help').trigger('click')
+    wrapper.find('.doc-help-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.find('.doc-help').text()).toContain('Hide Document Help')
-    expect(wrapper.find('.doc-help__info').exists()).toBe(true)
+    expect(wrapper.find('.doc-help-btn').text()).toContain('Hide Help')
+    expect(wrapper.find('.doc-help-info').exists()).toBe(true)
     // clicking again sets it back
-    wrapper.find('.doc-help').trigger('click')
+    wrapper.find('.doc-help-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.find('.doc-help').text()).toContain('Which Documents Can I Access?')
-    expect(wrapper.find('.doc-help__info').exists()).toBe(false)
+    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business Search')
+    expect(wrapper.find('.doc-help-info').exists()).toBe(false)
   })
   it('shows the results table when results are populated', async () => {
     search.results = []

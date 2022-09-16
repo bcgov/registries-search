@@ -64,7 +64,7 @@ export const useSearch = () => {
   }
   const getSearchResults = async (val: string) => {
     if (!val) {
-      resetSearch()
+      resetSearch(search.searchType)
       return
     }
     search._loading = true
@@ -99,10 +99,10 @@ export const useSearch = () => {
     if (!match) return ''
     return match.replaceAll(search._value.toUpperCase(), `<b>${search._value.toUpperCase()}</b>`)
   }
-  const resetSearch = () => {
+  const resetSearch = (searchType: 'business' | 'partner' = 'business') => {
     search.filters = {} as SearchFilterI
     search.results = null
-    search.searchType = 'business'
+    search.searchType = searchType
     search.totalResults = null
     search.unavailable = false
     search._error = null

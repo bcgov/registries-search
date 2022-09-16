@@ -94,6 +94,29 @@ td {
   transform: translateY(-8px) scale(0.75);
 }
 
+.v-field .v-label,
+.v-field .v-field__outline,
+.v-field .v-field__append-inner .v-icon,
+.v-text-field .v-input__details .v-messages {
+  color: $gray7;
+  opacity: 1;
+}
+
+.v-field .v-field__field .v-field__input {
+  color: $gray9;
+}
+
+.v-field.v-field--active:not(.v-field--error) .v-label.v-field-label--floating {
+  color: $primary-blue;
+  opacity: 1;
+}
+
+.v-field--active:not(.v-field--error) .v-field__outline::after,
+.v-field--active:not(.v-field--error) .v-field__outline::before {
+  border-color: $primary-blue;
+  opacity: 1;
+}
+
 // Dialogs
 .v-dialog {
   margin: 2rem;
