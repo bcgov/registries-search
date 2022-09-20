@@ -1,10 +1,10 @@
 <template>
   <v-app id="app" class="app-container">
     
-    <ErrorDialog
-      :dialog="errorDialog"
-      @close="clearError"
+    <base-dialog
       attach="#app"
+      :display="errorDisplay"
+      :options="errorInfo"
     />
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
@@ -50,9 +50,9 @@ import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-comm
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
-import { ErrorI } from '@/interfaces'
+import { DialogOptionsIF, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
-import { EntityInfo, ErrorDialog } from '@/components'
+import { BaseDialog, EntityInfo } from '@/components'
 import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest, 
 useDocumentAccessRequest } from '@/composables'
 import { navigate, getFeatureFlag } from '@/utils'
@@ -61,7 +61,9 @@ const aboutText: string = process.env.ABOUT_TEXT
 const appLoading = ref(false)
 const appReady = ref(false)
 const haveData = ref(true)
-const errorDialog = ref(false)
+// errors
+const errorDisplay = ref(false)
+const errorInfo: DialogOptionsIF = ref(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -160,11 +162,6 @@ const handleError = (error: ErrorI) => {
       navigate(sessionStorage.getItem('REGISTRY_URL'))
   }
   Sentry.captureException(error)
-}
-
-const clearError = () => {
-  documentAccessRequest._error = null
-  errorDialog.value = false
 }
 
 // watchers for errors
