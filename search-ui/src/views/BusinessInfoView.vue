@@ -461,6 +461,7 @@ const toggleFee = (event: any, item: any) => {
 .disabled-text {
   color: #757575;
   font-weight: normal;
+  opacity: 100%;
 }
 
 .validation-messages {
