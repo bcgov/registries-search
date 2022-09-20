@@ -25,7 +25,7 @@
     <v-row no-gutters>
       <v-col cols="9">
         <div v-if="warnings.length > 0">
-          <span class="section-header">Alerts ({{warnings.length}})</span>
+          <span class="section-header">Alerts <span class="warnings-count">({{warnings.length}})</span></span>
           <div class="mt-4">
             <v-expansion-panels class="warnings-list  pt-2 pb-2">
               <v-expansion-panel v-for="(warning, index) in warnings" :key="index" class="expansion-panel">
@@ -528,5 +528,9 @@ const toggleFee = (event: any, item: any) => {
   display: flex;
   width: 100%;
   padding-top: 10px
+}
+
+.warnings-count {
+  color: #868e96
 }
 </style>
