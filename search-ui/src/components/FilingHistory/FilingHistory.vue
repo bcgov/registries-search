@@ -583,7 +583,7 @@ onMounted(async () => {
 
   &__title {
     font-size: 16px;
-    color: $gray7;
+    color: $gray9;
     font-weight: bold;
   }
 

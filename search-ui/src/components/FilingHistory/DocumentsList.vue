@@ -17,7 +17,7 @@
                     </v-tooltip>
                     <div v-else>                        
                         <img :src="require('@/assets/svgs/pdf-icon-blue.svg')" />
-                        <span class="app-blue doc-title pl-2">{{ document.title }}</span>
+                        <span class="app-blue doc-title pl-2 doc-title-active">{{ document.title }}</span>
                     </div>
                 </v-btn>
             </v-list-item>
@@ -104,5 +104,10 @@ const downloadAll = (): void => {
 
 .download-all-active {
     margin-left: -5px;
+}
+
+.doc-title-active{
+   vertical-align: top;
+   padding-top:2px
 }
 </style>
