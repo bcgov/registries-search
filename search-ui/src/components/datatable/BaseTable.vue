@@ -1,5 +1,5 @@
 <template>
-  <v-container class="container pa-0 ma-0" :style="[{ height: height || '540px' }, { overflow: 'scroll' }]">
+  <v-container class="container pa-0 ma-0" :style="[{ height: height || '540px' }, { overflow: overflow || 'scroll' }]">
     <table class="base-table">
       <thead class="base-table__header">
         <slot name="header" :headers="headers">
@@ -10,7 +10,7 @@
                   <h2 class="ml-3 py-6">
                     {{ title }}
                     <span class="ml-1" v-if="loading">
-                      <v-progress-circular indeterminate size="22" />
+                      <v-progress-circular color="primary" indeterminate size="22" />
                     </span>
                     <span v-else-if="resultsDescription" style="font-weight: normal">
                       ({{ totalItems || setItems.length }} {{ resultsDescription }})
@@ -161,6 +161,7 @@ const props = defineProps<{
   loading?: boolean,
   noResultsText?: string,
   pagination?: boolean,
+  overflow?: string,
   resetFilters?: boolean,
   resetOnItemChange?: boolean,
   resultsDescription?: string,
@@ -179,7 +180,7 @@ const emit = defineEmits<{
 const headers = reactive(_.cloneDeep(props.setHeaders) as BaseTableHeaderI[])
 const sortedItems = ref([...props.setItems])
 
-const emptyText = computed(() => props.noResultsText || '<b>No results found</p>')
+const emptyText = computed(() => props.noResultsText || 'No results found')
 const filtering = ref(false)
 const filterActive = computed(() => {
   for (const i in headers) if (headers[i].filter?.value) return true
@@ -326,11 +327,9 @@ th {
 
       &__filter {
         :deep(.v-label.v-field-label) {
-          color: $gray7;
           font-size: 14px;
           margin: 11px 0 0 8px;
           max-width: none;
-          opacity: .75;
           transition: none !important;
         }
         :deep(.v-label.v-field-label.v-field-label--floating) {
@@ -340,7 +339,7 @@ th {
         }
       }
 
-      &__filter :deep(.v-input__control .v-field--active .v-field__overlay) {
+      &__filter :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
         background-color: $blueSelected;
         opacity: 1;
       }
@@ -369,6 +368,13 @@ th {
   }
 
   &__body {
+
+    &__empty {
+
+      td {
+        color: $gray7;
+      }
+    }
 
     &__row {
       background-color: white;

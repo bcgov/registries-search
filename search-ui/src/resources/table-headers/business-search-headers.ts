@@ -64,7 +64,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     itemFn: getEntityDescription,
-    value: 'Type',
+    value: 'Business Type',
     width: '18%'
   },
   {

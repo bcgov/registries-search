@@ -6,13 +6,12 @@
           Business Search
           <span class="beta-version">
             <v-tooltip
-              content-class="tooltip__beta-version px-2"
+              content-class="tooltip__beta-version top-arrow px-2"
               location="bottom"
               :model-value="showBetaTooltip"
               transition="fade-transition"
             >
-              <template v-slot:activator="{ isActive, props }">
-                <div v-if="isActive" class="bottom-tooltip-arrow beta-version__tooltip-arrow"></div>
+              <template v-slot:activator="{ props }">
                 <span v-bind="props" class="beta-version__text pl-2" @click="showBetaTooltip = true">BETA</span>
               </template>
               <div
@@ -38,7 +37,10 @@
                   </p>
                   <p class="pt-4"><b>Toll Free:</b> 1-877-526-1526</p>
                   <p><b>Victoria Office:</b> 250-387-7848</p>
-                  <p><b>Email:</b> BCRegistries@gov.bc.ca</p>
+                  <p>
+                    <b>Email: </b>
+                    <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
+                  </p>
                   <p class="pt-4">
                     As part of a modern agile software development process the
                     Business Search website will be continually updated and improved
@@ -70,7 +72,7 @@
       <span v-if="!showDocHelp">Help with Business Search</span>
       <span v-else>Hide Help</span>
     </v-btn>
-    <v-fade-transition>
+    <v-slide-y-transition>
       <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
         <div class="doc-help-info__content mx-auto">
           <h3 style="text-align: center;">Help with Business Search</h3>
@@ -112,7 +114,7 @@
         </div>
         <span class="doc-help-info__close-btn my-5" @click="showDocHelp = false">Hide help</span>
       </div>
-    </v-fade-transition>
+    </v-slide-y-transition>
 
     <v-tabs v-model="tab" style="height: 65px; margin-top: 20px;">
       <v-tab
@@ -128,7 +130,7 @@
         :class="['tab-item-default', tab == '1' ? 'tab-item-active' : 'tab-item-inactive']"
         :ripple="false"
       >
-        <v-icon>mdi-file-document-outline</v-icon>
+        <v-icon style="margin-bottom: 2px;">mdi-file-document-outline</v-icon>
         <b class="mx-1">View Recently Purchased Documents</b>
         <span class="ml-1" v-if="documentAccessRequest._loading">
           <v-progress-circular indeterminate size="22" />
@@ -155,14 +157,12 @@
             <div v-else>
               <p class="mb-7 mt-12 info-text">
                 Search for businesses
-                <v-tooltip location="top" content-class="tooltip" transition="fade-transition">
-                  <template v-slot:activator="{ isActive, props }">
+                <v-tooltip location="top" content-class="tooltip bottom-arrow" transition="fade-transition">
+                  <template v-slot:activator="{ props }">
                     <span class="tooltip-search-tab" style="position: relative;">
-                      <v-fade-transition>
-                        <div v-if="isActive" class="top-tooltip-arrow tooltip-search-tab__arrow" />
-                      </v-fade-transition>
                       <span class="tooltip-search-tab__text" v-bind="props">
-                        registered or incorporated in B.C.</span>
+                        registered or incorporated in B.C.
+                      </span>
                     </span>
                   </template>
                   <span>
@@ -171,7 +171,7 @@
                     incorporated under Private Acts.
                   </span>
                 </v-tooltip>
-                or for owners of Firms registered in B.C.
+                or for owners of firms, and access their business documents.
               </p>
               <search-bar class="pb-5" />
               <search-results class="mt-30px" v-if="search.results!=null" />
@@ -284,6 +284,10 @@ watch(() => props.appReady, (ready: boolean) => {
   &__info {
     font-size: 0.825rem;
     line-height: 1.125rem;
+
+    a {
+      color: white;
+    }
   }
 }
 
@@ -371,7 +375,7 @@ watch(() => props.appReady, (ready: boolean) => {
 
   &__text {
     // border-bottom: 1px dotted $gray7;
-    text-decoration: underline dotted 1.5px;
+    text-decoration: underline dotted 1px;
     margin-right: 2px;
   }
 }

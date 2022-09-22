@@ -24,6 +24,9 @@
     @filterActive="filterActive = $event"
     @resetFilters="resetFilters = false"
   >
+    <template v-slot:item-slot-name="{ item }">
+      <search-table-name icon="mdi-domain" :name="item.businessName" />
+    </template>
     <template v-slot:header-filter-slot-action>
       <v-btn
         v-if="filterActive"
@@ -59,6 +62,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 // local
 import { BaseTable } from '@/components'
+import { SearchTableName } from '@/components/search/common'
 import { useDocumentAccessRequest, useEntity, useFilingHistory } from '@/composables'
 import { RouteNames } from '@/enums'
 import { DocumentDetailsI } from '@/interfaces'

@@ -35,7 +35,7 @@
                   <span>FILED AND PENDING
                     <FiledLabel :filing="filing" />
                   </span>
-                  <v-tooltip location="top" content-class="tooltip">
+                  <v-tooltip location="top" content-class="bottom-arrow">
                     <template v-slot:activator="{ props }">
                       <div class="pending-alert" v-bind="props">
                         <v-icon color="orange darken-2">mdi-alert</v-icon>

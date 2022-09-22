@@ -300,44 +300,13 @@ span.invalid-color {
 
 // common tooltip styles
 .tooltip {
-  background-color: RGBA(73, 80, 87, .9) !important;
-  font-size: 12px !important;
-  line-height: 18px !important;
-  padding: 20px 16px !important;
-  width: 270px !important;
-  font-family: "BCSans", Verdana, Arial, sans-serif !important;
 
   &__beta-version {
-    background-color: RGBA(73, 80, 87, .9) !important;
     min-height: 0px !important;
     padding: 0 !important;
     top: 178px !important;
     width: 475px !important;
   }
-}
-
-.top-tooltip-arrow,
-.bottom-tooltip-arrow,
-.right-tooltip-arrow,
-.left-tooltip-arrow {
-  width: 20px;
-  position: absolute;
-  transition: linear 0.1s !important;
-}
-
-.top-tooltip-arrow,
-.bottom-tooltip-arrow {
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-}
-
-.bottom-tooltip-arrow {
-  border-bottom: 9px solid RGBA(73, 80, 87, .9);
-}
-
-.top-tooltip-arrow {
-  border-top: 9px solid RGBA(73, 80, 87, .9);
-  // box-shadow: 0px -2px RGBA(73, 80, 87, 0.75);
 }
 
 // tombstone styles
