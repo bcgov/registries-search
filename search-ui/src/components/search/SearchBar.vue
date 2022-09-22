@@ -15,7 +15,7 @@
       @keyup.enter="toggleErrorMsg()"
       :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
-    <v-radio-group class="search-radios pt-1" :direction="'horizontal'" hide-details v-model="search.searchType">
+    <v-radio-group class="search-radios ml-n2 pt-1" :direction="'horizontal'" hide-details v-model="search.searchType">
       <v-radio class="search-radios__btn" color="primary" key="business" label="Search Businesses" value="business" />
       <v-radio class="search-radios__btn" color="primary" key="partner" label="Search Firm Owners" value="partner" />
     </v-radio-group>
