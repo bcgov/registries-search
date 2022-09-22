@@ -19,16 +19,6 @@
       <v-radio class="search-radios__btn" color="primary" key="business" label="Search Businesses" value="business" />
       <v-radio class="search-radios__btn" color="primary" key="partner" label="Search Firm Owners" value="partner" />
     </v-radio-group>
-    <!-- <v-row class="mt-3" no-gutters style="height: 22px;">
-      <v-col cols="auto" style="padding-top: 3px;">
-      </v-col>
-      <v-col class="ml-6" cols="auto" style="padding-top: 3px;">
-        <input class="search-radio-btn" type="radio" value="partner" v-model="search.searchType">
-      </v-col>
-      <v-col class="ml-2" cols="auto">
-        <label class="font-normal font-16">Search Firm Owners</label>
-      </v-col>
-    </v-row> -->
   </v-container>
 </template>
 
