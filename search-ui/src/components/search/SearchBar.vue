@@ -15,20 +15,10 @@
       @keyup.enter="toggleErrorMsg()"
       :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
-    <v-row class="mt-3" no-gutters style="height: 22px;">
-      <v-col cols="auto" style="padding-top: 3px;">
-        <input class="search-radio-btn" type="radio" value="business" v-model="search.searchType">
-      </v-col>
-      <v-col class="ml-2" cols="auto">
-        <label class="font-normal font-16">Search Businesses</label>
-      </v-col>
-      <v-col class="ml-6" cols="auto" style="padding-top: 3px;">
-        <input class="search-radio-btn" type="radio" value="partner" v-model="search.searchType">
-      </v-col>
-      <v-col class="ml-2" cols="auto">
-        <label class="font-normal font-16">Search Firm Owners</label>
-      </v-col>
-    </v-row>
+    <v-radio-group class="search-radios ml-n2 pt-1" :direction="'horizontal'" hide-details v-model="search.searchType">
+      <v-radio class="search-radios__btn" color="primary" key="business" label="Search Businesses" value="business" />
+      <v-radio class="search-radios__btn" color="primary" key="partner" label="Search Firm Owners" value="partner" />
+    </v-radio-group>
   </v-container>
 </template>
 
@@ -42,8 +32,8 @@ import { useSearch } from '@/composables'
 const { search, getSearchResults } = useSearch()
 
 const searchErrorMsg = computed(() => {
-  if (search.searchType === 'partner') return 'Enter a Firm Owner'
-  return 'Enter a name or number'
+  if (search.searchType === 'partner') return 'Enter an owner name'
+  return 'Enter a business name or number'
 })
 
 const searchHint = computed(() => {
@@ -52,7 +42,7 @@ const searchHint = computed(() => {
 })
 
 const searchLabel = computed(() => {
-  if (search.searchType === 'partner') return 'Firm Owner'
+  if (search.searchType === 'partner') return 'Firm Owner Name'
   return 'Business Name or Incorporation/Registration Number or CRA Business Number'
 })
 
@@ -92,10 +82,24 @@ watch(() => search.unavailable, async (val) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+.search-radios {
+  height: 34px;
+  width: 385px;
 
-.search-radio-btn {
-  cursor: pointer;
-  height: 20px;
-  width: 20px;
+  &__btn {
+
+    :deep(.v-label) {
+      color: $gray7 !important;
+      font-size: 1rem;
+      font-weight: normal;
+      opacity: 1;
+    }
+  }
+
+  &__btn:last-child {
+    display: flex;
+    margin-top: -40px;
+    margin-left: 190px;
+  }
 }
 </style>

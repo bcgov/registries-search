@@ -94,10 +94,13 @@
             <div v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
               <div class="document-list__label">
                 <div>
-                <v-tooltip v-if="item.tooltip" content-class="tooltip document-list__tooltip" location="top left"
-                  transition="fade-transition">
-                  <template v-slot:activator="{ isActive, props }">
-                    <div v-if="isActive" class="top-tooltip-arrow document-list__tooltip-arrow" />
+                <v-tooltip
+                  v-if="item.tooltip"
+                  content-class="bottom-arrow"
+                  location="top left"
+                  transition="fade-transition"
+                >
+                  <template v-slot:activator="{ props }">
                     <v-row v-bind="props" no-gutters>
                       <v-col v-bind="props" cols="auto">
                         <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
@@ -409,11 +412,6 @@ const toggleFee = (event: any, item: any) => {
     text-align: right;
     width: 15%;
     margin-right: 5px;
-  }
-
-  &__tooltip-arrow {     
-    margin-top: -11px !important;
-    margin-left: 10px !important;
   }
 }
 

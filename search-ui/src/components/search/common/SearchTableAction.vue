@@ -8,7 +8,7 @@
   >
     Open
   </v-btn>
-  <v-tooltip v-else location="top" content-class="tooltip" transition="fade-transition">
+  <v-tooltip v-else location="top" transition="fade-transition">
     <template v-slot:activator="{ isActive, props }">
       <div class="action-div">
         <v-fade-transition>
@@ -48,8 +48,14 @@ const emit = defineEmits<{ (e: 'action', value: boolean): void }>()
 }
 
 .table-tooltip-arrow {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 9px solid RGBA(73, 80, 87);
   left: 2px;
   margin-top: -10px !important;
+  position: absolute;
+  transition:  0.1s !important;
+  width: 20px;
 }
 </style>
   
