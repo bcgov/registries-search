@@ -171,7 +171,5 @@ watch(fees, (val) => { if (val._error) handleError(val._error) })
 watch(filingHistory, (val) => { if (val._error) handleError(val._error) })
 watch(search, (val) => { if (val._error) handleError(val._error) })
 watch(suggest, (val) => { if (val._error) handleError(val._error) })
-watch(documentAccessRequest, (val)=> {if (val._error){
-errorDialog.value = true
-handleError(val._error)}})
+watch(documentAccessRequest, (val)=> { if (val._error) handleError(val._error) })
 </script>
