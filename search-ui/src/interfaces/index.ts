@@ -2,7 +2,7 @@ import type { CommentIF } from '@bcrs-shared-components/interfaces'
 
 export type { CommentIF }
 export * from './auth'
-export * from './dialog-options-interface'
+export * from './base-dialog'
 export * from './error'
 export * from './fees'
 export * from './store'

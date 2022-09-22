@@ -197,7 +197,7 @@ export async function createDocumentAccessRequest(
         {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
           message: error?.response?.data?.message,
-          category: ErrorCategories.CREATE_DOCUMENT_ACCESS_REQUEST,
+          category: ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE,
           type: error?.parsed?.rootCause?.type
         }
       }
@@ -223,7 +223,7 @@ export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI>
         {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
           message: error?.response?.data?.message,
-          category: ErrorCategories.CREATE_DOCUMENT_ACCESS_REQUEST,
+          category: ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY,
           type: error?.parsed?.rootCause?.type
         }
       }
@@ -260,7 +260,7 @@ export async function getDocument(businessIdentifier: string, document: Document
         error: {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
           message: 'An error occured while downloading the document.',
-          category: ErrorCategories.DOCUMENT_DOWNLOAD,
+          category: ErrorCategories.REPORT_GENERATION,
           type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
         }
       }
@@ -328,7 +328,7 @@ export const fetchFilingDocument = (businessIdentifier: string, filingId: number
         error: {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
           message: 'An error occured while downloading the document.',
-          category: ErrorCategories.DOCUMENT_DOWNLOAD,
+          category: ErrorCategories.REPORT_GENERATION,
           type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
         }
       }
