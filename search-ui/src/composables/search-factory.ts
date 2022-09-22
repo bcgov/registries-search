@@ -4,6 +4,8 @@ import { SearchFilterI, SearchI, SearchPartyFilterI, SearchResponseI } from '@/i
 import { searchBusiness, searchParties } from '@/requests'
 import { ErrorCategories } from '@/enums'
 
+const DEFAULT_SEARCH_ROWS = 100
+
 const search = reactive({
   filters: {},
   results: null,
@@ -44,12 +46,14 @@ export const useSearch = () => {
     if (!hasMoreResults.value) return
     search._loadingNext = true
     let searchResp: SearchResponseI = null
+    // FUTURE: add SEARCH_ROWS to enum
+    const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
     if (search.searchType === 'business') {
       // business search
-      searchResp = await searchBusiness(search._value, search.filters as SearchFilterI, search._start + 1)
+      searchResp = await searchBusiness(search._value, search.filters as SearchFilterI, rows, search._start + 1)
     } else {
       // owner search
-      searchResp = await searchParties(search._value, search.filters as SearchPartyFilterI, search._start + 1)
+      searchResp = await searchParties(search._value, search.filters as SearchPartyFilterI, rows, search._start + 1)
     }
     if (searchResp) {
       if (!searchResp.error) {
@@ -70,12 +74,14 @@ export const useSearch = () => {
     search._loading = true
     if (search.results === null && !search.unavailable) search.results = []
     let searchResp: SearchResponseI = null
+    // FUTURE: add SEARCH_ROWS to enum
+    const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
     if (search.searchType === 'business') {
       // business search
-      searchResp = await searchBusiness(val, search.filters as SearchFilterI, 0)
+      searchResp = await searchBusiness(val, search.filters as SearchFilterI, rows, 0)
     } else {
       // owner search
-      searchResp = await searchParties(val, search.filters as SearchPartyFilterI, 0)
+      searchResp = await searchParties(val, search.filters as SearchPartyFilterI, rows, 0)
     }
     if (searchResp) {
       if (!searchResp.error) {

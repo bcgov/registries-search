@@ -14,7 +14,6 @@ import { Document } from '@/types'
 import { StaffPaymentOptions } from '@/bcrs-common-components/enums'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
-const SEARCH_RESULT_SIZE = 100
 
 const addSearchBusFilters = (filters: SearchFilterI) => {
   const filterParams = { query: '', categories: '' }
@@ -87,11 +86,12 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
 export async function searchBusiness(
   searchValue: string,
   filters: SearchFilterI,
+  rows: number,
   start: number
 ): Promise<SearchResponseI> {
   if (!searchValue) return
   // basic params
-  const params = { query: `value:${searchValue}`, start: start, rows: SEARCH_RESULT_SIZE }
+  const params = { query: `value:${searchValue}`, start: start * rows, rows: rows }
   // add filters
   const filterParams = addSearchBusFilters(filters)
   if (filterParams.query) params.query += filterParams.query
@@ -123,6 +123,7 @@ export async function searchBusiness(
 export async function searchParties(
   searchValue: string,
   filters: SearchPartyFilterI,
+  rows: number,
   start: number
 ): Promise<SearchResponseI> {
   if (!searchValue) return
@@ -131,8 +132,8 @@ export async function searchParties(
   const params = {
     query: `value:${searchValue}`,
     categories: 'partyRoles:partner,proprietor',
-    start: start,
-    rows: SEARCH_RESULT_SIZE
+    start: start * rows,
+    rows: rows
   }
   // add filters
   const filterParams = addSearchPartyFilters(filters)
