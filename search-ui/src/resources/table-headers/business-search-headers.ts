@@ -7,7 +7,6 @@ const { filterSearch, highlightMatch } = useSearch()
 export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   {
     col: 'name',
-    customItemSlot: 'name',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('name', filterVal),
@@ -18,6 +17,7 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
+    slotId: 'name',
     value: 'Business Name',
     width: '26%'
   },
@@ -85,10 +85,9 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: '',
-    customHeaderSlot: 'action',
-    customItemSlot: 'action',
     hasFilter: false,
     hasSort: false,
+    slotId: 'action',
     value: 'Actions',
     width: '13%'
   }

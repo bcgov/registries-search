@@ -2,12 +2,12 @@
   <v-container class="pa-0">
     <v-row v-if="baseText" no-gutters>
       <v-col cols="auto">
-        <p class="dialog-text ma-0" v-html="baseText" />
+        <p class="base-dialog__text ma-0" v-html="baseText" />
       </v-col>
     </v-row>
     <v-row v-if="extraText.length > 0" class="pt-5" no-gutters>
       <v-col cols="auto">
-        <p v-for="(text, index) in extraText" class="dialog-text ma-0" :key="index" v-html="text" />
+        <p v-for="(text, index) in extraText" class="base-dialog__text ma-0" :key="index" v-html="text" />
       </v-col>
     </v-row>
   </v-container>

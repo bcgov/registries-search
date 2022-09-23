@@ -5,7 +5,13 @@
       attach="#app"
       :display="errorDisplay"
       :options="errorInfo"
-    />
+      @close="errorDisplay = false"
+    >
+      <template v-slot:extra-content>
+        <p class="mt-7"></p>
+        <contact-info class="mt-4" :contacts="HelpdeskInfo" />
+      </template>
+    </base-dialog>
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
     <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
@@ -39,7 +45,7 @@
 
 <script setup lang="ts">
 // External
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch, Ref } from 'vue'
 import * as Sentry from '@sentry/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
@@ -50,12 +56,16 @@ import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-comm
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
-import { DialogOptionsIF, ErrorI } from '@/interfaces'
+import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { BaseDialog, EntityInfo } from '@/components'
-import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest, 
-useDocumentAccessRequest } from '@/composables'
-import { navigate, getFeatureFlag } from '@/utils'
+import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest,
+  useDocumentAccessRequest } from '@/composables'
+import { AuthAccessError, CreateDocAccessError, DefaultError, EntityLoadError, PayBcolError,
+  PayPadError, ReportError } from '@/resources/error-dialog-options'
+import { HelpdeskInfo } from '@/resources/contact-info'
+import { getFeatureFlag } from '@/utils'
+import ContactInfo from './components/common/ContactInfo.vue'
 
 const aboutText: string = process.env.ABOUT_TEXT
 const appLoading = ref(false)
@@ -63,7 +73,7 @@ const appReady = ref(false)
 const haveData = ref(true)
 // errors
 const errorDisplay = ref(false)
-const errorInfo: DialogOptionsIF = ref(null)
+const errorInfo: Ref<DialogOptionsI> = ref(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -154,12 +164,53 @@ onMounted(async () => {
 })
 
 const handleError = (error: ErrorI) => {  
-  console.error(error)
-  
-  // FUTURE: add account info with error information, add dialog popups for specific errors
+  console.info(error)
+  const bcolCodes = [
+    ErrorCodes.BCOL_ACCOUNT_CLOSED, ErrorCodes.BCOL_ACCOUNT_INSUFFICIENT_FUNDS,
+    ErrorCodes.BCOL_ACCOUNT_REVOKED, ErrorCodes.BCOL_ERROR, ErrorCodes.BCOL_INVALID_ACCOUNT,
+    ErrorCodes.BCOL_UNAVAILABLE, ErrorCodes.BCOL_USER_REVOKED
+  ]
   switch (error.category) {
     case ErrorCategories.ACCOUNT_ACCESS:
-      navigate(sessionStorage.getItem('REGISTRY_URL'))
+      errorInfo.value = AuthAccessError
+      errorDisplay.value = true
+      break
+    case ErrorCategories.ACCOUNT_SETTINGS:
+      errorInfo.value = DefaultError
+      errorDisplay.value = true
+      break
+    case ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE:
+      if (error.type === ErrorCodes.ACCOUNT_IN_PAD_CONFIRMATION_PERIOD) {
+        errorInfo.value = PayPadError
+        errorDisplay.value = true
+      } else if (bcolCodes.includes(error.type)) {
+        errorInfo.value = PayBcolError
+        errorDisplay.value = true
+      } else {
+        errorInfo.value = CreateDocAccessError
+        errorDisplay.value = true
+      }
+      break
+    case ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY:
+      // handled inline
+      break
+    case ErrorCategories.ENTITY_BASIC:
+      errorInfo.value = EntityLoadError
+      errorDisplay.value = true
+      break
+    case ErrorCategories.FEE_INFO:
+      // handled inline
+      break
+    case ErrorCategories.REPORT_GENERATION:
+      errorInfo.value = ReportError
+      errorDisplay.value = true
+      break
+    case ErrorCategories.SEARCH:
+      // handled inline
+      break
+    default:
+      errorInfo.value = DefaultError
+      errorDisplay.value = true
   }
   Sentry.captureException(error)
 }

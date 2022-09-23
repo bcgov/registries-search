@@ -5,12 +5,13 @@
             contact BC Registries staff:
         </p>
 
-        <ContactInfo class="mt-4" />
+        <ContactInfo class="mt-4" :contacts="RegistriesInfo" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ContactInfo } from '@/components/common' 
+import { ContactInfo } from '@/components'
+import { RegistriesInfo } from '@/resources/contact-info'
 </script>
 
 <style lang="scss" scoped>
