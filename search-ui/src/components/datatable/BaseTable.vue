@@ -37,7 +37,7 @@
                 :class="[header.class, 'base-table__header__item']"
                 :width="header.width"
               >
-                <slot :name="'header-item-slot-' + header.customHeaderSlot" :header="header">
+                <slot :name="'header-item-slot-' + header.slotId" :header="header">
                   <v-btn
                     v-if="header.value"
                     class="base-table__header__item__title mb-5"
@@ -63,7 +63,7 @@
                 :class="[header.class, 'base-table__header__item pb-5']"
                 :width="header.width"
               >
-                <slot :name="'header-filter-slot-' + header.customHeaderSlot" :header="header">
+                <slot :name="'header-filter-slot-' + header.slotId" :header="header">
                   <v-select
                     :open-on-clear="true"
                     v-if="header.hasFilter && header.filter.type === 'select'"
@@ -121,7 +121,7 @@
                 v-for="header in headers" :key="'item-' + header.col"
                 :class="[header.itemClass, 'base-table__body__item']"
               >
-                <slot :header="header" :item="item" :name="'item-slot-' + header.customItemSlot">
+                <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
                   <span v-if="header.itemFn" v-html="header.itemFn(item[header.col])" />
                   <span v-else>{{ item[header.col] }}</span>
                 </slot>

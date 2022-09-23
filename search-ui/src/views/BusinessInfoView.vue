@@ -1,6 +1,6 @@
 <template>
   <v-container id="business-info" class="container" fluid>
-    <base-dialog :display="showStaffPayment" :options="staffDialogOptions" @proceed="staffPaymentHandler($event)">
+    <base-dialog :display="showStaffPayment" :options="staffDialogOptions" @close="showStaffPayment = false">
       <template v-slot:content>
         <staff-payment :staff-payment-data="staffPaymentData" @update:staffPaymentData="fees.staffPaymentData = $event"
           @valid="staffPaymentValid = $event" />
@@ -46,7 +46,7 @@
                     Any outstanding annual reports must be filed to bring the business back into good standing.
                     <div class="expansion-panel-txt">
                       If further action is required, please contact BC Registries staff:
-                      <ContactInfo class="expansion-panel-txt" />
+                      <ContactInfo class="mt-10px" :contacts="RegistriesInfo" />
                     </div>
                   </v-expansion-panel-text>
                 </div>
@@ -151,16 +151,17 @@
 <script setup lang="ts">
 import { onMounted, ref, Ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+// bcregistry
+import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
 // local
 import { StaffPayment } from '@/bcrs-common-components'
-import { BaseFeeCalculator, BaseDialog } from '@/components'
+import { BaseFeeCalculator, BaseDialog, ContactInfo } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
 import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
-import { FeeAction, FeeI, FeeDataI, DialogOptionsIF } from '@/interfaces'
-import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
-import { ContactInfo } from '@/components/common'
+import { FeeAction, FeeI, FeeDataI, DialogOptionsI } from '@/interfaces'
+import { RegistriesInfo } from '@/resources/contact-info'
 
 const props = defineProps({
   appReady: { default: false },
@@ -192,22 +193,24 @@ const feePreSelectItem: Ref<FeeI> = ref({
 
 // staff payment
 const showStaffPayment = ref(false)
-const staffDialogOptions: DialogOptionsIF = {
-  acceptText: 'Continue to Payment',
-  cancelText: 'Cancel',
-  text: '',
-  title: 'Staff Payment'
-}
 const staffPaymentData = { ...fees.staffPaymentData }
-const staffPaymentHandler = (proceed: boolean) => {
-  if (!proceed) showStaffPayment.value = false
-  else if (staffPaymentValid.value) {
+const staffPaymentHandler = () => {
+  if (staffPaymentValid.value) {
     // entry is valid, submit payment
     showStaffPayment.value = false
     payForDocuments()
   }
 }
 const staffPaymentValid = ref(false)
+
+const staffDialogOptions: DialogOptionsI = {
+  buttons: [
+    { onClickClose: true, outlined: true, text: 'Cancel' },
+    { onClick: staffPaymentHandler, onClickClose: false, outlined: false, text: 'Continue to Payment' }
+  ],
+  text: '',
+  title: 'Staff Payment'
+}
 
 // fee selections
 const bsrchCode = ref(FeeCodes.BSRCH)  // updates to different code for staff
@@ -516,10 +519,6 @@ const toggleFee = (event: any, item: any) => {
   padding-top: 3.5px;
   font-weight: normal;
   font-size: 13px;
-}
-
-.expansion-panel-txt {
-  margin-top: 10px;
 }
 
 .document-row {

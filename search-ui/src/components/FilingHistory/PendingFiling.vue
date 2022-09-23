@@ -11,14 +11,15 @@
 
         <p>If this issue persists, please contact us.</p>
 
-        <ContactInfo class="mt-4" />
+        <ContactInfo class="mt-4" :contacts="RegistriesInfo" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ContactInfo } from '@/components/common'
+import { ContactInfo } from '@/components'
 import { FilingHistoryItem } from '@/types'
 import { FilingNames, FilingTypes } from '@/enums'
+import { RegistriesInfo } from '@/resources/contact-info'
 
 const props = defineProps<{ filing: FilingHistoryItem }>()
 

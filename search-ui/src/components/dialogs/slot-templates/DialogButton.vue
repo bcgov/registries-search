@@ -1,31 +1,28 @@
 <template>
-  <v-row justify="center" no-gutters>
-    <v-col v-if="cancelText" cols="auto">
-      <v-btn id="cancel-btn" class="outlined dialog-btn" outlined @click="emit('proceed', false)">
-        {{ cancelText }}
-      </v-btn>
-    </v-col>
-    <v-col v-if="acceptText" :class="{ 'pl-3': cancelText }" cols="auto">
-      <v-btn id="accept-btn" class="primary dialog-btn" @click="emit('proceed', true)">
-        {{ acceptText }}
-      </v-btn>
-    </v-col>
-  </v-row>
+  <v-btn
+    :class="[button.outlined ? 'btn-basic-outlined' : 'btn-basic', button.class || '']"
+    :color="button.color ? button.color : ''"
+    @click="handleClick()"
+  >
+    {{ button.text }}
+  </v-btn>
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<{
-  acceptText?: string
-  cancelText?: string
-}>()
+import { DialogButtonI } from '@/interfaces'
 
-const emit = defineEmits<{(e: 'proceed', value: boolean): void}>()
+const props = defineProps<{ button: DialogButtonI }>()
+const emit = defineEmits<{(e:'close'): void}>()
+
+const handleClick = () => {
+  if (props.button.onClick && props.button.onClickArgs) {
+    props.button.onClick(...props.button.onClickArgs)
+  }
+  if (props.button.onClick) props.button.onClick()
+  if (props.button.onClickClose) emit('close')
+}
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-#accept-btn {
-  font-weight: normal;
-}
 </style>
