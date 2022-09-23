@@ -72,6 +72,7 @@ export const useSearch = () => {
       return
     }
     search._loading = true
+    search.totalResults = null
     if (search.results === null && !search.unavailable) search.results = []
     let searchResp: SearchResponseI = null
     // FUTURE: add SEARCH_ROWS to enum
