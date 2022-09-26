@@ -195,8 +195,8 @@ def test_post_business_document_payment_failure(session, client, jwt, mocker):
     # check
     assert api_response.status_code == HTTPStatus.PAYMENT_REQUIRED
     response_json = api_response.json
-    assert not response_json['expiryDate']
-    assert response_json['id']
+    assert response_json['detail']
+    assert response_json['message']
 
 
 def create_document_access_request(identifier: str, account_id: int, is_paid: bool = False):
