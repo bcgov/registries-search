@@ -84,12 +84,15 @@ def post(business_identifier):
 
         document_access_request = save_request(account_id, business_identifier, request_json)
 
-        pay_message, pay_code = create_invoice(document_access_request, jwt, request_json, business_json)
-        reply = document_access_request.json
+        pay_response, pay_code = create_invoice(document_access_request, jwt, request_json, business_json)
         if pay_code != HTTPStatus.CREATED:
-            reply['errors'] = [pay_message]
+            # format the error same as others (UI needs to parse this after gateway wraps the error response)
+            error_type = pay_response.get('error', {}).get('type')
+            detail = pay_response.get('error', {}).get('detail') or pay_response.get('error')
+            message = 'Invoice creation failed.'
+            return resource_utils.sbc_payment_required(message, detail, error_type)
 
-        return jsonify(reply), pay_code
+        return jsonify(document_access_request.json), pay_code
 
     except Exception as default_exception:   # noqa: B902
         return resource_utils.default_exception_response(default_exception)
