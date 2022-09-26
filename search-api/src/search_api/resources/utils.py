@@ -100,9 +100,9 @@ def sbc_payment_invalid():
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
 
 
-def sbc_payment_required(message: dict):
+def sbc_payment_required(message: str, detail: str, error_type: str):
     """Build sbc payment required error response."""
-    return jsonify({'message': message}), HTTPStatus.PAYMENT_REQUIRED
+    return jsonify({'message': message, 'detail': detail, 'type': error_type}), HTTPStatus.PAYMENT_REQUIRED
 
 
 def validation_error_response(errors, cause, additional_msg: str = None):
