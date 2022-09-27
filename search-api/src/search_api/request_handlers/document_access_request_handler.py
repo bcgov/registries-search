@@ -87,11 +87,11 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             error_type = payment_response.json().get('type')
             document_access_request.payment_status_code = error_type
             document_access_request.save()
-            return {'error': payment_response.json().get('detail')}, HTTPStatus.PAYMENT_REQUIRED
+            return {'error': payment_response.json()}, HTTPStatus.PAYMENT_REQUIRED
 
         current_app.logger.error('Received unhandled pay-api error.')
         current_app.logger.debug(f'status: {payment_response.status_code}, json: {payment_response.json()}.')
-        return {'message': 'Unable to create invoice for payment.'}, HTTPStatus.PAYMENT_REQUIRED
+        return {'error': 'Unable to create invoice for payment.'}, HTTPStatus.PAYMENT_REQUIRED
     except ApiConnectionException as connection_error:
         return {'error': connection_error.detail}, HTTPStatus.PAYMENT_REQUIRED
 
