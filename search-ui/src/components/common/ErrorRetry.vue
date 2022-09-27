@@ -27,12 +27,10 @@ const loading = ref(false)
 
 const handleRetry = _.debounce(async () => {
   loading.value = true
-  console.log('1')
   // wait 1 sec (give loader time to be shown)
   await new Promise(resolve => setTimeout(resolve, 1000))
   if (props.actionArgs) await props.action(...props.actionArgs)
   else await props.action()
-  console.log('2')
   loading.value = false
 }, 300)
 </script>
