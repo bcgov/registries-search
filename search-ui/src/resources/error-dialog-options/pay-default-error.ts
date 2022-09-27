@@ -1,7 +1,7 @@
 import { DialogOptionsI } from '@/interfaces'
 
-export const PayBcolError: DialogOptionsI = {
+export const PayDefaultError: DialogOptionsI = {
   buttons: [{ onClickClose: true, text: 'OK' }],
-  text: 'The payment could not be completed for the following reason:',
+  text: 'Payment could not be completed.',
   title: 'Payment Incomplete'
 }

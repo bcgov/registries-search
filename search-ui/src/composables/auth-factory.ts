@@ -31,15 +31,17 @@ export const useAuth = () => {
   const loadAuth = async () => {
     // set current account / set staff roles / get active products
     await _loadRoles()
-    await _loadCurrentAccount()
+    if (!auth._error) await _loadCurrentAccount()
     // check sbc
-    if (auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
-      const isSbc = await getSbcFromAuth()
-      if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
+    if (!auth._error) {
+      if (auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
+        const isSbc = await getSbcFromAuth()
+        if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
+      }
     }
-    if (!isStaff.value) await _loadProducts()
+    if (!isStaff.value && !auth._error) await _loadProducts()
     // update ldarkly user
-    await updateLdUser(auth.currentAccount.name, '', '', '')
+    if (!auth._error) await updateLdUser(auth.currentAccount.name, '', '', '')
   }
   /** Starts token service that refreshes KC token periodically. */
   const startTokenService = async () => {
@@ -80,7 +82,7 @@ export const useAuth = () => {
       // set user name
       auth.currentAccount.name = getKeycloakName()
     } catch (error) {
-      console.log(error)
+      console.warn(error)
       auth._error = {
         category: ErrorCategories.ACCOUNT_SETTINGS,
         message: 'Error getting/setting current account.',
@@ -95,7 +97,7 @@ export const useAuth = () => {
       const products = await getAccountProducts()
       auth.activeProducts = products.filter(product => product.subscriptionStatus === ProductStatus.ACTIVE)
     } catch (error) {
-      console.error(error)
+      console.warn(error)
       auth._error = {
         category: ErrorCategories.ACCOUNT_ACCESS,
         message: 'Error getting/setting active user products.',
@@ -115,7 +117,7 @@ export const useAuth = () => {
       const staffRoles = roles.filter(role => staffRoleList.includes(role as StaffRoles))
       auth.staffRoles = staffRoles as StaffRoles[]
     } catch (error) {
-      console.error(error)
+      console.warn(error)
       auth._error = {
         category: ErrorCategories.ACCOUNT_ACCESS,
         message: 'Error getting/setting auth roles.',

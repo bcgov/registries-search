@@ -135,7 +135,7 @@
         <span class="ml-1" v-if="documentAccessRequest._loading">
           <v-progress-circular indeterminate size="22" />
         </span>
-        <span v-else>({{ totalDocAccessLength }})</span>
+        <span v-else-if="totalDocAccessLength">({{ totalDocAccessLength }})</span>
       </v-tab>
     </v-tabs>
 
@@ -174,7 +174,7 @@
                 or for owners of firms, and access their business documents.
               </p>
               <search-bar class="pb-5" />
-              <search-results class="mt-30px" v-if="search.results!=null" />
+              <search-results class="mt-30px" v-if="search.results!=null && !search.unavailable" />
             </div>
           </v-fade-transition>
         </v-card>
@@ -211,7 +211,7 @@ const requestDocURL = 'https://www2.gov.bc.ca/gov/content/employment-business/bu
 const showDocHelp = ref(false)
 const tab = ref('0')
 
-const totalDocAccessLength = computed(() => documentAccessRequest.requests?.length || 0)
+const totalDocAccessLength = computed(() => documentAccessRequest.requests?.length)
 
 const showBetaTooltip = ref(false)
 // NB: needed for v-click-outside to work properly

@@ -37,6 +37,14 @@
             @action="goToBusinessInfo(item)"
           />
         </template>
+        <template v-if="search._error" v-slot:body-empty>
+          <error-retry
+            class="my-3"
+            :action="getSearchResults"
+            :action-args="[search._value]"
+            message="We are unable to display your search results. Please try again later."
+          />
+        </template>
       </base-table>
       <base-table
         v-else
@@ -84,6 +92,14 @@
             @action="goToBusinessFromParty(item)"
           />
         </template>
+        <template v-if="search._error" v-slot:body-empty>
+          <error-retry
+            class="my-3"
+            :action="getSearchResults"
+            :action-args="[search._value]"
+            message="We are unable to display your search results. Please try again later."
+          />
+        </template>
       </base-table>
     </div>
     <v-btn
@@ -103,7 +119,7 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import _ from 'lodash'
 // local
-import { BaseTable } from '@/components'
+import { BaseTable, ErrorRetry } from '@/components'
 import { useEntity, useSearch } from '@/composables'
 import { RouteNames } from '@/enums'
 import { SearchPartyResultI, SearchResultI } from '@/interfaces'
@@ -116,7 +132,7 @@ import { SearchTableAction, SearchTableName } from './common'
 const router = useRouter()
 // composables
 const { learBusinessTypes, setEntity } = useEntity()
-const { filtering, getNextResults, hasMoreResults, search } = useSearch()
+const { filtering, getNextResults, getSearchResults, hasMoreResults, search } = useSearch()
 
 const resetFilters = ref(false)
 

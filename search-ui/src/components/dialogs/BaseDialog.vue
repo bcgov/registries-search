@@ -10,7 +10,7 @@
             class="base-dialog__close-btn float-right"
             icon
             :ripple="false"
-            @click="emit('close')"
+            @click="close()"
           >
             <v-icon siz="32">mdi-window-close</v-icon>
           </v-btn>
@@ -20,19 +20,20 @@
         <!-- can be replaced with <template v-slot:content> -->
         <slot name="content" :options="options">
           <dialog-content
-            :setBaseText="options.text"
-            :setExtraText="options.textExtra"
+            class="base-dialog__text"
+            :baseText="options.text"
+            :extraText="options.textExtra"
           />
         </slot>
       </div>
       <slot name="extra-content" :options="options" />
-      <div class="pt-7">
+      <div class="base-dialog__btn-container pt-7">
         <!-- can be replaced with <template v-slot:buttons> -->
         <slot name="buttons" :options="options">
           <v-row justify="center" no-gutters>
             <v-col v-for="button, i in options.buttons" :key="'dialog-btn-' + i" cols="auto">
               <slot :name="'dialog-btn-slot-' + button.slotId">
-                <dialog-button :button="button" @close="emit('close')" />
+                <dialog-button class="base-dialog__btn" :button="button" @close="emit('close')" />
               </slot>
             </v-col>
           </v-row>
@@ -47,13 +48,20 @@ import { DialogOptionsI } from '@/interfaces'
 import { DialogButton, DialogContent } from './slot-templates'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps({
-  attach: { default: '' },
-  display: { default: false },
-  options: Object as () => DialogOptionsI
-})
+const props = defineProps<{
+  attach?: string,
+  display: boolean,
+  options: DialogOptionsI
+}>()
 
 const emit = defineEmits<{(e:'close'): void}>()
+
+const close = () => {
+  if (props.options.onClose && props.options.onCloseArgs) props.options.onClose(...props.options.onCloseArgs)
+  else if (props.options.onClose) props.options.onClose()
+
+  emit('close')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -82,5 +90,11 @@ const emit = defineEmits<{(e:'close'): void}>()
     height: 24px;
     width: 24px;
   }
+
+  &__btn-container {
+    :deep(.v-btn--size-default) { min-width: 100px;}
+  }
+
+  :deep(.v-overlay__content) { width: 100%; }
 }
 </style>

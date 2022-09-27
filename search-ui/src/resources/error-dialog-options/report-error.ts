@@ -1,7 +1,7 @@
 import { DialogOptionsI } from '@/interfaces'
 
 export const ReportError: DialogOptionsI = {
-  buttons: [],
-  text: '',
-  title: ''
+  buttons: [{ onClickClose: true, text: 'OK' }],
+  text: 'We are currently unable to download this document. Please try again later. ',
+  title: 'Unable to download document'
 }

@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <div class="container">
+    <div class="app-footer__container container">
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
@@ -9,35 +9,20 @@
           <li><a href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank">Accessibility</a></li>
           <li><a href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a></li>
         </ul>
-        <v-tooltip left nudge-top="30" v-if="aboutText" attach=".app-footer">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon icon v-bind="attrs" v-on="on" color="#8099b3">mdi-information-outline</v-icon>
+        <v-tooltip v-if="aboutText" location="left" content-class="tooltip__footer">
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" class="mr-3 mt-1" color="#8099b3">mdi-information-outline</v-icon>
           </template>
-          <div v-html="aboutText"></div>
+          <span v-html="aboutText"></span>
         </v-tooltip>
       </nav>
     </div>
   </footer>
 </template>
 
-<script lang="ts">
-// External
-import { computed, defineComponent, reactive } from 'vue'
-
-export default defineComponent({
-  name: 'SbcFooter',
-  props: {
-    setAboutText: { default: '' }
-  },
-  setup(props) {
-    const state = reactive({
-      aboutText: computed(() => { return props.setAboutText })
-    })
-    return {
-     ...state
-    }
-  },
-})
+<script setup lang="ts">
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps<{ aboutText?: string }>()
 </script>
 
 <style lang="scss" scoped>
@@ -50,6 +35,11 @@ export default defineComponent({
     border-top: 2px solid $BCgovGold5;
     background-color: $BCgovBlue5;
     font-size: 0.9375rem;
+
+    &__container {
+      margin: auto;
+      width: 100%;
+    }
   }
 
   nav {
@@ -92,15 +82,6 @@ export default defineComponent({
           padding: 0.25rem 0.5rem;
         }
       }
-    }
-  }
-
-  // make the tooltip opaque
-  .v-tooltip__content {
-    background: rgba($BCgovBlue3, 1) !important;
-
-    &.menuable__content__active {
-      opacity: 1!important;
     }
   }
 </style>

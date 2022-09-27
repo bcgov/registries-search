@@ -7,9 +7,9 @@
       :options="errorInfo"
       @close="errorDisplay = false"
     >
-      <template v-slot:extra-content>
-        <p class="mt-7"></p>
-        <contact-info class="mt-4" :contacts="HelpdeskInfo" />
+      <template v-if="errorContactInfo" v-slot:extra-content>
+        <p class="font-normal mt-7">If this issue persists, please contact us.</p>
+        <contact-info class="font-normal font-16 mt-4" :contacts="HelpdeskInfo" />
       </template>
     </base-dialog>
 
@@ -61,18 +61,19 @@ import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { BaseDialog, EntityInfo } from '@/components'
 import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest,
   useDocumentAccessRequest } from '@/composables'
-import { AuthAccessError, CreateDocAccessError, DefaultError, EntityLoadError, PayBcolError,
+import { AuthAccessError, DefaultError, EntityLoadError, PayDefaultError, PayBcolError,
   PayPadError, ReportError } from '@/resources/error-dialog-options'
 import { HelpdeskInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
 
-const aboutText: string = process.env.ABOUT_TEXT
+const aboutText: string = 'Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)
 const appReady = ref(false)
 const haveData = ref(true)
 // errors
 const errorDisplay = ref(false)
+const errorContactInfo = ref(false)
 const errorInfo: Ref<DialogOptionsI> = ref(null)
 
 const route = useRoute()
@@ -113,8 +114,10 @@ const showEntityInfo = computed((): boolean => {
 
 onMounted(async () => {
   appLoading.value = true
+  // clear any previous auth errors
+  auth._error = null
   await router.isReady() // otherwise below will process before route name is determined
-  const searchRoutes = [RouteNames.SEARCH, RouteNames.BUSINESS_INFO]
+  const searchRoutes = [RouteNames.SEARCH, RouteNames.BUSINESS_INFO, RouteNames.DOCUMENT_REQUEST]
   if (searchRoutes.includes(route.name as RouteNames)) {
     // do any preload items here
     if (!appReady.value && !isJestRunning.value) {
@@ -126,7 +129,7 @@ onMounted(async () => {
         appLoading.value = false
         return
       }
-      // wait to allow time for sbc header stuff to load (i.e. current account)
+      if (auth._error) return
       console.info('Loading account...')
       // check every second for up to 10 seconds
       for (let i=0; i<10; i++) {
@@ -139,6 +142,7 @@ onMounted(async () => {
       // initialize auth stuff
       await loadAuth()
     }
+    if (auth._error) return
     console.info('Verifying user access...')
     // verify user has access to business search product
     if (!hasProductAccess(ProductCode.BUSINESS_SEARCH) && !isStaff.value) {
@@ -172,22 +176,44 @@ const handleError = (error: ErrorI) => {
   ]
   switch (error.category) {
     case ErrorCategories.ACCOUNT_ACCESS:
-      errorInfo.value = AuthAccessError
+      errorInfo.value = {...AuthAccessError}
+      if (error.statusCode === StatusCodes.UNAUTHORIZED) {
+        errorInfo.value.text = 'This account does not have Business Search selected as an active product.'
+        errorInfo.value.textExtra = [
+          'Please ensure Business Search is selected in account settings and try again.']
+      } else {
+        errorInfo.value.text = 'We are unable to determine your account access at this ' +
+          'time. Please try again later.'
+      }
+      errorContactInfo.value = true
       errorDisplay.value = true
       break
     case ErrorCategories.ACCOUNT_SETTINGS:
-      errorInfo.value = DefaultError
+      errorInfo.value = {...DefaultError}
+      errorContactInfo.value = true
       errorDisplay.value = true
       break
     case ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE:
-      if (error.type === ErrorCodes.ACCOUNT_IN_PAD_CONFIRMATION_PERIOD) {
-        errorInfo.value = PayPadError
-        errorDisplay.value = true
-      } else if (bcolCodes.includes(error.type)) {
-        errorInfo.value = PayBcolError
-        errorDisplay.value = true
+      if (error.statusCode === StatusCodes.PAYMENT_REQUIRED) {
+        if (error.type === ErrorCodes.ACCOUNT_IN_PAD_CONFIRMATION_PERIOD) {
+          errorInfo.value = {...PayPadError}
+          errorContactInfo.value = true
+          errorDisplay.value = true
+        } else if (bcolCodes.includes(error.type)) {
+          errorInfo.value = {...PayBcolError}
+          errorInfo.value.textExtra = [error.detail]
+          errorContactInfo.value = false
+          errorDisplay.value = true
+        } else {
+          // FUTURE: change to CreateDocAccessError once design ready
+          errorInfo.value = {...PayDefaultError}
+          errorContactInfo.value = true
+          errorDisplay.value = true
+        }
       } else {
-        errorInfo.value = CreateDocAccessError
+        // FUTURE: change to CreateDocAccessError once design ready
+        errorInfo.value = {...DefaultError}
+        errorContactInfo.value = true
         errorDisplay.value = true
       }
       break
@@ -195,21 +221,30 @@ const handleError = (error: ErrorI) => {
       // handled inline
       break
     case ErrorCategories.ENTITY_BASIC:
-      errorInfo.value = EntityLoadError
+      errorInfo.value = {...EntityLoadError}
+      if (entity.name) {
+        errorInfo.value.text = errorInfo.value.text.replace('this business', entity.name)
+      }
+      errorContactInfo.value = true
       errorDisplay.value = true
+      break
+    case ErrorCategories.ENTITY_FILINGS:
+      // handled inline
       break
     case ErrorCategories.FEE_INFO:
       // handled inline
       break
     case ErrorCategories.REPORT_GENERATION:
-      errorInfo.value = ReportError
+      errorInfo.value = {...ReportError}
+      errorContactInfo.value = true
       errorDisplay.value = true
       break
     case ErrorCategories.SEARCH:
       // handled inline
       break
     default:
-      errorInfo.value = DefaultError
+      errorInfo.value = {...DefaultError}
+      errorContactInfo.value = true
       errorDisplay.value = true
   }
   Sentry.captureException(error)

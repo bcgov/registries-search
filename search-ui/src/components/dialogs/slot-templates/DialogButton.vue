@@ -15,10 +15,9 @@ const props = defineProps<{ button: DialogButtonI }>()
 const emit = defineEmits<{(e:'close'): void}>()
 
 const handleClick = () => {
-  if (props.button.onClick && props.button.onClickArgs) {
-    props.button.onClick(...props.button.onClickArgs)
-  }
-  if (props.button.onClick) props.button.onClick()
+  if (props.button.onClick && props.button.onClickArgs) props.button.onClick(...props.button.onClickArgs)
+  else if (props.button.onClick) props.button.onClick()
+
   if (props.button.onClickClose) emit('close')
 }
 </script>

@@ -20,24 +20,18 @@ const props = defineProps<{ contacts: ContactInfoI[] }>()
 @import '@/assets/styles/theme.scss';
 
 .contacts {
+  text-align: start;
+  width: fit-content;
 
   &__item {
-    font-size: $px-14;
-    color: $gray7;
     display: flex;
 
     &__icon {
-      flex: 0 0 1.375rem;
-      justify-content: flex-start;
       padding-top: 5px;
     }
 
     &__link {
       color: $primary-blue
-    }
-
-    &__value {
-      flex: 1 1;
     }
   }
 }

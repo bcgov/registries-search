@@ -12,10 +12,10 @@
                     <span class="ml-1" v-if="loading">
                       <v-progress-circular color="primary" indeterminate size="22" />
                     </span>
-                    <span v-else-if="resultsDescription" style="font-weight: normal">
-                      ({{ totalItems || setItems.length }} {{ resultsDescription }})
+                    <span v-else-if="totalItems && resultsDescription" style="font-weight: normal">
+                      ({{ totalItems }} {{ resultsDescription }})
                     </span>
-                    <span v-else style="font-weight: normal">({{ totalItems || setItems.length }})</span>
+                    <span v-else-if="totalItems" style="font-weight: normal">({{ totalItems }})</span>
                   </h2>
                 </slot>
                 <slot name="subtitle">
@@ -129,15 +129,15 @@
             </slot>
           </tr>
           <tr v-if="setItems.length === 0" class="base-table__body__empty">
-            <slot name="body-empty">
-              <td colspan="12">
+            <td colspan="12">
+              <slot name="body-empty">
                 <v-row class="my-15" justify="center" no-gutters>
                   <v-col cols="auto">
                     <p class="ma-0" v-html="emptyText" />
                   </v-col>
                 </v-row>
-              </td>
-            </slot>
+              </slot>
+            </td>
           </tr>
         </slot>
       </tbody>
