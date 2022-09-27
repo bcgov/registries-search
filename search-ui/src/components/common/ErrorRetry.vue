@@ -1,8 +1,8 @@
 <template>
-  <div class="error-retry-container">
-    <p v-html="message" />
-    <p>If this issue persists please contact us.</p>
-    <v-btn class="btn-basic-outlined mx-auto mt-5" :loading="loading" @click="handleRetry()">
+  <div class="error-retry">
+    <p class="error-retry__custom-msg" v-html="message" />
+    <p class="error-retry__base-msg">If this issue persists please contact us.</p>
+    <v-btn class="error-retry__btn btn-basic-outlined mx-auto mt-5" :loading="loading" @click="handleRetry()">
       <v-icon color="primary" size="18">mdi-reload</v-icon>
       <span>Retry</span>
     </v-btn>
@@ -27,15 +27,17 @@ const loading = ref(false)
 
 const handleRetry = _.debounce(async () => {
   loading.value = true
+  console.log('1')
   // wait 1 sec (give loader time to be shown)
   await new Promise(resolve => setTimeout(resolve, 1000))
   if (props.actionArgs) await props.action(...props.actionArgs)
   else await props.action()
+  console.log('2')
   loading.value = false
 }, 300)
 </script>
 <style lang="scss" scoped>
-.error-retry-container {
+.error-retry {
   background-color: transparent;
   text-align: center;
 }

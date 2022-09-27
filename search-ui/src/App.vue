@@ -2,6 +2,7 @@
   <v-app id="app" class="app-container">
     
     <base-dialog
+      id="error-dialog"
       attach="#app"
       :display="errorDisplay"
       :options="errorInfo"
@@ -158,7 +159,7 @@ onMounted(async () => {
         category: ErrorCategories.ACCOUNT_ACCESS,
         message: 'This account does not have access to Business Search',
         statusCode: StatusCodes.UNAUTHORIZED,
-        type: ErrorCodes.AUTH_PRODUCTS_ERROR
+        type: null
       })
     }
     appReady.value = true
@@ -205,7 +206,6 @@ const handleError = (error: ErrorI) => {
           errorContactInfo.value = false
           errorDisplay.value = true
         } else {
-          // FUTURE: change to CreateDocAccessError once design ready
           errorInfo.value = {...PayDefaultError}
           errorContactInfo.value = true
           errorDisplay.value = true

@@ -60,8 +60,6 @@ export const parseGatewayError = (category: ErrorCategories, defaultStatus: Stat
       return null
     }
   }
-  console.log(error.response.data.rootCause)
-  console.log(JSON.parse('{' + error.response.data.rootCause+ '}'))
   // parse root cause
   let rootCause = null
   if (error?.response?.data?.rootCause) rootCause = parseRootCause(error.response.data.rootCause)
