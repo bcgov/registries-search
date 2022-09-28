@@ -1,47 +1,38 @@
 <template>
-  <ul class="contact-info pl-0">
-    <li class="contact-container">
-      <v-icon class="contact-icon" size="18px">mdi-phone</v-icon>
-      <span class="px-2">Canada and U.S. Toll Free:</span>
-      <a href="tel:+1-877-526-1526" class="contact-value contact-link">1-877-526-1526</a>
-    </li>
-    <li class="contact-container">
-      <v-icon class="contact-icon" size="18px">mdi-phone</v-icon>
-      <span class="px-2">Victoria Office:</span>
-      <a href="tel:+1-250-952-0568" class="contact-value contact-link">250-952-0568</a>
-    </li>
-    <li class="contact-container">
-      <v-icon class="contact-icon" size="18px">mdi-email</v-icon>
-      <span class="px-2">Email:</span>
-      <a href="mailto:BCRegistries@gov.bc.ca" class="contact-value contact-link">BCRegistries@gov.bc.ca</a>
+  <ul class="contacts pl-0">
+    <li v-for="contact, i in contacts" :key="'contact-' + i" class="contacts__item">
+      <v-icon v-if="contact.icon" color="darkBlue" class="contacts__item__icon" size="18px">
+        {{ contact.icon }}
+      </v-icon>
+      <label class="px-2">{{ contact.label }}:</label>
+      <a :href="contact.href" class="contacts__item__value contacts__item__link">{{ contact.value }}</a>
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
+import { ContactInfoI } from '@/interfaces'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps<{ contacts: ContactInfoI[] }>()
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
-.contact-container {
-  font-size: $px-14;
-  color: $gray7;
-  display: flex;
+.contacts {
+  text-align: start;
+  width: fit-content;
 
-  .contact-icon {
-    flex: 0 0 1.375rem;
-    justify-content: flex-start;
-    color: $app-dk-blue;  
-    padding-top: 5px;   
-  }
+  &__item {
+    display: flex;
 
-  .contact-value {
-    flex: 1 1;
-  }
+    &__icon {
+      padding-top: 5px;
+    }
 
-  .contact-link {
-    color: $primary-blue
+    &__link {
+      color: $primary-blue
+    }
   }
 }
 </style>

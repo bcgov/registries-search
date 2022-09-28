@@ -1,60 +1,20 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 // local
+import { StaffPaymentOptions } from '@/bcrs-common-components/enums'
 import { StaffPaymentIF } from '@/bcrs-common-components/interfaces'
-import { useAuth } from '@/composables'
+import { DocumentType, ErrorCategories } from '@/enums'
 import {
   SearchResponseI, SuggestionResponseI, DocumentDetailsI,
-  CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI, ApiDocuments, SearchFilterI, SearchPartyFilterI
+  CreateDocumentResponseI, AccessRequestsHistoryI, DocumentI,
+  ApiDocuments, SearchFilterI, SearchPartyFilterI
 } from '@/interfaces'
-
-import { DocumentType, ErrorCategories, ErrorCodes } from '@/enums'
 import { DocumentTypeDescriptions } from '@/resources'
 import { Document } from '@/types'
-import { StaffPaymentOptions } from '@/bcrs-common-components/enums'
+// internal
+import { addSearchBusFilters, addSearchPartyFilters, getSearchConfig, parseGatewayError } from './search-api-utils'
 
 const AUTO_SUGGEST_RESULT_SIZE = 10
-
-const addSearchBusFilters = (filters: SearchFilterI) => {
-  const filterParams = { query: '', categories: '' }
-  // filters
-  if (filters?.bn) filterParams.query += `::bn:${filters.bn}`
-  if (filters?.identifier) filterParams.query += `::identifier:${filters.identifier}`
-  if (filters?.name) filterParams.query += `::name:${filters.name}`
-  // categories
-  if (filters?.legalType) filterParams.categories += `legalType:${filters.legalType}`
-  if (filters?.status) {
-    filterParams.categories += filters?.legalType ? `::` : ''
-    filterParams.categories += `status:${filters.status}`
-  }
-  return filterParams
-}
-
-const addSearchPartyFilters = (filters: SearchPartyFilterI) => {
-  const filterParams = { query: '', categories: '' }
-  // filters
-  if (filters.parentBN) filterParams.query += `::parentBN:${filters.parentBN}`
-  if (filters.parentIdentifier) filterParams.query += `::parentIdentifier:${filters.parentIdentifier}`
-  if (filters.parentName) filterParams.query += `::parentName:${filters.parentName}`
-  if (filters.partyName) filterParams.query += `::partyName:${filters.partyName}`
-  // categories
-  if (filters.partyRoles) filterParams.categories += `partyRoles:${filters.partyRoles}`
-  else filterParams.categories += 'partyRoles:partner,proprietor'
-  if (filters.parentStatus) filterParams.categories += `::parentStatus:${filters.parentStatus}`
-
-  return filterParams
-}
-
-const getSearchConfig = (params: object = null) => {
-  const { auth } = useAuth()
-  const url = sessionStorage.getItem('REGISTRY_SEARCH_API_URL')
-  const apiKey = window['searchApiKey']
-  if (!url) console.error('Error: REGISTRY_SEARCH_API_URL expected, but not found.')
-  if (!apiKey) console.error('Error: REGISTRY_SEARCH_API_KEY expected, but not found.')
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  
-  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey }, params: params }
-}
 
 export async function getAutoComplete(searchValue: string): Promise<SuggestionResponseI> {
   if (!searchValue) return
@@ -71,14 +31,10 @@ export async function getAutoComplete(searchValue: string): Promise<SuggestionRe
     }).catch(error => {
       let category = ErrorCategories.SEARCH
       if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
+
       return {
         results: [],
-        error: {
-          statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
-          message: error?.response?.data?.message,
-          category: category,
-          type: error?.parsed?.rootCause?.type
-        }
+        error: parseGatewayError(category, StatusCodes.NOT_FOUND, error)
       }
     })
 }
@@ -108,14 +64,10 @@ export async function searchBusiness(
     }).catch(error => {
       let category = ErrorCategories.SEARCH
       if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
+
       return {
         searchResults: null,
-        error: {
-          statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
-          message: error?.response?.data?.message,
-          category: category,
-          type: error?.parsed?.rootCause?.type
-        }
+        error: parseGatewayError(category, StatusCodes.NOT_FOUND, error)
       }
     })
 }
@@ -149,14 +101,12 @@ export async function searchParties(
       }
       return data
     }).catch(error => {
+      let category = ErrorCategories.SEARCH
+      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
+
       return {
         searchResults: null,
-        error: {
-          statusCode: error?.response?.status || StatusCodes.NOT_FOUND,
-          message: error?.response?.data?.message,
-          category: ErrorCategories.SEARCH,
-          type: error?.parsed?.rootCause?.type
-        }
+        error: parseGatewayError(category, StatusCodes.NOT_FOUND, error)
       }
     })
 }
@@ -192,16 +142,13 @@ export async function createDocumentAccessRequest(
       }
       return createAccessResponse
     }).catch(error => {
-      const createAccessResponse: CreateDocumentResponseI = {
-        error:
-        {
-          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error?.response?.data?.message,
-          category: ErrorCategories.CREATE_DOCUMENT_ACCESS_REQUEST,
-          type: error?.parsed?.rootCause?.type
-        }
+      return {
+        error: parseGatewayError(
+          ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
       }
-      return createAccessResponse
     })
 }
 
@@ -217,17 +164,13 @@ export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI>
       }
       return data
     }).catch(error => {
-      console.error(error)
-      const documentRequests: AccessRequestsHistoryI = {
-        error:
-        {
-          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error?.response?.data?.message,
-          category: ErrorCategories.CREATE_DOCUMENT_ACCESS_REQUEST,
-          type: error?.parsed?.rootCause?.type
-        }
+      return {
+        error: parseGatewayError(
+          ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
       }
-      return documentRequests
     })
 }
 
@@ -257,12 +200,11 @@ export async function getDocument(businessIdentifier: string, document: Document
       }
     }).catch(error => {
       return {
-        error: {
-          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'An error occured while downloading the document.',
-          category: ErrorCategories.DOCUMENT_DOWNLOAD,
-          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
-        }
+        error: parseGatewayError(
+          ErrorCategories.REPORT_GENERATION,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
       }
     })
 }
@@ -286,12 +228,11 @@ export const fetchDocumentList = async (businessIdentifier: string, filingId: nu
       return data
     }).catch(error => {
       return {
-        error: {
-          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-          message: error?.response?.data?.message,
-          category: ErrorCategories.ENTITY_BASIC,
-          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
-        }
+        error: parseGatewayError(
+          ErrorCategories.ENTITY_BASIC,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
       }
     })
 }
@@ -325,12 +266,11 @@ export const fetchFilingDocument = (businessIdentifier: string, filingId: number
       }
     }).catch(error => {
       return {
-        error: {
-          statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
-          message: 'An error occured while downloading the document.',
-          category: ErrorCategories.DOCUMENT_DOWNLOAD,
-          type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
-        }
+        error: parseGatewayError(
+          ErrorCategories.REPORT_GENERATION,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
       }
     })
 }

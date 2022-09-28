@@ -6,7 +6,6 @@ const { filterSearch, highlightMatch } = useSearch()
 export const PartySearchHeaders: BaseTableHeaderI[] = [
   {
     col: 'partyName',
-    customItemSlot: 'name',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('partyName', filterVal),
@@ -17,12 +16,12 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     hasFilter: true,
     hasSort: true,
     itemFn: highlightMatch,
+    slotId: 'name',
     value: 'Owner Name',
     width: '20%'
   },
   {
     col: 'partyRoles',
-    customItemSlot: 'roles',
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch('partyRoles', filterVal),
@@ -33,6 +32,7 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
     },
     hasFilter: true,
     hasSort: true,
+    slotId: 'roles',
     value: 'Role',
     width: '10%'
   },
@@ -96,10 +96,9 @@ export const PartySearchHeaders: BaseTableHeaderI[] = [
   },
   {
     col: '',
-    customHeaderSlot: 'action',
-    customItemSlot: 'action',
     hasFilter: false,
     hasSort: false,
+    slotId: 'action',
     value: 'Actions',
     width: '12%'
   }

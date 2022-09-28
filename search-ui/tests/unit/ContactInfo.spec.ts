@@ -1,21 +1,23 @@
 import { mount } from '@vue/test-utils'
-import { ContactInfo } from '@/components/common'
+
+import { ContactInfo } from '@/components'
+import { RegistriesInfo } from '@/resources/contact-info'
 
 
-describe('Error Contact', () => {
-    it('Displays expected content', () => {
-        const wrapper = mount(ContactInfo)
+describe('ContactInfo tests', () => {
+  it('Displays expected content', () => {
+    const wrapper = mount(ContactInfo, { props: { contacts: RegistriesInfo }})
 
-        // verify content
-        const listItems = wrapper.findAll('.contact-container')
-        expect(listItems.length).toBe(3)
-        expect(listItems[0].find('span').text()).toBe('Canada and U.S. Toll Free:')
-        expect(listItems[0].find('.contact-value').text()).toBe('1-877-526-1526')
-        expect(listItems[1].find('span').text()).toBe('Victoria Office:')
-        expect(listItems[1].find('.contact-value').text()).toBe('250-952-0568')
-        expect(listItems[2].find('span').text()).toBe('Email:')
-        expect(listItems[2].find('.contact-value').text()).toBe('BCRegistries@gov.bc.ca')
+    // verify content
+    expect(wrapper.find('.contacts').exists()).toBe(true)
+    const contacts = wrapper.findAll('.contacts__item')
+    expect(contacts.length).toBe(RegistriesInfo.length)
+    for (const i in contacts) {
+      expect(contacts[i].find('.contacts__item__icon').text()).toContain(RegistriesInfo[i].icon)
+      expect(contacts[i].find('label').text()).toContain(RegistriesInfo[i].label)
+      expect(contacts[i].find('.contacts__item__value').text()).toContain(RegistriesInfo[i].value)
+    }
 
-        wrapper.unmount()
-    })
+    wrapper.unmount()
+  })
 })

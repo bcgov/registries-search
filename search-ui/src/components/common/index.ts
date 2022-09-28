@@ -1,11 +1,4 @@
-import ContactInfo from './ContactInfo.vue'
-import DateTooltip from './DateTooltip.vue'
-import DetailsList from './DetailsList.vue'
-import ErrorDialog from './ErrorDialog.vue'
-
-export {
-  ContactInfo,
-  DateTooltip,
-  DetailsList,
-  ErrorDialog
-}
+export { default as ContactInfo } from './ContactInfo.vue'
+export { default as DateTooltip } from './DateTooltip.vue'
+export { default as DetailsList } from './DetailsList.vue'
+export { default as ErrorRetry } from './ErrorRetry.vue'

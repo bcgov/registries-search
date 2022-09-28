@@ -21,7 +21,7 @@ const search = reactive({
 
 const _searchErrorHandler = async (searchResp: SearchResponseI) => {
   // response error with info
-  search.results = null
+  search.results = []
   search.totalResults = null
   search._error = searchResp.error
   if (searchResp.error.category === ErrorCategories.SEARCH_UNAVAILABLE) {
@@ -73,6 +73,7 @@ export const useSearch = () => {
     }
     search._loading = true
     search.totalResults = null
+    search._value = val
     if (search.results === null && !search.unavailable) search.results = []
     let searchResp: SearchResponseI = null
     // FUTURE: add SEARCH_ROWS to enum

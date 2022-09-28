@@ -1,24 +1,18 @@
 <template>
   <v-container class="pa-0">
-    <v-row v-if="baseText" no-gutters>
-      <v-col cols="auto">
-        <p class="dialog-text ma-0" v-html="baseText" />
-      </v-col>
-    </v-row>
-    <v-row v-if="extraText.length > 0" class="pt-5" no-gutters>
-      <v-col cols="auto">
-        <p v-for="(text, index) in extraText" class="dialog-text ma-0" :key="index" v-html="text" />
-      </v-col>
-    </v-row>
+    <p v-if="baseText" v-html="baseText" />
+    <div v-if="extraText" class="pt-5" no-gutters>
+      <p v-for="(text, index) in extraText" :key="index" v-html="text" />
+    </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps({
-  baseText: { default: '' },
-  extraText: { default: (): string[] => []}
-})
+const props = defineProps<{
+  baseText: string,
+  extraText?: string[]
+}>()
 </script>
 
 <style lang="scss" scoped>

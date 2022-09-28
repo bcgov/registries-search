@@ -1,6 +1,7 @@
 // External
-import { mount, VueWrapper } from '@vue/test-utils'
 import { Router } from 'vue-router'
+import { StatusCodes } from 'http-status-codes'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import App from '@/App.vue'
@@ -8,9 +9,10 @@ import { EntityInfo } from '@/components'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
-import { useAuth } from '@/composables'
-import { ProductCode, ProductStatus, RouteNames } from '@/enums'
+import { useAuth, useDocumentAccessRequest, useEntity } from '@/composables'
+import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, RouteNames } from '@/enums'
 import { SearchBusinessInfoBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
+import { DefaultError, EntityLoadError, PayDefaultError } from '@/resources/error-dialog-options'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 
@@ -19,12 +21,12 @@ import store from '@/store'
 describe('App tests', () => {
   let wrapper: VueWrapper<any>
   let router: Router
+  const { auth } = useAuth()
 
   beforeEach(async () => {
     // set keycloak token so it doesn't redirect
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
     // set auth
-    const { auth } = useAuth()
     auth.tokenInitialized = true
     auth.activeProducts = [{ code: ProductCode.BUSINESS_SEARCH, subscriptionStatus: ProductStatus.ACTIVE }]
     // set router
@@ -75,5 +77,68 @@ describe('App tests', () => {
   })
   it('registers jest running', () => {
     expect(wrapper.vm.isJestRunning).toBe(true)
+  })
+  it('triggers auth error dialog', async () => {
+    // confirm in an error free state
+    expect(auth._error).toBe(null)
+    expect(wrapper.vm.errorDisplay).toBe(false)
+    expect(wrapper.vm.errorContactInfo).toBe(false)
+    expect(wrapper.vm.errorInfo).toBe(null)
+    // set error
+    auth._error = {
+      category: ErrorCategories.ACCOUNT_SETTINGS,
+      message: 'Error getting/setting current account.',
+      statusCode: null,
+      type: ErrorCodes.ACCOUNT_SETUP_ERROR
+    }
+    await flushPromises()
+    // check error dialog values have updated
+    expect(wrapper.vm.errorDisplay).toBe(true)
+    expect(wrapper.vm.errorContactInfo).toBe(true)
+    expect(wrapper.vm.errorInfo).toEqual(DefaultError)
+  })
+
+  it('triggers document access request error dialog', async () => {
+    // confirm in an error free state
+    const { documentAccessRequest } = useDocumentAccessRequest()
+    expect(documentAccessRequest._error).toBe(null)
+    expect(wrapper.vm.errorDisplay).toBe(false)
+    expect(wrapper.vm.errorContactInfo).toBe(false)
+    expect(wrapper.vm.errorInfo).toBe(null)
+    // set error
+    documentAccessRequest._error = {
+      category: ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE,
+      detail: 'pay default error',
+      message: 'not used',
+      statusCode: StatusCodes.PAYMENT_REQUIRED,
+      type: null
+    }
+    await flushPromises()
+    // check error dialog values have updated
+    expect(wrapper.vm.errorDisplay).toBe(true)
+    expect(wrapper.vm.errorContactInfo).toBe(true)
+    expect(wrapper.vm.errorInfo).toEqual(PayDefaultError)
+  })
+
+  it('triggers entity error dialog', async () => {
+    // confirm in an error free state
+    const { entity } = useEntity()
+    expect(entity._error).toBe(null)
+    expect(wrapper.vm.errorDisplay).toBe(false)
+    expect(wrapper.vm.errorContactInfo).toBe(false)
+    expect(wrapper.vm.errorInfo).toBe(null)
+    // set error
+    entity._error = {
+      category: ErrorCategories.ENTITY_BASIC,
+      detail: 'not used',
+      message: 'not used',
+      statusCode: null,
+      type: null
+    }
+    await flushPromises()
+    // check error dialog values have updated
+    expect(wrapper.vm.errorDisplay).toBe(true)
+    expect(wrapper.vm.errorContactInfo).toBe(true)
+    expect(wrapper.vm.errorInfo).toEqual(EntityLoadError)
   })
 })

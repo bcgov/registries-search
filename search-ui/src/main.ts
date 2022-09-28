@@ -21,6 +21,7 @@ declare const window: any
 
 // main code
 async function start() {
+  console.info('Version', process.env.VUE_APP_VERSION)
   // fetch config from environment and API
   // must come first as inits below depend on config
   await fetchConfig()
@@ -47,6 +48,7 @@ async function start() {
         }),
       ],
       logErrors: true,
+      release: 'search-ui@' + process.env.VUE_APP_VERSION,
       // Set tracesSampleRate to 1.0 to capture 100%
       // of transactions for performance monitoring.
       // We recommend adjusting this value in production

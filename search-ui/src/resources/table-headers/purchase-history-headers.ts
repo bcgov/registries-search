@@ -8,10 +8,10 @@ const { dateTimeString } = useDatetime()
 export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   {
     col: 'businessName',
-    customItemSlot: 'name',
     filter: { clearable: true, label: 'Business Name', type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
+    slotId: 'name',
     value: 'Business Name',
     width: '20%'
   },
@@ -27,7 +27,6 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   },
   {
     col: 'documents',
-    customItemSlot: 'documents',
     filter: {
       clearable: true,
       filterFn: (colVal: any[], filterVal: string) => {
@@ -41,6 +40,7 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
     },
     hasFilter: true,
     hasSort: false,
+    slotId: 'documents',
     value: 'Purchased Items',
     width: '15%'
   },
@@ -75,8 +75,6 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   // },
   {
     col: 'submitter',
-    customHeaderSlot: '',
-    customItemSlot: '',
     filter: { clearable: true, label: 'User Name', type: 'text', value: '' },
     hasFilter: true,
     hasSort: true,
@@ -85,11 +83,10 @@ export const PurchaseHistoryHeaders: BaseTableHeaderI[] = [
   },
   {
     col: '',
-    customHeaderSlot: 'action',
-    customItemSlot: 'action',
     itemClass: 'large-cell',
     hasFilter: false,
     hasSort: false,
+    slotId: 'action',
     value: 'Actions',
     width: '12%'
   }

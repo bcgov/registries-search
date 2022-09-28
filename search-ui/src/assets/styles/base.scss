@@ -46,6 +46,7 @@ body {
 }
 
 html {
+  font-family: "BCSans", Verdana, Arial, sans-serif !important;
   // default font size (14px)
   font-size: 0.875rem;
 }
@@ -188,28 +189,6 @@ p {
   border-radius: 4px 4px 0px 0px;
 }
 
-// dialog styles
-.dialog-btn {
-  box-shadow: none;
-  min-width: 6rem !important;
-}
-
-.dialog-checkbox {
-  color: $gray9;
-}
-
-.dialog-title {
-  color: $gray9;
-  font-size: 1.5rem;
-  line-height: 1.625rem;
-}
-
-.dialog-text {
-  color: $gray7;
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
 // fade animations
 .fade-out {
   animation: fadeOut 2s forwards;
@@ -306,6 +285,12 @@ span.invalid-color {
     padding: 0 !important;
     top: 178px !important;
     width: 475px !important;
+  }
+
+  &__footer {
+    padding: 10px !important;
+    text-align: center;
+    width: 175px !important;
   }
 }
 

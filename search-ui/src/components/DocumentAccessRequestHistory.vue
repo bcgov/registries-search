@@ -54,6 +54,13 @@
         View Documents
       </v-btn>
     </template>
+    <template v-if="documentAccessRequest._error" v-slot:body-empty>
+      <error-retry
+        class="my-3"
+        :action="loadAccessRequestHistory"
+        message="We were unable to retrieve your recent purchases. Please try again later."
+      />
+    </template>
   </base-table>
 </template>
 
@@ -61,7 +68,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 // local
-import { BaseTable } from '@/components'
+import { BaseTable, ErrorRetry } from '@/components'
 import { SearchTableName } from '@/components/search/common'
 import { useDocumentAccessRequest, useEntity, useFilingHistory } from '@/composables'
 import { RouteNames } from '@/enums'
@@ -71,7 +78,7 @@ import { PurchaseHistoryHeaders } from '@/resources/table-headers'
  
 
 // composables
-const { documentAccessRequest } = useDocumentAccessRequest()
+const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 const { loadEntity } = useEntity()
 const { clearFilingHistory, loadFilingHistory } = useFilingHistory()
 const router = useRouter()

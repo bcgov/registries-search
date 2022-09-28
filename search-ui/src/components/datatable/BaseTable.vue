@@ -12,10 +12,10 @@
                     <span class="ml-1" v-if="loading">
                       <v-progress-circular color="primary" indeterminate size="22" />
                     </span>
-                    <span v-else-if="resultsDescription" style="font-weight: normal">
-                      ({{ totalItems || setItems.length }} {{ resultsDescription }})
+                    <span v-else-if="totalItems && resultsDescription" style="font-weight: normal">
+                      ({{ totalItems }} {{ resultsDescription }})
                     </span>
-                    <span v-else style="font-weight: normal">({{ totalItems || setItems.length }})</span>
+                    <span v-else-if="totalItems" style="font-weight: normal">({{ totalItems }})</span>
                   </h2>
                 </slot>
                 <slot name="subtitle">
@@ -37,7 +37,7 @@
                 :class="[header.class, 'base-table__header__item']"
                 :width="header.width"
               >
-                <slot :name="'header-item-slot-' + header.customHeaderSlot" :header="header">
+                <slot :name="'header-item-slot-' + header.slotId" :header="header">
                   <v-btn
                     v-if="header.value"
                     class="base-table__header__item__title mb-5"
@@ -63,7 +63,7 @@
                 :class="[header.class, 'base-table__header__item pb-5']"
                 :width="header.width"
               >
-                <slot :name="'header-filter-slot-' + header.customHeaderSlot" :header="header">
+                <slot :name="'header-filter-slot-' + header.slotId" :header="header">
                   <v-select
                     :open-on-clear="true"
                     v-if="header.hasFilter && header.filter.type === 'select'"
@@ -121,7 +121,7 @@
                 v-for="header in headers" :key="'item-' + header.col"
                 :class="[header.itemClass, 'base-table__body__item']"
               >
-                <slot :header="header" :item="item" :name="'item-slot-' + header.customItemSlot">
+                <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
                   <span v-if="header.itemFn" v-html="header.itemFn(item[header.col])" />
                   <span v-else>{{ item[header.col] }}</span>
                 </slot>
@@ -129,15 +129,15 @@
             </slot>
           </tr>
           <tr v-if="setItems.length === 0" class="base-table__body__empty">
-            <slot name="body-empty">
-              <td colspan="12">
+            <td colspan="12">
+              <slot name="body-empty">
                 <v-row class="my-15" justify="center" no-gutters>
                   <v-col cols="auto">
                     <p class="ma-0" v-html="emptyText" />
                   </v-col>
                 </v-row>
-              </td>
-            </slot>
+              </slot>
+            </td>
           </tr>
         </slot>
       </tbody>

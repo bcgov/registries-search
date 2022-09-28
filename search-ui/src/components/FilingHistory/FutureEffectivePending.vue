@@ -16,15 +16,17 @@
             please contact us.
         </p>
 
-        <ContactInfo class="mt-4" />
+        <ContactInfo class="mt-4" :contacts="RegistriesInfo" />
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+// local
 import { ContactInfo } from '@/components/common'
+import { RegistriesInfo } from '@/resources/contact-info'
 import { FilingHistoryItem } from '@/types'
 import { dateToPacificDateTime } from '@/utils'
-import { computed } from '@vue/reactivity'
 
 const props = defineProps<{ filing: FilingHistoryItem, entityName: string }>()
 

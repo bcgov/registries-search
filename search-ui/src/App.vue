@@ -1,11 +1,18 @@
 <template>
   <v-app id="app" class="app-container">
     
-    <ErrorDialog
-      :dialog="errorDialog"
-      @close="clearError"
+    <base-dialog
+      id="error-dialog"
       attach="#app"
-    />
+      :display="errorDisplay"
+      :options="errorInfo"
+      @close="errorDisplay = false"
+    >
+      <template v-if="errorContactInfo" v-slot:extra-content>
+        <p class="font-normal mt-7">If this issue persists, please contact us.</p>
+        <contact-info class="font-normal font-16 mt-4" :contacts="HelpdeskInfo" />
+      </template>
+    </base-dialog>
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
     <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
@@ -39,7 +46,7 @@
 
 <script setup lang="ts">
 // External
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch, Ref } from 'vue'
 import * as Sentry from '@sentry/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
@@ -50,18 +57,25 @@ import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-comm
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
-import { ErrorI } from '@/interfaces'
+import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
-import { EntityInfo, ErrorDialog } from '@/components'
-import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest, 
-useDocumentAccessRequest } from '@/composables'
-import { navigate, getFeatureFlag } from '@/utils'
+import { BaseDialog, EntityInfo } from '@/components'
+import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest,
+  useDocumentAccessRequest } from '@/composables'
+import { AuthAccessError, DefaultError, EntityLoadError, PayDefaultError, PayBcolError,
+  PayPadError, ReportError } from '@/resources/error-dialog-options'
+import { HelpdeskInfo } from '@/resources/contact-info'
+import { getFeatureFlag } from '@/utils'
+import ContactInfo from './components/common/ContactInfo.vue'
 
-const aboutText: string = process.env.ABOUT_TEXT
+const aboutText: string = 'Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)
 const appReady = ref(false)
 const haveData = ref(true)
-const errorDialog = ref(false)
+// errors
+const errorDisplay = ref(false)
+const errorContactInfo = ref(false)
+const errorInfo: Ref<DialogOptionsI> = ref(null)
 
 const route = useRoute()
 const router = useRouter()
@@ -101,8 +115,10 @@ const showEntityInfo = computed((): boolean => {
 
 onMounted(async () => {
   appLoading.value = true
+  // clear any previous auth errors
+  auth._error = null
   await router.isReady() // otherwise below will process before route name is determined
-  const searchRoutes = [RouteNames.SEARCH, RouteNames.BUSINESS_INFO]
+  const searchRoutes = [RouteNames.SEARCH, RouteNames.BUSINESS_INFO, RouteNames.DOCUMENT_REQUEST]
   if (searchRoutes.includes(route.name as RouteNames)) {
     // do any preload items here
     if (!appReady.value && !isJestRunning.value) {
@@ -114,7 +130,7 @@ onMounted(async () => {
         appLoading.value = false
         return
       }
-      // wait to allow time for sbc header stuff to load (i.e. current account)
+      if (auth._error) return
       console.info('Loading account...')
       // check every second for up to 10 seconds
       for (let i=0; i<10; i++) {
@@ -127,6 +143,7 @@ onMounted(async () => {
       // initialize auth stuff
       await loadAuth()
     }
+    if (auth._error) return
     console.info('Verifying user access...')
     // verify user has access to business search product
     if (!hasProductAccess(ProductCode.BUSINESS_SEARCH) && !isStaff.value) {
@@ -142,7 +159,7 @@ onMounted(async () => {
         category: ErrorCategories.ACCOUNT_ACCESS,
         message: 'This account does not have access to Business Search',
         statusCode: StatusCodes.UNAUTHORIZED,
-        type: ErrorCodes.AUTH_PRODUCTS_ERROR
+        type: null
       })
     }
     appReady.value = true
@@ -152,19 +169,85 @@ onMounted(async () => {
 })
 
 const handleError = (error: ErrorI) => {  
-  console.error(error)
-  
-  // FUTURE: add account info with error information, add dialog popups for specific errors
+  console.info(error)
+  const bcolCodes = [
+    ErrorCodes.BCOL_ACCOUNT_CLOSED, ErrorCodes.BCOL_ACCOUNT_INSUFFICIENT_FUNDS,
+    ErrorCodes.BCOL_ACCOUNT_REVOKED, ErrorCodes.BCOL_ERROR, ErrorCodes.BCOL_INVALID_ACCOUNT,
+    ErrorCodes.BCOL_UNAVAILABLE, ErrorCodes.BCOL_USER_REVOKED
+  ]
   switch (error.category) {
     case ErrorCategories.ACCOUNT_ACCESS:
-      navigate(sessionStorage.getItem('REGISTRY_URL'))
+      errorInfo.value = {...AuthAccessError}
+      if (error.statusCode === StatusCodes.UNAUTHORIZED) {
+        errorInfo.value.text = 'This account does not have Business Search selected as an active product.'
+        errorInfo.value.textExtra = [
+          'Please ensure Business Search is selected in account settings and try again.']
+      } else {
+        errorInfo.value.text = 'We are unable to determine your account access at this ' +
+          'time. Please try again later.'
+      }
+      errorContactInfo.value = true
+      errorDisplay.value = true
+      break
+    case ErrorCategories.ACCOUNT_SETTINGS:
+      errorInfo.value = {...DefaultError}
+      errorContactInfo.value = true
+      errorDisplay.value = true
+      break
+    case ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE:
+      if (error.statusCode === StatusCodes.PAYMENT_REQUIRED) {
+        if (error.type === ErrorCodes.ACCOUNT_IN_PAD_CONFIRMATION_PERIOD) {
+          errorInfo.value = {...PayPadError}
+          errorContactInfo.value = true
+          errorDisplay.value = true
+        } else if (bcolCodes.includes(error.type)) {
+          errorInfo.value = {...PayBcolError}
+          errorInfo.value.textExtra = [error.detail]
+          errorContactInfo.value = false
+          errorDisplay.value = true
+        } else {
+          errorInfo.value = {...PayDefaultError}
+          errorContactInfo.value = true
+          errorDisplay.value = true
+        }
+      } else {
+        // FUTURE: change to CreateDocAccessError once design ready
+        errorInfo.value = {...DefaultError}
+        errorContactInfo.value = true
+        errorDisplay.value = true
+      }
+      break
+    case ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY:
+      // handled inline
+      break
+    case ErrorCategories.ENTITY_BASIC:
+      errorInfo.value = {...EntityLoadError}
+      if (entity.name) {
+        errorInfo.value.text = errorInfo.value.text.replace('this business', entity.name)
+      }
+      errorContactInfo.value = true
+      errorDisplay.value = true
+      break
+    case ErrorCategories.ENTITY_FILINGS:
+      // handled inline
+      break
+    case ErrorCategories.FEE_INFO:
+      // handled inline
+      break
+    case ErrorCategories.REPORT_GENERATION:
+      errorInfo.value = {...ReportError}
+      errorContactInfo.value = true
+      errorDisplay.value = true
+      break
+    case ErrorCategories.SEARCH:
+      // handled inline
+      break
+    default:
+      errorInfo.value = {...DefaultError}
+      errorContactInfo.value = true
+      errorDisplay.value = true
   }
   Sentry.captureException(error)
-}
-
-const clearError = () => {
-  documentAccessRequest._error = null
-  errorDialog.value = false
 }
 
 // watchers for errors
@@ -174,7 +257,5 @@ watch(fees, (val) => { if (val._error) handleError(val._error) })
 watch(filingHistory, (val) => { if (val._error) handleError(val._error) })
 watch(search, (val) => { if (val._error) handleError(val._error) })
 watch(suggest, (val) => { if (val._error) handleError(val._error) })
-watch(documentAccessRequest, (val)=> {if (val._error){
-errorDialog.value = true
-handleError(val._error)}})
+watch(documentAccessRequest, (val)=> { if (val._error) handleError(val._error) })
 </script>

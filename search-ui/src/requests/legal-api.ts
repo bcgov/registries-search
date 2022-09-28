@@ -46,7 +46,7 @@ export async function getFilings(identifier: string, effective_date: string): Pr
         error: {
           statusCode: error?.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
           message: error?.response?.data?.message,
-          category: ErrorCategories.ENTITY_BASIC,
+          category: ErrorCategories.ENTITY_FILINGS,
           type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
         }
       }

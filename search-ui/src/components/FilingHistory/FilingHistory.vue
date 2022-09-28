@@ -1,17 +1,32 @@
 <template>
   <div id="filing-history-list">
     <span data-test-id="dashboard-filing-history-subtitle" class="section-header">
-      <span v-if="props.isLocked">Filing History <span style="color:#868e96">({{historyItems.length}})</span></span>
+      <span v-if="props.isLocked">
+        Filing History
+        <span v-if="historyItems.length" style="color:#868e96">({{historyItems.length}})</span>
+      </span>
       <span v-else>Filing History Documents</span>
-      <span v-if="filingHistory._loading" class="gray6">(Loading...)</span>
+      <span class="ml-1" v-if="filingHistory._loading">
+        <v-progress-circular color="primary" indeterminate size="22" />
+      </span>
     </span>
     <div class="mt-5 pa-5 court-order-section" v-if="hasCourtOrderFilings">
       <v-icon class="ml-1">mdi-gavel</v-icon>
       <span class="ml-2">Court order(s) have been filed on this company. Review the 
         filing history for impacts to business information.</span>
     </div>
-    <div class="scrollable-container mt-4">
-      <v-expansion-panels v-if="historyItems.length > 0" v-model="panel">
+    <div class="scrollable-container soft-corners mt-4">
+      <div v-if="filingHistory._loading" class="mx-auto my-15" style="width: 50px;">
+        <v-progress-circular color="primary" size="50" indeterminate />
+      </div>
+      <error-retry
+        v-else-if="filingHistory._error"
+        class="error-retry-filings font-14 mx-auto my-5"
+        :action="loadFilingHistory"
+        :actionArgs="[filingHistory._identifier, filingHistory._effective_date]"
+        :message="historyErrorMsg"
+      />
+      <v-expansion-panels v-else-if="historyItems.length > 0" v-model="panel">
         <v-expansion-panel class="align-items-top filing-history-item px-6 py-5" v-for="(filing, index) in historyItems"
           :key="index">
           <v-expansion-panel-title class="no-dropdown-icon pa-0">
@@ -226,7 +241,10 @@
 </template>
 
 <script setup lang="ts">
-
+// external
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { StatusCodes } from 'http-status-codes'
 // Components and dialogs
 import CompletedAlteration from './CompletedAlteration.vue'
 import CompletedDissolution from './CompletedDissolution.vue'
@@ -237,7 +255,7 @@ import FutureEffectivePending from './FutureEffectivePending.vue'
 import PaperFiling from './PaperFiling.vue'
 import PendingFiling from './PendingFiling.vue'
 import StaffFiling from './StaffFiling.vue'
-import { DetailsList } from '@/components/common'
+import { DetailsList, ErrorRetry } from '@/components'
 import {
   isStatusPaid, isStatusCompleted, isTypeAlteration, isTypeChangeOfAddress,
   isEffectOfOrderPlanOfArrangement, isTypeDissolution, isTypeStaff, filingTypeToName, camelCaseToWords,
@@ -247,24 +265,30 @@ import { fetchDocumentList, fetchComments } from '@/requests'
 import { LegalFiling, ApiFiling } from '@/interfaces/legal-api-responses'
 
 // Enums, interfaces and mixins
-import { ref, computed, watch, onMounted } from 'vue'
-import { ErrorCategories, ErrorCodes, FilingTypes } from '@/enums'
+import { ErrorCategories, ErrorCodes, FilingTypes, RouteNames } from '@/enums'
 import { Document, FilingHistoryItem } from '@/types'
 import { useEntity, useFilingHistory, useDocumentAccessRequest } from '@/composables'
 import { ErrorI } from '@/interfaces'
-import { StatusCodes } from 'http-status-codes'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{ isLocked: boolean }>()
 
+const router = useRouter()
 const { entity, isBComp } = useEntity()
-const { filingHistory, hasCourtOrderFilings } = useFilingHistory()
+const { filingHistory, hasCourtOrderFilings, loadFilingHistory } = useFilingHistory()
 const { downloadFilingDocument } = useDocumentAccessRequest()
 
 const filings = computed(() => filingHistory.filings)
 
 
 const panel = ref(-1) // currently expanded panel
+const historyErrorMsg = computed(() => {
+  if (router.currentRoute.value.name === RouteNames.DOCUMENT_REQUEST) {
+    return 'We were unable to retrieve the filing history. This purchase will be ' +
+      'available under Recently Purchased Documents for 14 days. Please try again later.'
+  }
+  return 'We were unable to retrieve the filing history for this business. Please try again later.'
+})
 const historyItems = ref([])
 const loadingOne = ref(false)
 const loadingAll = ref(false)
@@ -274,7 +298,7 @@ const isBusy = ref(false)
 const emit = defineEmits(['error'])
 
 const documentDownloadError: ErrorI = {
-  category: ErrorCategories.DOCUMENT_DOWNLOAD,
+  category: ErrorCategories.REPORT_GENERATION,
   message: 'Document Download Error',
   statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
   type: ErrorCodes.SERVICE_UNAVAILABLE
@@ -527,8 +551,12 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 @import "@/assets/styles/theme.scss";
+.error-retry-filings {
+  max-width: 500px;
+}
 
 .scrollable-container {
+  background-color: white;
   max-height: 60rem;
   overflow-y: auto;
   margin-bottom: 50px;
