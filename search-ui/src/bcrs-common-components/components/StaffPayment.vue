@@ -29,19 +29,19 @@
             />
           </v-form>
 
-          <!-- BC Online radio button and form -->
+          <!-- BC OnLine radio button and form -->
           <v-radio
             id="bcol-radio"
             class="mb-0 pt-2"
             color="primary"
-            label="BC Online"
+            label="BC OnLine"
             :value="StaffPaymentOptions.BCOL"
           />
           <v-form class="mt-4 ml-8" ref="bcolForm" v-model="bcolFormValid">
             <v-text-field
               filled
               id="bcol-account-number-textfield"
-              label="BC Online Account Number"
+              label="BC OnLine Account Number"
               v-model="staffPaymentData.bcolAccountNumber"
               :rules="validate ? bcolAccountNumberRules : []"
               :disabled="paymentOption === StaffPaymentOptions.FAS || paymentOption === StaffPaymentOptions.NO_FEE"
@@ -163,8 +163,8 @@ const routingSlipNumberRules: Array<(v: string) => string | true> = [
   v => /^\d{9}$/.test(v) || 'Routing Slip Number must be 9 digits'
 ]
 const bcolAccountNumberRules: Array<(v: string) => string | true> = [
-  v => !!v || 'Enter BC Online Account Number',
-  v => /^\d{6}$/.test(v) || 'BC Online Account Number must be 6 digits'
+  v => !!v || 'Enter BC OnLine Account Number',
+  v => /^\d{6}$/.test(v) || 'BC OnLine Account Number must be 6 digits'
 ]
 const datNumberRules: Array<(v: string) => string | true> = [
   v => !!v || 'Enter DAT Number',

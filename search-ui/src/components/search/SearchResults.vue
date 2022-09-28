@@ -139,7 +139,7 @@ const resetFilters = ref(false)
 const resultsDescBusiness = computed(() => search.results?.length === 1 ? 'Business' : 'Businesses')
 const resultsDescOwner = computed(() => search.results?.length === 1 ? 'Firm Owner' : 'Firm Owners')
 
-const tooltipMsg = 'You can access this business through BC Online or by contacting BC Registries. ' +
+const tooltipMsg = 'You can access this business through BC OnLine or by contacting BC Registries. ' +
   'See "Help with Business Search" for details.'
 
 const clearFilters = () => {
