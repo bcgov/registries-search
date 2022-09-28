@@ -15,6 +15,7 @@
 import search_api.services.authz as auth_svc
 from search_api.enums import DocumentType
 from search_api.services import SBC_STAFF, STAFF_ROLE
+from search_api.utils.util import get_str
 
 
 class RequestValidator():  # pylint: disable=too-few-public-methods
@@ -52,3 +53,51 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
         if validation_errors:
             return validation_errors
         return None
+
+    @staticmethod
+    def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches
+        """Validate solr business update request."""
+        err = []
+        if not request_json.get('business'):
+            err.append({'error': 'Business Object is required.', 'path': '/business'})
+            return err
+
+        identifier_path = '/business/identifier'
+        if get_str(request_json, identifier_path) is None:
+            err.append({'error': 'Identifier is required.', 'path': identifier_path})
+
+        business_name_path = '/business/legalName'
+        if get_str(request_json, business_name_path) is None:
+            err.append({'error': 'Business Name is required.', 'path': business_name_path})
+
+        business_type_path = '/business/legalType'
+        if get_str(request_json, business_type_path) is None:
+            err.append({'error': 'Business Type is required.', 'path': business_type_path})
+
+        business_status_path = '/business/status'
+        business_status = get_str(request_json, business_status_path)
+        if business_status is None or business_status not in ['ACTIVE', 'HISTORICAL']:
+            err.append({'error': 'A valid business status is required.', 'path': business_status_path})
+
+        index = 0
+        for party in request_json.get('parties', []):
+            if not party.get('id'):
+                err.append({'error': 'Party Id is required.', 'path': f'/parties/{index}/id'})
+
+            if not party.get('partyType'):
+                err.append({'error': 'Party Type is required.', 'path': f'/parties/{index}/partyType'})
+
+            if not party.get('roles'):
+                err.append({'error': 'Party Roles is required.', 'path': f'/parties/{index}/roles'})
+
+            if party.get('partyType'):
+                if party.get('partyType') == 'organization':
+                    if not party.get('organizationName'):
+                        err.append({'error': 'Organization name is required.',
+                                    'path': f'/parties/{index}/organizationName'})
+                else:
+                    if not (party.get('firstName') or party.get('middleInitial') or party.get('lastName')):
+                        err.append({'error': 'First name or middle name or last name is required.',
+                                    'path': f'/parties/{index}'})
+            index += 1
+        return err
