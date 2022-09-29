@@ -178,7 +178,6 @@ export async function getDocument(businessIdentifier: string, document: Document
   const config = getSearchConfig()
   config.headers['Accept'] = 'application/pdf'
   config['responseType'] = 'blob' as 'json'
-
   return axios.get(`businesses/${businessIdentifier}/documents/${document.documentKey}`,
     config).then(response => {
       if (!response) throw new Error('Null response')

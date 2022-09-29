@@ -21,7 +21,7 @@
       </div>
       <error-retry
         v-else-if="filingHistory._error"
-        class="error-retry-filings font-14 mx-auto my-5"
+        class="error-retry-filings font-14 mx-auto my-8"
         :action="loadFilingHistory"
         :actionArgs="[filingHistory._identifier, filingHistory._effective_date]"
         :message="historyErrorMsg"
@@ -552,7 +552,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @import "@/assets/styles/theme.scss";
 .error-retry-filings {
-  max-width: 500px;
+  max-width: 550px;
 }
 
 .scrollable-container {

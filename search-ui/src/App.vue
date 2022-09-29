@@ -6,7 +6,7 @@
       attach="#app"
       :display="errorDisplay"
       :options="errorInfo"
-      @close="errorDisplay = false"
+      @close="errorDisplay = false; errorInfo = null"
     >
       <template v-if="errorContactInfo" v-slot:extra-content>
         <p class="font-normal mt-7">If this issue persists, please contact us.</p>

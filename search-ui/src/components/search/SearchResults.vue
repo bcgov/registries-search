@@ -39,7 +39,7 @@
         </template>
         <template v-if="search._error" v-slot:body-empty>
           <error-retry
-            class="my-3"
+            class="my-5"
             :action="getSearchResults"
             :action-args="[search._value]"
             message="We are unable to display your search results. Please try again later."
@@ -94,7 +94,7 @@
         </template>
         <template v-if="search._error" v-slot:body-empty>
           <error-retry
-            class="my-3"
+            class="my-5"
             :action="getSearchResults"
             :action-args="[search._value]"
             message="We are unable to display your search results. Please try again later."
