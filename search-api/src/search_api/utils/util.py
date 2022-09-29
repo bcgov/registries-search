@@ -17,6 +17,9 @@
 A simple decorator to add the options method to a Request Class.
 """
 # from functools import wraps
+from typing import Dict
+
+import dpath.util
 
 
 def cors_preflight(methods: str = 'GET'):
@@ -31,3 +34,24 @@ def cors_preflight(methods: str = 'GET'):
         setattr(f, 'options', options)
         return f
     return wrapper
+
+
+def get_str(filing: Dict, path: str) -> str:
+    """Extract a str from the JSON filing, at the provided path.
+
+    Args:
+        filing (Dict): A valid registry_schema filing.
+        path (str): The path to the date, which is in ISO Format.
+
+    Examples:
+        >>>get_str(
+            filing={'filing':{'header':{'name': 'annualReport'}}},
+            path='filing/header/name')
+        'annualReport'
+
+    """
+    try:
+        raw = dpath.util.get(filing, path)
+        return str(raw)
+    except (IndexError, KeyError, TypeError, ValueError):
+        return None
