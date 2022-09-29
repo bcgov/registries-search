@@ -11,13 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all of the businesses endpoints in Flask-Blueprint style."""
+"""Exposes all of the internal endpoints in Flask-Blueprint style."""
 from flask import Blueprint
 
-from .documents import bp as documents_bp
-from .search import bp as search_bp
+from .update_solr import bp as update_solr_bp
 
 
-bp = Blueprint('BUSINESSES', __name__, url_prefix='/businesses')  # pylint: disable=invalid-name
-bp.register_blueprint(search_bp)
-bp.register_blueprint(documents_bp)
+bp = Blueprint('INTERNAL', __name__, url_prefix='/internal')  # pylint: disable=invalid-name
+bp.register_blueprint(update_solr_bp)

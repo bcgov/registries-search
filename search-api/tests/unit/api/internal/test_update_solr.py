@@ -51,7 +51,7 @@ REQUEST_TEMPLATE = {
 @integration_solr
 def test_update_business_in_solr(session, client, jwt, mocker):
     """Assert that update operation is successful."""
-    api_response = client.put(f'/api/v1/businesses/update',
+    api_response = client.put(f'/api/v1/internal/solr/update',
                      data=json.dumps(REQUEST_TEMPLATE),
                     headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
                                                                 'content-type': 'application/json'})
@@ -65,7 +65,7 @@ def test_update_business_in_solr_missing_data(session, client, jwt, mocker):
     """Assert that error is returned."""
     request_json = copy.deepcopy(REQUEST_TEMPLATE)
     del request_json['business']['identifier']
-    api_response = client.put(f'/api/v1/businesses/update',
+    api_response = client.put(f'/api/v1/internal/solr/update',
                      data=json.dumps(request_json),
                     headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
                                                                 'content-type': 'application/json'})
@@ -79,7 +79,7 @@ def test_update_business_in_solr_invalid_data(session, client, jwt, mocker):
     """Assert that error is returned."""
     request_json = copy.deepcopy(REQUEST_TEMPLATE)
     request_json['parties'][0]['partyType'] = 'test'
-    api_response = client.put(f'/api/v1/businesses/update',
+    api_response = client.put(f'/api/v1/internal/solr/update',
                      data=json.dumps(request_json),
                     headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
                                                                 'content-type': 'application/json'})

@@ -2162,7 +2162,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
@@ -2185,13 +2185,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/update",
+							"raw": "{{base_url}}/{{version}}/internal/solr/update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{version}}",
-								"businesses",
+								"internal",
+								"solr",
 								"update"
 							]
 						}
