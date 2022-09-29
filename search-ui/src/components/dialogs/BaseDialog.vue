@@ -2,10 +2,10 @@
   <v-dialog class="base-dialog" :attach="attach" :model-value="display" persistent>
     <v-card v-if="options" class="px-10 py-9">
       <v-row no-gutters>
-        <v-col cols="11">
+        <v-col :cols="options.hideClose ? '12' : '11'">
           <h2 class="base-dialog__title">{{ options.title }}</h2>
         </v-col>
-        <v-col cols="1">
+        <v-col v-if="!options.hideClose" cols="1">
           <v-btn
             class="base-dialog__close-btn float-right"
             icon
