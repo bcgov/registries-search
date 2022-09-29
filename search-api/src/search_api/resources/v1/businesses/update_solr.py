@@ -53,14 +53,14 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
     """Return the SolrDoc for the json data."""
     def get_party_name(doc_info: Dict) -> str:
         """Return the parsed name of the party in the given doc info."""
-        if doc_info['organizationName']:
+        if doc_info.get('organizationName'):
             return doc_info['organizationName'].strip()
         person_name = ''
-        if doc_info['firstName']:
+        if doc_info.get('firstName'):
             person_name += doc_info['firstName'].strip()
-        if doc_info['middleInitial']:
+        if doc_info.get('middleInitial'):
             person_name += ' ' + doc_info['middleInitial'].strip()
-        if doc_info['lastName']:
+        if doc_info.get('lastName'):
             person_name += ' ' + doc_info['lastName'].strip()
         return person_name.strip()
 
@@ -76,10 +76,10 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
         'bn': business_info['taxId']
     }
     if party_info:
-        prepped_data['parties'] = {}
+        party_list = []
         # add party doc to base doc
         for party in party_info:
-            prepped_data['parties'][party.get('id')] = {
+            party_doc = {
                 'parentBN': business_info['taxId'],
                 'parentLegalType': business_info['legalType'],
                 'parentName': business_info['legalName'],
@@ -88,12 +88,8 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
                 'partyRoles': party['roles'],
                 'partyType': party['partyType']
             }
+            party_list.append(party_doc)
 
-    base_doc = prepped_data
-    if base_doc.get('parties'):
-        flattened_parties = []
-        for party_key in base_doc['parties']:
-            flattened_parties.append(base_doc['parties'][party_key])
-        base_doc['parties'] = flattened_parties
-        print(base_doc)
-    return SolrDoc(base_doc)
+        if party_list:
+            prepped_data['parties'] = party_list
+    return SolrDoc(prepped_data)

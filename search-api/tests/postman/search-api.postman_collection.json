@@ -2138,12 +2138,8 @@
 								"exec": [
 									"var jsonData = pm.response.json()\r",
 									"\r",
-									"pm.test(\"Status code is 201/Created\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"    \r",
-									"    // success, so set keys\r",
-									"    pm.environment.set(\"access_request_id\", jsonData.id)\r",
-									"    pm.environment.set(\"document_key\", jsonData.documents[0].documentKey)\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
 									"});\r",
 									"\r",
 									"pm.test('should return JSON', function () {\r",
@@ -2181,7 +2177,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789\",\r\n      \"status\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n         \"id\":1,\r\n         \"partyType\":\"organization\",\r\n         \"organizationName\":\"TEST ABC\",\r\n         \"roles\":[\r\n            \"director\",\r\n            \"incorporator\"\r\n         ]\r\n      }\r\n   ]\r\n}",
+							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789\",\r\n      \"status\":\"ACTIVE1\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n         \"id\":1,\r\n         \"partyType\":\"organization\",\r\n         \"organizationName\":\"TEST ABC\",\r\n         \"roles\":[\r\n            \"director\",\r\n            \"incorporator\"\r\n         ]\r\n      }\r\n   ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
