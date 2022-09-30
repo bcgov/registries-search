@@ -58,6 +58,12 @@ def test_update_business_in_solr(session, client, jwt, mocker):
                     )
     # check
     assert api_response.status_code == HTTPStatus.OK
+    search_response = client.get(f'/api/v1/businesses/search/facets?query=value:BC1233334',
+                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
+                                                                          'content-type': 'application/json'})
+                              )
+    assert search_response.status_code == HTTPStatus.OK
+    assert len(search_response.json['searchResults']['results']) == 1
 
 
 @integration_solr

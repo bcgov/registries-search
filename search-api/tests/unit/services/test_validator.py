@@ -132,6 +132,7 @@ def test_document_access_request_invalid(client, session, jwt, requests_mock, te
 
 
 @pytest.mark.parametrize('test_name, error_message', [
+    ('success', None),
     ('no_identifier', 'Identifier is required.'),
     ('no_legal_name', 'Business Name is required.'),
     ('no_legal_type', 'Business Type is required.'),
@@ -169,4 +170,7 @@ def test_validate_solr_update_request(client, session, test_name, error_message)
     err =RequestValidator.validate_solr_update_request(request_template_copy)
     # check
 
-    assert err[0]['error'] == error_message
+    if test_name == 'success':
+        assert not err
+    else:
+        assert err[0]['error'] == error_message
