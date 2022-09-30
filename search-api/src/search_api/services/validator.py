@@ -95,9 +95,12 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
                     if not party.get('organizationName'):
                         err.append({'error': 'Organization name is required.',
                                     'path': f'/parties/{index}/organizationName'})
-                else:
+                elif party.get('partyType') == 'person':
                     if not (party.get('firstName') or party.get('middleInitial') or party.get('lastName')):
                         err.append({'error': 'First name or middle name or last name is required.',
                                     'path': f'/parties/{index}'})
+                else:
+                    err.append({'error': 'Invalid party type.',
+                                'path': f'/parties/{index}/partyType'})
             index += 1
         return err

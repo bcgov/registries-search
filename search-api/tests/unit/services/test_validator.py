@@ -50,6 +50,27 @@ USERS_ORG =  {
   ]
 }
 
+SOLR_UPDATE_REQUEST_TEMPLATE = {
+   "business":{
+      "identifier":"BC1233334",
+      "legalName":"ABCD Corp",
+      "legalType":"BEN",
+      "taxId":"123456789",
+      "status":"ACTIVE"
+   },
+   "parties":[
+      {
+         "id":1,
+         "partyType":"organization",
+         "organizationName":"TEST ABC",
+         "roles":[
+            "director",
+            "incorporator"
+         ]
+      }
+   ]
+}
+
 def test_document_access_request_valid(client, session, jwt, requests_mock):
     """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
     # setup
@@ -108,3 +129,48 @@ def test_document_access_request_invalid(client, session, jwt, requests_mock, te
     # check
 
     assert err[0]['error'] == error_message
+
+
+@pytest.mark.parametrize('test_name, error_message', [
+    ('success', None),
+    ('no_identifier', 'Identifier is required.'),
+    ('no_legal_name', 'Business Name is required.'),
+    ('no_legal_type', 'Business Type is required.'),
+    ('no_status', 'A valid business status is required.'),
+    ('no_party_type', 'Party Type is required.'),
+    ('invalid_party_type', 'Invalid party type.'),
+    ('no_roles', 'Party Roles is required.'),
+    ('no_person_name', 'First name or middle name or last name is required.'),
+    ('no_org_name', 'Organization name is required.'),
+])
+def test_validate_solr_update_request(client, session, test_name, error_message):
+    """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
+    # setup
+    request_template_copy = copy.deepcopy(SOLR_UPDATE_REQUEST_TEMPLATE)
+    if test_name == 'no_identifier':
+        del request_template_copy['business']['identifier']
+    elif test_name == 'no_legal_name':
+        del request_template_copy['business']['legalName']
+    elif test_name == 'no_legal_type':
+        del request_template_copy['business']['legalType']
+    elif test_name == 'no_status':
+        del request_template_copy['business']['status']
+    elif test_name == 'no_party_type':
+        del request_template_copy['parties'][0]['partyType']
+    elif test_name == 'invalid_party_type':
+        request_template_copy['parties'][0]['partyType'] = 'test'
+    elif test_name == 'no_roles':
+        del request_template_copy['parties'][0]['roles']
+    elif test_name == 'no_org_name':
+        del request_template_copy['parties'][0]['organizationName']
+    elif test_name == 'no_person_name':
+        del request_template_copy['parties'][0]['organizationName']
+        request_template_copy['parties'][0]['partyType'] = 'person'
+
+    err =RequestValidator.validate_solr_update_request(request_template_copy)
+    # check
+
+    if test_name == 'success':
+        assert not err
+    else:
+        assert err[0]['error'] == error_message

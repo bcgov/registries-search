@@ -25,10 +25,10 @@ from search_api.services.solr import SolrDoc
 from search_api.services.validator import RequestValidator
 
 
-bp = Blueprint('UPDATE', __name__, url_prefix='/update')  # pylint: disable=invalid-name
+bp = Blueprint('UPDATE', __name__, url_prefix='/solr')  # pylint: disable=invalid-name
 
 
-@bp.put('')
+@bp.put('/update')
 @cross_origin(origin='*')
 def update_solr():
     """Add/Update business in solr."""
