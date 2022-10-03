@@ -40,6 +40,7 @@ export const useDocumentAccessRequest = () => {
 
     const createAccessRequest = async (selectedDocs: DocumentType[], entity: EntityI, header: StaffPaymentIF) => {
         documentAccessRequest._saving = true
+        documentAccessRequest._error = null
         const response: CreateDocumentResponseI = await createDocumentAccessRequest(entity.identifier, entity.name,
              selectedDocs, header)
         if (response.error) {
@@ -52,6 +53,7 @@ export const useDocumentAccessRequest = () => {
 
     const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
         documentAccessRequest._downloading = true
+        documentAccessRequest._error = null
         const response = await getDocument(businessIdentifier, document)       
         if (response?.error){
             documentAccessRequest._error = response.error
@@ -61,6 +63,7 @@ export const useDocumentAccessRequest = () => {
 
     const downloadFilingDocument = async (businessIdentifier: string, filingId: number, document: Document) => {     
         documentAccessRequest._downloading = true
+        documentAccessRequest._error = null
         const response = await fetchFilingDocument(businessIdentifier, filingId, document)      
         if (response?.error){
             documentAccessRequest._error = response.error

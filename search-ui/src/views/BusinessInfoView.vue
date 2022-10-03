@@ -82,15 +82,16 @@
         </p>
         <v-divider class="my-10" />
         <span class="section-header">Available Documents to Download:</span>
-        <div :class="['document-list', 'mt-3', 'pa-3', 'pr-5', 'pt-7', 
-        searchValidInput ? ' ': 'document-list-error']"
-         :key="checkBoxesKey">
+        <div
+          :class="['document-list', 'mt-3', 'py-8', searchValidInput ? '': 'document-list-error']"
+          :key="checkBoxesKey"
+        >
           <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
             </v-col>
           </v-row>
-          <div v-else class="documents-section">
+          <div v-else class="pl-3 pr-5">
             <div v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
               <div class="document-list__label">
                 <div>
@@ -391,12 +392,6 @@ const toggleFee = (event: any, item: any) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-
-.documents-section {
-  padding-bottom: 20px;
-  margin-top: -5px;
-}
-
 .document-list {
   background-color: white;
   border-radius: 5px;
@@ -524,6 +519,8 @@ const toggleFee = (event: any, item: any) => {
 .document-row {
   display: flex;
   width: 100%;
+}
+.document-row:not(:first-child) {
   padding-top: 10px
 }
 
