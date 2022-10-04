@@ -2,13 +2,15 @@
 import * as Sentry from '@sentry/vue'
 import { BrowserTracing } from '@sentry/tracing'
 import { createApp } from 'vue'
+import Hotjar from 'vue-hotjar'
+
 // Local
 import App from '@/App.vue'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 import { fetchConfig, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
- 
+
 // Styles
 import '@mdi/font/css/materialdesignicons.min.css' // ensure you are using css-loader
 import '@/assets/styles/base.scss'
@@ -59,6 +61,12 @@ async function start() {
   // initialize Launch Darkly
   if (window.ldClientId) {
     await initLdClient()
+  }
+
+  // Initialize Hotjar
+  if (window['hotjarId']) {
+    console.info('Initializing Hotjar...') // eslint-disable-line no-console
+    app.use(Hotjar, { id: window['hotjarId'], isProduction: true })
   }
 
   // start Vue application

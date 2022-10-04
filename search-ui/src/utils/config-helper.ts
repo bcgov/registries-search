@@ -47,14 +47,6 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
   console.info('Set REGISTRY URL to: ' + registryUrl)
 
-  const systemMessage: string = response.data.SYSTEM_MESSAGE
-  sessionStorage.setItem('SYSTEM_MESSAGE', systemMessage)
-  console.info('Set SYSTEM MESSAGE to: ' + systemMessage)
-
-  const systemMessageType: string = response.data.SYSTEM_MESSAGE_TYPE
-  sessionStorage.setItem('SYSTEM_MESSAGE_TYPE', systemMessageType)
-  console.info('Set SYSTEM MESSAGE TYPE to: ' + systemMessageType)
-
   const keycloakConfigPath: string = response.data.KEYCLOAK_CONFIG_PATH
   sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
   console.info('Set Keycloak Config Path to: ' + keycloakConfigPath)
@@ -107,6 +99,11 @@ export async function fetchConfig(): Promise<any> {
     console.info('Set Sentry Trace Sample Rate to', sentryTSR)
   }
 
+  const hotjarId: string = response.data.HOTJAR_ID
+  if (hotjarId) {
+    (<any>window).hotjarId = hotjarId
+    console.info('Set HotJar ID.')
+  }
   // set Base for Vue Router
   // eg, "/basePath/xxxx/"
   const vueRouterBase = processEnvBaseUrl

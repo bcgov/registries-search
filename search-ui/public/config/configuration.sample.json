@@ -19,6 +19,5 @@
   "SENTRY_TRACE_SAMPLE_RATE": "1.0",
   "STATUS_API_URL": "https://status-api-dev.apps.silver.devops.gov.bc.ca",
   "STATUS_API_VERSION": "/api/v1",
-  "SYSTEM_MESSAGE": "This is a <b>test</b> message",
-  "SYSTEM_MESSAGE_TYPE": "warning"
+  "HOTJAR_ID": ""
 }
