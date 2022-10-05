@@ -1,6 +1,6 @@
 <template>
   <v-app id="app" class="app-container">
-    
+
     <base-dialog
       id="error-dialog"
       attach="#app"
@@ -16,14 +16,14 @@
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
     <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
-    <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
     <sbc-system-banner
       v-if="systemMessage != null"
       class="justify-center"
       :setShow="systemMessage != null"
-      :setType="systemMessageType"
       :setMessage="systemMessage"
+      setType="warning"
     />
+    <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
     <v-expand-transition>
       <div v-if="showEntityInfo">
         <entity-info />
@@ -94,14 +94,8 @@ const isJestRunning = computed((): boolean => {
 
 const systemMessage = computed((): string => {
   // if SYSTEM_MESSAGE does not exist this will return 'undefined'. Needs to be null or str
-  const systemMessage = sessionStorage.getItem('SYSTEM_MESSAGE')
-  if (systemMessage) return systemMessage
-  return null
-})
-const systemMessageType = computed((): string => {
-  // if SYSTEM_MESSAGE_TYPE does not exist this will return 'undefined'. Needs to be null or str
-  const systemMessageType = sessionStorage.getItem('SYSTEM_MESSAGE_TYPE')
-  if (systemMessageType) return systemMessageType
+  const systemMessage = getFeatureFlag('banner-text')
+  if (systemMessage?.trim()) return systemMessage?.trim()
   return null
 })
 
@@ -168,7 +162,7 @@ onMounted(async () => {
   appLoading.value = false
 })
 
-const handleError = (error: ErrorI) => {  
+const handleError = (error: ErrorI) => {
   console.info(error)
   const bcolCodes = [
     ErrorCodes.BCOL_ACCOUNT_CLOSED, ErrorCodes.BCOL_ACCOUNT_INSUFFICIENT_FUNDS,

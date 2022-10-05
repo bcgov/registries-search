@@ -14,11 +14,9 @@
   "REGISTRIES_SEARCH_API_VERSION": "/api/v1",
   "REGISTRY_SEARCH_API_KEY": "xxxxxxxxx",
   "REGISTRY_URL": "https://yfthig-dev.web.app/dashboard",
-  "SENTRY_ENABLE": "false",
   "SENTRY_DSN": "",
   "SENTRY_TRACE_SAMPLE_RATE": "1.0",
   "STATUS_API_URL": "https://status-api-dev.apps.silver.devops.gov.bc.ca",
   "STATUS_API_VERSION": "/api/v1",
-  "SYSTEM_MESSAGE": "This is a <b>test</b> message",
-  "SYSTEM_MESSAGE_TYPE": "warning"
+  "HOTJAR_ID": ""
 }
