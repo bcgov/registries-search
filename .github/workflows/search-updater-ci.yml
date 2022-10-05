@@ -1,4 +1,4 @@
-name: Search Updater CI
+name: SEARCH UPDATER CI
 
 on:
   pull_request:
