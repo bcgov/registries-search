@@ -80,7 +80,7 @@ def collect_lear_data():
     return cur
 
 
-def prep_data(data: List, cur) -> List[SolrDoc]:
+def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable=too-many-branches, too-many-locals
     """Return the list of SolrDocs for the given raw db data."""
     prepped_data = {}
 
@@ -142,8 +142,11 @@ def prep_data(data: List, cur) -> List[SolrDoc]:
 
         elif not base_doc_already_added:
             # add new base doc
+            identifier = item_dict['identifier']
+            if source == 'COLIN' and item_dict['legal_type'] == 'BC':
+                identifier = f'BC{identifier}'
             prepped_data[item_dict['identifier']] = {
-                'identifier': item_dict['identifier'],
+                'identifier': identifier,
                 'name': item_dict['legal_name'],
                 'legaltype': item_dict['legal_type'],
                 'status': item_dict['state'],
@@ -195,12 +198,12 @@ def load_search_core():
         colin_data_cur = collect_colin_data()
         colin_data = colin_data_cur.fetchall()
         current_app.logger.debug('Prepping COLIN data...')
-        prepped_colin_data = prep_data(colin_data, colin_data_cur)
+        prepped_colin_data = prep_data(colin_data, colin_data_cur, 'COLIN')
         current_app.logger.debug(f'{len(prepped_colin_data)} COLIN records ready for import.')
         lear_data_cur = collect_lear_data()
         lear_data = lear_data_cur.fetchall()
         current_app.logger.debug('Prepping LEAR data...')
-        prepped_lear_data = prep_data(lear_data, lear_data_cur)
+        prepped_lear_data = prep_data(lear_data, lear_data_cur, 'LEAR')
         current_app.logger.debug(f'{len(prepped_lear_data)} LEAR records ready for import.')
         if current_app.config.get('REINDEX_CORE', False):
             # delete existing index
