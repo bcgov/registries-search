@@ -15,6 +15,7 @@ export default createVuetify({
           darkBlue: '#38598a',
           error: '#d3272c',
           success: '#1a9031',
+          warning: '#ffc107'
         }
       }
     },

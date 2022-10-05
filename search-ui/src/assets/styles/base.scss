@@ -453,19 +453,29 @@ span.invalid-color {
 
 // buttons
 .btn-basic,
-.btn-basic-outlined {
+.btn-basic:hover,
+.btn-basic-outlined,
+.btn-basic-outlined:hover {
   font-size: 0.875rem !important;
   font-weight: normal !important;
   box-shadow: none;
 }
+
 .btn-basic {
   background-color: $primary-blue;
   color: white;
 }
+.btn-basic:hover {
+  opacity: 0.9;
+}
+
 .btn-basic-outlined {
   background-color: white;
   border: 1px solid $primary-blue;
   color: $primary-blue;
+}
+.btn-basic-outlined:hover {
+  background-color: $gray0 !important;
 }
 
 // lists
