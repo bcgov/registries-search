@@ -122,7 +122,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
 
     SENTRY_ENABLE = 'false'
     STAN_CLUSTER_NAME = 'test-cluster'
-    SEARCH_API_URL = os.getenv('TEST_REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://test-search-solr.test')
+    SEARCH_API_URL = os.getenv('TEST_REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://search_api_url.test')
 
 
 class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
