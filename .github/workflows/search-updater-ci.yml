@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.8.,3.9]
 
     steps:
       - uses: actions/checkout@v2
@@ -51,7 +51,6 @@ jobs:
     needs: setup-job
     env:
       POD_NAMESPACE: ci
-
       NATS_SERVERS: "nats://nats:4222"
       NATS_CLUSTER_ID: test-cluster
       STAN_CLUSTER_NAME: test-cluster
@@ -60,14 +59,10 @@ jobs:
       NATS_ENTITY_EVENTS_QUEUE: entity-worker
       NATS_QUEUE: search-solr-updater-worker
       RUN_NATS_TESTS: True
-
       KEYCLOAK_AUTH_TOKEN_URL: https://kc_url.test
       BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID: test
       BUSINESS_SEARCH_SERVICE_ACCOUNT_SECRET: 1234
-
       LEGAL_API_URL: https://legal_api_url.test
-      
-
 
     runs-on: ubuntu-20.04
 
