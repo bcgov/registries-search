@@ -20,8 +20,8 @@
       v-if="systemMessage != null"
       class="justify-center"
       :setShow="systemMessage != null"
-      type="warning"
       :setMessage="systemMessage"
+      :setMessageType="systemMessageType"
     />
     <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
     <v-expand-transition>
@@ -97,6 +97,11 @@ const systemMessage = computed((): string => {
   const systemMessage = getFeatureFlag('banner-text')
   if (systemMessage?.trim()) return systemMessage?.trim()
   return null
+})
+
+const systemMessageType= computed((): string => {
+  // set warning as default, we don't have requirement now to show different type of message.
+  return 'warning'
 })
 
 const breadcrumbs = computed((): Array<BreadcrumbIF> => {
