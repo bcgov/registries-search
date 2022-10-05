@@ -80,7 +80,7 @@ def collect_lear_data():
     return cur
 
 
-def prep_data(data: List, cur, source: str) -> List[SolrDoc]:
+def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable=too-many-branches, too-many-locals
     """Return the list of SolrDocs for the given raw db data."""
     prepped_data = {}
 
