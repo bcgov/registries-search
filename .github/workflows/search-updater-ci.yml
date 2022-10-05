@@ -51,7 +51,7 @@ jobs:
     needs: setup-job
     env:
       POD_NAMESPACE: ci
-      NATS_SERVERS: "nats://nats:4222"
+      NATS_SERVERS: "http://0.0.0.0:4222"
       NATS_CLUSTER_ID: test-cluster
       STAN_CLUSTER_NAME: test-cluster
       NATS_ENTITY_EVENTS_CLIENT_NAME: entity.events.worker
