@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "35965a92-e3e1-4c46-9d9c-c1ea128bfde1",
+		"_postman_id": "1c470b4a-ec58-4554-bc85-2f4b48bd4b24",
 		"name": "SEARCH API Integration Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "7999989"
+		"_exporter_id": "6835935"
 	},
 	"item": [
 		{
@@ -2130,7 +2130,7 @@
 			"name": "internal",
 			"item": [
 				{
-					"name": "Add/Update business in solr",
+					"name": "business solr update",
 					"event": [
 						{
 							"listen": "test",
@@ -2177,7 +2177,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789\",\r\n      \"status\":\"ACTIVE1\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n         \"id\":1,\r\n         \"partyType\":\"organization\",\r\n         \"organizationName\":\"TEST ABC\",\r\n         \"roles\":[\r\n            \"director\",\r\n            \"incorporator\"\r\n         ]\r\n      }\r\n   ]\r\n}",
+							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2199,9 +2199,9 @@
 					},
 					"response": [
 						{
-							"name": "Create Document Access Request",
+							"name": "business solr update",
 							"originalRequest": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [
 									{
 										"key": "Accept",
@@ -2216,7 +2216,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"documentAccessRequest\":{\r\n        \"documents\": [\r\n            {\r\n                \"type\": \"BUSINESS_SUMMARY_FILING_HISTORY\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2224,21 +2224,20 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/{{identifier}}/documents/requests",
+									"raw": "{{base_url}}/{{version}}/internal/solr/update",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"{{version}}",
-										"businesses",
-										"{{identifier}}",
-										"documents",
-										"requests"
+										"internal",
+										"solr",
+										"update"
 									]
 								}
 							},
-							"status": "CREATED",
-							"code": 201,
+							"status": "OK",
+							"code": 200,
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
@@ -2247,7 +2246,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Tue, 14 Jun 2022 21:51:51 GMT"
+									"value": "Tue, 04 Oct 2022 14:05:39 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -2255,7 +2254,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "320"
+									"value": "43"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -2263,7 +2262,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/0.0.1"
+									"value": "search_api/1.0.0b1.dev6"
 								},
 								{
 									"key": "SCHEMAS",
@@ -2275,7 +2274,156 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"businessIdentifier\": \"BC1218851\",\n    \"documents\": [\n        {\n            \"documentKey\": \"1db17RjuI\",\n            \"documentType\": \"BUSINESS_SUMMARY_FILING_HISTORY\",\n            \"fileName\": null,\n            \"id\": 9\n        }\n    ],\n    \"expiryDate\": \"2022-06-21T21:51:51.907315+00:00\",\n    \"id\": 9,\n    \"outputFileKey\": null,\n    \"paymentStatus\": \"APPROVED\",\n    \"status\": \"PAID\",\n    \"submissionDate\": \"2022-06-14T21:51:51.513740+00:00\"\n}"
+							"body": "{\n    \"responseHeader\": {\n        \"QTime\": 31,\n        \"status\": 0\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "business + parties solr update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"Test update parties\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABC\",\r\n          \"partyType\":\"organization\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bob\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "business + parties solr update",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"Test update parties\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABC\",\r\n          \"partyType\":\"organization\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bob\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 04 Oct 2022 14:23:37 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "API",
+									"value": "search_api/1.0.0b1.dev6"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"responseHeader\": {\n        \"QTime\": 53,\n        \"status\": 0\n    }\n}"
 						}
 					]
 				}

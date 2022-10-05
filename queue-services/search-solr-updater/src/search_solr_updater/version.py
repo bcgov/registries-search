@@ -11,22 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for the api utils module."""
 
-SOLR_UPDATE_REQUEST_TEMPLATE = {
-   "business": {
-        "identifier": "FM1233334",
-        "legalName": "ABCD Prop",
-        "legalType": "SP",
-        "taxId": "123456789",
-        "state": "ACTIVE"
-   },
-   "parties":[{
-        "officer": {
-            "id": 1,
-            "partyType": "organization",
-            "organizationName": "TEST ABC"
-        },
-        "roles": [{"roleType": "proprietor"}]
-    }]
-}
+"""Version of this service in PEP440.
+
+[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
+Epoch segment: N!
+Release segment: N(.N)*
+Pre-release segment: {a|b|rc}N
+Post-release segment: .postN
+Development release segment: .devN
+"""
+
+__version__ = '1.0.0rc1'  # pylint: disable=invalid-name

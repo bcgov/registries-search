@@ -155,7 +155,7 @@ export async function createDocumentAccessRequest(
 
 export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI> {
   const config = getSearchConfig()
-  return axios.get<AccessRequestsHistoryI>(`purchases`,
+  return axios.get<AccessRequestsHistoryI>(`purchases1`,
     config)
     .then(response => {
       const data: AccessRequestsHistoryI = response?.data
@@ -178,7 +178,7 @@ export async function getDocument(businessIdentifier: string, document: Document
   const config = getSearchConfig()
   config.headers['Accept'] = 'application/pdf'
   config['responseType'] = 'blob' as 'json'
-  return axios.get(`businesses/${businessIdentifier}/documents/${document.documentKey}`,
+  return axios.get(`businesses1/${businessIdentifier}/documents/${document.documentKey}`,
     config).then(response => {
       if (!response) throw new Error('Null response')
       const blob = new Blob([response.data], { type: 'application/pdf' })

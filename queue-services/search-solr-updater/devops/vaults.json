@@ -1,0 +1,33 @@
+[
+    {
+        "vault": "nats",
+        "application": [
+            "base",
+            "entity-events-listener"
+        ]
+    },
+    {
+        "vault": "sentry",
+        "application": [
+             "registries-search-backend"
+        ]
+    },
+    {
+        "vault": "API",
+        "application": [
+            "legal-api",
+            "registries-search-api"
+        ]
+    },
+    {
+        "vault": "keycloak",
+        "application": [
+            "jwt-base",
+            "business-search-service-account"
+        ]
+    },
+    {
+        "vault": "registries-search",
+        "application": ["shared"]
+    }
+]

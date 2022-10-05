@@ -74,33 +74,41 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
         if get_str(request_json, business_type_path) is None:
             err.append({'error': 'Business Type is required.', 'path': business_type_path})
 
-        business_status_path = '/business/status'
+        business_status_path = '/business/state'
         business_status = get_str(request_json, business_status_path)
         if business_status is None or business_status not in ['ACTIVE', 'HISTORICAL']:
-            err.append({'error': 'A valid business status is required.', 'path': business_status_path})
+            err.append({'error': 'A valid business state is required.', 'path': business_status_path})
 
-        index = 0
-        for party in request_json.get('parties', []):
-            if not party.get('id'):
-                err.append({'error': 'Party Id is required.', 'path': f'/parties/{index}/id'})
-
-            if not party.get('partyType'):
-                err.append({'error': 'Party Type is required.', 'path': f'/parties/{index}/partyType'})
+        for index, party in enumerate(request_json.get('parties', [])):
 
             if not party.get('roles'):
                 err.append({'error': 'Party Roles is required.', 'path': f'/parties/{index}/roles'})
+            for role_index, role in enumerate(party.get('roles', [])):
+                if not role.get('roleType'):
+                    err.append(
+                        {'error': 'Role Type is required.', 'path': f'/parties/{index}/roles/{role_index}/roleType'})
+                elif role.get('roleType').lower() not in ['partner', 'proprietor']:
+                    err.append(
+                        {'error': 'Only Partner or Proprietor roles are accepted.',
+                         'path': f'/parties/{index}/roles/{role_index}/roleType'})
 
-            if party.get('partyType'):
-                if party.get('partyType') == 'organization':
-                    if not party.get('organizationName'):
+            officer_path = f'/parties/{index}/officer'
+            officer = party.get('officer', {})
+
+            party_type = officer.get('partyType')
+            if not party_type:
+                err.append({'error': 'Party Type is required.', 'path': f'{officer_path}/partyType'})
+
+            if party_type:
+                if party_type == 'organization':
+                    if not officer.get('organizationName'):
                         err.append({'error': 'Organization name is required.',
-                                    'path': f'/parties/{index}/organizationName'})
-                elif party.get('partyType') == 'person':
-                    if not (party.get('firstName') or party.get('middleInitial') or party.get('lastName')):
+                                    'path': f'{officer_path}/organizationName'})
+                elif party_type == 'person':
+                    if not (officer.get('firstName') or officer.get('middleInitial') or officer.get('lastName')):
                         err.append({'error': 'First name or middle name or last name is required.',
-                                    'path': f'/parties/{index}'})
+                                    'path': f'{officer_path}'})
                 else:
                     err.append({'error': 'Invalid party type.',
-                                'path': f'/parties/{index}/partyType'})
-            index += 1
+                                'path': f'{officer_path}/partyType'})
         return err

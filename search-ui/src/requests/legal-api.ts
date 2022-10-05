@@ -29,7 +29,7 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
 export async function getFilings(identifier: string, effective_date: string): Promise<any> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
   const config = { baseURL: url }
-  let filings_url = `businesses/${identifier}/filings`
+  let filings_url = `businesses/${identifier}/filings1`
   if (effective_date) {
 
     filings_url = filings_url + `?effective_date=${effective_date.split('.')[0]}`

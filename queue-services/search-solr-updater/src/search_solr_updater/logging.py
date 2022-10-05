@@ -11,22 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for the api utils module."""
+"""Setup logging for the service."""
+import logging
+import os
 
-SOLR_UPDATE_REQUEST_TEMPLATE = {
-   "business": {
-        "identifier": "FM1233334",
-        "legalName": "ABCD Prop",
-        "legalType": "SP",
-        "taxId": "123456789",
-        "state": "ACTIVE"
-   },
-   "parties":[{
-        "officer": {
-            "id": 1,
-            "partyType": "organization",
-            "organizationName": "TEST ABC"
-        },
-        "roles": [{"roleType": "proprietor"}]
-    }]
-}
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s,%(msecs)d-%(name)s-%(levelname)s > %(module)s:%(filename)s:%(lineno)d-%(funcName)s:%(message)s',
+    datefmt='%H:%M:%S',
+)
+logging.getLogger('asyncio').setLevel(logging.DEBUG)
+
+if os.getenv('DISABLE_HTTP_ACCESS_LOGS', 'False').lower() == 'true':
+    # This disables the healthz / readyz / meta logging messsages.
+    logging.getLogger('aiohttp.access').setLevel(logging.ERROR)
+
+logger = logging.getLogger('asyncio')
