@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8.,3.9]
+        python-version: [3.8,3.9]
 
     steps:
       - uses: actions/checkout@v2
@@ -63,6 +63,7 @@ jobs:
       BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID: test
       BUSINESS_SEARCH_SERVICE_ACCOUNT_SECRET: 1234
       LEGAL_API_URL: https://legal_api_url.test
+      REGISTRIES_SEARCH_API_INTERNAL_URL: https://search_api_url.test
 
     runs-on: ubuntu-20.04
 
