@@ -79,27 +79,17 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
         event_message (object): cloud event message, format below.
             {
                 'specversion': '1.0.1',
-                'type': 'bc.registry.names.events',
-                'source': 'LEGAL_API_URL/business/:idenifier/filing/:filing_id',
-                'id': id,
+                'type': 'bc.registry.business.:filing_type',
+                'source': '<str>',
+                'id': :str(uuid.uuid4()),
                 'time': ':datetime.utcnow().isoformat()',
                 'datacontenttype': 'application/json',
-                'identifier': ':identifier',
-                'data': {
-                    'filing': {
-                        'header': {
-                            'filingId': filing.id,
-                            'effectiveDate': filing.effective_date.isoformat()
-                        },
-                        'business': {'identifier': business.identifier},
-                        'legalFilings': get_filing_types(filing.filing_json)
-                    }
-                }
+                'identifier': ':identifier'
             }
     """
-    logger.debug('>>>>>>>process_business_events>>>>>')
+    logger.debug('>>>>>>>process_business_event>>>>>')
     # get identifier
-    identifier = event_message.get('identifier') or event_message.get('data', {}).get('business', {}).get('identifier')
+    identifier = event_message.get('identifier')
     if not identifier:
         raise QueueException('Unable to parse identifier from message payload.')
 
@@ -138,7 +128,7 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
         logger.debug('SEARCH API connection failure: %s', err.with_traceback(None))
         raise QueueException(HTTPStatus.INTERNAL_SERVER_ERROR, 'Unable to update search solr via search api.')
 
-    logger.debug('<<<<<<<process_business_events<<<<<<<<<<')
+    logger.debug('<<<<<<<process_business_event<<<<<<<<<<')
 
 
 qsm = QueueServiceManager()  # pylint: disable=invalid-name
