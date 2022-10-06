@@ -3,7 +3,8 @@
         "vault": "nats",
         "application": [
             "base",
-            "entity-events-listener"
+            "entity-events-listener",
+            "search-solr-updater"
         ]
     },
     {

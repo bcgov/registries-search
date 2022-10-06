@@ -54,7 +54,7 @@ async def run(loop, identifier):
             'servers': os.getenv('NATS_SERVERS', 'nats://127.0.0.1:4222').split(','),
             'io_loop': loop,
             'error_cb': error_cb,
-            'name': os.getenv('NATS_ENTITY_EVENTS_CLIENT_NAME', 'entity.events.worker')
+            'name': os.getenv('SEARCH_SOLR_CLIENT_NAME', 'search.solr.worker')
         }
 
     def stan_connection_options():
@@ -67,8 +67,8 @@ async def run(loop, identifier):
     def subscription_options():
         return {
             'subject': os.getenv('NATS_ENTITY_EVENTS_SUBJECT', 'entity.events'),
-            'queue': os.getenv('NATS_ENTITY_EVENTS_QUEUE', 'events-worker'),
-            'durable_name': os.getenv('NATS_ENTITY_EVENTS_QUEUE', 'events-worker') + '_durable'
+            'queue': os.getenv('SEARCH_SOLR_QUEUE', 'search-solr-worker'),
+            'durable_name': os.getenv('SEARCH_SOLR_QUEUE', 'search-solr-worker') + '_durable'
         }
 
     try:
