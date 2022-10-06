@@ -34,7 +34,7 @@ export const useAuth = () => {
     if (!auth._error) await _loadCurrentAccount()
     // check sbc
     if (!auth._error) {
-      if (auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
+      if (!isStaff.value && auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
         const isSbc = await getSbcFromAuth()
         if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
       }
