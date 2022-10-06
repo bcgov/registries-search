@@ -1,0 +1,99 @@
+name: SEARCH UPDATER CI
+
+on:
+  pull_request:
+    types: [assigned, synchronize]
+    paths:
+      - "queue-services/search-solr-updater/**"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./queue-services/search-solr-updater
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-20.04
+
+    if: github.repository == 'bcgov/registries-search'
+    
+    steps:
+      - uses: actions/checkout@v2
+      - run: "true"
+
+  linting:
+    needs: setup-job
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        python-version: [3.8,3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          make setup
+      - name: Lint with pylint
+        id: pylint
+        run: |
+          make pylint
+      - name: Lint with flake8
+        id: flake8
+        run: |
+          make flake8
+
+  # testing:
+  #   needs: setup-job
+  #   env:
+  #     POD_NAMESPACE: ci
+  #     NATS_SERVERS: localhost:4222
+  #     NATS_CLUSTER_ID: test-cluster
+  #     STAN_CLUSTER_NAME: test-cluster
+  #     NATS_ENTITY_EVENTS_CLIENT_NAME: entity.events.tester
+  #     NATS_ENTITY_EVENTS_SUBJECT: entity.events
+  #     NATS_ENTITY_EVENTS_QUEUE: entity-worker
+  #     RUN_NATS_TESTS: True
+  #     KEYCLOAK_AUTH_TOKEN_URL: https://kc_url.test
+  #     BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID: test
+  #     BUSINESS_SEARCH_SERVICE_ACCOUNT_SECRET: 1234
+  #     LEGAL_API_URL: https://legal_api_url.test
+  #     REGISTRIES_SEARCH_API_INTERNAL_URL: https://search_api_url.test
+
+  #   runs-on: ubuntu-20.04
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v1
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Install dependencies
+  #       run: |
+  #         make setup
+  #     - name: Test with pytest
+  #       id: test
+  #       run: |
+  #         make test
+  #     - name: Upload coverage to Codecov
+  #       uses: codecov/codecov-action@v1
+  #       with:
+  #         file: ./queue-services/search-solr-updater/coverage.xml
+  #         flags: search-solr-updater
+  #         name: codecov-search-solr-updater
+  #         fail_ci_if_error: false
+
+  build-check:
+    needs: setup-job
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: build to check strictness
+        id: build
+        run: |
+          make build-nc

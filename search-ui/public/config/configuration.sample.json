@@ -12,7 +12,7 @@
   "POD_NAMESPACE": "dev",
   "REGISTRIES_SEARCH_API_URL": "https://bcregistry-dev.apigee.net/registry-search",
   "REGISTRIES_SEARCH_API_VERSION": "/api/v1",
-  "REGISTRY_SEARCH_API_KEY": "xxxxxxxxx",
+  "REGISTRIES_SEARCH_API_KEY": "xxxxxxxxx",
   "REGISTRY_URL": "https://yfthig-dev.web.app/dashboard",
   "SENTRY_DSN": "",
   "SENTRY_TRACE_SAMPLE_RATE": "1.0",

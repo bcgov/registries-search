@@ -11,22 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for the api utils module."""
-
-SOLR_UPDATE_REQUEST_TEMPLATE = {
-   "business": {
-        "identifier": "FM1233334",
-        "legalName": "ABCD Prop",
-        "legalType": "SP",
-        "taxId": "123456789",
-        "state": "ACTIVE"
-   },
-   "parties":[{
-        "officer": {
-            "id": 1,
-            "partyType": "organization",
-            "organizationName": "TEST ABC"
-        },
-        "roles": [{"roleType": "proprietor"}]
-    }]
-}
+"""Test suite for the integrations to NATS Queue."""

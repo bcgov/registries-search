@@ -51,17 +51,17 @@ def update_solr():
 
 def _prepare_data(request_json: Dict) -> SolrDoc:
     """Return the SolrDoc for the json data."""
-    def get_party_name(doc_info: Dict) -> str:
+    def get_party_name(officer: Dict[str, str]) -> str:
         """Return the parsed name of the party in the given doc info."""
-        if doc_info.get('organizationName'):
-            return doc_info['organizationName'].strip()
+        if officer.get('organizationName'):
+            return officer['organizationName'].strip()
         person_name = ''
-        if doc_info.get('firstName'):
-            person_name += doc_info['firstName'].strip()
-        if doc_info.get('middleInitial'):
-            person_name += ' ' + doc_info['middleInitial'].strip()
-        if doc_info.get('lastName'):
-            person_name += ' ' + doc_info['lastName'].strip()
+        if officer.get('firstName'):
+            person_name += officer['firstName'].strip()
+        if officer.get('middleInitial'):
+            person_name += ' ' + officer['middleInitial'].strip()
+        if officer.get('lastName'):
+            person_name += ' ' + officer['lastName'].strip()
         return person_name.strip()
 
     business_info = request_json.get('business')
@@ -72,21 +72,21 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
         'identifier': business_info['identifier'],
         'name': business_info['legalName'],
         'legaltype': business_info['legalType'],
-        'status': business_info['status'],
-        'bn': business_info['taxId']
+        'status': business_info['state'],
+        'bn': business_info.get('taxId')
     }
     if party_info:
         party_list = []
         # add party doc to base doc
         for party in party_info:
             party_doc = {
-                'parentBN': business_info['taxId'],
+                'parentBN': business_info.get('taxId'),
                 'parentLegalType': business_info['legalType'],
                 'parentName': business_info['legalName'],
-                'parentStatus': business_info['status'],
-                'partyName': get_party_name(party),
-                'partyRoles': party['roles'],
-                'partyType': party['partyType']
+                'parentStatus': business_info['state'],
+                'partyName': get_party_name(party['officer']),
+                'partyRoles': [x['roleType'].lower() for x in party['roles']],
+                'partyType': party['officer']['partyType']
             }
             party_list.append(party_doc)
 

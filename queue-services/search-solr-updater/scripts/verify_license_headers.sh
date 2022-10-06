@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Copyright © 2022 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,22 +13,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for the api utils module."""
 
-SOLR_UPDATE_REQUEST_TEMPLATE = {
-   "business": {
-        "identifier": "FM1233334",
-        "legalName": "ABCD Prop",
-        "legalType": "SP",
-        "taxId": "123456789",
-        "state": "ACTIVE"
-   },
-   "parties":[{
-        "officer": {
-            "id": 1,
-            "partyType": "organization",
-            "organizationName": "TEST ABC"
-        },
-        "roles": [{"roleType": "proprietor"}]
-    }]
-}
+
+COPYRIGHT="Copyright © 2022 Province of British Columbia"
+RET=0
+
+for file in $(find $@ -not \( -path */venv -prune \) -not \( -path */migrations -prune \) -not \( -path */tests -prune \) -not \( -path */.egg* -prune \) -name \*.py)
+do
+  grep "${COPYRIGHT}" ${file} >/dev/null
+  if [[ $? != 0 ]]
+  then
+    echo "${file} missing copyright header"
+    RET=1
+  fi
+done
+exit ${RET}
