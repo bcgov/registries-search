@@ -114,7 +114,7 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
     try:
         update_payload = {**business_resp.json(), 'parties': parties}
         solr_update_url = f'{APP_CONFIG.SEARCH_API_URL}/internal/solr/update'
-        update_resp = requests.put(url=solr_update_url, headers=headers, json=update_payload, timeout='30')
+        update_resp = requests.put(url=solr_update_url, headers=headers, json=update_payload, timeout=30)
         if update_resp.status_code != HTTPStatus.OK:
             logger.debug(update_resp.json())
             raise QueueException(update_resp.status_code, 'Unable to update search solr via search api.')
