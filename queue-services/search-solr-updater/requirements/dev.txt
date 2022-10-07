@@ -4,7 +4,6 @@
 # Testing
 pytest
 pytest-mock
-requests
 pyhamcrest
 pytest-cov
 FreezeGun
