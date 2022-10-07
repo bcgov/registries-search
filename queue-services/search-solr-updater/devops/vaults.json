@@ -23,7 +23,7 @@
     {
         "vault": "keycloak",
         "application": [
-            "jwt-base",
+            "base",
             "business-search-service-account"
         ]
     },
