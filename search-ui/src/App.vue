@@ -246,6 +246,9 @@ const handleError = (error: ErrorI) => {
       // handled inline
       Sentry.captureException(error)
       break
+    case ErrorCategories.SEARCH_UNAVAILABLE:
+      // handled inline and no error msg needed
+      break
     default:
       errorInfo.value = {...DefaultError}
       errorContactInfo.value = true
