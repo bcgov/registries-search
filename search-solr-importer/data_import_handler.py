@@ -38,7 +38,7 @@ def collect_colin_data():
         SELECT c.corp_num as identifier, c.corp_typ_cd as legal_type, c.bn_15 as tax_id,
             cn.corp_nme as legal_name, cp.business_nme as organization_name, cp.first_nme as first_name,
             cp.last_nme as last_name, cp.middle_nme as middle_initial, cp.party_typ_cd, cp.corp_party_id as party_id,
-            CASE cos.state_typ_cd
+            CASE cos.op_state_typ_cd
                 when 'ACT' then 'ACTIVE' when 'HIS' then 'HISTORICAL'
                 else 'ACTIVE' END as state
         FROM corporation c
