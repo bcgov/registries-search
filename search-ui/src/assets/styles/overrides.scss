@@ -369,12 +369,15 @@ td {
 }
 
 // v-select
-.v-overlay .v-overlay__content.v-select__content .v-list-item--link:hover {
-  background-color: $gray1;
-}
+.v-overlay .v-overlay__content.v-select__content {
+  max-height: 350px !important;
 
-.v-overlay .v-overlay__content.v-select__content .v-list-item--link:hover
-.v-list-item-header .v-list-item-title {
-  color: $primary-blue !important;
+  .v-list-item--link:hover {
+    background-color: $gray1;
+
+    .v-list-item-header .v-list-item-title {
+      color: $primary-blue !important;
+    }
+  }
 }
 

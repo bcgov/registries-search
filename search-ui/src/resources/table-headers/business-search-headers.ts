@@ -1,7 +1,8 @@
 import { useEntity, useSearch } from '@/composables'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
+import { SearchCorpTypes } from '@/resources'
 
-const { corpTypes, getEntityCode, getEntityDescription } = useEntity()
+const { getEntityCode, getEntityDescription } = useEntity()
 const { filterSearch, highlightMatch } = useSearch()
 
 export const BusinessSearchHeaders: BaseTableHeaderI[] = [
@@ -55,8 +56,8 @@ export const BusinessSearchHeaders: BaseTableHeaderI[] = [
     col: 'legalType',
     filter: {
       clearable: true,
-      filterApiFn: (filterVal: string) => filterSearch('legalType', getEntityCode(filterVal)),
-      items: corpTypes.value.sort(),
+      filterApiFn: (filterVal: string) => filterSearch('legalType', getEntityCode(filterVal) || filterVal),
+      items: SearchCorpTypes,
       label: 'Business Type',
       type: 'select',
       value: ''

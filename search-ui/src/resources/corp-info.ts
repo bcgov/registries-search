@@ -212,13 +212,13 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       colinInd: true,
       corpClass: CorpClass.SOC,
       shortDesc: 'SOCIETY',
-      fullDesc: 'Society'
+      fullDesc: 'BC Society'
     }, {
       corpTypeCd: CorpTypeCd.SOCIETY_BRANCH,
       colinInd: false,
       corpClass: CorpClass.OT,
       shortDesc: 'SOCIETY BRANCH',
-      fullDesc: 'Society Branch'
+      fullDesc: 'BC Society'
     }, {
       corpTypeCd: CorpTypeCd.SOLE_PROP,
       colinInd: true,
