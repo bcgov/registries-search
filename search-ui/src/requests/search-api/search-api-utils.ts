@@ -1,8 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 // local
 import { useAuth } from '@/composables'
-import { ErrorCategories, ErrorCodes } from '@/enums'
+import { CorpTypeCd, ErrorCategories, ErrorCodes } from '@/enums'
 import { ErrorI, SearchFilterI, SearchPartyFilterI } from '@/interfaces'
+import { OtherCorpTypes } from '@/resources'
 
 export const addSearchBusFilters = (filters: SearchFilterI) => {
   const filterParams = { query: '', categories: '' }
@@ -11,7 +12,18 @@ export const addSearchBusFilters = (filters: SearchFilterI) => {
   if (filters?.identifier) filterParams.query += `::identifier:${filters.identifier}`
   if (filters?.name) filterParams.query += `::name:${filters.name}`
   // categories
-  if (filters?.legalType) filterParams.categories += `legalType:${filters.legalType}`
+  if (filters?.legalType) {
+    // group society legal types
+    const societyTypes = [CorpTypeCd.CONT_IN_SOCIETY, CorpTypeCd.SOCIETY, CorpTypeCd.SOCIETY_BRANCH]
+    if (societyTypes.includes(filters.legalType as CorpTypeCd)) {
+      // query by all society corp types
+      filters.legalType = societyTypes.join(',') as CorpTypeCd
+    } else if (filters.legalType === 'Other' as CorpTypeCd) {
+      // query by all 'other' corp types
+      filters.legalType = OtherCorpTypes.join(',') as CorpTypeCd
+    }
+    filterParams.categories += `legalType:${filters.legalType}`
+  }
   if (filters?.status) {
     filterParams.categories += filters?.legalType ? `::` : ''
     filterParams.categories += `status:${filters.status}`

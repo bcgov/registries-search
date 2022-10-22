@@ -106,7 +106,10 @@ export const useEntity = () => {
   })
 
   const corpTypes = computed(() => {
-    return [...new Set(CorpInfoArray.map((corp) => corp.fullDesc))]
+    const nrTypeCodes = [CorpTypeCd.BC_CORPORATION, CorpTypeCd.NR_SOLE_PROP]
+    const corpSet = new Set(CorpInfoArray.map((corp) => !nrTypeCodes.includes(corp.corpTypeCd) ? corp.fullDesc : null))
+    corpSet.delete(null)
+    return [...corpSet]
   })
 
   const learBusinessTypes = computed(() => {
