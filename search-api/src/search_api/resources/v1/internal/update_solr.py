@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoint for updating/adding business record in solr."""
+import re
 from http import HTTPStatus
 from typing import Dict
 
@@ -51,6 +52,12 @@ def update_solr():
 
 def _prepare_data(request_json: Dict) -> SolrDoc:
     """Return the SolrDoc for the json data."""
+    def needs_bc_prefix(identifier: str, legal_type: str) -> bool:
+        """Return if the identifier should have the BC prefix or not."""
+        numbers_only_rgx = r'^[0-9]+$'
+        # TODO: get legal types from shared enum
+        return legal_type in ['BEN', 'BC', 'CC', 'ULC'] and re.search(numbers_only_rgx, identifier)
+
     def get_party_name(officer: Dict[str, str]) -> str:
         """Return the parsed name of the party in the given doc info."""
         if officer.get('organizationName'):
@@ -68,10 +75,12 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
     party_info = request_json.get('parties')
 
     # add new base doc
+    identifier = business_info['identifier']
+    legal_type = business_info['legalType']
     prepped_data = {
-        'identifier': business_info['identifier'],
+        'identifier': f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
         'name': business_info['legalName'],
-        'legaltype': business_info['legalType'],
+        'legaltype': legal_type,
         'status': business_info['state'],
         'bn': business_info.get('taxId')
     }
