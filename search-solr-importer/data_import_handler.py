@@ -143,7 +143,7 @@ def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable
         elif not base_doc_already_added:
             # add new base doc
             identifier = item_dict['identifier']
-            if source == 'COLIN' and item_dict['legal_type'] == 'BC':
+            if source == 'COLIN' and item_dict['legal_type'] in ['BC', 'CC', 'ULC']:
                 identifier = f'BC{identifier}'
             prepped_data[item_dict['identifier']] = {
                 'identifier': identifier,
