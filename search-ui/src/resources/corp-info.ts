@@ -17,19 +17,19 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       shortDesc: 'EXTRA PRO',
       fullDesc: 'Extraprovincial Company'
     }, {
-      corpTypeCd: CorpTypeCd.BC_COMPANY,
-      colinInd: true,
-      corpClass: CorpClass.BC,
-      shortDesc: 'BC COMPANY',
-      fullDesc: 'BC Limited Company',
-      numberedDesc: 'Numbered Limited Company'
-    }, {
       corpTypeCd: CorpTypeCd.BENEFIT_COMPANY,
       colinInd: true,
       corpClass: CorpClass.BC,
       shortDesc: 'BENEFIT COMPANY',
       fullDesc: 'BC Benefit Company',
       numberedDesc: 'Numbered Benefit Company'
+    }, {
+      corpTypeCd: CorpTypeCd.BC_COMPANY,
+      colinInd: true,
+      corpClass: CorpClass.BC,
+      shortDesc: 'BC COMPANY',
+      fullDesc: 'BC Limited Company',
+      numberedDesc: 'Numbered Limited Company'
     }, {
       corpTypeCd: CorpTypeCd.CONTINUE_IN,
       colinInd: true,
@@ -41,12 +41,6 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       colinInd: true,
       corpClass: CorpClass.BC,
       shortDesc: 'BC CCC',
-      fullDesc: 'BC Community Contribution Company'
-    }, {
-      corpTypeCd: CorpTypeCd.CCC_CONTINUE_IN,
-      colinInd: true,
-      corpClass: CorpClass.BC,
-      shortDesc: 'CCC CONTINUE IN',
       fullDesc: 'BC Community Contribution Company'
     }, {
       corpTypeCd: CorpTypeCd.CEMETARY,
@@ -70,11 +64,12 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       fullDesc: 'BC Company', // BC Company - Incorporation/Amalgamation
       numberedDesc: 'Numbered Company'
     }, {
-      corpTypeCd: CorpTypeCd.CONT_IN_SOCIETY,
+      corpTypeCd: CorpTypeCd.BC_ULC_COMPANY,
       colinInd: true,
-      corpClass: CorpClass.SOC,
-      shortDesc: 'CONT IN SOCIETY',
-      fullDesc: 'BC Society'
+      corpClass: CorpClass.BC,
+      shortDesc: 'BC ULC COMPANY',
+      fullDesc: 'BC Unlimited Liability Company',
+      numberedDesc: 'Numbered Unlimited Liability Company'
     }, {
       corpTypeCd: CorpTypeCd.ULC_CONTINUE_IN,
       colinInd: true,
@@ -220,6 +215,12 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       shortDesc: 'SOCIETY BRANCH',
       fullDesc: 'BC Society'
     }, {
+      corpTypeCd: CorpTypeCd.CONT_IN_SOCIETY,
+      colinInd: true,
+      corpClass: CorpClass.SOC,
+      shortDesc: 'CONT IN SOCIETY',
+      fullDesc: 'BC Society'
+    }, {
       corpTypeCd: CorpTypeCd.SOLE_PROP,
       colinInd: true,
       corpClass: CorpClass.FIRM,
@@ -237,13 +238,6 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       corpClass: CorpClass.OT,
       shortDesc: 'TRAMWAYS',
       fullDesc: 'Tramways'
-    }, {
-      corpTypeCd: CorpTypeCd.BC_ULC_COMPANY,
-      colinInd: true,
-      corpClass: CorpClass.BC,
-      shortDesc: 'BC ULC COMPANY',
-      fullDesc: 'BC Unlimited Liability Company',
-      numberedDesc: 'Numbered Unlimited Liability Company'
     }, {
       corpTypeCd: CorpTypeCd.ULC_CO_1860,
       colinInd: true,

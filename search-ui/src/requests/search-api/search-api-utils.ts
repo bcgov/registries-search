@@ -13,14 +13,22 @@ export const addSearchBusFilters = (filters: SearchFilterI) => {
   if (filters?.name) filterParams.query += `::name:${filters.name}`
   // categories
   if (filters?.legalType) {
-    // group society legal types
-    const societyTypes = [CorpTypeCd.CONT_IN_SOCIETY, CorpTypeCd.SOCIETY, CorpTypeCd.SOCIETY_BRANCH]
-    if (societyTypes.includes(filters.legalType as CorpTypeCd)) {
-      // query by all society corp types
-      filters.legalType = societyTypes.join(',') as CorpTypeCd
-    } else if (filters.legalType === 'Other' as CorpTypeCd) {
+    // group specific corp types together
+    if (filters.legalType === 'Other' as CorpTypeCd) {
       // query by all 'other' corp types
       filters.legalType = OtherCorpTypes.join(',') as CorpTypeCd
+    } else {
+      const bcLimitedTypes = [CorpTypeCd.CONTINUE_IN, CorpTypeCd.BC_COMPANY]
+      const ulcTypes = [CorpTypeCd.ULC_CONTINUE_IN, CorpTypeCd.BC_ULC_COMPANY]
+      const societyTypes = [CorpTypeCd.CONT_IN_SOCIETY, CorpTypeCd.SOCIETY, CorpTypeCd.SOCIETY_BRANCH]
+      const corp_grps = [bcLimitedTypes, ulcTypes, societyTypes]
+      for (const i in corp_grps) {
+        if (corp_grps[i].includes(filters.legalType as CorpTypeCd)) {
+          // query by all society corp types
+          filters.legalType = corp_grps[i].join(',') as CorpTypeCd
+          break
+        }
+      }
     }
     filterParams.categories += `legalType:${filters.legalType}`
   }
