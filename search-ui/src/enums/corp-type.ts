@@ -5,7 +5,6 @@ export enum CorpTypeCd {
     BENEFIT_COMPANY = 'BEN',
     CONTINUE_IN = 'C',
     BC_CCC = 'CC',
-    CCC_CONTINUE_IN = 'CCC',
     CEMETARY = 'CEM',
     COOP = 'CP',
     BC_CORPORATION = 'CR', // SPECIAL NAMEREQUEST-ONLY ENTITY TYPE
