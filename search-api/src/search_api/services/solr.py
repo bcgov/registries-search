@@ -381,4 +381,4 @@ class Solr:
         rmv_spec_chars_rgx = r'([\[\]!()\"~*?:/\\={}^%`#|<>,.@$;_\-])'
         handled_spec_chars_rgx = r'([&+]+)'
         query = re.sub(rmv_spec_chars_rgx, ' ', query.lower())
-        return re.sub(handled_spec_chars_rgx, r' \\\1 ', query) if not query.isspace() else '\*'
+        return re.sub(handled_spec_chars_rgx, r' \\\1 ', query) if not query.isspace() else r'\*'
