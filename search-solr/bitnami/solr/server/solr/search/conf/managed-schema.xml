@@ -473,6 +473,8 @@
   </fieldType>
   <fieldType name="text_stemmed" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
+      <charFilter name="patternReplace" pattern="-" replacement=" "/>
+      <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter class="solr.ASCIIFoldingFilterFactory"/>
@@ -482,6 +484,8 @@
       <filter name="englishMinimalStem"/>
     </analyzer>
     <analyzer type="query">
+      <charFilter name="patternReplace" pattern="-" replacement=" "/>
+      <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter class="solr.ASCIIFoldingFilterFactory"/>
@@ -492,6 +496,8 @@
   </fieldType>
   <fieldType name="text_stemmed_agro" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
+      <charFilter name="patternReplace" pattern="-" replacement=" "/>
+      <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter class="solr.ASCIIFoldingFilterFactory"/>
@@ -501,6 +507,8 @@
       <filter name="porterStem"/>
     </analyzer>
     <analyzer type="query">
+      <charFilter name="patternReplace" pattern="-" replacement=" "/>
+      <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter class="solr.ASCIIFoldingFilterFactory"/>

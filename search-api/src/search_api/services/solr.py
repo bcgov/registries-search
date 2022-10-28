@@ -378,5 +378,7 @@ class Solr:
     def prep_query_str(query: str) -> str:
         """Return query string prepped for solr call."""
         # replace solr specific special chars
-        solr_special_chars_regex = r'([+\-!()\"~*?:/\\&={}^%`#|<>,.@$;_]|&&|\|\|)'
-        return re.sub(solr_special_chars_regex, '', query.lower())
+        rmv_spec_chars_rgx = r'([\[\]!()\"~*?:/\\={}^%`#|<>,.@$;_\-])'
+        handled_spec_chars_rgx = r'([&+]+)'
+        query = re.sub(rmv_spec_chars_rgx, ' ', query.lower())
+        return re.sub(handled_spec_chars_rgx, r' \\\1 ', query) if not query.isspace() else '\*'
