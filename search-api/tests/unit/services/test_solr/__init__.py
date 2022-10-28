@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from search_api.services.solr import SolrDoc, SolrField
 
+
 def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) -> SolrDoc:
     solr_parties = None
     if parties:
@@ -41,6 +42,7 @@ def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) 
         'parties': solr_parties
     })
 
+
 SOLR_TEST_DOCS = [
     create_solr_doc('CP1234567', 'test 1234', 'ACTIVE', 'CP', 'BN00012334'),
     create_solr_doc('CP0234567', 'tester 1111', 'HISTORICAL', 'CP', '09876K'),
@@ -50,9 +52,9 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0000067', 'single', 'ACTIVE', 'BEN', '242217'),
     create_solr_doc('BC0000007', 'lots of words in here', 'ACTIVE', 'BEN', '124221'),
     create_solr_doc('BC0020047', 'NOt Case SENSitive', 'ACTIVE', 'BEN', '1255323221'),
-    create_solr_doc('FM1000028', 'sp firm', 'ACTIVE', 'SP', '123', [('person 1','proprietor','person')]),
-    create_solr_doc('FM1001118', 'gp firm', 'ACTIVE', 'GP', None, [('org 1','partner','organization')]),
-    create_solr_doc('FM0004018', 'gp firm multiple parties', 'ACTIVE', 'GP', None, [('test org partner','partner','organization'), ('test person partner','partner','person')]),
+    create_solr_doc('FM1000028', 'sp firm', 'ACTIVE', 'SP', '123', [('person 1', 'proprietor', 'person')]),
+    create_solr_doc('FM1001118', 'gp firm', 'ACTIVE', 'GP', None, [('org 1', 'partner', 'organization')]),
+    create_solr_doc('FM0004018', 'gp firm multiple parties', 'ACTIVE', 'GP', None, [('test org partner', 'partner', 'organization'), ('test person partner', 'partner', 'person')]),
     create_solr_doc('BC0030001', '01 solr special && char', 'ACTIVE', 'BEN', '123456789BC0001'),
     create_solr_doc('BC0030002', '02 solr special || char', 'ACTIVE', 'BEN', '123456788BC0001'),
     create_solr_doc('BC0030003', '03 solr special: char', 'ACTIVE', 'BEN', '123456787BC0001'),
@@ -66,7 +68,16 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0030011', '11 solr special* char', 'ACTIVE', 'BEN', '123456779BC0001'),
     create_solr_doc('BC0030012', '12 solr special? char', 'ACTIVE', 'BEN', '123456778BC0001'),
     create_solr_doc('BC0030013', '13 solr special / char', 'ACTIVE', 'BEN', '123456777BC0001'),
-    create_solr_doc('BC0030014', 'special =&{}^%`#|<>,.@$;_chars', 'ACTIVE', 'BEN', '123456776BC0001'),
+    create_solr_doc('BC0030014', 'many special =&{}^%`#|<>,.@$;_chars', 'ACTIVE', 'BEN', '123456776BC0001'),
     create_solr_doc('BC0030015', 'special OR AND NOT operators', 'ACTIVE', 'BEN', '123456775BC0001'),
-    create_solr_doc('BC0030016', 'DIVINE ÉBÉNISTERIE INC.', 'ACTIVE', 'BEN', 'BN00012388')
+    create_solr_doc('BC0030016', 'DIVINE ÉBÉNISTERIE INC.', 'ACTIVE', 'BEN', 'BN00012388'),
+    create_solr_doc('BC0030017', 'special and match 1', 'ACTIVE', 'BEN', '123456780BC0001'),
+    create_solr_doc('BC0030018', 'special + match 2', 'ACTIVE', 'BEN', '123456781BC0001'),
+    create_solr_doc('BC0030019', 'special+match 3', 'ACTIVE', 'BEN', '123456782BC0001'),
+    create_solr_doc('BC0030020', 'special & match 4', 'ACTIVE', 'BEN', '123456783BC0001'),
+    create_solr_doc('BC0030021', 'special&match 5', 'ACTIVE', 'BEN', '123456784BC0001'),
+    create_solr_doc('BC0030023', 'special-dash match 1', 'ACTIVE', 'BEN', '123456785BC0001'),
+    create_solr_doc('BC0030024', 'special - dash match 2', 'ACTIVE', 'BEN', '123456786BC0001'),
+    create_solr_doc('BC0030025', 'special dash match 3', 'ACTIVE', 'BEN', '123456787BC0001'),
+    create_solr_doc('BC0030026', 'special match nothing', 'ACTIVE', 'BEN', '123456788BC0001')
 ]

@@ -31,8 +31,8 @@ bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=inva
 
 def _parse_url_param(param: str, param_str: str):
     """Return parsed param string if the param_str is for the param (i.e. 'value' for 'value:..')."""
-    if f'{param}:' == param_str[:len(param)+1]:
-        return param_str[len(param)+1:]
+    if f'{param}:' == param_str[:len(param) + 1]:
+        return param_str[len(param) + 1:]
     return ''
 
 
