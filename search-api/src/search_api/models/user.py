@@ -113,6 +113,18 @@ class User(db.Model):
             if not user:
                 current_app.logger.debug(f'didnt find user, attempting to create new user:{jwt_oidc_token}')
                 user = User.create_from_jwt_token(jwt_oidc_token)
+            else:
+                # update if there are any values that weren't saved previously or have changed since
+                user_keys = [{'jwt_key': current_app.config.get('JWT_OIDC_USERNAME'), 'table_key': 'username'},
+                             {'jwt_key': current_app.config.get('JWT_OIDC_FIRSTNAME'), 'table_key': 'firstname'},
+                             {'jwt_key': current_app.config.get('JWT_OIDC_LASTNAME'), 'table_key': 'lastname'}]
+                for keys in user_keys:
+                    value = jwt_oidc_token.get(keys['jwt_key'], None)
+                    if value and value != getattr(user, keys['table_key']):
+                        current_app.logger.debug(
+                            f'found new user value, attempting to update user {keys["table_key"]}:{value}')
+                        setattr(user, keys['table_key'], value)
+                        user.save()
 
             return user
         except Exception as err:  # noqa: B902

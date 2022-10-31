@@ -13,11 +13,11 @@
 # limitations under the License.
 """API endpoints for Document Access Requests."""
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
-from search_api.models import DocumentAccessRequest
+from search_api.models import DocumentAccessRequest, User
 from search_api.utils.auth import jwt
 
 
@@ -28,12 +28,17 @@ bp = Blueprint('PURCHASE_REQUESTS', __name__, url_prefix='/purchases')  # pylint
 @bp.get('/<int:request_id>')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def get(request_id=None):
+def get(request_id=None):  # pylint: disable=too-many-return-statements
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        # updates user information with given jwt
+        user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
+        if not user:
+            return resource_utils.default_exception_response('Error getting user information from JWT.')
 
         if request_id:
             access_request = DocumentAccessRequest.find_by_id(request_id)
