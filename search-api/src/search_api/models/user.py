@@ -121,7 +121,8 @@ class User(db.Model):
                 for keys in user_keys:
                     value = jwt_oidc_token.get(keys['jwt_key'], None)
                     if value and value != getattr(user, keys['table_key']):
-                        current_app.logger.debug(f'found new user value, attempting to update user {keys["table_key"]}:{value}')
+                        current_app.logger.debug(
+                            f'found new user value, attempting to update user {keys["table_key"]}:{value}')
                         setattr(user, keys['table_key'], value)
                         user.save()
 

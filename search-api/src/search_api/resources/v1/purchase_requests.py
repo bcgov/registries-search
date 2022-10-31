@@ -28,7 +28,7 @@ bp = Blueprint('PURCHASE_REQUESTS', __name__, url_prefix='/purchases')  # pylint
 @bp.get('/<int:request_id>')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def get(request_id=None):
+def get(request_id=None):  # pylint: disable=too-many-return-statements
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
         account_id = request.headers.get('Account-Id', None)
