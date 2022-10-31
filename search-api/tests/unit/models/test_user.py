@@ -67,6 +67,42 @@ def test_get_or_create_user_by_jwt(session):
     assert u.id is not None
 
 
+def test_get_or_create_user_by_jwt_existing(session):
+    """Assert User is created from the JWT fields."""
+    # setup
+    token = {'username': 'username',
+             'firstname': 'firstname',
+             'lastname': 'lastname',
+             'given_name': 'given_name',
+             'family_name': 'family_name',
+             'iss': 'iss',
+             'sub': 'sub'
+             }
+    u = User.get_or_create_user_by_jwt(token)
+
+    # sets user values correctly
+    assert u.username == token['username']
+    assert u.firstname == token['firstname']
+    assert u.lastname == token['lastname']
+
+    # does not create a new user if already exists
+    existing = User.get_or_create_user_by_jwt(token)
+    assert u.id == existing.id
+
+    # update
+    updated_token = {'username': token['username'] + 'new',
+                     'firstname': token['firstname'] + 'new',
+                     'lastname': token['lastname'] + 'new',
+                     'iss': 'iss',
+                     'sub': 'sub'}
+
+    new = User.get_or_create_user_by_jwt(updated_token)
+    assert new.username == updated_token['username']
+    assert new.firstname == updated_token['firstname']
+    assert new.lastname == updated_token['lastname']
+    assert new.id == u.id
+
+
 def test_get_or_create_user_by_jwt_invlaid_jwt(session):
     """Assert User is not returned/created from an invalid token."""
     token = b'invalidtoken'
