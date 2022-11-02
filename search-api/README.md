@@ -33,7 +33,7 @@ See .env.sample
 Follow the instructions of the [Development Readme](https://github.com/bcgov/entity/blob/master/docs/development.md)
 to setup your local development environment.
 
-### Development Setup
+## Development Setup
 1. Open the ppr-api directory in VS Code to treat it as a project (or WSL projec). To prevent version clashes, set up a virtual environment to install the Python packages used by this project.
 1. Run `make setup`
 1. Run `pip install .`
