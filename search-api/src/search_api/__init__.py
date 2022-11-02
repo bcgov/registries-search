@@ -32,11 +32,11 @@ from search_api import config, errorhandlers, models
 from search_api.models import db
 from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
-from search_api.services import flags, solr
+from search_api.services import Flags, solr
 from search_api.services.solr import SolrDoc
 from search_api.translations import babel
 from search_api.utils.auth import jwt
-from search_api.utils.logging import setup_logging
+from search_api.utils.logging import set_log_level_by_flag, setup_logging
 from search_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort
 
@@ -44,7 +44,7 @@ setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.
 migrate = Migrate()  # pylint: disable=invalid-name
 
 
-def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
+def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
     app.config.from_object(config.CONFIGURATION[run_mode])
@@ -59,16 +59,25 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             traces_sample_rate=app.config.get('SENTRY_TSR')
             )
 
+    # td is testData instance passed in to support testing
+    td = kwargs.get('ld_test_data', None)
+    Flags().init_app(app, td)
+
     errorhandlers.init_app(app)
     db.init_app(app)
     rsbc_schemas.init_app(app)
-    flags.init_app(app)
     solr.init_app(app)
     babel.init_app(app)
     migrate.init_app(app, db)
 
     v1_endpoint.init_app(app)
     setup_jwt_manager(app, jwt)
+
+    @app.before_request
+    def before_request():  # pylint: disable=unused-variable
+        # do any common setup here
+        # set logging level
+        set_log_level_by_flag()
 
     @app.route('/')
     def be_nice_swagger_redirect():  # pylint: disable=unused-variable

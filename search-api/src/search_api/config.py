@@ -72,6 +72,9 @@ class _Config():  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
+    # the name of the Feature Flag that has the logging.level
+    OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
+
     SECRET_KEY = 'a secret'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False

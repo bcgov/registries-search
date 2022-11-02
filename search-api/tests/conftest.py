@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Common setup and fixtures for the pytest suite used by this service."""
+import os
 from contextlib import contextmanager, suppress
 
 import pytest
 from flask_migrate import Migrate, upgrade
+from ldclient.integrations.test_data import TestData
 from sqlalchemy import event, text
 from sqlalchemy.schema import DropConstraint, MetaData
 
@@ -37,11 +39,28 @@ def not_raises(exception):
 
 
 @pytest.fixture(scope='session')
-def app():
+def ld():
+    """LaunchDarkly TestData source."""
+    td = TestData.data_source()
+    yield td
+
+
+@pytest.fixture(scope='session')
+def app(ld):
     """Return a session-wide application configured in TEST mode."""
-    _app = create_app('testing')
+    _app = create_app('testing', **{'ld_test_data': ld})
 
     return _app
+
+
+@pytest.fixture
+def set_env(app):
+    """Factory to set environment and Flask config variables."""
+    def _set_env(name, value):
+        os.environ[name] = value
+        app.config[name] = value
+
+    return _set_env
 
 
 @pytest.fixture(scope='function')

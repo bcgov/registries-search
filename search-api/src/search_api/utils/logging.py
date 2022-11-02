@@ -12,9 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Centralized setup of logging for the service."""
+from __future__ import annotations
+
+import logging
 import logging.config
 import sys
 from os import path
+from typing import Union
+
+from flask import current_app
+
+from search_api.services.flags import Flags
+
+from .base import BaseEnum, auto
 
 
 def setup_logging(conf):
@@ -29,3 +39,53 @@ def setup_logging(conf):
         print('Configure logging, from conf:{}'.format(conf), file=sys.stdout)
     else:
         print('Unable to configure logging, attempted conf:{}'.format(conf), file=sys.stderr)
+
+
+class Level(BaseEnum):
+    """Enum for the Business state."""
+
+    CRITICAL = auto()
+    DEBUG = auto()
+    ERROR = auto()
+    INFO = auto()
+    WARNING = auto()
+
+
+def get_logging_flag_name():
+    """Get the name of the FFlag to lookup."""
+    try:
+        return current_app.config.get('OPS_LOGGER_LEVEL')
+    except:  # pylint: disable=bare-except; # noqa: E722, B901
+        return 'ops-{name}-log-level'.format(name=__name__)
+
+
+def set_log_level_by_flag():
+    """Set the logging level if the FF has a different level than what is currently set."""
+    try:
+        flag_name = get_logging_flag_name()
+        flag_value = Flags.value(flag_name, user={'key': flag_name})
+        if flag_value and (level_name := logging.getLevelName(logging.getLogger().level)) \
+                and flag_value != level_name:  # pylint: disable=E0601; linter hates the walrus
+            set_logging_level(flag_value)
+    except Exception:  # noqa: B902
+        return
+
+
+def set_logging_level(level: Union(Level, str)):
+    """Set the logging level of the top logger."""
+    _logger = logging.getLogger()
+
+    match level:
+        case Level.CRITICAL:
+            _logger.setLevel(logging.CRITICAL)
+        case Level.DEBUG:
+            _logger.setLevel(logging.DEBUG)
+        case Level.ERROR:
+            _logger.setLevel(logging.ERROR)
+        case Level.INFO:
+            _logger.setLevel(logging.INFO)
+        case Level.WARNING:
+            _logger.setLevel(logging.WARNING)
+
+        case _:
+            _logger.setLevel(logging.INFO)
