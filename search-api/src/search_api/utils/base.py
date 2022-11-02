@@ -13,7 +13,7 @@
 # limitations under the License.
 """Enum Utilities."""
 
-from enum import Enum, EnumMeta
+from enum import Enum, EnumMeta, auto  # pylint: disable=W0611;# noqa: F401
 from typing import Optional
 
 
@@ -48,3 +48,9 @@ class BaseEnum(str, Enum, metaclass=BaseMeta):
             if enum_value.name == value:
                 return enum_value
         return None
+
+    #pragma warning disable S5720; # noqa: E265
+    # disable sonar cloud complaining about this signature
+    def _generate_next_value_(name, start, count, last_values):  # pylint: disable=E0213;# noqa: N805
+        """Return the name of the key."""
+        return name
