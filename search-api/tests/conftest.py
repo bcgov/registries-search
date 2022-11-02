@@ -40,7 +40,7 @@ def not_raises(exception):
 
 @pytest.fixture(scope='session')
 def ld():
-    '''LaunchDarkly TestData source.'''
+    """LaunchDarkly TestData source."""
     td = TestData.data_source()
     yield td
 
@@ -55,7 +55,7 @@ def app(ld):
 
 @pytest.fixture
 def set_env(app):
-    '''Factory to set environment and Flask config variables.'''
+    """Factory to set environment and Flask config variables."""
     def _set_env(name, value):
         os.environ[name] = value
         app.config[name] = value
