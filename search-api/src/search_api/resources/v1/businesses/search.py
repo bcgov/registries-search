@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoints for Search Suggester."""
+import re
 from contextlib import suppress
 from http import HTTPStatus
 
@@ -29,7 +30,16 @@ import search_api.resources.utils as resource_utils
 bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=invalid-name
 
 
-def _parse_url_param(param: str, param_str: str):
+def _clean_request_args(query: str) -> str:
+    """Put backslash on expected param values that start with ':'."""
+    expected_params = [
+        SolrField.NAME, SolrField.IDENTIFIER, SolrField.BN,
+        SolrField.PARTY_NAME, SolrField.PARENT_NAME, SolrField.PARENT_IDENTIFIER, SolrField.PARENT_BN]
+    query_cleaner_rgx = r'(::|^)(value|' + '|'.join(expected_params) + ')(::)'
+    return re.sub(query_cleaner_rgx, r'\1\2:\:', query)
+
+
+def _parse_url_param(param: str, param_str: str) -> str:
     """Return parsed param string if the param_str is for the param (i.e. 'value' for 'value:..')."""
     if f'{param}:' == param_str[:len(param) + 1]:
         return param_str[len(param) + 1:]
@@ -42,7 +52,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
     """Return a list of business results from solr based from the given query."""
     try:
         # parse query params
-        query_items = request.args.get('query', '').split('::')
+        query = _clean_request_args(request.args.get('query', ''))
+        query_items = query.split('::')
         if not query_items:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
         value = ''
@@ -124,7 +135,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
 def parties():  # pylint: disable=too-many-branches, too-many-return-statements, too-many-locals
     """Return a list of business/parties results from solr based from the given query."""
     try:
-        query_items = request.args.get('query', '').split('::')
+        query = _clean_request_args(request.args.get('query', ''))
+        query_items = query.split('::')
         if not query_items:
             return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
         value = ''
