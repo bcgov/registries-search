@@ -64,6 +64,7 @@ jobs:
       SOLR_SVC_TEST_URL: http://test-solr
       RUN_LD_TESTS: False
       RUN_SOLR_TESTS: False
+      LD_SDK_KEY: temp
 
     runs-on: ubuntu-20.04
 

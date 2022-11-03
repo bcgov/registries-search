@@ -13,7 +13,6 @@
 # limitations under the License.
 """This manages all of the authentication and authorization service."""
 from http import HTTPStatus
-from typing import List
 
 import requests
 from requests import Session, exceptions
@@ -38,7 +37,7 @@ BCOL_HELP = 'helpdesk'
 SBC_STAFF = 'sbc_staff'
 
 
-def _call_auth_api(path: str, token: str) -> str:
+def _call_auth_api(path: str, token: str) -> dict:
     """Return the auth api response for the given endpoint path."""
     response = None
     if not token:
