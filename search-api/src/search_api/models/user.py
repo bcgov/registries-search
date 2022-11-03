@@ -22,6 +22,8 @@ from enum import Enum
 from flask import current_app
 
 from search_api.exceptions import BusinessException
+from search_api.services.authz import user_info
+from search_api.utils.auth import jwt
 
 from .db import db
 
@@ -90,10 +92,18 @@ class User(db.Model):
         to populate the User audit data
         """
         if token:
+            firstname = token.get(current_app.config.get('JWT_OIDC_FIRSTNAME'), None)
+            lastname = token.get(current_app.config.get('JWT_OIDC_LASTNAME'), None)
+            if token.get('loginSource') == 'BCEID':
+                # bceid doesn't use the names from the token so have to get from auth
+                auth_user = user_info(jwt.get_token_auth_header())
+                firstname = auth_user['firstname']
+                lastname = auth_user['lastname']
+
             user = User(
                 username=token.get(current_app.config.get('JWT_OIDC_USERNAME'), None),
-                firstname=token.get(current_app.config.get('JWT_OIDC_FIRSTNAME'), None),
-                lastname=token.get(current_app.config.get('JWT_OIDC_LASTNAME'), None),
+                firstname=firstname,
+                lastname=lastname,
                 iss=token['iss'],
                 sub=token['sub']
             )
@@ -104,7 +114,7 @@ class User(db.Model):
         return None
 
     @classmethod
-    def get_or_create_user_by_jwt(cls, jwt_oidc_token):
+    def get_or_create_user_by_jwt(cls, jwt_oidc_token: dict):
         """Return a valid user for audit tracking purposes."""
         # GET existing or CREATE new user based on the JWT info
         try:
@@ -113,6 +123,13 @@ class User(db.Model):
             if not user:
                 current_app.logger.debug(f'didnt find user, attempting to create new user:{jwt_oidc_token}')
                 user = User.create_from_jwt_token(jwt_oidc_token)
+            elif jwt_oidc_token.get('loginSource') == 'BCEID':  # BCEID doesn't use the jwt values for their name
+                auth_user = user_info(jwt.get_token_auth_header())
+                if user.firstname != auth_user['firstname']:
+                    user.firstname = auth_user['firstname']
+                if user.lastname != auth_user['lastname']:
+                    user.lastname = auth_user['lastname']
+                user.save()
             else:
                 # update if there are any values that weren't saved previously or have changed since
                 user_keys = [{'jwt_key': current_app.config.get('JWT_OIDC_USERNAME'), 'table_key': 'username'},

@@ -184,7 +184,9 @@ def test_endpoint_suggest(session, client, requests_mock, test_name, query, mock
      [x.json for x in SOLR_TEST_DOCS[2:4]],
      [x.json for x in SOLR_TEST_DOCS[4:5]],
      [x.json for x in SOLR_TEST_DOCS[:5]]),
-    ('test_special_chars_only', {'query': '`~!@#$%^*()_-={}[]\\|', 'start': 0, 'rows': 10}, [], [], [], [])
+    ('test_special_chars_only', {'query': '`~!@#$%^*()_-={}[]\\|', 'start': 0, 'rows': 10}, [], [], [], []),
+    ('test_:_only', {'query': ':test', 'start': 0, 'rows': 10}, [], [], [], []),
+    ('test_start_with_:', {'query': ':test', 'start': 0, 'rows': 10}, [], [], [], [])
 ])
 def test_endpoint_facets(session, client, requests_mock, test_name, query_params, mock_names, mock_ids, mock_bns, expected_docs):
     """Assert that search facets endpoint works as expected."""
@@ -202,16 +204,16 @@ def test_endpoint_facets(session, client, requests_mock, test_name, query_params
     if expected_docs:
         assert resp.json['facets'] == Solr.parse_facets(facets_mock)
         assert resp.json['searchResults']['queryInfo']['rows'] == rows
-        assert resp.json['searchResults']['queryInfo']['query']['value'] == query
+        assert resp.json['searchResults']['queryInfo']['query']['value'] == query or query[0] == ':'
         assert resp.json['searchResults']['queryInfo']['start'] == start
         assert resp.json['searchResults']['totalResults'] == num_found
         assert resp.json['searchResults']['results'] == expected_docs
 
 
 @pytest.mark.parametrize('test_name,query_params,mock_docs', [
-    ('test-parties',
-     {'query': '1', 'start': 0, 'rows': 5},
-     [x.json for x in SOLR_TEST_DOCS[8:10]]),
+    ('test_parties', {'query': '1', 'start': 0, 'rows': 5}, [x.json for x in SOLR_TEST_DOCS[8:10]]),
+    ('test_parties_:_only', {'query': ':', 'start': 0, 'rows': 5}, []),
+    ('test_parties_start_with_:', {'query': ':test', 'start': 0, 'rows': 5}, []),
 ])
 def test_endpoint_parties(session, client, requests_mock, test_name, query_params, mock_docs):
     """Assert that search parties endpoint works as expected."""
@@ -231,7 +233,7 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['facets'] == Solr.parse_facets(facets_mock)
     assert resp.json['searchResults']['queryInfo']['rows'] == rows
-    assert resp.json['searchResults']['queryInfo']['query']['value'] == query
+    assert resp.json['searchResults']['queryInfo']['query']['value'] == query or query[0] == ':'
     assert resp.json['searchResults']['queryInfo']['start'] == start
     assert resp.json['searchResults']['queryInfo']['categories']['partyRoles'] == ['partner', 'proprietor']
     assert resp.json['searchResults']['totalResults'] == num_found
