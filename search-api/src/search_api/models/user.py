@@ -19,7 +19,7 @@ here as a convenience for audit and db reporting.
 from datetime import datetime
 from enum import Enum
 
-from flask import current_app, g
+from flask import current_app
 
 from search_api.exceptions import BusinessException
 from search_api.services.authz import user_info
@@ -96,10 +96,7 @@ class User(db.Model):
             lastname = token.get(current_app.config.get('JWT_OIDC_LASTNAME'), None)
             if token.get('loginSource') == 'BCEID':
                 # bceid doesn't use the names from the token so have to get from auth
-                print('here')
-                print(jwt.get_token_auth_header())
                 auth_user = user_info(jwt.get_token_auth_header())
-                print('created')
                 firstname = auth_user['firstname']
                 lastname = auth_user['lastname']
 
