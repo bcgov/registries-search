@@ -139,7 +139,7 @@ jobs:
       - name: Create new solr instance
         run: |
           gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --format=json --project $PROJECT_ID > instances_in_preload.json
-          instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
-          instances_to_rmv=$(instances_in_preload) | tr ' ' ,
-          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$(instances_to_rmv)
+          echo "PRELOAD_INSTANCES=$(jq -r '.[].name' instances_in_preload.json)" >> $GITHUB_ENV
+          echo "RMV_INSTANCES=$(echo $PRELOAD_INSTANCES | tr ' ' ,)" >> $GITHUB_ENV
+          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$RMV_INSTANCES
           gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
