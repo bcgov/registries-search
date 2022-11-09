@@ -23,11 +23,12 @@ env:
   TAG_NAME: "dev"
 
 jobs:
-  permissions:
-    contents: "read"
-    id-token: "write"
   search-solr-cd-by-push:
     runs-on: ubuntu-20.04
+    
+    permissions:
+      contents: "read"
+      id-token: "write"
 
     if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
     environment:
@@ -69,6 +70,10 @@ jobs:
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
+    
+    permissions:
+      contents: "read"
+      id-token: "write"
 
     if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
     environment:
