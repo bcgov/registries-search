@@ -68,14 +68,12 @@ jobs:
         run: |
           gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
-          sleep 120s
 
       - name: Create new solr image
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
-          sleep 30s
           gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
-          sleep 30s
+
 
       - name: Create new solr instance
         run: |
@@ -98,7 +96,7 @@ jobs:
 
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      NEW_VERSION: test1
+      NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
       ZONE: northamerica-northeast1-a
 
     steps:
@@ -130,14 +128,12 @@ jobs:
         run: |
           gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
-          sleep 120s
 
       - name: Create new solr image
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
-          sleep 30s
           gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
-          sleep 30s
+
       - name: Create new solr instance
         run: |
           gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --format=json --project $PROJECT_ID > instances_in_preload.json
