@@ -72,7 +72,7 @@ jobs:
       - name: Create new solr image
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
-          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
+          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
 
 
       - name: Create new solr instance
@@ -132,7 +132,7 @@ jobs:
       - name: Create new solr image
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
-          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
+          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
 
       - name: Create new solr instance
         run: |
