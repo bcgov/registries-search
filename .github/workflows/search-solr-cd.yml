@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH SOLR IMPORTER CD
+name: REGISTRIES SEARCH SOLR CD
 on:
   push:
     branches:
@@ -29,6 +29,47 @@ jobs:
     if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
     environment:
       name: "dev"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          token_format: "access_token"
+          create_credentials_file: true
+          activate_credentials_file: true
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          access_token_lifetime: "3600s"
+
+      - name: Setup - gcloud / gsutil
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v1
+      - name: Set credentials
+        run: |
+          gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
+
+      - name: Copy new solr files to GCP
+        run: |
+          gsutil -m rsync -R bitnami/ gs://solr-files/bitnami --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Run search solr deployment
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          NEW_VERSION: ${{ env.GITHUB_SHA }}::${{ env.GITHUB_RUN_ID }}::${{ env.GITHUB_RUN_ATTEMPT }}
+          TAG_NAME: ${{ env.TAG_NAME }}
+          ZONE: northamerica-northeast1-a
+        run: |
+          make cd
+
+  search-solr-cd-by-dispatch:
+    runs-on: ubuntu-20.04
+
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
+    environment:
+      name: "${{ github.event.inputs.environment }}"
 
     steps:
       - name: Checkout
