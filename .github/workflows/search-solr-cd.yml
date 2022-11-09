@@ -79,6 +79,7 @@ jobs:
           sleep 30s
 
       - name: Create new solr instance
+        run: |
           gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --format=json --project $(PROJECT_ID) > instances_in_preload.json
           instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
           instances_to_rmv=$(instances_in_preload) | tr ' ' ,
@@ -140,6 +141,7 @@ jobs:
           gcloud compute images create search-solr-$(NEW_VERSION) --family search-solr --source-disk search-solr-base-$(NEW_VERSION) --project $(PROJECT_ID)
           sleep 30s
       - name: Create new solr instance
+        run: |
           gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --format=json --project $(PROJECT_ID) > instances_in_preload.json
           instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
           instances_to_rmv=$(instances_in_preload) | tr ' ' ,
