@@ -107,7 +107,7 @@ jobs:
       - name: Run search solr deployment
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          NEW_VERSION: ${{ env.GITHUB_SHA }}-${{ env.GITHUB_RUN_ID }}-${{ env.GITHUB_RUN_ATTEMPT }}
+          NEW_VERSION: $GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT
           TAG_NAME: ${{ env.TAG_NAME }}
           ZONE: northamerica-northeast1-a
         run: |
