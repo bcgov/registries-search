@@ -66,24 +66,24 @@ jobs:
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
-          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
-          gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
+          gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
           sleep 120s
 
       - name: Create new solr image
         run: |
-          gcloud compute instances stop search-solr-base-$(NEW_VERSION) --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
           sleep 30s
-          gcloud compute images create search-solr-$(NEW_VERSION) --family search-solr --source-disk search-solr-base-$(NEW_VERSION) --project $(PROJECT_ID)
+          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
           sleep 30s
 
       - name: Create new solr instance
         run: |
-          gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --format=json --project $(PROJECT_ID) > instances_in_preload.json
+          gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --format=json --project $PROJECT_ID > instances_in_preload.json
           instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
           instances_to_rmv=$(instances_in_preload) | tr ' ' ,
-          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --instances=$(instances_to_rmv)
-          gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --instances=search-solr-$(TAG_NAME)-$(NEW_VERSION)
+          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$(instances_to_rmv)
+          gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
@@ -128,20 +128,20 @@ jobs:
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
-          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
-          gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
+          gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
           sleep 120s
 
       - name: Create new solr image
         run: |
-          gcloud compute instances stop search-solr-base-$(NEW_VERSION) --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
           sleep 30s
-          gcloud compute images create search-solr-$(NEW_VERSION) --family search-solr --source-disk search-solr-base-$(NEW_VERSION) --project $(PROJECT_ID)
+          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --project $PROJECT_ID
           sleep 30s
       - name: Create new solr instance
         run: |
-          gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --format=json --project $(PROJECT_ID) > instances_in_preload.json
+          gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --format=json --project $PROJECT_ID > instances_in_preload.json
           instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
           instances_to_rmv=$(instances_in_preload) | tr ' ' ,
-          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --instances=$(instances_to_rmv)
-          gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --instances=search-solr-$(TAG_NAME)-$(NEW_VERSION)
+          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$(instances_to_rmv)
+          gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
