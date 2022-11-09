@@ -32,12 +32,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        with: ${{ github.repository }}
+        uses: actions/checkout@v2
 
       - id: "auth"
         name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1"
+        uses: google-github-actions/auth@v0.4.0
         with:
           token_format: "access_token"
           create_credentials_file: true
@@ -47,7 +46,7 @@ jobs:
           access_token_lifetime: "3600s"
 
       - name: Setup - gcloud / gsutil
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v0.3.0
       - name: Set credentials
         run: |
           gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
