@@ -102,7 +102,7 @@ jobs:
 
       - name: Copy new solr files to GCP
         run: |
-          gsutil -m rsync -R bitnami/ gs://solr-files/bitnami --project ${{ secrets.GCP_PROJECT_ID }}
+          gsutil -m rsync -R bitnami/ gs://solr-files/bitnami
 
       - name: Run search solr deployment
         env:
