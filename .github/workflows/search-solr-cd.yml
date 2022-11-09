@@ -46,7 +46,7 @@ jobs:
           access_token_lifetime: "3600s"
 
       - name: Setup - gcloud / gsutil
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v1
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@v0
       - name: Set credentials
         run: |
           gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
