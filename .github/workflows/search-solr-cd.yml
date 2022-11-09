@@ -37,7 +37,6 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: "${GITHUB_SHA}${GITHUB_RUN_ID}${GITHUB_RUN_ATTEMPT}"
-      TAG_NAME: ${{ env.TAG_NAME }}
       ZONE: northamerica-northeast1-a
 
     steps:
@@ -100,7 +99,6 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: "${GITHUB_SHA}${GITHUB_RUN_ID}${GITHUB_RUN_ATTEMPT}"
-      TAG_NAME: ${{ env.TAG_NAME }}
       ZONE: northamerica-northeast1-a
 
     steps:
