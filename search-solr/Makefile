@@ -7,37 +7,24 @@ PROJECT_NAME=search-solr
 #################################################################################
 cd: ## CD flow
 ifeq ($(TAG_NAME), test)
-cd: vault-env
-	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):dev $(DOCKER_NAME):$(TAG_NAME)
+cd: echo 'n/a'
 else ifeq ($(TAG_NAME), prod)
-cd: vault-env
-	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):$(TAG_NAME) $(DOCKER_NAME):$(TAG_NAME)-$(shell date +%F)
-	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):test $(DOCKER_NAME):$(TAG_NAME)
+cd: echo 'n/a'
 else
 TAG_NAME=dev
 cd: build tag
 endif
 
 build: ## Build the new compute image
-	gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json > instances.json; \
-	OLD_VERSION=$(jq -r '.[-1].name' instances.json); \
-	gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone=$(ZONE)
-
-
-build-nc: ## Build the docker container without caching
-	docker build . --no-cache -t $(DOCKER_NAME) \
-	    --platform linux/amd64 \
-		--build-arg VCS_REF=$(shell git rev-parse --short HEAD) \
-		--build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-REGISTRY_IMAGE=$(OPENSHIFT_DOCKER_REGISTRY)/$(OPENSHIFT_REPOSITORY)-tools/$(DOCKER_NAME)
-push: #build ## Push the docker container to the registry & tag latest
-	@echo "$(OPENSHIFT_SA_TOKEN)" | docker login $(OPENSHIFT_DOCKER_REGISTRY) -u $(OPENSHIFT_SA_NAME) --password-stdin ;\
-    docker tag $(DOCKER_NAME) $(REGISTRY_IMAGE):latest ;\
-    docker push $(REGISTRY_IMAGE):latest
-
-tag: push ## tag image
-	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):latest $(DOCKER_NAME):$(TAG_NAME)
+	gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json; \
+	gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID); \
+	gcloud compute instances stop search-solr-base-$(NEW_VERSION) --zone $(ZONE) --project $(PROJECT_ID); \
+	gcloud compute images create search-solr-$(NEW_VERSION) --family search-solr --source-disk search-solr-base-$(NEW_VERSION) --project $(PROJECT_ID); \
+	gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --format=json --project $(PROJECT_ID) > instances_in_preload.json; \
+	instances_in_preload=$(jq -r '.[].name' instances_in_preload.json); \
+	instances_to_rmv=$instances_in_preload | tr ' ' ,; \
+	gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$(TAG_NAME) --zone=$(ZONE) --instances=$instances_to_rmv
+	gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$(TAG_NAME)-$(NEW_VERSION)
 
 #################################################################################
 # Self Documenting Commands                                                     #

@@ -31,8 +31,9 @@ jobs:
       name: "dev"
 
     steps:
-      - name: Set env by input
+      - name: Checkout
         uses: actions/checkout@v3
+      - name: Set env by input
         run: |
           echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
