@@ -23,6 +23,9 @@ env:
   TAG_NAME: "dev"
 
 jobs:
+  permissions:
+    contents: "read"
+    id-token: "write"
   search-solr-cd-by-push:
     runs-on: ubuntu-20.04
 
