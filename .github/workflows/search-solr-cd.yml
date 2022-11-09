@@ -136,13 +136,7 @@ jobs:
           gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
 
       - name: Create new solr vm
-        env:
-          prefix: https://www.googleapis.com/compute/v1/projects/$PROJECT_ID/zones/$ZONE/instances/
         run: |
-          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
-          echo "INSTANCES=$(jq -r '.[].name' instances.json)" >> $GITHUB_ENV
-          echo $INSTANCES
-          echo "PARSED_INSTANCES=$(echo $INSTANCES | tr ' ' ,)" >> $GITHUB_ENV
-          echo $PARSED_INSTANCES
+          gcloud compute instances create search-solr-$TAG_NAME-$NEW_VERSION --source-instance-template search-solr-$TAG_NAME --zone $ZONE --project $PROJECT_ID
           gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$PARSED_INSTANCES
           gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
