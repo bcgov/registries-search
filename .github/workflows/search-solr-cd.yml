@@ -33,7 +33,7 @@ jobs:
     if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
     environment:
       name: "dev"
-    
+
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: "${GITHUB_SHA}${GITHUB_RUN_ID}${GITHUB_RUN_ATTEMPT}"
@@ -68,7 +68,7 @@ jobs:
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
-	        gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
           sleep 120s
 
       - name: Create new solr image
@@ -95,7 +95,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
     environment:
       name: "${{ github.event.inputs.environment }}"
-    
+
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: "${GITHUB_SHA}${GITHUB_RUN_ID}${GITHUB_RUN_ATTEMPT}"
@@ -130,7 +130,7 @@ jobs:
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
-	        gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+          gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
           sleep 120s
 
       - name: Create new solr image
