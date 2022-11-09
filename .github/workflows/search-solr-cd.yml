@@ -144,7 +144,5 @@ jobs:
           echo $INSTANCES
           echo "PARSED_INSTANCES=$(echo $INSTANCES | tr ' ' ,)" >> $GITHUB_ENV
           echo $PARSED_INSTANCES
-          if echo $PARSED_INSTANCES | grep -c "search-solr"
-          then
-            echo hurray
+          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$PARSED_INSTANCES
           gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
