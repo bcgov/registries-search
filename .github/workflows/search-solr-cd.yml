@@ -66,7 +66,10 @@ jobs:
           gsutil -m rsync -R bitnami/ gs://solr-files/bitnami
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
-        run: echo bla > instances.json
+        run: |
+          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
+	        gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+          sleep 120s
 
       - name: Create new solr image
         run: |
@@ -127,7 +130,7 @@ jobs:
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $(PROJECT_ID) > instances.json
-	  gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
+	        gcloud compute instances create search-solr-base-$(NEW_VERSION) --source-instance-template search-solr-base --zone $(ZONE) --project $(PROJECT_ID)
           sleep 120s
 
       - name: Create new solr image
