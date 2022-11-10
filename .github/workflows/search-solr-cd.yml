@@ -181,7 +181,6 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
-          oc delete job search-solr-preload
           oc create -f solr_preload_job.yaml
           oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
 
