@@ -64,9 +64,13 @@ jobs:
         run: |
           gsutil -m rsync -R bitnami/ gs://solr-files/bitnami
 
+      - name: Get current solr vm info
+        run: |
+          gcloud compute instances list --filter name:search-solr --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
+          gcloud compute instances list --filter name:search-solr --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
+
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
-          gcloud compute instances list --filter name:search-solr --sort-by NAME --format=json --project $PROJECT_ID > instances.json
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
           sleep 30s
 
@@ -75,14 +79,35 @@ jobs:
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
           gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
 
-
-      - name: Create new solr instance
+      - name: Create new solr vm
         run: |
-          gcloud compute instance-groups unmanaged list-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --format=json --project $PROJECT_ID > instances_in_preload.json
-          instances_in_preload=$(jq -r '.[].name' instances_in_preload.json)
-          instances_to_rmv=$(instances_in_preload) | tr ' ' ,
-          gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=$(instances_to_rmv)
+          gcloud compute instances create search-solr-$TAG_NAME-$NEW_VERSION --source-instance-template search-solr-$TAG_NAME --zone $ZONE --project $PROJECT_ID
           gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
+
+      - name: Login Openshift
+        run: |
+          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT4_SA_TOKEN}}
+
+      - name: Preload new solr vm index
+        run: |
+          oc delete job search-solr-preload
+          oc create -f solr_preload_job.yaml
+          oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
+
+      - name: Add new solr vm to active load balancer
+        run: |
+          gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
+
+      - name: Cleanup (stop perviously running instances and delete previously stopped instances)
+        run: |
+          if [[ $(jq length running_instance.json) != 0 ]]; then
+            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+            gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
+          if [[ $(jq length stopped_instance.json) != 0 ]]; then
+            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
+            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
@@ -103,6 +128,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        run: |
+          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
       - id: "auth"
         name: "Authenticate to Google Cloud"
@@ -125,6 +152,11 @@ jobs:
         run: |
           gsutil -m rsync -R bitnami/ gs://solr-files/bitnami
 
+      - name: Get current solr vm info
+        run: |
+          gcloud compute instances list --filter name:search-solr --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
+          gcloud compute instances list --filter name:search-solr --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
+
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
@@ -139,3 +171,28 @@ jobs:
         run: |
           gcloud compute instances create search-solr-$TAG_NAME-$NEW_VERSION --source-instance-template search-solr-$TAG_NAME --zone $ZONE --project $PROJECT_ID
           gcloud compute instance-groups unmanaged add-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
+
+      - name: Login Openshift
+        run: |
+          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT4_SA_TOKEN}}
+
+      - name: Preload new solr vm index
+        run: |
+          oc delete job search-solr-preload
+          oc create -f solr_preload_job.yaml
+          oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
+
+      - name: Add new solr vm to active load balancer
+        run: |
+          gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
+
+      - name: Cleanup (stop perviously running instances and delete previously stopped instances)
+        run: |
+          if [[ $(jq length running_instance.json) != 0 ]]; then
+            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+            gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
+          if [[ $(jq length stopped_instance.json) != 0 ]]; then
+            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
+            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
