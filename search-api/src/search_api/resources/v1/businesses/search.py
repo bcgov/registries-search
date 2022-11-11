@@ -75,7 +75,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         # clean query values
         query = {
             'value': Solr.prep_query_str(value),
-            SolrField.NAME_Q: Solr.prep_query_str(name),
+            SolrField.NAME_SINGLE: Solr.prep_query_str(name),
             SolrField.IDENTIFIER_Q: Solr.prep_query_str(identifier),
             SolrField.BN_Q: Solr.prep_query_str(bn)
         }
@@ -111,7 +111,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     'rows': rows or solr.default_rows,
                     'query': {
                         'value': query['value'],
-                        SolrField.NAME: query[SolrField.NAME_Q] or '',
+                        SolrField.NAME: query[SolrField.NAME_SINGLE] or '',
                         SolrField.IDENTIFIER: query[SolrField.IDENTIFIER_Q] or '',
                         SolrField.BN: query[SolrField.BN_Q] or ''
                     },
@@ -161,8 +161,8 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
         # clean query values
         query = {
             'value': Solr.prep_query_str(value),
-            SolrField.PARTY_NAME_Q: Solr.prep_query_str(party_name),
-            SolrField.PARENT_NAME_Q: Solr.prep_query_str(parent_name),
+            SolrField.PARTY_NAME_SINGLE: Solr.prep_query_str(party_name),
+            SolrField.PARENT_NAME_SINGLE: Solr.prep_query_str(parent_name),
             SolrField.PARENT_IDENTIFIER_Q: Solr.prep_query_str(parent_identifier),
             SolrField.PARENT_BN_Q: Solr.prep_query_str(parent_bn)
         }
@@ -205,8 +205,8 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
                     'rows': rows or solr.default_rows,
                     'query': {
                         'value': query['value'],
-                        SolrField.PARTY_NAME: query[SolrField.PARTY_NAME_Q] or '',
-                        SolrField.PARENT_NAME: query[SolrField.PARENT_NAME_Q] or '',
+                        SolrField.PARTY_NAME: query[SolrField.PARTY_NAME_SINGLE] or '',
+                        SolrField.PARENT_NAME: query[SolrField.PARENT_NAME_SINGLE] or '',
                         SolrField.PARENT_IDENTIFIER: query[SolrField.PARENT_IDENTIFIER_Q] or '',
                         SolrField.PARENT_BN: query[SolrField.PARENT_BN_Q] or ''
                     },
