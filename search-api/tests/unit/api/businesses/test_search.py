@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test-Suite to ensure that the search endpoints/functions work as expected."""
+import time
 from http import HTTPStatus
 
 import pytest
@@ -19,8 +20,10 @@ from flask import current_app, Flask
 
 from search_api.request_handlers import business_search, business_suggest, parties_search
 from search_api.request_handlers.search import SearchParams
+from search_api.services import solr
 from search_api.services.solr import Solr, SolrField
 
+from tests import integration_solr
 from tests.unit.services.test_solr import create_solr_doc, SOLR_TEST_DOCS
 
 
@@ -238,3 +241,28 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
     assert resp.json['searchResults']['queryInfo']['categories']['partyRoles'] == ['partner', 'proprietor']
     assert resp.json['searchResults']['totalResults'] == num_found
     assert resp.json['searchResults']['results'] == parties_docs
+
+
+@integration_solr
+@pytest.mark.parametrize('test_name,doc_name,path,endpoint,match', [
+    ('test_bus_search_value', 'Test basic query', 'facets?query=value:basic', 'facets', True),
+    ('test_bus_search_name', 'Test names filter', 'facets?query=value:test::name:names', 'facets', True),
+    ('test_bus_search_name_no_match', 'Test name filter no match', 'facets?query=value:test::name:names', 'facets', False),
+    ('test_bus_search_name_&', 'Test name filter & match', 'facets?query=value:test::name:filter&', 'facets', True),
+    ('test_party_search_value', 'Test basic party query', 'parties?query=value:party&categories=partyRoles:partner,proprietor', 'parties', True),
+    ('test_party_search_owner_name', 'Test party owner name filter query', 'parties?query=value:party::partyName:person owner name filter&categories=partyRoles:partner,proprietor', 'parties', True),
+    ('test_party_search_parent_name', 'Test party parent name filter query', 'parties?query=value:party::parentName:name filter&categories=partyRoles:partner,proprietor', 'parties', True),
+])
+def test_endpoint_full_integration(app, session, client, test_name, doc_name, path, endpoint, match):
+    """Assert that search endpoints work as expected."""
+    solr.init_app(app)
+    solr.delete_all_docs()
+    solr.create_or_replace_docs([create_solr_doc('FM0000001', doc_name, 'ACTIVE', 'SP', '123', [(f'person {doc_name}', 'proprietor', 'person')])])
+    time.sleep(2)  # wait for solr to register update
+    resp = client.get(f'/api/v1/businesses/search/{path}')
+
+    assert resp.status_code == HTTPStatus.OK
+    assert resp.json['searchResults']['totalResults'] == (1 if match else 0)
+    validation_field = 'name' if endpoint == 'facets' else 'parentName'
+    if match:
+        assert resp.json['searchResults']['results'][0][validation_field] == doc_name
