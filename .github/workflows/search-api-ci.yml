@@ -18,7 +18,7 @@ jobs:
     if: github.repository == 'bcgov/registries-search'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: "true"
 
   linting:
@@ -30,7 +30,6 @@ jobs:
         python-version: [3.10.8]
 
     steps:
-      - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -49,6 +48,10 @@ jobs:
 
   testing:
     needs: setup-job
+
+    environment:
+      name: dev
+
     env:
       IMAGE_NAME: registries-search-api
       DATABASE_TEST_USERNAME: postgres
@@ -88,9 +91,6 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - id: "auth"
         name: "Authenticate to Google Cloud"
         uses: google-github-actions/auth@v1
@@ -143,7 +143,6 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
       - name: build to check strictness
         id: build
         run: |
