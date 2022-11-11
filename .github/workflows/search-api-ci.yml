@@ -5,6 +5,9 @@ on:
     types: [assigned, synchronize]
     paths:
       - "search-api/**"
+    secrets:
+      GCP_PROJECT_ID:
+        required: true
 
 defaults:
   run:
@@ -50,7 +53,12 @@ jobs:
   testing:
     needs: setup-job
 
-    environment: dev
+    environment:
+      name: "dev"
+
+    permissions:
+      contents: "read"
+      id-token: "write"
 
     env:
       IMAGE_NAME: registries-search-api
