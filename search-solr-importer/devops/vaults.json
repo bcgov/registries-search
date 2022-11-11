@@ -10,7 +10,7 @@
         "vault": "registries-search",
         "application": [
             "shared",
-            "registries-search-api",
+            "registries-search-solr",
             "registries-search-solr-importer"
         ]
     },
