@@ -50,8 +50,7 @@ jobs:
   testing:
     needs: setup-job
 
-    environment:
-      name: dev
+    environment: dev
 
     env:
       IMAGE_NAME: registries-search-api
