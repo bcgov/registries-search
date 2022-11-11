@@ -273,7 +273,7 @@ import { CorpClass, CorpTypeCd } from '@/enums'
       colinInd: false,
       corpClass: CorpClass.OT,
       shortDesc: 'XPRO COOP',
-      fullDesc: 'Extraprovincial Cooperative Assocation'
+      fullDesc: 'Extraprovincial Cooperative Association'
     }, {
       corpTypeCd: CorpTypeCd.XPRO_LL_PARTNR,
       colinInd: true,
