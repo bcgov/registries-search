@@ -35,8 +35,10 @@ jobs:
       name: "dev"
 
     env:
+      OLD_INSTANCE: overwritten-in-script
+      OLDEST_INSTANCE: overwritten-in-script
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      NEW_VERSION: test1
+      NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
       ZONE: northamerica-northeast1-a
 
     steps:
@@ -56,7 +58,8 @@ jobs:
 
       - name: Setup - gcloud / gsutil
         uses: google-github-actions/setup-gcloud@v0
-      - name: Set credentials
+
+      - name: Login to GCP
         run: |
           gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
 
@@ -108,6 +111,7 @@ jobs:
             echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
             gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
+          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
@@ -121,6 +125,8 @@ jobs:
       name: "${{ github.event.inputs.environment }}"
 
     env:
+      OLD_INSTANCE: overwritten-in-script
+      OLDEST_INSTANCE: overwritten-in-script
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
       ZONE: northamerica-northeast1-a
@@ -128,7 +134,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-  
+
       - name: Set env by input
         run: |
           echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
@@ -146,8 +152,8 @@ jobs:
 
       - name: Setup - gcloud / gsutil
         uses: google-github-actions/setup-gcloud@v0
-  
-      - name: Set credentials
+
+      - name: Login to GCP
         run: |
           gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
 
@@ -157,8 +163,8 @@ jobs:
 
       - name: Get current solr vm info
         run: |
-          gcloud compute instances list --filter name:search-solr --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
-          gcloud compute instances list --filter name:search-solr --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
+          gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
+          gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
@@ -181,6 +187,7 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
+          oc delete job search-solr-preload
           oc create -f solr_preload_job.yaml
           oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
 
@@ -198,3 +205,4 @@ jobs:
             echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
             gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
+          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
