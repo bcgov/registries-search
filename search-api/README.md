@@ -12,6 +12,7 @@ For BC Registries Gateway API configuration see [Gateway Search Proxy](https://g
 * SOLR
 * CloudBuild
 * CloudRun
+* Compute Engine
 
 ## Third-Party Products/Libraries used and the the License they are covert by
 
