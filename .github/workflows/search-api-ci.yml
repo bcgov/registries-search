@@ -53,8 +53,7 @@ jobs:
   testing:
     needs: setup-job
 
-    environment:
-      name: "dev"
+    environment: dev
 
     permissions:
       contents: "read"
