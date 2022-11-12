@@ -16,14 +16,17 @@ import json
 from datetime import datetime
 from http import HTTPStatus
 
+import pytest
 from dateutil.relativedelta import relativedelta
 
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.authz import STAFF_ROLE
 from search_api.services.validator import RequestValidator
+from search_api.services.flags import Flags
+
 from tests.unit import MockResponse
-from tests.unit.services.utils import create_header
+from tests.unit.services.utils import create_header, helper_create_jwt
 
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
@@ -222,3 +225,111 @@ def create_document_access_request(identifier: str, account_id: int, is_paid: bo
 
     assert document_access_request.id is not None
     return document_access_request
+
+
+@pytest.fixture
+def create_user():
+    def _create_user(**kwargs):
+        if not kwargs:
+            return User()
+        
+        return User(**kwargs)
+    return _create_user
+
+
+def test_post_business_document_submit_ce_to_queue(ld, session_flag, client, jwt, mocker, create_user, set_env):
+    """Assert that unauthorized error is returned."""
+    # setup
+    from jose import jwt as jt
+    from flask import g
+
+    account_id = 123
+    business_identifier = 'CP1234567'
+
+    mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
+                 return_value=[])
+    mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_role',
+                 return_value='basic')
+
+    # token = helper_create_jwt(jwt)
+    # unverified_header = jt.get_unverified_header(token)
+    # token_dict = jwt._validate_token(token)
+    # user = User.get_or_create_user_by_jwt(token_dict)
+    user = create_user(**{'username':'username',
+                          'firstname':'firstname',
+                          'lastname':'lastname',
+                          'sub':'sub',
+                          'iss':'iss',
+                          'login_source': 'API_GW',
+                          })
+    user.save()
+    mocker.patch('search_api.models.User.get_or_create_user_by_jwt',
+                 return_value=user)
+
+    mock_response = MockResponse({'id': 123}, HTTPStatus.CREATED)
+    mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
+                 return_value=mock_response)
+
+    business_mock_response = MockResponse(
+        {'business': {'identifier': 'CP1234567', 'legalType': 'CP', 'legalName': 'Test - 1234567'}},
+        HTTPStatus.OK)
+    mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_business',
+                 return_value=business_mock_response)
+    
+    # set the test data for the flag
+    TEST_FLAG_NAME = 'ff_queue_doc_request_name'
+    set_env('FF_QUEUE_DOC_REQUEST_NAME', TEST_FLAG_NAME)
+    flag_user = Flags.flag_user(user, account_id, jwt)
+    ld.update(ld.flag(TEST_FLAG_NAME)
+                .variations(False, True)
+                .variation_for_user(flag_user['key'], 1)
+                .fallthrough_variation(0))
+    
+    # Test
+    api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
+                               data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),
+                               headers=create_header(jwt,
+                                                     [STAFF_ROLE],
+                                                     business_identifier,
+                                                     **{'Accept-Version': 'v1',
+                                                        'Account-Id': account_id,
+                                                        'content-type': 'application/json'
+                                                        })
+                    )
+    # Check
+    assert api_response.status_code == HTTPStatus.CREATED
+    response_json = api_response.json
+    assert response_json['expiryDate']
+    assert response_json['id']
+
+
+def test_submit_ce_to_queue(session_flag, client, ld, jwt, mocker, create_user, set_env):
+    from flask import current_app
+    TEST_FLAG_NAME = 'ff_test_flag'
+    user_json = {
+            'key': '12345667',
+            'firstName': 'firstname',
+            'lastName': 'lastname'
+        }
+    
+    app = current_app
+
+    @app.route("/secret_route")
+    def hello_world():
+        flag = Flags.link(TEST_FLAG_NAME, user_json)
+        return "<p>Hello, World!</p>"
+    
+    # set the test data for the flag
+    ld.update(ld.flag(TEST_FLAG_NAME)
+                .variations(False, True)
+                .variation_for_user(user_json['key'], 1)
+                .fallthrough_variation(0))
+    
+    # Execute test
+    response = client.get("/secret_route")
+    # response = app.test_client().get("/secret_route")
+    # with app.test_client() as client:
+    #     response = client.get("/secret_route")
+
+    # Validate expected outcomes
+    assert b"Hello, World" in response.data

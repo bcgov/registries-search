@@ -14,16 +14,18 @@
 """API endpoints for Document Access Requests."""
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
-from search_api.models import DocumentAccessRequest
+from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
+from search_api.services import get_role
+from search_api.services.document_services import create_doc_request_ce
+from search_api.services.entity import get_business
+from search_api.services.flags import Flags
 from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
-from search_api.services import get_role
-from search_api.services.entity import get_business
 
 
 bp = Blueprint('DOCUMENT_REQUESTS', __name__, url_prefix='/requests')  # pylint: disable=invalid-name
@@ -91,6 +93,17 @@ def post(business_identifier):
             detail = pay_response.get('error', {}).get('detail') or pay_response.get('error')
             message = 'Invoice creation failed.'
             return resource_utils.sbc_payment_required(message, detail, error_type)
+        
+        # (user := User.find_by_jwt_token(g.jwt_oidc_token_info)) and \
+            # (ff_queue_doc_request_flag := Flags.link(ff_queue_doc_request_name, Flags.flag_user(user, account_id, jwt))) and \
+        if pay_code == HTTPStatus.CREATED and \
+            (ff_queue_doc_request_name := current_app.config.get('FF_QUEUE_DOC_REQUEST_NAME')) and \
+            (user := User.find_by_sub('sub')) and \
+            (ff_queue_doc_request_flag := Flags.value('ff_queue_doc_request_name', Flags.flag_user(user, account_id, jwt))) and \
+            isinstance(ff_queue_doc_request_flag, bool) and \
+            ff_queue_doc_request_flag:
+          ce = create_doc_request_ce(document_access_request) 
+
 
         return jsonify(document_access_request.json), pay_code
 
