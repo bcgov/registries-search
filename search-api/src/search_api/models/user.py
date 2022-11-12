@@ -16,6 +16,8 @@
 Actual user data is kept in the OIDC and IDP services, this data is
 here as a convenience for audit and db reporting.
 """
+from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 
@@ -48,6 +50,7 @@ class User(db.Model):
     firstname = db.Column(db.String(1000))
     lastname = db.Column(db.String(1000))
     email = db.Column(db.String(1024))
+    login_source = db.Column('login_source', db.String(200), nullable=True)
     sub = db.Column(db.String(36), unique=True)
     iss = db.Column(db.String(1024))
     creation_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
@@ -105,7 +108,8 @@ class User(db.Model):
                 firstname=firstname,
                 lastname=lastname,
                 iss=token['iss'],
-                sub=token['sub']
+                sub=token['sub'],
+                login_source=token['loginSource'],
             )
             current_app.logger.debug('Creating user from JWT:{}; User:{}'.format(token, user))
             db.session.add(user)

@@ -18,7 +18,14 @@ from typing import List
 STAFF_ROLE = 'staff'
 
 
-def helper_create_jwt(jwt_manager, roles: List[str] = [], username: str = 'test-user'):
+def helper_create_jwt(jwt_manager,
+                      roles: List[str] = [],
+                      username: str = 'test-user',
+                      email: str = None,
+                      firstname: str =None,
+                      lastname: str = None,
+                      login_source:str = None
+                      ):
     """Create a jwt bearer token with the correct keys, roles and username."""
     token_header = {
         'alg': 'RS256',
@@ -34,6 +41,10 @@ def helper_create_jwt(jwt_manager, roles: List[str] = [], username: str = 'test-
         'jti': 'flask-jwt-oidc-test-support',
         'typ': 'Bearer',
         'username': f'{username}',
+        'firstname': firstname,
+        'lastname': lastname,
+        'email': email,
+        'loginSource': login_source,
         'realm_access': {
             'roles': [] + roles
         }
