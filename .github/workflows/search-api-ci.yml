@@ -5,9 +5,6 @@ on:
     types: [assigned, synchronize]
     paths:
       - "search-api/**"
-    secrets:
-      GCP_PROJECT_ID:
-        required: true
 
 defaults:
   run:
@@ -53,8 +50,6 @@ jobs:
   testing:
     needs: setup-job
 
-    environment: dev
-
     permissions:
       contents: "read"
       id-token: "write"
@@ -78,8 +73,6 @@ jobs:
       # needed for spinning up test solr instance
       PROJECT_ID: ${{ secrets.TEST_GCP_PROJECT_ID }}
       ZONE: northamerica-northeast1-a
-      WORKLOAD_IP_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
-      GCP_SA: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
     runs-on: ubuntu-20.04
 
@@ -101,11 +94,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: test variables
-        run: |
-          echo $PROJECT_ID
-          echo $WORKLOAD_IP_ID
-          echo $GCP_SA
 
       - id: "auth"
         name: "Authenticate to Google Cloud"
@@ -113,8 +101,8 @@ jobs:
         with:
           token_format: "access_token"
           create_credentials_file: true
-          workload_identity_provider: $WORKLOAD_IP_ID
-          service_account: $GCP_SA
+          workload_identity_provider: ${{ secrets.TEST_GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
+          service_account: ${{ secrets.TEST_GCP_SERVICE_ACCOUNT }}
           access_token_lifetime: "3600s"
 
       - name: Setup - gcloud / gsutil
