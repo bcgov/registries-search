@@ -1,10 +1,26 @@
 name: REGISTRIES SEARCH API CI
 
 on:
+  workflow_call:
+    secrets:
+      TEST_GCP_PROJECT_ID:
+        required: true
+      TEST_GCP_SERVICE_ACCOUNT:
+        required: True
+      TEST_GCP_WORKLOAD_IDENTITY_PROVIDER_ID:
+        required: true
+
   pull_request:
     types: [assigned, synchronize]
     paths:
       - "search-api/**"
+    secrets:
+      TEST_GCP_PROJECT_ID:
+        required: true
+      TEST_GCP_SERVICE_ACCOUNT:
+        required: True
+      TEST_GCP_WORKLOAD_IDENTITY_PROVIDER_ID:
+        required: true
 
 defaults:
   run:
