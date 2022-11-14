@@ -10,7 +10,7 @@ on:
       TEST_GCP_WORKLOAD_IDENTITY_PROVIDER_ID:
         required: true
 
-  pull_request:
+  pull_request_target:
     types: [assigned, synchronize]
     paths:
       - "search-api/**"
