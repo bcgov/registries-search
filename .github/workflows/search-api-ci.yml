@@ -76,7 +76,7 @@ jobs:
       RUN_SOLR_TESTS: True
       LD_SDK_KEY: temp
       # needed for spinning up test solr instance
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      PROJECT_ID: ${{ secrets.TEST_GCP_PROJECT_ID }}
       ZONE: northamerica-northeast1-a
       WORKLOAD_IP_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
       GCP_SA: ${{ secrets.GCP_SERVICE_ACCOUNT }}
