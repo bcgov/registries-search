@@ -66,6 +66,14 @@ class _Config():  # pylint: disable=too-few-public-methods
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
     LEAR_SVC_URL = os.getenv('LEGAL_API_URL', 'http://') + os.getenv('LEGAL_API_VERSION_2', '/api/v2')
 
+    # Flask-Pub
+    FLASK_PUB_CONFIG={'plugins':[{'gcp': 'gcp-pub-sub'},]}
+    FLASK_PUB_DEFAULT_SUBJECT='projects/unique-project-id/topics/simpleTopicName'
+    QUEUE_PROJECT_ID = os.getenv('QUEUE_PROJECT_ID', '12345')
+    QUEUE_TOPIC = os.getenv('QUEUE_TOPIC', 'doc-test')
+
+
+
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
