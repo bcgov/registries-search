@@ -262,13 +262,14 @@ def session_flag(db_flag):  # pylint: disable=redefined-outer-name, invalid-name
 
     yield sess
 
-    # Cleanup
-    sess.remove()
-    # This instruction rollsback any commit that were executed in the tests.
-    txn.rollback()
+    with suppress(Exception):
+        # Cleanup
+        sess.remove()
+        # This instruction rollsback any commit that were executed in the tests.
+        txn.rollback()
 
-    # Fix need here for ResourceClosedError('This Connection is closed') running
-    # the test suite. The problem does not occur running a small number of tests,
-    # such as in an individual file.
-    #
-    conn.close()
+        # Fix need here for ResourceClosedError('This Connection is closed') running
+        # the test suite. The problem does not occur running a small number of tests,
+        # such as in an individual file.
+        #
+        conn.close()

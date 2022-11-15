@@ -16,11 +16,13 @@ from http import HTTPStatus
 
 from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
+from simple_cloudevent import to_queue_message
 
 import search_api.resources.utils as resource_utils
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 from search_api.services import get_role
+from search_api.services import queue
 from search_api.services.document_services import create_doc_request_ce
 from search_api.services.entity import get_business
 from search_api.services.flags import Flags
@@ -79,6 +81,7 @@ def post(business_identifier):
         token = jwt.get_token_auth_header()
         request_json = request.get_json()
         role = get_role(jwt, account_id)
+        token_dict = g.jwt_oidc_token_info
 
         errors = RequestValidator.validate_document_access_request(request_json, account_id, token, role)
         if errors:
@@ -94,16 +97,26 @@ def post(business_identifier):
             message = 'Invoice creation failed.'
             return resource_utils.sbc_payment_required(message, detail, error_type)
         
-        # (user := User.find_by_jwt_token(g.jwt_oidc_token_info)) and \
-            # (ff_queue_doc_request_flag := Flags.link(ff_queue_doc_request_name, Flags.flag_user(user, account_id, jwt))) and \
-        if pay_code == HTTPStatus.CREATED and \
-            (ff_queue_doc_request_name := current_app.config.get('FF_QUEUE_DOC_REQUEST_NAME')) and \
-            (user := User.find_by_sub('sub')) and \
-            (ff_queue_doc_request_flag := Flags.value('ff_queue_doc_request_name', Flags.flag_user(user, account_id, jwt))) and \
-            isinstance(ff_queue_doc_request_flag, bool) and \
-            ff_queue_doc_request_flag:
-          ce = create_doc_request_ce(document_access_request) 
+        try:
+            if pay_code == HTTPStatus.CREATED and \
+                (ff_queue_doc_request_name := current_app.config.get('FF_QUEUE_DOC_REQUEST_NAME')) and \
+                (user := User.find_by_jwt_token(token_dict)) and \
+                (ff_queue_doc_request_flag := Flags.value(ff_queue_doc_request_name, Flags.flag_user(user, account_id, jwt))) and \
+                isinstance(ff_queue_doc_request_flag, bool) and \
+                ff_queue_doc_request_flag:
+            
+            # Create a CloudEvent and publish to the correct subject
+                    ce = create_doc_request_ce(document_access_request)
+                    project_id=current_app.config.get('QUEUE_PROJECT_ID')
+                    topic=current_app.config.get('QUEUE_TOPIC')
 
+                    queue.publish(
+                        subject=queue.create_subject(project_id, topic),
+                        msg=to_queue_message(ce)
+                    )
+        except Exception as err:
+            # will need to decide on how to best notify there is an error
+            current_app.logger.error('Unable to put document request on Queue', err)
 
         return jsonify(document_access_request.json), pay_code
 

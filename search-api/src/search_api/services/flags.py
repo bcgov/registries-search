@@ -72,8 +72,9 @@ class Flags():
 
         Ensure we close the client connection nicely.
         """
-        client = current_app.extensions[Flags.COMPONENT_NAME]
-        client.close()
+        with suppress(Exception):
+            if client := current_app.extensions.get(Flags.COMPONENT_NAME):
+                client.close()
 
     @staticmethod
     def get_client():
@@ -95,7 +96,9 @@ class Flags():
         }
 
     @staticmethod
-    def flag_user(user, account_id: int = None ,jwt: JwtManager = None):
+    def flag_user(user: search_api.models.User,
+                  account_id: int = None,
+                  jwt: JwtManager = None):
         """Convert User into a Flag user dict."""
         if not isinstance(user, search_api.models.User):
             return None
@@ -126,8 +129,6 @@ class Flags():
         else:
             flag_user = Flags.get_anonymous_user()
         
-        link = client.variation_detail(flag, flag_user, False)
-
         try:
             return client.variation(flag, flag_user, None)
         except Exception as err:  # noqa: B902
