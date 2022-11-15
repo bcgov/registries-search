@@ -57,15 +57,15 @@ class Flags():
             ldclient.set_config(Config(self.sdk_key))
             client = ldclient.get()
         elif td:
-            client = LDClient(config=Config('testing', update_processor_class = td))
+            client = LDClient(config=Config('testing', update_processor_class=td))
 
         # with suppress(Exception):
         try:
             if client and client.is_initialized():  # pylint: disable=E0601
                 app.extensions[Flags.COMPONENT_NAME] = client
                 app.teardown_appcontext(self.teardown)
-        except Exception as err:
-            print(err)
+        except Exception as err:  # noqa: B902
+            current_app.logger.warn('issue registering flag service', err)
 
     def teardown(self, exception):  # pylint: disable=unused-argument,no-self-use; flask method signature
         """Destroy all objects created by this extension.
@@ -82,7 +82,7 @@ class Flags():
         with suppress(KeyError):
             client = current_app.extensions[Flags.COMPONENT_NAME]
             return client
-         
+
         try:
             return ldclient.get()
         except Exception:  # noqa: B902
@@ -107,10 +107,9 @@ class Flags():
             'key': user.sub,
             'firstName': user.firstname,
             'lastName': user.lastname,
-            "email": user.email,
-            "custom": {
-                "loginSource": user.login_source,
-                "groups": ["Google", "Microsoft"],
+            'email': user.email,
+            'custom': {
+                'loginSource': user.login_source,
             }
         }
         with suppress(Exception):
@@ -128,7 +127,7 @@ class Flags():
             flag_user = user
         else:
             flag_user = Flags.get_anonymous_user()
-        
+
         try:
             return client.variation(flag, flag_user, None)
         except Exception as err:  # noqa: B902
@@ -136,7 +135,8 @@ class Flags():
             return None
 
     @staticmethod
-    def link(flag: str, user = None) -> Union[bool, int, str]:
+    def detail(flag: str, user=None) -> Union[bool, int, str]:  # pylint: disable=E1136
+        """Return the full flag and meta info."""
         client = current_app.extensions[Flags.COMPONENT_NAME]
         link = client.variation_detail(flag, user, False)
         return link

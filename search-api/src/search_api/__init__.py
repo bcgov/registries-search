@@ -32,9 +32,7 @@ from search_api import config, errorhandlers, models
 from search_api.models import db
 from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
-from search_api.services import Flags
-from search_api.services import solr
-from search_api.services import queue
+from search_api.services import Flags, queue, solr
 from search_api.services.solr import SolrDoc
 from search_api.translations import babel
 from search_api.utils.auth import jwt
