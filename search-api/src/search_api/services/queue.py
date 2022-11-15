@@ -14,14 +14,13 @@
 """This class enqueues messages for asynchronous events."""
 from __future__ import annotations
 
-import json
 from typing import Final, Union
 
-from flask import _app_ctx_stack
 from flask import Flask
 from flask import current_app
-from flask_pub import FlaskPub
+# from flask_pub import FlaskPub
 from google.cloud import pubsub
+
 
 __version__ = '0.0.1'
 
@@ -32,11 +31,11 @@ class Queue():
     """Queue publishing services."""
 
     def __init__(
-        self,
-        app=None,
+            self,
+            app: Flask = None,
     ):
         """Initialize the queue services.
-        
+
         If app is provided, then this is bound to that app instance.
         """
         self.app = app
@@ -45,19 +44,18 @@ class Queue():
             self.init_app(app)
 
     def init_app(
-        self,
-        app=None,
-        ):
-        """This callback can be used to initialize an application for the
-        use with this queue setup.
+                self,
+                app: Flask = None,
+                ):
+        """Create callback used to initialize this.
+
+        An application can be assigned for use with this queue setup.
         """
         # We intentionally don't set self.app = app, to support multiple
         # applications. If the app is passed in the constructor,
         # we set it and don't support multiple applications.
 
-        if not (
-            app.config.get('FLASK_PUB_CONFIG')
-        ):
+        if not app.config.get('FLASK_PUB_CONFIG'):
             raise RuntimeError(
                 'FLASK_PUB_CONFIG needs to be set.'
             )
@@ -69,42 +67,42 @@ class Queue():
         app.extensions[EXTENSION_NAME] = self.driver
 
         @app.teardown_appcontext
-        def shutdown(response_or_exc):
+        def shutdown(response_or_exc):  # pylint: disable=W0612
             """Cleanup all state here as part of the Flask shutdown."""
-
             return response_or_exc
-    
+
     def publish(self,
                 msg: Union[str, bytes],
                 subject: str = None):
+        """Publish a message onto the queue subject."""
+        if not (app := self.app):  # pylint: disable=C0325
+            app = current_app
 
-        if not (app := self.app):
-                app = current_app
-  
         topic_name = subject or app.config.get('FLASK_PUB_DEFAULT_SUBJECT')
-        
+
         if app and topic_name and (_queue := self._get_queue(app)):
 
             data = msg
             if isinstance(msg, str):
-                data = msg.encode("utf8")
-            
-            future = _queue.publish(subject, data)
+                data = msg.encode('utf8')
+
+            future = _queue.publish(subject, data)  # pylint: disable=W0612; # noqa: F841; an unused future, debugging
 
     @staticmethod
     def create_subject(
-        project: str,
-        topic: str,
+            project: str,
+            topic: str,
     ) -> str:
-        """Returns a fully-qualified topic string."""
-        return "projects/{project}/topics/{topic}".format(
+        """Return a fully-qualified topic string."""
+        return 'projects/{project}/topics/{topic}'.format(
             project=project,
             topic=topic,
         )
 
-    def _get_queue(self, app):
-        """Gets the queue for the application"""
+    @staticmethod
+    def _get_queue(app):
+        """Get the queue for the application."""
         if queue := app.extensions.get(EXTENSION_NAME):
             return queue
-        
+
         raise RuntimeError('The Flask_Pub extension was not registered with the current app.')

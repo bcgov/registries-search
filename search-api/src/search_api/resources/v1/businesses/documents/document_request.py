@@ -96,27 +96,32 @@ def post(business_identifier):
             detail = pay_response.get('error', {}).get('detail') or pay_response.get('error')
             message = 'Invoice creation failed.'
             return resource_utils.sbc_payment_required(message, detail, error_type)
-        
+
         try:
+            # pylint: disable=E0601,W0311; # noqa: E117,E129,E501; doesn't understand the walrus koo koo kachoo
             if pay_code == HTTPStatus.CREATED and \
                 (ff_queue_doc_request_name := current_app.config.get('FF_QUEUE_DOC_REQUEST_NAME')) and \
                 (user := User.find_by_jwt_token(token_dict)) and \
-                (ff_queue_doc_request_flag := Flags.value(ff_queue_doc_request_name, Flags.flag_user(user, account_id, jwt))) and \
+                (ff_queue_doc_request_flag := Flags.value(ff_queue_doc_request_name,
+                                                          Flags.flag_user(user, account_id, jwt))) and \
                 isinstance(ff_queue_doc_request_flag, bool) and \
-                ff_queue_doc_request_flag:
-            
-            # Create a CloudEvent and publish to the correct subject
-                    ce = create_doc_request_ce(document_access_request)
-                    project_id=current_app.config.get('QUEUE_PROJECT_ID')
-                    topic=current_app.config.get('QUEUE_TOPIC')
+                ff_queue_doc_request_flag:  # noqa: E129
+
+                    # Create a CloudEvent and publish to the correct subject; # noqa: E117
+                    # noqa: E117
+                    project_id = current_app.config.get('QUEUE_PROJECT_ID')  # noqa: E117
+                    topic = current_app.config.get('QUEUE_TOPIC')   # noqa: E117
+                    ce = create_doc_request_ce(document_access_request)   # noqa: E117
 
                     queue.publish(
                         subject=queue.create_subject(project_id, topic),
                         msg=to_queue_message(ce)
                     )
-        except Exception as err:
+        except Exception as err:  # noqa: B902
             # will need to decide on how to best notify there is an error
-            current_app.logger.error('Unable to put document request on Queue', err)
+            msg = 'Identifier: {identifier} Unable to put document request on Queue' \
+                  .format(identifier=business_identifier)
+            current_app.logger.error(msg, err)
 
         return jsonify(document_access_request.json), pay_code
 
