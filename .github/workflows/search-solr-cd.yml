@@ -93,9 +93,9 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
-          oc delete job search-solr-preload
-          oc create -f solr_preload_job.yaml
-          oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME create -f solr_preload_job.yaml
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
 
       - name: Add new solr vm to active load balancer
         run: |
@@ -187,9 +187,9 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
-          oc delete job search-solr-preload
-          oc create -f solr_preload_job.yaml
-          oc wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME create -f solr_preload_job.yaml
+          oc -n ${{secrets.OPENSHIFT_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
 
       - name: Add new solr vm to active load balancer
         run: |
