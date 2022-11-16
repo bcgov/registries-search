@@ -99,6 +99,7 @@ jobs:
 
       - name: Add new solr vm to active load balancer
         run: |
+          gcloud compute instance-groups unmanaged delete-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
           gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
 
       - name: Cleanup (stop perviously running instances and delete previously stopped instances)
@@ -193,6 +194,7 @@ jobs:
 
       - name: Add new solr vm to active load balancer
         run: |
+          gcloud compute instance-groups unmanaged delete-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
           gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
 
       - name: Cleanup (stop perviously running instances and delete previously stopped instances)
