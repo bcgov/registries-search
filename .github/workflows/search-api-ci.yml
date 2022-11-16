@@ -18,7 +18,7 @@ jobs:
     if: github.repository == 'bcgov/registries-search'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: "true"
 
   linting:
@@ -30,7 +30,7 @@ jobs:
         python-version: [3.10.8]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -63,11 +63,8 @@ jobs:
       JWT_OIDC_JWKS_CACHE_TIMEOUT: 300
       SOLR_SVC_TEST_URL: ${{ secrets.SOLR_SVC_TEST_URL }}
       RUN_LD_TESTS: False
-      RUN_SOLR_TESTS: True
+      RUN_SOLR_TESTS: False
       LD_SDK_KEY: temp
-      # needed for spinning up test solr instance
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      ZONE: northamerica-northeast1-a
 
     runs-on: ubuntu-20.04
 
@@ -91,29 +88,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: google-github-actions/auth@v1
-        with:
-          token_format: "access_token"
-          create_credentials_file: true
-          activate_credentials_file: true
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          access_token_lifetime: "3600s"
-
-      - name: Setup - gcloud / gsutil
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: Login to GCP
-        run: |
-          gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
-
-      - name: Create new solr vm for tests
-        run: |
-          gcloud compute instances create search-solr-test-vm --source-instance-template search-solr-dev --zone $ZONE --project $PROJECT_ID
-          gcloud compute instance-groups unmanaged add-instances search-solr-test-grp-dev --zone=$ZONE --instances=search-solr-test-vm
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -135,9 +109,6 @@ jobs:
           flags: search-api
           name: codecov-search-api
           fail_ci_if_error: false
-      - name: Cleanup GCP
-        run: |
-          gcloud compute instances delete search-solr-test-vm --zone $ZONE --project $PROJECT_ID
 
   build-check:
     needs: setup-job
