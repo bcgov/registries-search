@@ -36,7 +36,7 @@ jobs:
 
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
+      NEW_VERSION: ${{ github.run.id }}${{ github.run.attempt }}${{ github.sha }}
       ZONE: northamerica-northeast1-a
 
     steps:
@@ -129,7 +129,7 @@ jobs:
 
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
+      NEW_VERSION: ${{ github.run.id }}${{ github.run.attempt }}${{ github.sha }}
       ZONE: northamerica-northeast1-a
 
     steps:
