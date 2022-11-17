@@ -35,7 +35,6 @@ jobs:
       name: "dev"
 
     env:
-      OLDEST_INSTANCE: overwritten-in-script
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
       ZONE: northamerica-northeast1-a
@@ -129,8 +128,6 @@ jobs:
       name: "${{ github.event.inputs.environment }}"
 
     env:
-      OLD_INSTANCE: overwritten-in-script
-      OLDEST_INSTANCE: overwritten-in-script
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
       ZONE: northamerica-northeast1-a
