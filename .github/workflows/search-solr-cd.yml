@@ -35,7 +35,6 @@ jobs:
       name: "dev"
 
     env:
-      OLD_INSTANCE: overwritten-in-script
       OLDEST_INSTANCE: overwritten-in-script
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.sha }}${{ github.run.id }}${{ github.run.attempt }}
@@ -174,7 +173,9 @@ jobs:
           fi
       - name: test var using
         run: |
-          gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          if [ -n $OLD_INSTANCE ]; then
+            gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
