@@ -167,6 +167,15 @@ jobs:
           gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
           gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
 
+      - name: test var setting
+        run: |
+          if [[ $(jq length running_instance.json) != 0 ]]; then
+            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+          fi
+      - name: test var using
+        run: |
+          gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
