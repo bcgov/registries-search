@@ -70,6 +70,12 @@ jobs:
         run: |
           gcloud compute instances list --filter name:search-solr --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
           gcloud compute instances list --filter name:search-solr --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
+          if [[ $(jq length running_instance.json) != 0 ]]; then
+            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+          fi
+          if [[ $(jq length stopped_instance.json) != 0 ]]; then
+            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
+          fi
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
@@ -103,13 +109,11 @@ jobs:
 
       - name: Cleanup (stop perviously running instances and delete previously stopped instances)
         run: |
-          if [[ $(jq length running_instance.json) != 0 ]]; then
-            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+          if [ -n $OLD_INSTANCE ]; then
             gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
-          if [[ $(jq length stopped_instance.json) != 0 ]]; then
-            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
-            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          if [ -n $OLDEST_INSTANCE ]; then
+            gcloud compute instances stop $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
           gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
@@ -165,16 +169,11 @@ jobs:
         run: |
           gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:RUNNING --sort-by NAME --format=json --project=$PROJECT_ID > running_instance.json
           gcloud compute instances list --filter name:search-solr-$TAG_NAME --filter status:TERMINATED --sort-by NAME --format=json --project=$PROJECT_ID > stopped_instance.json
-
-      - name: test var setting
-        run: |
           if [[ $(jq length running_instance.json) != 0 ]]; then
             echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
           fi
-      - name: test var using
-        run: |
-          if [ -n $OLD_INSTANCE ]; then
-            gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          if [[ $(jq length stopped_instance.json) != 0 ]]; then
+            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
           fi
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
@@ -209,12 +208,10 @@ jobs:
 
       - name: Cleanup (stop perviously running instances and delete previously stopped instances)
         run: |
-          if [[ $(jq length running_instance.json) != 0 ]]; then
-            echo "OLD_INSTANCE=$(jq -r '.[0].name' running_instance.json)" >> $GITHUB_ENV
+          if [ -n $OLD_INSTANCE ]; then
             gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
-          if [[ $(jq length stopped_instance.json) != 0 ]]; then
-            echo "OLDEST_INSTANCE=$(jq -r '.[0].name' stopped_instance.json)" >> $GITHUB_ENV
-            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          if [ -n $OLDEST_INSTANCE ]; then
+            gcloud compute instances stop $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
           gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
