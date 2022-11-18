@@ -2,5 +2,5 @@
 name: "Search Solr Action"
 description: "Spins up a search solr container on port 8983"
 runs:
-  using: "docker -d"
+  using: "docker"
   image: "Dockerfile"
