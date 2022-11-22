@@ -67,7 +67,7 @@ class Queue():
             self.driver = pubsub.PublisherClient()
             app.extensions[EXTENSION_NAME] = self.driver
         except Exception as err:
-            current_app.logger.warn('flask_pub.init_app called but unable to create driver.')
+            app.logger.warn('flask_pub.init_app called but unable to create driver.')
 
         @app.teardown_appcontext
         def shutdown(response_or_exc):  # pylint: disable=W0612
