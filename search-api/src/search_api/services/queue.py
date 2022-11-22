@@ -14,6 +14,7 @@
 """This class enqueues messages for asynchronous events."""
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import Final, Union
 
 from flask import Flask
@@ -62,9 +63,11 @@ class Queue():
 
         app.config.setdefault('FLASK_PUB_DEFAULT_SUBJECT', None)
 
-        self.driver = pubsub.PublisherClient()
-
-        app.extensions[EXTENSION_NAME] = self.driver
+        try:
+            self.driver = pubsub.PublisherClient()
+            app.extensions[EXTENSION_NAME] = self.driver
+        except Exception as err:
+            current_app.logger.warn('flask_pub.init_app called but unable to create driver.')
 
         @app.teardown_appcontext
         def shutdown(response_or_exc):  # pylint: disable=W0612
@@ -104,5 +107,11 @@ class Queue():
         """Get the queue for the application."""
         if queue := app.extensions.get(EXTENSION_NAME):
             return queue
+        
+        with suppress(Exception):
+            # throw a hail mary to see if we can initialize the driver
+            driver = pubsub.PublisherClient()
+            app.extensions[EXTENSION_NAME] = driver
+            return driver
 
         raise RuntimeError('The Flask_Pub extension was not registered with the current app.')
