@@ -40,7 +40,7 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
 }
 
 
-def test_get_business_documents(session_flag, client, jwt):
+def test_get_business_documents(session, client, jwt):
     """Assert that document requests are returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -55,7 +55,7 @@ def test_get_business_documents(session_flag, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 1
 
 
-def test_get_business_documents_no_payment(session_flag, client, jwt):
+def test_get_business_documents_no_payment(session, client, jwt):
     """Assert that document requests with no payment are not returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -70,7 +70,7 @@ def test_get_business_documents_no_payment(session_flag, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 0
 
 
-def test_get_business_documents_no_records(session_flag, client, jwt):
+def test_get_business_documents_no_records(session, client, jwt):
     """Assert that document requests are not returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -84,7 +84,7 @@ def test_get_business_documents_no_records(session_flag, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 0
 
 
-def test_get_business_documents_invalid_account(session_flag, client, jwt):
+def test_get_business_documents_invalid_account(session, client, jwt):
     """Assert that document requests are not returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -100,7 +100,7 @@ def test_get_business_documents_invalid_account(session_flag, client, jwt):
 
 
 
-def test_get_business_document_by_id(session_flag, client, jwt):
+def test_get_business_document_by_id(session, client, jwt):
     """Assert that the document request having the specified id is returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -114,7 +114,7 @@ def test_get_business_document_by_id(session_flag, client, jwt):
     assert 'documentAccessRequest' in rv.json
 
 
-def test_get_business_document_by_invalid_id(session_flag, client, jwt):
+def test_get_business_document_by_invalid_id(session, client, jwt):
     """Assert that document request is not returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -127,7 +127,7 @@ def test_get_business_document_by_invalid_id(session_flag, client, jwt):
     assert rv.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_get_business_document_by_id_unauthorized(session_flag, client, jwt):
+def test_get_business_document_by_id_unauthorized(session, client, jwt):
     """Assert that unauthorized error is returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -140,7 +140,7 @@ def test_get_business_document_by_id_unauthorized(session_flag, client, jwt):
     assert rv.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_post_business_document(session_flag, client, jwt, mocker):
+def test_post_business_document(session, client, jwt, mocker):
     """Assert that unauthorized error is returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -171,7 +171,7 @@ def test_post_business_document(session_flag, client, jwt, mocker):
     assert response_json['id']
 
 
-def test_post_business_document_payment_failure(session_flag, client, jwt, mocker):
+def test_post_business_document_payment_failure(session, client, jwt, mocker):
     """Assert that unauthorized error is returned."""
     account_id = 123
     business_identifier = 'CP1234567'
@@ -242,7 +242,7 @@ def create_user():
     (False),
     ('unknown'),
 ])
-def test_post_business_document_submit_ce_to_queue(ld, session_flag, client, jwt, mocker, create_user, set_env,
+def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, mocker, create_user, set_env,
                                                    flag_value):
     """Assert that unauthorized error is returned."""
     # setup

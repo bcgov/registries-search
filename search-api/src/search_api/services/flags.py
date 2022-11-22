@@ -53,11 +53,11 @@ class Flags():
         self.app = app
         self.sdk_key = app.config.get('LD_SDK_KEY')
 
-        if self.sdk_key:
+        if td:
+            client = LDClient(config=Config('testing', update_processor_class=td))
+        elif self.sdk_key:
             ldclient.set_config(Config(self.sdk_key))
             client = ldclient.get()
-        elif td:
-            client = LDClient(config=Config('testing', update_processor_class=td))
 
         # with suppress(Exception):
         try:
