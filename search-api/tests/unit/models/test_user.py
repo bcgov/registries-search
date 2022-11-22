@@ -49,7 +49,8 @@ def test_create_from_jwt_token(session):
              'given_name': 'given_name',
              'family_name': 'family_name',
              'iss': 'iss',
-             'sub': 'sub'
+             'sub': 'sub',
+             'loginSource': 'test',
              }
     u = User.create_from_jwt_token(token)
     assert u.id is not None
@@ -61,7 +62,8 @@ def test_get_or_create_user_by_jwt(session):
              'given_name': 'given_name',
              'family_name': 'family_name',
              'iss': 'iss',
-             'sub': 'sub'
+             'sub': 'sub',
+             'loginSource': 'test',
              }
     u = User.get_or_create_user_by_jwt(token)
     assert u.id is not None
@@ -76,7 +78,8 @@ def test_get_or_create_user_by_jwt_existing(session):
              'given_name': 'given_name',
              'family_name': 'family_name',
              'iss': 'iss',
-             'sub': 'sub'
+             'sub': 'sub',
+             'loginSource': 'test',
              }
     u = User.get_or_create_user_by_jwt(token)
 
@@ -94,7 +97,9 @@ def test_get_or_create_user_by_jwt_existing(session):
                      'firstname': token['firstname'] + 'new',
                      'lastname': token['lastname'] + 'new',
                      'iss': 'iss',
-                     'sub': 'sub'}
+                     'sub': 'sub',
+                     'loginSource': 'test',
+                     }
 
     new = User.get_or_create_user_by_jwt(updated_token)
     assert new.username == updated_token['username']
