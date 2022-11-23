@@ -32,7 +32,7 @@ from search_api import config, errorhandlers, models
 from search_api.models import db
 from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
-from search_api.services import Flags, solr
+from search_api.services import Flags, queue, solr
 from search_api.services.solr import SolrDoc
 from search_api.translations import babel
 from search_api.utils.auth import jwt
@@ -66,6 +66,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
     errorhandlers.init_app(app)
     db.init_app(app)
     rsbc_schemas.init_app(app)
+    queue.init_app(app)
     solr.init_app(app)
     babel.init_app(app)
     migrate.init_app(app, db)

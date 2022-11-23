@@ -65,3 +65,4 @@ strict-rfc3339==0.7
 urllib3==1.26.9
 zipp==3.8.0
 git+https://github.com/bcgov/registry-schemas.git@1.5.3#egg=registry_schemas
+git+https://github.com/daxiom/simple-cloudevent.py.git@0.0.2

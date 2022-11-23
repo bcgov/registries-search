@@ -14,11 +14,19 @@
 """Feature flag wrapper for Flask."""
 from __future__ import annotations
 
+from contextlib import suppress
+from typing import Union
+
 import ldclient
-from ldclient.config import Config
+from ldclient import LDClient, Config
 from ldclient.integrations.test_data import TestData
 from flask import current_app
 from flask import Flask
+
+import search_api
+# from search_api.models import User
+from search_api.services.authz import get_role
+from search_api.utils.auth import JwtManager
 
 
 class Flags():
@@ -45,26 +53,36 @@ class Flags():
         self.app = app
         self.sdk_key = app.config.get('LD_SDK_KEY')
 
-        if self.sdk_key:
+        if td:
+            client = LDClient(config=Config('testing', update_processor_class=td))
+        elif self.sdk_key:
             ldclient.set_config(Config(self.sdk_key))
-        elif td:
-            ldclient.set_config(config=Config('testing', update_processor_class=td))
+            client = ldclient.get()
 
-        if (client := ldclient.get()) and client.is_initialized():  # pylint: disable=E0601
-            app.extensions[Flags.COMPONENT_NAME] = client
-            app.teardown_appcontext(self.teardown)
+        # with suppress(Exception):
+        try:
+            if client and client.is_initialized():  # pylint: disable=E0601
+                app.extensions[Flags.COMPONENT_NAME] = client
+                app.teardown_appcontext(self.teardown)
+        except Exception as err:  # noqa: B902
+            current_app.logger.warn('issue registering flag service', err)
 
     def teardown(self, exception):  # pylint: disable=unused-argument,no-self-use; flask method signature
         """Destroy all objects created by this extension.
 
         Ensure we close the client connection nicely.
         """
-        client = current_app.extensions[Flags.COMPONENT_NAME]
-        client.close()
+        with suppress(Exception):
+            if client := current_app.extensions.get(Flags.COMPONENT_NAME):
+                client.close()
 
     @staticmethod
     def get_client():
         """Get the currently configured ldclient."""
+        with suppress(KeyError):
+            client = current_app.extensions[Flags.COMPONENT_NAME]
+            return client
+
         try:
             return ldclient.get()
         except Exception:  # noqa: B902
@@ -77,14 +95,28 @@ class Flags():
             'key': 'anonymous'
         }
 
-    # @staticmethod
-    # def _user_as_key(user: User):
-    #     user_json = {
-    #         'key': user.sub,
-    #         'firstName': user.firstname,
-    #         'lastName': user.lastname
-    #     }
-    #     return user_json
+    @staticmethod
+    def flag_user(user: search_api.models.User,
+                  account_id: int = None,
+                  jwt: JwtManager = None):
+        """Convert User into a Flag user dict."""
+        if not isinstance(user, search_api.models.User):
+            return None
+
+        _user = {
+            'key': user.sub,
+            'firstName': user.firstname,
+            'lastName': user.lastname,
+            'email': user.email,
+            'custom': {
+                'loginSource': user.login_source,
+            }
+        }
+        with suppress(Exception):
+            if account_id and jwt:
+                _user['custom']['group'] = get_role(jwt, account_id)
+
+        return _user
 
     @staticmethod
     def value(flag: str, user=None):
@@ -101,3 +133,10 @@ class Flags():
         except Exception as err:  # noqa: B902
             current_app.logger.error('Unable to read flags: %s' % repr(err), exc_info=True)
             return None
+
+    @staticmethod
+    def detail(flag: str, user=None) -> Union[bool, int, str]:  # pylint: disable=E1136
+        """Return the full flag and meta info."""
+        client = current_app.extensions[Flags.COMPONENT_NAME]
+        link = client.variation_detail(flag, user, False)
+        return link

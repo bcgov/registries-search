@@ -66,13 +66,20 @@ class _Config():  # pylint: disable=too-few-public-methods
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
     LEAR_SVC_URL = os.getenv('LEGAL_API_URL', 'http://') + os.getenv('LEGAL_API_VERSION_2', '/api/v2')
 
+    # Flask-Pub
+    FLASK_PUB_CONFIG = {'plugins': [{'gcp': 'gcp-pub-sub'}, ]}
+    FLASK_PUB_DEFAULT_SUBJECT = 'projects/unique-project-id/topics/simpleTopicName'
+    QUEUE_PROJECT_ID = os.getenv('QUEUE_PROJECT_ID', '12345')
+    QUEUE_TOPIC = os.getenv('QUEUE_TOPIC', 'doc-test')
+
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
-    # the name of the Feature Flag that has the logging.level
+    # Flag Names
+    FF_QUEUE_DOC_REQUEST_NAME = os.getenv('FF_QUEUE_DOC_REQUEST_NAME', None)
     OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
 
     SECRET_KEY = 'a secret'

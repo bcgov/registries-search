@@ -18,7 +18,15 @@ from typing import List
 STAFF_ROLE = 'staff'
 
 
-def helper_create_jwt(jwt_manager, roles: List[str] = [], username: str = 'test-user'):
+def helper_create_jwt(jwt_manager,
+                      roles: List[str] = [],
+                      username: str = 'test-user',
+                      email: str = None,
+                      firstname: str =None,
+                      lastname: str = None,
+                      login_source:str = None,
+                      sub:str = None,
+                      ):
     """Create a jwt bearer token with the correct keys, roles and username."""
     token_header = {
         'alg': 'RS256',
@@ -27,13 +35,17 @@ def helper_create_jwt(jwt_manager, roles: List[str] = [], username: str = 'test-
     }
     claims = {
         'iss': 'https://example.localdomain/auth/realms/example',
-        'sub': '43e6a245-0bf7-4ccf-9bd0-e7fb85fd18cc',
+        'sub': sub,
         'aud': 'example',
         'exp': 2539722391,
         'iat': 1539718791,
         'jti': 'flask-jwt-oidc-test-support',
         'typ': 'Bearer',
         'username': f'{username}',
+        'firstname': firstname,
+        'lastname': lastname,
+        'email': email,
+        'loginSource': login_source,
         'realm_access': {
             'roles': [] + roles
         }
@@ -41,9 +53,25 @@ def helper_create_jwt(jwt_manager, roles: List[str] = [], username: str = 'test-
     return jwt_manager.create_jwt(claims, token_header)
 
 
-def create_header(jwt_manager, roles: List[str] = [], username: str = 'test-user', **kwargs):
+def create_header(jwt_manager,
+                  roles: List[str] = [],
+                  username: str = 'test-user',
+                  firstname: str =None,
+                  lastname: str = None,
+                  email: str = None,
+                  login_source:str = None,
+                  sub:str = '43e6a245-0bf7-4ccf-9bd0-e7fb85fd18cc',
+                  **kwargs):
     """Return a header containing a JWT bearer token."""
-    token = helper_create_jwt(jwt_manager, roles=roles, username=username)
+    token = helper_create_jwt(jwt_manager,
+                              roles=roles,
+                              username=username,
+                              firstname=firstname,
+                              lastname=lastname,
+                              email=email,
+                              login_source=login_source,
+                              sub=sub,
+                              )
     headers = {**kwargs, **{'Authorization': 'Bearer ' + token}}
     return headers
 

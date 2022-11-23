@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """The Test Suites to ensure that the service is built and operating correctly."""
-
 from .pytest_marks import (
     integration_authorization,
     integration_ldarkly,
