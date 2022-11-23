@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from search_api.utils.logging import logging, get_logging_flag_name
+from tests import not_github_ci
 
-
+@not_github_ci
 def test_change_log_level_using_LD_flag():
     from search_api import create_app
     from ldclient.integrations.test_data import TestData
