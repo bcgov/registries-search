@@ -11,10 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import pytest
+
 from search_api.utils.logging import logging, get_logging_flag_name
 from tests import not_github_ci
 
 @not_github_ci
+@pytest.mark.skip(reason="skip in the ci")
 def test_change_log_level_using_LD_flag():
     from search_api import create_app
     from ldclient.integrations.test_data import TestData
