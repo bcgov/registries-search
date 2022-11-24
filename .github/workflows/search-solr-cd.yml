@@ -79,12 +79,12 @@ jobs:
       - name: Create solr base vm (instance runs startup script to get new solr files)
         run: |
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
-          sleep 30s
+          sleep 45s
 
       - name: Create new solr image
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
-          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
+          gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --storage-location northamerica-northeast1 --project $PROJECT_ID
 
       - name: Create new solr vm
         run: |
