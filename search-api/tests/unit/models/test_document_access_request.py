@@ -31,7 +31,7 @@ def test_document_request_save(session):
         expiry_date = datetime.now()+ relativedelta(days=7)
     )
 
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
     document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
@@ -54,7 +54,7 @@ def test_find_active_requests(session):
         status=DocumentAccessRequest.Status.PAID.value
     )
 
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
     document_1 = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test1')
@@ -82,7 +82,7 @@ def test_find_by_id(session):
         expiry_date=datetime.now() + relativedelta(days=7)
     )
 
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
     document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
@@ -109,7 +109,7 @@ def test_document_access_request_json(session):
         status=DocumentAccessRequest.Status.PAID.value
     )
 
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
     document_1 = Document(document_type=DocumentType.LETTER_UNDER_SEAL, document_key='test1')
