@@ -17,6 +17,8 @@ These will get initialized by the application.
 """
 from __future__ import annotations
 
+import os
+
 import cx_Oracle
 from flask import _app_ctx_stack, current_app
 
@@ -26,6 +28,10 @@ class OracleDB:
 
     def __init__(self, app=None):
         """initializer, supports setting the app context on instantiation."""
+        print(os.getcwd())
+        print(os.listdir('/Users/kial/work/oracle/instantclient_19_8'))
+        lib_dir = '/Users/kial/work/oracle/instantclient_19_8'
+        cx_Oracle.init_oracle_client(lib_dir=lib_dir)
         if app is not None:
             self.init_app(app)
 

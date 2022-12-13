@@ -22,8 +22,9 @@ from flask_cors import cross_origin
 from search_api.exceptions import SolrException
 from search_api.request_handlers import business_search, business_suggest, parties_search
 from search_api.request_handlers.search import SearchParams
-from search_api.services import solr
-from search_api.services.solr import Solr, SolrField
+from search_api.services import search_solr
+from search_api.services.solr import Solr
+from search_api.services.solr.solr_fields import SolrField
 import search_api.resources.utils as resource_utils
 
 
@@ -108,7 +109,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
             'facets': Solr.parse_facets(results),
             'searchResults': {
                 'queryInfo': {
-                    'rows': rows or solr.default_rows,
+                    'rows': rows or search_solr.default_rows,
                     'query': {
                         'value': query['value'],
                         SolrField.NAME: query[SolrField.NAME_SINGLE] or '',
@@ -202,7 +203,7 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
             'facets': Solr.parse_facets(results),
             'searchResults': {
                 'queryInfo': {
-                    'rows': rows or solr.default_rows,
+                    'rows': rows or search_solr.default_rows,
                     'query': {
                         'value': query['value'],
                         SolrField.PARTY_NAME: query[SolrField.PARTY_NAME_SINGLE] or '',

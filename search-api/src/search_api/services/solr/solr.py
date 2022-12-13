@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Manages solr classes for search."""
+"""Manages solr class for using search solr."""
 import json
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta
-from enum import Enum
+from dataclasses import asdict
 from http import HTTPStatus
 from typing import Dict, List
 
@@ -26,80 +26,8 @@ from flask import current_app
 
 from search_api.exceptions import SolrException
 
-
-class SolrField(str, Enum):
-    """Enum of the fields available in the solr search core."""
-
-    # base doc stored fields
-    BN = 'bn'
-    IDENTIFIER = 'identifier'
-    NAME = 'name'
-    PARTIES = 'parties'
-    SCORE = 'score'
-    STATE = 'status'
-    TYPE = 'legalType'
-
-    # child parties doc stored fields
-    PARENT_BN = 'parentBN'
-    PARENT_IDENTIFIER = 'parentIdentifier'
-    PARENT_NAME = 'parentName'
-    PARENT_STATE = 'parentStatus'
-    PARENT_TYPE = 'parentLegalType'
-    PARTY_NAME = 'partyName'
-    PARTY_ROLE = 'partyRoles'
-    PARTY_TYPE = 'partyType'
-
-    # business query fields
-    BN_Q = 'bn_q'
-    IDENTIFIER_Q = 'identifier_q'
-    NAME_Q = 'name_q'
-    NAME_SINGLE = 'name_single_term'
-    NAME_STEM_AGRO = 'name_stem_agro'
-    NAME_SUGGEST = 'name_suggest'
-    # party query fields
-    PARTY_NAME_Q = 'partyName_q'
-    PARTY_NAME_SINGLE = 'partyName_single_term'
-    PARTY_NAME_STEM_AGRO = 'partyName_stem_agro'
-    PARTY_NAME_SUGGEST = 'partyName_suggest'
-    PARENT_NAME_Q = 'parentName_q'
-    PARENT_NAME_SINGLE = 'parentName_single_term'
-    PARENT_NAME_STEM_AGRO = 'parentName_stem_agro'
-    PARENT_BN_Q = 'parentBN_q'
-    PARENT_IDENTIFIER_Q = 'parentIdentifier_q'
-
-
-class SolrDoc:  # pylint: disable=too-few-public-methods
-    """Class representation for a solr search core doc."""
-
-    # TODO: make enums for state and type
-    def __init__(self, data: Dict):
-        """Initialize this object."""
-        self.identifier = data['identifier']
-        self.name = data['name']
-        self.state = data['status']
-        self.legal_type = data['legaltype']
-        if data.get('parties'):
-            self.parties = data['parties']
-        if data.get('bn'):
-            self.tax_id = data['bn']
-
-    @property
-    def json(self):
-        """Return the dict representation of a SolrDoc."""
-        doc_json = {
-            SolrField.IDENTIFIER: self.identifier,
-            SolrField.IDENTIFIER_Q: self.identifier,
-            SolrField.NAME: self.name,
-            SolrField.STATE: self.state,
-            SolrField.TYPE: self.legal_type
-        }
-        with suppress(AttributeError):
-            if self.parties:
-                doc_json[SolrField.PARTIES] = self.parties
-        with suppress(AttributeError):
-            if self.tax_id:
-                doc_json[SolrField.BN] = self.tax_id
-        return doc_json
+from .solr_docs import BusinessDoc
+from .solr_fields import SolrField
 
 
 class Solr:
@@ -189,9 +117,9 @@ class Solr:
                 error=msg,
                 status_code=status_code)
 
-    def create_or_replace_docs(self, docs: List[SolrDoc]):
+    def create_or_replace_docs(self, docs: List[BusinessDoc]):
         """Create or replace solr docs in the core."""
-        update_json = [doc.json for doc in docs]
+        update_json = [asdict(doc) for doc in docs]
         response = self.call_solr('POST', self.update_query, json_data=update_json)
         return response
 

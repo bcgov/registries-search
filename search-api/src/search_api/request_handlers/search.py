@@ -14,8 +14,9 @@
 """API request handlers for Search."""
 from typing import Dict, List
 
-from search_api.services import solr
-from search_api.services.solr import Solr, SolrField
+from search_api.services import search_solr
+from search_api.services.solr import Solr
+from search_api.services.solr.solr_fields import SolrField
 
 
 class SearchParams:  # pylint: disable=too-few-public-methods
@@ -65,7 +66,7 @@ def business_search(params: SearchParams):
 
     # facets
     solr_query_params['facet'] = 'on'
-    solr_query_params['json.facet'] = solr.base_facets
+    solr_query_params['json.facet'] = search_solr.base_facets
     # filter queries
     filter_q = ''
     if params.legal_types:
@@ -87,24 +88,24 @@ def business_search(params: SearchParams):
         f' AND {SolrField.NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
         f' AND {SolrField.NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
 
-    solr_query_params['fl'] = solr.base_fields
-    return solr.query(solr_query_params, params.start, params.rows)
+    solr_query_params['fl'] = search_solr.base_fields
+    return search_solr.query(solr_query_params, params.start, params.rows)
 
 
 def business_suggest(query: str, highlight: bool, rows: int) -> List:
     """Return the list of business suggestions from Solr from given text."""
     if not rows:
-        rows = solr.default_rows
+        rows = search_solr.default_rows
 
     # 1st solr query (names)
-    name_suggestions = solr.suggest(query, rows)
+    name_suggestions = search_solr.suggest(query, rows)
 
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
         name_select_params = Solr.build_split_query({'value': query}, [SolrField.NAME_SINGLE], [])
-        name_select_params['fl'] = solr.base_fields
-        name_docs = solr.query(name_select_params, rows).get('response', {}).get('docs', [])
+        name_select_params['fl'] = search_solr.base_fields
+        name_docs = search_solr.query(name_select_params, rows).get('response', {}).get('docs', [])
         extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
@@ -119,8 +120,8 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     if len(name_suggestions) < rows:
         bn_id_params = {
             'q': f'{SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}',
-            'fl': solr.base_fields}
-        bn_id_docs = solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
+            'fl': search_solr.base_fields}
+        bn_id_docs = search_solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
         if highlight:
             # return list of identifier strings with highlighted query
             identifier_suggestions = [
@@ -150,7 +151,7 @@ def parties_search(params: SearchParams):
                                                [SolrField.PARTY_NAME_Q, SolrField.PARENT_NAME_Q])
     # facets
     solr_query_params['facet'] = 'on'
-    solr_query_params['json.facet'] = solr.party_facets
+    solr_query_params['json.facet'] = search_solr.party_facets
     # filters
     filter_q = ''
     if params.party_roles:
@@ -176,6 +177,6 @@ def parties_search(params: SearchParams):
         f' AND {SolrField.PARTY_NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
         f' AND {SolrField.PARTY_NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
 
-    solr_query_params['fl'] = solr.party_fields
+    solr_query_params['fl'] = search_solr.party_fields
 
-    return solr.query(solr_query_params, params.start, params.rows)
+    return search_solr.query(solr_query_params, params.start, params.rows)

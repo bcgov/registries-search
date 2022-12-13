@@ -21,7 +21,8 @@ from flask import current_app, Flask
 from search_api.request_handlers import business_search, business_suggest, parties_search
 from search_api.request_handlers.search import SearchParams
 from search_api.services import solr
-from search_api.services.solr import Solr, SolrField
+from search_api.services.solr import Solr
+from search_api.services.solr.solr_fields import SolrField
 
 from tests import integration_solr
 from tests.unit.services.test_solr import create_solr_doc, SOLR_TEST_DOCS

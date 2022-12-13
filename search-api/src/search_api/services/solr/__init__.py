@@ -11,7 +11,5 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""This exports all of the enums used by the application."""
-from .document_type import DocumentType
-from .solr_doc_status import SolrDocStatus
+"""This module wraps the solr classes/fields for using registries search solr."""
+from .solr import Solr

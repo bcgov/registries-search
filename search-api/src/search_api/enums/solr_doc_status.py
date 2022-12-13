@@ -11,7 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Enum for document types."""
+from enum import auto
 
-"""This exports all of the enums used by the application."""
-from .document_type import DocumentType
-from .solr_doc_status import SolrDocStatus
+from search_api.utils.base import BaseEnum
+
+
+class SolrDocStatus(BaseEnum):
+    """Enum of the solr doc statuses."""
+
+    COMPLETE = auto()
+    ERROR = auto()
+    PENDING = auto()

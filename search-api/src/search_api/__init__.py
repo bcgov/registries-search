@@ -32,8 +32,7 @@ from search_api import config, errorhandlers, models
 from search_api.models import db
 from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
-from search_api.services import Flags, queue, solr
-from search_api.services.solr import SolrDoc
+from search_api.services import Flags, queue, search_solr
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.logging import set_log_level_by_flag, setup_logging
@@ -57,7 +56,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
             environment=app.config.get('POD_NAMESPACE'),
             release=f'search-api@{get_run_version()}',
             traces_sample_rate=app.config.get('SENTRY_TSR')
-            )
+        )
 
     # td is testData instance passed in to support testing
     td = kwargs.get('ld_test_data', None)
@@ -67,7 +66,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
     db.init_app(app)
     rsbc_schemas.init_app(app)
     queue.init_app(app)
-    solr.init_app(app)
+    search_solr.init_app(app)
     babel.init_app(app)
     migrate.init_app(app, db)
 

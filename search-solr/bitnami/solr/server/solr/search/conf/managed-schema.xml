@@ -367,6 +367,7 @@
   <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
   <!-- custom copy fields -->
   <copyField source="bn" dest="bn_q"/>
+  <copyField source="identifier" dest="identifier_q"/>
   <copyField source="name" dest="name_q"/>
   <copyField source="name" dest="name_single_term"/>
   <copyField source="name" dest="name_stem_agro"/>

@@ -19,7 +19,9 @@ import pytest
 from flask import Flask
 
 from search_api.services import solr
-from search_api.services.solr import Solr, SolrDoc, SolrField
+from search_api.services.solr import Solr
+from search_api.services.solr.solr_docs import SolrDoc
+from search_api.services.solr.solr_fields import SolrField
 
 from tests import integration_solr
 from . import SOLR_TEST_DOCS

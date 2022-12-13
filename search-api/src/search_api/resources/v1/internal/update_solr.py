@@ -21,8 +21,8 @@ from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
 from search_api.exceptions import SolrException
-from search_api.services import solr
-from search_api.services.solr import SolrDoc
+from search_api.services import search_solr
+from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
 from search_api.services.validator import RequestValidator
 
 
@@ -41,7 +41,7 @@ def update_solr():
 
         solr_doc = _prepare_data(request_json)
 
-        response = solr.create_or_replace_docs([solr_doc])
+        response = search_solr.create_or_replace_docs([solr_doc])
         return jsonify(response.json()), HTTPStatus.OK
 
     except SolrException as solr_exception:
@@ -50,8 +50,8 @@ def update_solr():
         return resource_utils.default_exception_response(default_exception)
 
 
-def _prepare_data(request_json: Dict) -> SolrDoc:
-    """Return the SolrDoc for the json data."""
+def _prepare_data(request_json: Dict) -> BusinessDoc:
+    """Return the solr doc for the json data."""
     def needs_bc_prefix(identifier: str, legal_type: str) -> bool:
         """Return if the identifier should have the BC prefix or not."""
         numbers_only_rgx = r'^[0-9]+$'
@@ -77,28 +77,29 @@ def _prepare_data(request_json: Dict) -> SolrDoc:
     # add new base doc
     identifier = business_info['identifier']
     legal_type = business_info['legalType']
-    prepped_data = {
-        'identifier': f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
-        'name': business_info['legalName'],
-        'legaltype': legal_type,
-        'status': business_info['state'],
-        'bn': business_info.get('taxId')
-    }
+    business_doc = BusinessDoc(
+        bn=business_info.get('taxId'),
+        identifier=f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
+        legalType=legal_type,
+        name=business_info['legalName'],
+        status=business_info['state'])
+
     if party_info:
         party_list = []
         # add party doc to base doc
         for party in party_info:
-            party_doc = {
-                'parentBN': business_info.get('taxId'),
-                'parentLegalType': business_info['legalType'],
-                'parentName': business_info['legalName'],
-                'parentStatus': business_info['state'],
-                'partyName': get_party_name(party['officer']),
-                'partyRoles': [x['roleType'].lower() for x in party['roles']],
-                'partyType': party['officer']['partyType']
-            }
+            party_doc = PartyDoc(
+                parentBN=business_info.get('taxId'),
+                parentLegalType=business_info['legalType'],
+                parentName=business_info['legalName'],
+                parentStatus=business_info['state'],
+                partyName=get_party_name(party['officer']),
+                partyRoles=[x['roleType'].lower() for x in party['roles']],
+                partyType=party['officer']['partyType']
+            )
             party_list.append(party_doc)
 
         if party_list:
-            prepped_data['parties'] = party_list
-    return SolrDoc(prepped_data)
+            business_doc.parties = party_list
+    # add doc to updates table
+    return business_doc

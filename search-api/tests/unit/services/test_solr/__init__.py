@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from __future__ import annotations
-
-from search_api.services.solr import SolrDoc, SolrField
+from search_api.services.solr import SolrDoc
+from search_api.services.solr.solr_fields import SolrField
 
 
 def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) -> SolrDoc:
