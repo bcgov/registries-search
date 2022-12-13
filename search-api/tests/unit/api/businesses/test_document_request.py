@@ -252,6 +252,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
     firstname = 'firstname'
     lastname = 'lastname'
     sub = 'this-is-the-key'
+    idp_userid = '123'
     iss = 'iss'
     login_source = 'API_GW'
  
@@ -270,6 +271,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
                           'sub': sub,
                           'iss': iss,
                           'login_source': login_source,
+                          'idp_userid': idp_userid,
                           })
     user.save()
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt',
@@ -307,6 +309,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
                                                      lastname=lastname,
                                                      login_source=login_source,
                                                      sub=sub,
+                                                     idp_userid=idp_userid,
                                                      **{'Accept-Version': 'v1',
                                                         'Account-Id': account_id,
                                                         'content-type': 'application/json'
