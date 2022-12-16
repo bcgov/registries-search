@@ -23,7 +23,7 @@ from search_api.models import User
 
 def test_user(session):
     """Assert that a User can be stored in the service."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
 
     session.add(user)
     session.commit()
@@ -33,11 +33,11 @@ def test_user(session):
 
 def test_user_find_by_jwt_token(session):
     """Assert that a User can be stored in the service."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     session.add(user)
     session.commit()
 
-    token = {'sub': 'sub'}
+    token = {'idp_userid': '123'}
     u = User.find_by_jwt_token(token)
 
     assert u.id is not None
@@ -51,6 +51,7 @@ def test_create_from_jwt_token(session):
              'iss': 'iss',
              'sub': 'sub',
              'loginSource': 'test',
+             'idp_userid': '123',
              }
     u = User.create_from_jwt_token(token)
     assert u.id is not None
@@ -64,6 +65,7 @@ def test_get_or_create_user_by_jwt(session):
              'iss': 'iss',
              'sub': 'sub',
              'loginSource': 'test',
+             'idp_userid': '123',
              }
     u = User.get_or_create_user_by_jwt(token)
     assert u.id is not None
@@ -80,6 +82,7 @@ def test_get_or_create_user_by_jwt_existing(session):
              'iss': 'iss',
              'sub': 'sub',
              'loginSource': 'test',
+             'idp_userid': '123',
              }
     u = User.get_or_create_user_by_jwt(token)
 
@@ -99,6 +102,7 @@ def test_get_or_create_user_by_jwt_existing(session):
                      'iss': 'iss',
                      'sub': 'sub',
                      'loginSource': 'test',
+                     'idp_userid': '123',
                      }
 
     new = User.get_or_create_user_by_jwt(updated_token)
@@ -137,7 +141,7 @@ def test_create_from_invalid_jwt_token(session):
 
 def test_find_by_username(session):
     """Assert User can be found by the most current username."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     session.add(user)
     session.commit()
 
@@ -148,7 +152,7 @@ def test_find_by_username(session):
 
 def test_find_by_sub(session):
     """Assert find User by the unique sub key."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     session.add(user)
     session.commit()
 
@@ -159,7 +163,7 @@ def test_find_by_sub(session):
 
 def test_user_save(session):
     """Assert User record is saved."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     user.save()
 
     assert user.id is not None
@@ -167,7 +171,7 @@ def test_user_save(session):
 
 def test_user_delete(session):
     """Assert the User record is deleted."""
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     user.save()
     user.delete()
 
@@ -190,6 +194,6 @@ TEST_USER_DISPLAY_NAME = [
 @pytest.mark.parametrize('test_description, username, firstname, lastname, display_name', TEST_USER_DISPLAY_NAME)
 def test_user_display_name(session, test_description, username, firstname, lastname, display_name):
     """Assert the User record returns the expected display name."""
-    user = User(username=username, firstname=firstname, lastname=lastname, sub='sub', iss='iss')
+    user = User(username=username, firstname=firstname, lastname=lastname, sub='sub', iss='iss', idp_userid='123')
 
     assert display_name == user.display_name

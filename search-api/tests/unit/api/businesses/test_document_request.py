@@ -147,7 +147,7 @@ def test_post_business_document(session, client, jwt, mocker):
     mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
                  return_value=[])
     mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_role', return_value='basic')
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
     mock_response = MockResponse({'id': 123}, HTTPStatus.CREATED)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
@@ -178,7 +178,7 @@ def test_post_business_document_payment_failure(session, client, jwt, mocker):
     mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
                  return_value=[])
     mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_role', return_value='basic')
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
     mock_response = MockResponse({'id': 123}, HTTPStatus.BAD_REQUEST)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
@@ -215,7 +215,7 @@ def create_document_access_request(identifier: str, account_id: int, is_paid: bo
         document_access_request.payment_completion_date=datetime.utcnow()
         document_access_request.status=DocumentAccessRequest.Status.PAID.value
 
-    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss')
+    user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
     document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
@@ -252,6 +252,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
     firstname = 'firstname'
     lastname = 'lastname'
     sub = 'this-is-the-key'
+    idp_userid = '123'
     iss = 'iss'
     login_source = 'API_GW'
  
@@ -270,6 +271,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
                           'sub': sub,
                           'iss': iss,
                           'login_source': login_source,
+                          'idp_userid': idp_userid,
                           })
     user.save()
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt',
@@ -307,6 +309,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
                                                      lastname=lastname,
                                                      login_source=login_source,
                                                      sub=sub,
+                                                     idp_userid=idp_userid,
                                                      **{'Accept-Version': 'v1',
                                                         'Account-Id': account_id,
                                                         'content-type': 'application/json'

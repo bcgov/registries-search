@@ -26,6 +26,7 @@ def helper_create_jwt(jwt_manager,
                       lastname: str = None,
                       login_source:str = None,
                       sub:str = None,
+                      idp_userid: str = None,
                       ):
     """Create a jwt bearer token with the correct keys, roles and username."""
     token_header = {
@@ -46,6 +47,7 @@ def helper_create_jwt(jwt_manager,
         'lastname': lastname,
         'email': email,
         'loginSource': login_source,
+        'idp_userid': idp_userid,
         'realm_access': {
             'roles': [] + roles
         }
@@ -61,6 +63,7 @@ def create_header(jwt_manager,
                   email: str = None,
                   login_source:str = None,
                   sub:str = '43e6a245-0bf7-4ccf-9bd0-e7fb85fd18cc',
+                  idp_userid: str = '123',
                   **kwargs):
     """Return a header containing a JWT bearer token."""
     token = helper_create_jwt(jwt_manager,
@@ -70,6 +73,7 @@ def create_header(jwt_manager,
                               lastname=lastname,
                               email=email,
                               login_source=login_source,
+                              idp_userid=idp_userid,
                               sub=sub,
                               )
     headers = {**kwargs, **{'Authorization': 'Bearer ' + token}}
