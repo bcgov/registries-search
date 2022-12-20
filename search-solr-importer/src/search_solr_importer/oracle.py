@@ -28,6 +28,8 @@ class OracleDB:
 
     def __init__(self, app=None):
         """initializer, supports setting the app context on instantiation."""
+        lib_dir = '/Users/kial/work/oracle/instantclient_19_8'
+        cx_Oracle.init_oracle_client(lib_dir=lib_dir)
         if app is not None:
             self.init_app(app)
 
