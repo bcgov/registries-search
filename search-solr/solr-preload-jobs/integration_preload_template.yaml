@@ -80,6 +80,8 @@ objects:
                     name: search-solr-importer-prod-secret
               - name: REINDEX_CORE
                 value: "True"
+              - name: PRELOADER_JOB
+                value: "True"
               - name: FLASK_ENV
                 valueFrom:
                   secretKeyRef:
