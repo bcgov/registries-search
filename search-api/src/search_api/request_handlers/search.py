@@ -122,6 +122,7 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
             'q': f'{SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}',
             'fl': search_solr.base_fields}
         bn_id_docs = search_solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
+        print(bn_id_docs)
         if highlight:
             # return list of identifier strings with highlighted query
             identifier_suggestions = [
@@ -130,11 +131,11 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
             # return list of bn strings with highlighted query
             bn_suggestions = [
                 x.get(SolrField.BN).replace(query, f'<b>{query}</b>')
-                for x in bn_id_docs if query in x.get(SolrField.BN, '')]
+                for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
         else:
             identifier_suggestions = [
                 x.get(SolrField.IDENTIFIER) for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
-            bn_suggestions = [x.get(SolrField.BN) for x in bn_id_docs if query in x.get(SolrField.BN, '')]
+            bn_suggestions = [x.get(SolrField.BN) for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
 
     # format/combine response
     suggestions = [{'type': SolrField.NAME, 'value': x} for x in name_suggestions]

@@ -18,9 +18,8 @@ from http import HTTPStatus
 import pytest
 from flask import Flask
 
-from search_api.services import solr
+from search_api.services import search_solr
 from search_api.services.solr import Solr
-from search_api.services.solr.solr_docs import SolrDoc
 from search_api.services.solr.solr_fields import SolrField
 
 from tests import integration_solr
@@ -43,12 +42,12 @@ from . import SOLR_TEST_DOCS
 def test_solr_suggest_name(app, test_name, query, expected):
     """Assert that solr suggest call works as expected."""
     # setup
-    solr.init_app(app)
-    solr.delete_all_docs()
-    solr.create_or_replace_docs(SOLR_TEST_DOCS)
+    search_solr.init_app(app)
+    search_solr.delete_all_docs()
+    search_solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(1)  # wait for solr to register update
     # call suggester
-    suggestions = solr.suggest(query, 10, True)
+    suggestions = search_solr.suggest(query, 10, True)
     assert len(suggestions) == len(expected)
     for name in expected:
         assert name.upper() in suggestions
@@ -103,15 +102,15 @@ def test_solr_suggest_name(app, test_name, query, expected):
 def test_solr_query(app, test_name, query, query_field, base_fields, expected_field, expected):
     """Assert that solr query call works as expected."""
     # setup
-    solr.init_app(app)
-    solr.delete_all_docs()
-    solr.create_or_replace_docs(SOLR_TEST_DOCS)
+    search_solr.init_app(app)
+    search_solr.delete_all_docs()
+    search_solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(1)  # wait for solr to register update
     query = {'value': Solr.prep_query_str(query)}
     search_params = Solr.build_split_query(query, [query_field, SolrField.NAME_STEM_AGRO], [SolrField.NAME_Q])
-    search_params['fl'] = solr.base_fields if base_fields else solr.party_fields
+    search_params['fl'] = search_solr.base_fields if base_fields else search_solr.party_fields
     # call select
-    resp = solr.query(search_params, 0, 10)
+    resp = search_solr.query(search_params, 0, 10)
     docs = resp['response']['docs']
     # test
     assert len(docs) == len(expected)

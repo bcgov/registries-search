@@ -11,6 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exports request handler functions."""
-from .search import business_search, business_suggest, parties_search
-from .update_solr_handler import update_search_solr
+"""Enum for document types."""
+from enum import auto
+
+from search_api.utils.base import BaseEnum
+
+
+class SolrDocEventStatus(BaseEnum):
+    """Enum of the solr doc event statuses."""
+
+    COMPLETE = auto()
+    ERROR = auto()
+    PENDING = auto()

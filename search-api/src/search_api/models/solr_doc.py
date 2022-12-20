@@ -12,24 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages solr doc updates made to the Search Core (tracks updates made via the api)."""
+from __future__ import annotations
+
+from datetime import datetime
+from typing import List
+
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import backref
 
-from search_api.enums import SolrDocStatus
+from search_api.enums import SolrDocEventStatus
 
 from .db import db
 
 
-class SolrDocUpdate(db.Model):
-    """Used to hold the solr doc update information."""
+class SolrDoc(db.Model):
+    """Used to hold the solr doc information."""
 
-    __tablename__ = 'solr_doc_updates'
+    __tablename__ = 'solr_docs'
 
     id = db.Column(db.Integer, primary_key=True)
     doc = db.Column(JSONB)
-    identifier = db.Column(db.String(10), nullable=False)
-    status = db.Column(db.Enum(SolrDocStatus), default=SolrDocStatus.PENDING, index=True)
+    identifier = db.Column(db.String(10), nullable=False, index=True)
     submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, index=True)
     _submitter_id = db.Column('submitter_id', db.Integer, db.ForeignKey('users.id'))
 
     submitter = db.relationship('User', backref=backref('submitter', uselist=False), foreign_keys=[_submitter_id])
+
+    solr_doc_events = db.relationship('SolrDocEvent', lazy='dynamic')
+
+    @classmethod
+    def find_most_recent_by_identifier(cls, identifier: str) -> SolrDoc:
+        """Return most recently submitted SolrDoc by identifier."""
+        return cls.query.filter_by(identifier=identifier).order_by(cls.submission_date.desc()).first()
+
+    @staticmethod
+    def get_updated_identifiers_after_date(date: datetime) -> List[str]:
+        """Return all identifiers with a submitted SolrDoc after the date."""
+        return [x['identifier'] for x in db.session.query(SolrDoc.identifier).filter(SolrDoc.submission_date > date).group_by(SolrDoc.identifier).all()]
+
+    def save(self) -> SolrDoc:
+        """Store the update into the db."""
+        db.session.add(self)
+        db.session.commit()
+        return self

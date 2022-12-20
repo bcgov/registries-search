@@ -13,7 +13,7 @@
 # limitations under the License.
 """This module wraps the calls to external services used by the API."""
 
-from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff
+from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff, is_system
 from .flags import Flags
 from .queue import Queue
 from .solr import Solr

@@ -18,6 +18,8 @@ from .db import db
 from .user import User, UserRoles
 from .document_access_request import DocumentAccessRequest
 from .document import Document
+from .solr_doc_event import SolrDocEvent
+from .solr_doc import SolrDoc
 
 
-__all__ = ('db', 'User', 'Document', 'DocumentAccessRequest')
+__all__ = ('db', 'User', 'Document', 'DocumentAccessRequest', 'SolrDoc', 'SolrDocEvent')

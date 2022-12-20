@@ -17,9 +17,8 @@ from enum import auto
 from search_api.utils.base import BaseEnum
 
 
-class SolrDocStatus(BaseEnum):
-    """Enum of the solr doc statuses."""
+class SolrDocEventType(BaseEnum):
+    """Enum of the solr doc event types."""
 
-    COMPLETE = auto()
-    ERROR = auto()
-    PENDING = auto()
+    RESYNC = auto()
+    UPDATE = auto()

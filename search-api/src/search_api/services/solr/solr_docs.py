@@ -39,4 +39,13 @@ class BusinessDoc:
     name: str
     status: str
     bn: Optional[str] = None
+    identifier_q: str = None
     parties: Optional[List[PartyDoc]] = None
+
+    def __post_init__(self):
+        """Set identifier_q to the business level identifier.
+
+        It isn't a copy field in solr to avoid including generated party identifiers
+        so it must be set explicitly during an update.
+        """
+        self.identifier_q = self.identifier

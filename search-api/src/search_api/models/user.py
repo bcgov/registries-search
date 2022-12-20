@@ -110,7 +110,7 @@ class User(db.Model):
                 lastname=lastname,
                 iss=token['iss'],
                 sub=token['sub'],
-                login_source=token['loginSource'],
+                login_source=token.get('loginSource', 'N/A'),
                 idp_userid=token['idp_userid'],
             )
             current_app.logger.debug('Creating user from JWT:{}; User:{}'.format(token, user))

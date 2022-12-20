@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from search_api.services.solr import SolrDoc
+from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
 from search_api.services.solr.solr_fields import SolrField
 
 
-def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) -> SolrDoc:
+def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) -> BusinessDoc:
     solr_parties = None
     if parties:
         solr_parties = []
         for party in parties:
             party_doc = {
+                SolrField.PARENT_BN: bn,
                 SolrField.PARENT_NAME: name,
                 SolrField.PARENT_STATE: state,
                 SolrField.PARENT_TYPE: legal_type,
@@ -29,17 +30,15 @@ def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) 
                 SolrField.PARTY_ROLE: [party[1]],
                 SolrField.PARTY_TYPE: party[2],
             }
-            if bn:
-                party_doc[SolrField.PARENT_BN] = bn
-            solr_parties.append(party_doc)
-    return SolrDoc({
-        'identifier': identifier,
-        'name': name,
-        'status': state,
-        'legaltype': legal_type,
-        'bn': bn,
-        'parties': solr_parties
-    })
+            solr_parties.append(PartyDoc(**party_doc))
+    return BusinessDoc(
+        identifier=identifier,
+        legalType=legal_type,
+        name=name,
+        status=state,
+        bn=bn,
+        parties=solr_parties
+    )
 
 
 SOLR_TEST_DOCS = [

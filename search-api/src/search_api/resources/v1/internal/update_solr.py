@@ -13,36 +13,82 @@
 # limitations under the License.
 """API endpoint for updating/adding business record in solr."""
 import re
+from dataclasses import asdict
 from http import HTTPStatus
 from typing import Dict
 
-from flask import Blueprint, jsonify, request
+from datetime import datetime, timedelta
+from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
+from flask_jwt_oidc import JwtManager
 
 import search_api.resources.utils as resource_utils
+from search_api.enums import SolrDocEventStatus, SolrDocEventType
 from search_api.exceptions import SolrException
-from search_api.services import search_solr
+from search_api.models import SolrDoc, User
+from search_api.request_handlers import update_search_solr
+from search_api.services import is_system
 from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
 from search_api.services.validator import RequestValidator
+from search_api.utils.auth import jwt
 
 
-bp = Blueprint('UPDATE', __name__, url_prefix='/solr')  # pylint: disable=invalid-name
+bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable=invalid-name
 
 
-@bp.put('/update')
+@bp.put('')
 @cross_origin(origin='*')
+@jwt.requires_auth
 def update_solr():
     """Add/Update business in solr."""
     try:
+        if not is_system(jwt):
+            # system only endpoint
+            return jsonify({'message': 'Not authorized to update a solr doc.'}), HTTPStatus.UNAUTHORIZED
+
         request_json = request.json
         errors = RequestValidator.validate_solr_update_request(request_json)
         if errors:
             return resource_utils.bad_request_response(errors)
 
-        solr_doc = _prepare_data(request_json)
+        user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
 
-        response = search_solr.create_or_replace_docs([solr_doc])
-        return jsonify(response.json()), HTTPStatus.OK
+        solr_doc = _prepare_data(request_json)
+        # commit so that other flows will take this record as most recent for this identifier
+        solr_doc_update = SolrDoc(doc=asdict(solr_doc), identifier=solr_doc.identifier, _submitter_id=user.id).save()
+
+        update_search_solr(solr_doc_update.identifier, SolrDocEventType.UPDATE)
+        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
+
+    except SolrException as solr_exception:
+        return resource_utils.solr_exception_response(solr_exception)
+    except Exception as default_exception:  # noqa: B902
+        return resource_utils.default_exception_response(default_exception)
+
+
+@bp.patch('/resync')
+@cross_origin(origin='*')
+def resync_solr():
+    """Resync solr docs from the given date."""
+    try:
+        request_json = request.json
+        fromDatetime = datetime.utcnow()
+        if not request_json.get('minutesOffset'):
+            return resource_utils.bad_request_response('Missing required field "minutesOffset".')
+        try:
+            minutes = float(request_json.get('minutesOffset'))
+        except ValueError:
+            return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
+
+        # get all updates since the fromDatetime
+        resync_date = fromDatetime - timedelta(minutes=minutes)
+        identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
+        current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+        # update docs
+        for identifier in identifiers_to_resync:
+            update_search_solr(identifier, SolrDocEventType.RESYNC)
+
+        return jsonify({'message': 'Resync successful.'}), HTTPStatus.OK
 
     except SolrException as solr_exception:
         return resource_utils.solr_exception_response(solr_exception)

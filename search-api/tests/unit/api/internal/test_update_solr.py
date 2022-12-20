@@ -23,7 +23,7 @@ from dateutil.relativedelta import relativedelta
 
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
-from search_api.services.authz import STAFF_ROLE
+from search_api.services.authz import SYSTEM_ROLE
 from search_api.services.validator import RequestValidator
 
 from tests.unit import MockResponse
@@ -37,16 +37,16 @@ def test_update_business_in_solr(session, client, jwt, mocker):
     """Assert that update operation is successful."""
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(REQUEST_TEMPLATE),
-                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                          'content-type': 'application/json'})
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                           'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.OK
     time.sleep(2)  # wait for solr to register update
     identifier = REQUEST_TEMPLATE['business']['identifier']
     search_response = client.get(f'/api/v1/businesses/search/facets?query=value:{identifier}',
-                                 headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                             'content-type': 'application/json'})
+                                 headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                              'content-type': 'application/json'})
                                  )
     assert search_response.status_code == HTTPStatus.OK
     assert len(search_response.json['searchResults']['results']) == 1
@@ -60,16 +60,16 @@ def test_update_business_no_tax_id(session, client, jwt, mocker):
     no_tax_id['business']['identifier'] = 'FM1111111'
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(no_tax_id),
-                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                          'content-type': 'application/json'})
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                           'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.OK
     time.sleep(2)  # wait for solr to register update
     identifier = no_tax_id['business']['identifier']
     search_response = client.get(f'/api/v1/businesses/search/facets?query=value:{identifier}',
-                                 headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                             'content-type': 'application/json'})
+                                 headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                              'content-type': 'application/json'})
                                  )
     assert search_response.status_code == HTTPStatus.OK
     assert len(search_response.json['searchResults']['results']) == 1
@@ -97,14 +97,14 @@ def test_update_bc_class_adds_prefix(session, client, jwt, test_name, legal_type
 
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                          'content-type': 'application/json'}))
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                           'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.OK
     time.sleep(2)  # wait for solr to register update
     search_response = client.get(f'/api/v1/businesses/search/facets?query=value:{expected}::identifier:{expected}',
-                                 headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                             'content-type': 'application/json'}))
+                                 headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                              'content-type': 'application/json'}))
 
     assert search_response.status_code == HTTPStatus.OK
     assert len(search_response.json['searchResults']['results']) == 1
@@ -118,8 +118,8 @@ def test_update_business_in_solr_missing_data(session, client, jwt, mocker):
     del request_json['business']['identifier']
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                          'content-type': 'application/json'})
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                           'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.BAD_REQUEST
@@ -132,8 +132,8 @@ def test_update_business_in_solr_invalid_data(session, client, jwt, mocker):
     request_json['parties'][0]['officer']['partyType'] = 'test'
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [STAFF_ROLE], **{'Accept-Version': 'v1',
-                                                                          'content-type': 'application/json'})
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
+                                                                           'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.BAD_REQUEST
