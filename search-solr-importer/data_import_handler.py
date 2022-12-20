@@ -20,6 +20,7 @@ from http import HTTPStatus
 from typing import Dict, List, Optional
 
 import psycopg2
+import requests
 from flask import current_app
 from search_api.exceptions import SolrException
 from search_api.services import solr
@@ -217,6 +218,19 @@ def load_search_core():
         count += update_solr(prepped_lear_data, 'LEAR')
         current_app.logger.debug('LEAR import completed.')
         current_app.logger.debug(f'Total records imported: {count}')
+
+        if not current_app.config.get('PRELOADER_JOB', False):
+            try:
+                current_app.logger.debug('Resyncing any overwritten docs during import...')
+                search_api_url = f'{current_app.config.get("SEARCH_API_URL")}/{current_app.config.get("SEARCH_API_V1")}'
+                resync_resp = requests.patch(url=f'{search_api_url}/solr/update/resync', json={'offsetMinutes': 60})
+                if resync_resp.status_code != HTTPStatus.NO_CONTENT:
+                    current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
+                current_app.logger.debug('Resync complete.')
+            except Exception as error:
+                current_app.logger.debug(error.with_traceback(None))
+                current_app.logger.error('Resync failed.')
+
         if current_app.config.get('REINDEX_CORE', False):
             current_app.logger.debug('Building suggester...')
             solr.suggest('', 1, True)
