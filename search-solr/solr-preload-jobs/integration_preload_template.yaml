@@ -1,0 +1,108 @@
+apiVersion: batch/v1
+kind: template
+metadata:
+  name: integration-preload-job-template
+objects:
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    name: search-solr-preload-integration
+    namespace: cc892f-prod
+  spec:
+    template:
+      metadata:
+        name: search-solr-preload-integration
+      spec:
+        containers:
+          - command:
+              - /bin/sh
+              - -c
+              - cd /opt/app-root; ./run.sh
+            env:
+              - name: ORACLE_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: ORACLE_USER
+                    name: search-solr-importer-prod-secret
+              - name: ORACLE_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: ORACLE_PASSWORD
+                    name: search-solr-importer-prod-secret
+              - name: ORACLE_DB_NAME
+                valueFrom:
+                  secretKeyRef:
+                    key: ORACLE_DB_NAME
+                    name: search-solr-importer-prod-secret
+              - name: ORACLE_HOST
+                valueFrom:
+                  secretKeyRef:
+                    key: ORACLE_HOST
+                    name: search-solr-importer-prod-secret
+              - name: ORACLE_PORT
+                valueFrom:
+                  secretKeyRef:
+                    key: ORACLE_PORT
+                    name: search-solr-importer-prod-secret
+              - name: DATABASE_HOST
+                valueFrom:
+                  secretKeyRef:
+                    key: DATABASE_HOST
+                    name: search-solr-importer-prod-secret
+              - name: DATABASE_NAME
+                valueFrom:
+                  secretKeyRef:
+                    key: DATABASE_NAME
+                    name: search-solr-importer-prod-secret
+              - name: DATABASE_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: DATABASE_PASSWORD
+                    name: search-solr-importer-prod-secret
+              - name: DATABASE_PORT
+                valueFrom:
+                  secretKeyRef:
+                    key: DATABASE_PORT
+                    name: search-solr-importer-prod-secret
+              - name: DATABASE_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    key: DATABASE_USERNAME
+                    name: search-solr-importer-prod-secret
+              - name: POD_NAMESPACE
+                    value: integration
+              - name: SOLR_SVC_URL
+                value: ${PRELOAD_URL}
+              - name: SOLR_BATCH_UPDATE_SIZE
+                valueFrom:
+                  secretKeyRef:
+                    key: SOLR_BATCH_UPDATE_SIZE
+                    name: search-solr-importer-prod-secret
+              - name: REINDEX_CORE
+                value: "True"
+              - name: FLASK_ENV
+                valueFrom:
+                  secretKeyRef:
+                    key: FLASK_ENV
+                    name: search-solr-importer-prod-secret
+            image: image-registry.openshift-image-registry.svc:5000/cc892f-tools/search-solr-importer:integration
+            imagePullPolicy: Always
+            name: search-solr-preload-integration
+            resources:
+              limits:
+                cpu: 250m
+                memory: 5Gi
+              requests:
+                cpu: 150m
+                memory: 3Gi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Never
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+parameters:
+  - description: Preload load balancer url
+    name: PRELOAD_URL
+    required: true
