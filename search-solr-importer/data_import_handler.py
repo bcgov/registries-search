@@ -23,8 +23,8 @@ import psycopg2
 import requests
 from flask import current_app
 from search_api.exceptions import SolrException
-from search_api.services import solr
-from search_api.services.solr import SolrDoc
+from search_api.services import search_solr
+from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
 
 from search_solr_importer import create_app, oracle_db
 from search_solr_importer.enums import ColinPartyTypeCode
@@ -81,8 +81,8 @@ def collect_lear_data():
     return cur
 
 
-def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable=too-many-branches, too-many-locals
-    """Return the list of SolrDocs for the given raw db data."""
+def prep_data(data: List, cur, source: str) -> List[BusinessDoc]:  # pylint: disable=too-many-branches, too-many-locals
+    """Return the list of BusinessDocs for the given raw db data."""
     prepped_data = {}
 
     def get_party_name(doc_info: Dict) -> str:
@@ -149,7 +149,7 @@ def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable
             prepped_data[item_dict['identifier']] = {
                 'identifier': identifier,
                 'name': item_dict['legal_name'],
-                'legaltype': item_dict['legal_type'],
+                'legalType': item_dict['legal_type'],
                 'status': item_dict['state'],
                 'bn': item_dict['tax_id']
             }
@@ -173,13 +173,13 @@ def prep_data(data: List, cur, source: str) -> List[SolrDoc]:  # pylint: disable
         if base_doc.get('parties'):
             flattened_parties = []
             for party_key in base_doc['parties']:
-                flattened_parties.append(base_doc['parties'][party_key])
+                flattened_parties.append(PartyDoc(**base_doc['parties'][party_key]))
             base_doc['parties'] = flattened_parties
-        solr_docs.append(SolrDoc(base_doc))
+        solr_docs.append(BusinessDoc(**base_doc))
     return solr_docs
 
 
-def update_solr(base_docs: List[SolrDoc], data_name: str) -> int:
+def update_solr(base_docs: List[BusinessDoc], data_name: str) -> int:
     """Import data into solr."""
     count = 0
     offset = 0
@@ -187,7 +187,7 @@ def update_solr(base_docs: List[SolrDoc], data_name: str) -> int:
     while count < len(base_docs) and rows > 0 and len(base_docs) - offset > 0:
         count += min(rows, len(base_docs) - offset)
         # send batch to solr
-        solr.create_or_replace_docs(base_docs[offset:count])
+        search_solr.create_or_replace_docs(base_docs[offset:count])
         offset = count
         current_app.logger.debug(f'Total {data_name} base doc records imported: {count}')
     return count
@@ -209,7 +209,7 @@ def load_search_core():
         if current_app.config.get('REINDEX_CORE', False):
             # delete existing index
             current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
-            solr.delete_all_docs()
+            search_solr.delete_all_docs()
         # execute update to solr in batches
         current_app.logger.debug('Importing records from COLIN...')
         count = update_solr(prepped_colin_data, 'COLIN')
@@ -233,7 +233,7 @@ def load_search_core():
 
         if current_app.config.get('REINDEX_CORE', False):
             current_app.logger.debug('Building suggester...')
-            solr.suggest('', 1, True)
+            search_solr.suggest('', 1, True)
             current_app.logger.debug('Suggester built.')
         current_app.logger.debug('SOLR import finished successfully.')
 
