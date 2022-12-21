@@ -11,15 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Enum for document types."""
+from enum import auto
 
-"""Version of this service in PEP440.
+from search_api.utils.base import BaseEnum
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
 
-__version__ = '1.0.4'  # pylint: disable=invalid-name
+class SolrDocEventType(BaseEnum):
+    """Enum of the solr doc event types."""
+
+    RESYNC = auto()
+    UPDATE = auto()

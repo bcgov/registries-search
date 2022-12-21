@@ -14,3 +14,5 @@
 
 """This exports all of the enums used by the application."""
 from .document_type import DocumentType
+from .solr_doc_event_status import SolrDocEventStatus
+from .solr_doc_event_type import SolrDocEventType

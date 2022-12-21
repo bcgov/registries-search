@@ -114,14 +114,14 @@ def account_org(token: str, account_id: str) -> dict:
     return _call_auth_api(f'orgs/{account_id}', token)
 
 
-def is_staff(jwt: JwtManager) -> bool:  # pylint: disable=too-many-return-statements
+def is_staff(jwt: JwtManager) -> bool:
     """Return True if the user has the BC Registries staff role."""
-    if not jwt:
-        return False
-    if jwt.validate_roles([STAFF_ROLE]):
-        return True
+    return jwt is not None and jwt.validate_roles([STAFF_ROLE])
 
-    return False
+
+def is_system(jwt: JwtManager) -> bool:
+    """Return True if the user has the BC Registries system role."""
+    return jwt is not None and jwt.validate_roles([SYSTEM_ROLE])
 
 
 def is_bcol_help(account_id: str) -> bool:

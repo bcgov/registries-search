@@ -23,4 +23,4 @@ def upgrade():
 
 def downgrade():
     op.drop_index(op.f('ix_user_idp_userid'), table_name='users')
-    op.drop_constraint('users_idp_userid_key', 'users', ['idp_userid'])
+    op.drop_constraint('users_idp_userid_key', 'users', type_='unique')

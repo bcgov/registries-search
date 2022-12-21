@@ -13,3 +13,4 @@
 # limitations under the License.
 """Exports request handler functions."""
 from .search import business_search, business_suggest, parties_search
+from .update_solr_handler import update_search_solr

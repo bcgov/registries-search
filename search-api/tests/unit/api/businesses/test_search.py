@@ -13,6 +13,7 @@
 # limitations under the License.
 """Test-Suite to ensure that the search endpoints/functions work as expected."""
 import time
+from dataclasses import asdict
 from http import HTTPStatus
 
 import pytest
@@ -20,8 +21,9 @@ from flask import current_app, Flask
 
 from search_api.request_handlers import business_search, business_suggest, parties_search
 from search_api.request_handlers.search import SearchParams
-from search_api.services import solr
-from search_api.services.solr import Solr, SolrField
+from search_api.services import search_solr
+from search_api.services.solr import Solr
+from search_api.services.solr.solr_fields import SolrField
 
 from tests import integration_solr
 from tests.unit.services.test_solr import create_solr_doc, SOLR_TEST_DOCS
@@ -33,7 +35,7 @@ from tests.unit.services.test_solr import create_solr_doc, SOLR_TEST_DOCS
 def test_business_suggest_identifier(session, client, requests_mock, test_name, query, mocked_terms, expected):
     """Assert that solr business suggest call works as expected."""
     # setup solr mock
-    mocked_docs = [create_solr_doc(x, 'test doc', 'ACTIVE', 'BEN').json for x in mocked_terms]
+    mocked_docs = [asdict(create_solr_doc(x, 'test doc', 'ACTIVE', 'BEN')) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={})
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}%3A{query})", json={})
     requests_mock.get(
@@ -53,7 +55,7 @@ def test_business_suggest_identifier(session, client, requests_mock, test_name, 
 def test_business_suggest_bn(session, client, requests_mock, test_name, query, mocked_terms, expected):
     """Assert that solr business suggest call works as expected."""
     # setup solr mock
-    mocked_docs = [create_solr_doc('BC1234567', 'test doc', 'ACTIVE', 'BEN', x).json for x in mocked_terms]
+    mocked_docs = [asdict(create_solr_doc('BC1234567', 'test doc', 'ACTIVE', 'BEN', x)) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={})
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})", json={})
     requests_mock.get(
@@ -73,7 +75,7 @@ def test_business_suggest_bn(session, client, requests_mock, test_name, query, m
 def test_business_suggest_name(session, client, requests_mock, test_name, query, mocked_terms, expected):
     """Assert that solr business suggest call works as expected."""
     # setup solr mock
-    mocked_docs = [create_solr_doc('BC1234567', x, 'ACTIVE', 'BEN').json for x in mocked_terms]
+    mocked_docs = [asdict(create_solr_doc('BC1234567', x, 'ACTIVE', 'BEN')) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={'suggest': {'name': {query: {'suggestions': [{'term': mocked_terms[0]}]}}}})
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query.split()[0]})", json={'response': {'docs': [mocked_docs[1]]}})
     requests_mock.get(
@@ -93,9 +95,9 @@ def test_business_suggest_name(session, client, requests_mock, test_name, query,
 def test_business_suggest_all(session, client, requests_mock, test_name, query, mock_names, mock_ids, mock_bns, expected):
     """Assert that search business suggest call works as expected."""
     # setup solr mock
-    mocked_name_docs = [create_solr_doc('BC0024562', x, 'ACTIVE', 'BEN').json for x in mock_names]
-    mocked_identifier_docs = [create_solr_doc(x, 'test identifier match', 'ACTIVE', 'BEN').json for x in mock_ids]
-    mocked_bn_docs = [create_solr_doc('BC0004567', 'test bn match', 'ACTIVE', 'BEN', x).json for x in mock_bns]
+    mocked_name_docs = [asdict(create_solr_doc('BC0024562', x, 'ACTIVE', 'BEN')) for x in mock_names]
+    mocked_identifier_docs = [asdict(create_solr_doc(x, 'test identifier match', 'ACTIVE', 'BEN')) for x in mock_ids]
+    mocked_bn_docs = [asdict(create_solr_doc('BC0004567', 'test bn match', 'ACTIVE', 'BEN', x)) for x in mock_bns]
 
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={'suggest': {'name': {query: {'suggestions': []}}}})
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})", json={'response': {'docs': mocked_name_docs}})
@@ -113,10 +115,10 @@ def test_business_suggest_all(session, client, requests_mock, test_name, query, 
 @pytest.mark.parametrize('test_name,query,mock_names,mock_ids,mock_bns,expected', [
     ('test-bus-search',
      '123',
-     [x.json for x in SOLR_TEST_DOCS[:2]],
-     [x.json for x in SOLR_TEST_DOCS[2:4]],
-     [x.json for x in SOLR_TEST_DOCS[4:5]],
-     [x.json for x in SOLR_TEST_DOCS[:5]]),
+     [asdict(x) for x in SOLR_TEST_DOCS[:2]],
+     [asdict(x) for x in SOLR_TEST_DOCS[2:4]],
+     [asdict(x) for x in SOLR_TEST_DOCS[4:5]],
+     [asdict(x) for x in SOLR_TEST_DOCS[:5]]),
 ])
 def test_business_search(session, client, requests_mock, test_name, query, mock_names, mock_ids, mock_bns, expected):
     """Assert that search business search call works as expected."""
@@ -135,7 +137,7 @@ def test_business_search(session, client, requests_mock, test_name, query, mock_
 @pytest.mark.parametrize('test_name,query,mock_docs', [
     ('test-party-search',
      '1',
-     [x.json for x in SOLR_TEST_DOCS[8:10]]),
+     [asdict(x) for x in SOLR_TEST_DOCS[8:10]]),
 ])
 def test_parties_search(session, client, requests_mock, test_name, query, mock_docs):
     """Assert that search parties search call works as expected."""
@@ -183,10 +185,10 @@ def test_endpoint_suggest(session, client, requests_mock, test_name, query, mock
 @pytest.mark.parametrize('test_name,query_params,mock_names,mock_ids,mock_bns,expected_docs', [
     ('test_facets',
      {'query': '123', 'start': 0, 'rows': 5},
-     [x.json for x in SOLR_TEST_DOCS[:2]],
-     [x.json for x in SOLR_TEST_DOCS[2:4]],
-     [x.json for x in SOLR_TEST_DOCS[4:5]],
-     [x.json for x in SOLR_TEST_DOCS[:5]]),
+     [asdict(x) for x in SOLR_TEST_DOCS[:2]],
+     [asdict(x) for x in SOLR_TEST_DOCS[2:4]],
+     [asdict(x) for x in SOLR_TEST_DOCS[4:5]],
+     [asdict(x) for x in SOLR_TEST_DOCS[:5]]),
     ('test_special_chars_only', {'query': '`~!@#$%^*()_-={}[]\\|', 'start': 0, 'rows': 10}, [], [], [], []),
     ('test_:_only', {'query': ':test', 'start': 0, 'rows': 10}, [], [], [], []),
     ('test_start_with_:', {'query': ':test', 'start': 0, 'rows': 10}, [], [], [], [])
@@ -214,7 +216,7 @@ def test_endpoint_facets(session, client, requests_mock, test_name, query_params
 
 
 @pytest.mark.parametrize('test_name,query_params,mock_docs', [
-    ('test_parties', {'query': '1', 'start': 0, 'rows': 5}, [x.json for x in SOLR_TEST_DOCS[8:10]]),
+    ('test_parties', {'query': '1', 'start': 0, 'rows': 5}, [asdict(x) for x in SOLR_TEST_DOCS[8:10]]),
     ('test_parties_:_only', {'query': ':', 'start': 0, 'rows': 5}, []),
     ('test_parties_start_with_:', {'query': ':test', 'start': 0, 'rows': 5}, []),
 ])
@@ -255,9 +257,9 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
 ])
 def test_endpoint_full_integration(app, session, client, test_name, doc_name, path, endpoint, match):
     """Assert that search endpoints work as expected."""
-    solr.init_app(app)
-    solr.delete_all_docs()
-    solr.create_or_replace_docs([create_solr_doc('FM0000001', doc_name, 'ACTIVE', 'SP', '123', [(f'person {doc_name}', 'proprietor', 'person')])])
+    search_solr.init_app(app)
+    search_solr.delete_all_docs()
+    search_solr.create_or_replace_docs([create_solr_doc('FM0000001', doc_name, 'ACTIVE', 'SP', '123', [(f'person {doc_name}', 'proprietor', 'person')])])
     time.sleep(2)  # wait for solr to register update
     resp = client.get(f'/api/v1/businesses/search/{path}')
 

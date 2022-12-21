@@ -43,7 +43,9 @@ build-req: clean ## Upgrade requirements
 	pip install -Ur requirements/prod.txt ;\
 	pip freeze | sort > requirements.txt ;\
 	cat requirements/bcregistry-libraries.txt >> requirements.txt ;\
-	pip install -Ur requirements/bcregistry-libraries.txt
+	cat requirements/external-libraries.txt >> requirements.txt ;\
+	pip install -Ur requirements/bcregistry-libraries.txt ;\
+	pip install -Ur requirements/external-libraries.txt
 
 install: clean ## Install python virtrual environment
 	test -f venv/bin/activate || python3 -m venv  $(CURRENT_ABS_DIR)/venv ;\
