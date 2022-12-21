@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment (dev/test/prod)"
+        description: "Environment (dev/test/integration/prod)"
         required: true
         default: "dev"
 
@@ -38,6 +38,7 @@ jobs:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.run_id }}${{ github.run_attempt }}
       ZONE: northamerica-northeast1-a
+      SEARCH_API_URL: ${{ secrets.SEARCH_API_URL }}
 
     steps:
       - name: Checkout
@@ -97,9 +98,7 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f solr_preload_job.yaml
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME
 
       - name: Add new solr vm to active load balancer
         run: |
@@ -116,6 +115,10 @@ jobs:
           fi
           gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
+      - name: Resync (catch any missed updates that happened during the fresh import)
+        run: |
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
 
@@ -130,6 +133,7 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       NEW_VERSION: ${{ github.run_id }}${{ github.run_attempt }}
+      SEARCH_API_URL: ${{ secrets.SEARCH_API_URL }}
       ZONE: northamerica-northeast1-a
 
     steps:
@@ -159,6 +163,7 @@ jobs:
           gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
 
       - name: Copy new solr files to GCP
+        if: ${{ env.TAG_NAME == 'dev' }}
         run: |
           gsutil -m rsync -R bitnami/ gs://solr-files/bitnami
 
@@ -174,11 +179,13 @@ jobs:
           fi
 
       - name: Create solr base vm (instance runs startup script to get new solr files)
+        if: ${{ env.TAG_NAME == 'dev' }}
         run: |
           gcloud compute instances create search-solr-base-$NEW_VERSION --source-instance-template search-solr-base --zone $ZONE --project $PROJECT_ID
           sleep 30s
 
       - name: Create new solr image
+        if: ${{ env.TAG_NAME == 'dev' }}
         run: |
           gcloud compute instances stop search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
           gcloud compute images create search-solr-$NEW_VERSION --family search-solr --source-disk search-solr-base-$NEW_VERSION --source-disk-zone $ZONE --project $PROJECT_ID
@@ -193,10 +200,14 @@ jobs:
           oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT4_SA_TOKEN}}
 
       - name: Preload new solr vm index
+        if: ${{ env.TAG_NAME != 'integration' }}
         run: |
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f solr_preload_job.yaml
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME
+
+      - name: Preload new solr vm index in sandbox
+        if: ${{ env.TAG_NAME == 'integration' }}
+        run: |
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-prod process -f solr-preload-jobs/integration_preload_template.yaml -p PRELOAD_URL=${{secrets.INTEGRATION_PRELOAD_URL}}
 
       - name: Add new solr vm to active load balancer
         run: |
@@ -212,3 +223,7 @@ jobs:
             gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
           gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
+
+      - name: Resync (catch any missed updates that happened during the fresh import)
+        run: |
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
