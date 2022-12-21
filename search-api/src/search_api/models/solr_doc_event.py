@@ -15,17 +15,13 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List
-
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import backref
 
 from search_api.enums import SolrDocEventStatus, SolrDocEventType
 
 from .db import db
 
 
-class SolrDocEvent(db.Model):
+class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
     """Used to hold event information for a solr doc."""
 
     __tablename__ = 'solr_doc_events'

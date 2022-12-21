@@ -20,10 +20,9 @@ from typing import Dict
 from datetime import datetime, timedelta
 from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
-from flask_jwt_oidc import JwtManager
 
 import search_api.resources.utils as resource_utils
-from search_api.enums import SolrDocEventStatus, SolrDocEventType
+from search_api.enums import SolrDocEventType
 from search_api.exceptions import SolrException
 from search_api.models import SolrDoc, User
 from search_api.request_handlers import update_search_solr
@@ -72,7 +71,7 @@ def resync_solr():
     """Resync solr docs from the given date."""
     try:
         request_json = request.json
-        fromDatetime = datetime.utcnow()
+        from_datetime = datetime.utcnow()
         if not request_json.get('minutesOffset'):
             return resource_utils.bad_request_response('Missing required field "minutesOffset".')
         try:
@@ -80,15 +79,15 @@ def resync_solr():
         except ValueError:
             return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
 
-        # get all updates since the fromDatetime
-        resync_date = fromDatetime - timedelta(minutes=minutes)
+        # get all updates since the from_datetime
+        resync_date = from_datetime - timedelta(minutes=minutes)
         identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
         # update docs
         for identifier in identifiers_to_resync:
             update_search_solr(identifier, SolrDocEventType.RESYNC)
 
-        return jsonify({'message': 'Resync successful.'}), HTTPStatus.OK
+        return jsonify({'message': 'Resync successful.'}), HTTPStatus.NO_CONTENT
 
     except SolrException as solr_exception:
         return resource_utils.solr_exception_response(solr_exception)

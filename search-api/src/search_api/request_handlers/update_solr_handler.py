@@ -36,4 +36,4 @@ def update_search_solr(identifier: str, event_type: SolrDocEventType) -> Dict[st
         current_app.logger.debug('Failed to %s solr for %s', event_type, identifier)
         doc_event.event_status = SolrDocEventStatus.ERROR
         doc_event.save()
-        raise (err)
+        raise err

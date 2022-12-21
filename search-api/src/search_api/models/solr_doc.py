@@ -20,8 +20,6 @@ from typing import List
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import backref
 
-from search_api.enums import SolrDocEventStatus
-
 from .db import db
 
 
@@ -48,7 +46,9 @@ class SolrDoc(db.Model):
     @staticmethod
     def get_updated_identifiers_after_date(date: datetime) -> List[str]:
         """Return all identifiers with a submitted SolrDoc after the date."""
-        return [x['identifier'] for x in db.session.query(SolrDoc.identifier).filter(SolrDoc.submission_date > date).group_by(SolrDoc.identifier).all()]
+        return [x['identifier'] for x in db.session.query(SolrDoc.identifier)
+                .filter(SolrDoc.submission_date > date)
+                .group_by(SolrDoc.identifier).all()]
 
     def save(self) -> SolrDoc:
         """Store the update into the db."""

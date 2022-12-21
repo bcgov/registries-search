@@ -135,7 +135,8 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
         else:
             identifier_suggestions = [
                 x.get(SolrField.IDENTIFIER) for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
-            bn_suggestions = [x.get(SolrField.BN) for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
+            bn_suggestions = [
+                x.get(SolrField.BN) for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
 
     # format/combine response
     suggestions = [{'type': SolrField.NAME, 'value': x} for x in name_suggestions]
