@@ -17,8 +17,6 @@ These will get initialized by the application.
 """
 from __future__ import annotations
 
-import os
-
 import cx_Oracle
 from flask import _app_ctx_stack, current_app
 

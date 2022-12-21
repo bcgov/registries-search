@@ -65,7 +65,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
     errorhandlers.init_app(app)
     db.init_app(app)
     rsbc_schemas.init_app(app)
-    # queue.init_app(app)
+    queue.init_app(app)
     search_solr.init_app(app)
     babel.init_app(app)
     migrate.init_app(app, db)
