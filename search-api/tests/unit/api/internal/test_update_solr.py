@@ -165,9 +165,9 @@ def test_resync(session, client, jwt, mocker):
     solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
     solr_doc_old.save()
 
-    api_response = client.patch(f'/api/v1/internal/solr/update/resync', json={'minutesOffset': 5})
+    api_response = client.post(f'/api/v1/internal/solr/update/resync', json={'minutesOffset': 5})
     # check
-    assert api_response.status_code == HTTPStatus.NO_CONTENT
+    assert api_response.status_code == HTTPStatus.CREATED
 
     doc_events = solr_doc.solr_doc_events.all()
     assert len(doc_events) == 1

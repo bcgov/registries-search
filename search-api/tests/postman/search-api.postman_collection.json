@@ -2370,7 +2370,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Accept",

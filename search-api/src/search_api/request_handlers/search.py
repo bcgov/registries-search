@@ -122,7 +122,6 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
             'q': f'{SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}',
             'fl': search_solr.base_fields}
         bn_id_docs = search_solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
-        print(bn_id_docs)
         if highlight:
             # return list of identifier strings with highlighted query
             identifier_suggestions = [

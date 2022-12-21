@@ -65,7 +65,7 @@ def update_solr():
         return resource_utils.default_exception_response(default_exception)
 
 
-@bp.patch('/resync')
+@bp.post('/resync')
 @cross_origin(origin='*')
 def resync_solr():
     """Resync solr docs from the given date."""
@@ -87,7 +87,7 @@ def resync_solr():
         for identifier in identifiers_to_resync:
             update_search_solr(identifier, SolrDocEventType.RESYNC)
 
-        return jsonify({'message': 'Resync successful.'}), HTTPStatus.NO_CONTENT
+        return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
 
     except SolrException as solr_exception:
         return resource_utils.solr_exception_response(solr_exception)
