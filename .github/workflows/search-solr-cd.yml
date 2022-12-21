@@ -117,7 +117,7 @@ jobs:
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
-          curl -X PATCH $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
@@ -226,4 +226,4 @@ jobs:
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
-          curl -X PATCH $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
