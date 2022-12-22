@@ -9,7 +9,7 @@ objects:
       name: search-solr-preload
       namespace: cc892f-${ENV}
     spec:
-      template:
+      jobTemplate:
         metadata:
           name: search-solr-preload-${ENV}
         spec:
