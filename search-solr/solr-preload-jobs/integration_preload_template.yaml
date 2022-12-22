@@ -1,5 +1,5 @@
-apiVersion: batch/v1
-kind: template
+apiVersion: template.openshift.io/v1
+kind: Template
 metadata:
   name: integration-preload-job-template
 objects:
@@ -9,7 +9,7 @@ objects:
     name: search-solr-preload-integration
     namespace: cc892f-prod
   spec:
-    jobTemplate:
+    template:
       metadata:
         name: search-solr-preload-integration
       spec:
