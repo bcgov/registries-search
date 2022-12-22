@@ -1,5 +1,11 @@
 [
     {
+        "vault": "API",
+        "application": [
+            "registries-search-api"
+        ]
+    },
+    {
         "vault": "entity",
         "application": [
             "colin-api",
