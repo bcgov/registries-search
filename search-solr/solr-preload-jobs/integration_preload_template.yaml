@@ -9,7 +9,7 @@ objects:
     name: search-solr-preload-integration
     namespace: cc892f-prod
   spec:
-    template:
+    jobTemplate:
       metadata:
         name: search-solr-preload-integration
       spec:
