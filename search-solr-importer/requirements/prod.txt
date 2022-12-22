@@ -7,3 +7,4 @@ sentry-sdk[flask]
 jsonschema==3.2.0
 Babel==2.10.1
 certifi==2022.5.18.1
+requests

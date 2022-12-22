@@ -26,7 +26,7 @@ from flask import Flask  # noqa: I001
 # from legal_api.models import db
 from registry_schemas import __version__ as registry_schemas_version
 from registry_schemas.flask import SchemaServices  # noqa: I001
-from search_api.services import solr
+from search_api.services import search_solr
 
 from search_solr_importer import config
 from search_solr_importer.logging import setup_logging
@@ -75,7 +75,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
     # db.init_app(app)
     oracle_db.init_app(app)
-    solr.init_app(app)
+    search_solr.init_app(app)
     babel.init_app(app)
 
     register_shellcontext(app)

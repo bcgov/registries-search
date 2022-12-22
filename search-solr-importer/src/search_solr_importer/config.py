@@ -61,6 +61,8 @@ class _Config():  # pylint: disable=too-few-public-methods
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
+    SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
+    SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
@@ -72,6 +74,7 @@ class _Config():  # pylint: disable=too-few-public-methods
 
     BATCH_SIZE = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
+    PRELOADER_JOB = os.getenv('PRELOADER_JOB', 'False') == 'True'
 
     # ORACLE - CDEV/CTST/CPRD
     ORACLE_USER = os.getenv('ORACLE_USER', '')
