@@ -106,19 +106,26 @@ jobs:
           gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
           gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
 
-      - name: Cleanup (stop perviously running instances and delete previously stopped instances)
+      - name: Stop the old instance
         run: |
           if [ -n $OLD_INSTANCE ]; then
             gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
-          if [ -n $OLDEST_INSTANCE ]; then
-            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
-          fi
-          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
           curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+
+      - name: Cleanup (delete previously stopped instances)
+        run: |
+          if [ -n $OLDEST_INSTANCE ]; then
+            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
+
+      - name: Remove base vm
+        if: ${{ env.TAG_NAME == 'dev' }}
+        run: |
+          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
   search-solr-cd-by-dispatch:
     runs-on: ubuntu-20.04
@@ -217,16 +224,23 @@ jobs:
           gcloud compute instance-groups unmanaged remove-instances search-solr-preload-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
           gcloud compute instance-groups unmanaged add-instances search-solr-active-grp-$TAG_NAME --zone=$ZONE --instances=search-solr-$TAG_NAME-$NEW_VERSION
 
-      - name: Cleanup (stop perviously running instances and delete previously stopped instances)
+      - name: Stop the old instance
         run: |
           if [ -n $OLD_INSTANCE ]; then
             gcloud compute instances stop $OLD_INSTANCE --zone=$ZONE --project $PROJECT_ID
           fi
-          if [ -n $OLDEST_INSTANCE ]; then
-            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
-          fi
-          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
           curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+
+      - name: Cleanup (delete previously stopped instances)
+        run: |
+          if [ -n $OLDEST_INSTANCE ]; then
+            gcloud compute instances delete $OLDEST_INSTANCE --zone=$ZONE --project $PROJECT_ID
+          fi
+
+      - name: Remove base vm
+        if: ${{ env.TAG_NAME == 'dev' }}
+        run: |
+          gcloud compute instances delete search-solr-base-$NEW_VERSION --zone $ZONE --project $PROJECT_ID
