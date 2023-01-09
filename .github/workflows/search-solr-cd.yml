@@ -114,7 +114,7 @@ jobs:
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
-          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"minutesOffset": 60}'
 
       - name: Cleanup (delete previously stopped instances)
         run: |
@@ -232,7 +232,7 @@ jobs:
 
       - name: Resync (catch any missed updates that happened during the fresh import)
         run: |
-          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"offsetMinutes": 60}'
+          curl -X POST $SEARCH_API_URL/internal/solr/update/resync -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"minutesOffset": 60}'
 
       - name: Cleanup (delete previously stopped instances)
         run: |
