@@ -227,7 +227,7 @@ def load_search_core():
                 if resync_resp.status_code != HTTPStatus.CREATED:
                     current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
                 current_app.logger.debug('Resync complete.')
-            except Exception as error:
+            except Exception as error:  # noqa: B902
                 current_app.logger.debug(error.with_traceback(None))
                 current_app.logger.error('Resync failed.')
 
@@ -239,7 +239,7 @@ def load_search_core():
 
     except SolrException as err:
         current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
-        if err.status_code == HTTPStatus.BAD_GATEWAY:
+        if err.status_code in [HTTPStatus.BAD_GATEWAY, HTTPStatus.GATEWAY_TIMEOUT]:
             current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
                                      'Please wait a couple minutes and then verify import '
                                      'and suggester build manually in the solr admin UI.')
