@@ -227,7 +227,7 @@ def load_search_core():
                 if resync_resp.status_code != HTTPStatus.CREATED:
                     current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
                 current_app.logger.debug('Resync complete.')
-            except Exception as error:
+            except Exception as error:  # noqa: B902
                 current_app.logger.debug(error.with_traceback(None))
                 current_app.logger.error('Resync failed.')
 
