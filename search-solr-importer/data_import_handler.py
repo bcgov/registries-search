@@ -193,7 +193,7 @@ def update_solr(base_docs: List[BusinessDoc], data_name: str) -> int:
     return count
 
 
-def load_search_core():
+def load_search_core():  # pylint: disable=too-many-statements
     """Load data from LEAR and COLIN into the search core."""
     try:
         colin_data_cur = collect_colin_data()
@@ -233,20 +233,24 @@ def load_search_core():
 
         if current_app.config.get('REINDEX_CORE', False):
             current_app.logger.debug('Building suggester...')
-            search_solr.suggest('', 1, True)
+            try:
+                search_solr.suggest('', 1, True)
+            except SolrException as err:
+                current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
+                if err.status_code in [HTTPStatus.BAD_GATEWAY, HTTPStatus.GATEWAY_TIMEOUT]:
+                    current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
+                                             'Please wait a couple minutes and then verify import '
+                                             'and suggester build manually in the solr admin UI.')
+                    sys.exit(0)
+                else:
+                    raise err
             current_app.logger.debug('Suggester built.')
         current_app.logger.debug('SOLR import finished successfully.')
 
     except SolrException as err:
         current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
-        if err.status_code in [HTTPStatus.BAD_GATEWAY, HTTPStatus.GATEWAY_TIMEOUT]:
-            current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
-                                     'Please wait a couple minutes and then verify import '
-                                     'and suggester build manually in the solr admin UI.')
-            sys.exit(0)
-        else:
-            current_app.logger.error(err.error)
-            current_app.logger.debug('SOLR import failed.')
+        current_app.logger.error(err.error)
+        current_app.logger.debug('SOLR import failed.')
         sys.exit(1)
 
 
