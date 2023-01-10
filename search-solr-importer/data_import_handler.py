@@ -193,7 +193,7 @@ def update_solr(base_docs: List[BusinessDoc], data_name: str) -> int:
     return count
 
 
-def load_search_core():
+def load_search_core():  # pylint: disable=too-many-statements
     """Load data from LEAR and COLIN into the search core."""
     try:
         colin_data_cur = collect_colin_data()
