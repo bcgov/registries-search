@@ -99,7 +99,7 @@ jobs:
       - name: Preload new solr vm index
         run: |
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME -o yaml | oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f -
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=3600s
 
       - name: Add new solr vm to active load balancer
         run: |
@@ -211,13 +211,13 @@ jobs:
         if: ${{ env.TAG_NAME != 'integration' }}
         run: |
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME -o yaml | oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f -
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=3600s
 
       - name: Preload new solr vm index in sandbox
         if: ${{ env.TAG_NAME == 'integration' }}
         run: |
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-prod process -f solr-preload-jobs/integration_preload_template.yaml -p PRELOAD_URL=${{secrets.INTEGRATION_PRELOAD_URL}} | oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-prod create -f -
-          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-prod wait --for=condition=complete job/search-solr-preload-integration --timeout=2400s
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-prod wait --for=condition=complete job/search-solr-preload-integration --timeout=3600s
 
       - name: Add new solr vm to active load balancer
         run: |
