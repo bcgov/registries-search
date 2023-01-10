@@ -98,6 +98,7 @@ jobs:
 
       - name: Preload new solr vm index
         run: |
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME -o yaml | oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f -
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=3600s
 
@@ -210,6 +211,7 @@ jobs:
       - name: Preload new solr vm index
         if: ${{ env.TAG_NAME != 'integration' }}
         run: |
+          oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME delete job search-solr-preload
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME process -f solr-preload-jobs/preload_template.yaml -p ENV=$TAG_NAME -o yaml | oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME create -f -
           oc -n ${{secrets.OPENSHIFT4_REPOSITORY}}-$TAG_NAME wait --for=condition=complete job/search-solr-preload --timeout=3600s
 
