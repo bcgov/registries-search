@@ -222,7 +222,7 @@ def load_search_core():  # pylint: disable=too-many-statements
         if not current_app.config.get('PRELOADER_JOB', False):
             try:
                 current_app.logger.debug('Resyncing any overwritten docs during import...')
-                search_api_url = f'{current_app.config.get("SEARCH_API_URL")}/{current_app.config.get("SEARCH_API_V1")}'
+                search_api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
                 resync_resp = requests.post(url=f'{search_api_url}/solr/update/resync', json={'minutesOffset': 60})
                 if resync_resp.status_code != HTTPStatus.CREATED:
                     current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
