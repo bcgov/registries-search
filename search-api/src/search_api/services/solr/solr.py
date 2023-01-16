@@ -76,10 +76,11 @@ class Solr:
                   query: str,
                   params: dict = None,
                   json_data: dict = None,
-                  xml_data: str = None) -> Response:
+                  xml_data: str = None,
+                  force=False) -> Response:
         """Call solr instance with given params."""
         try:
-            if self.is_reindexing():
+            if self.is_reindexing() and not force:
                 err_msg = 'This resource is undergoing scheduled maintenance and will be ' \
                     f'unavailable for up to {self.app.config.get("SOLR_REINDEX_LENGTH")} minutes.'
                 raise SolrException(err_msg, HTTPStatus.SERVICE_UNAVAILABLE)
@@ -117,10 +118,10 @@ class Solr:
                 error=msg,
                 status_code=status_code)
 
-    def create_or_replace_docs(self, docs: List[BusinessDoc]):
+    def create_or_replace_docs(self, docs: List[BusinessDoc], force=False):
         """Create or replace solr docs in the core."""
         update_json = [asdict(doc) for doc in docs]
-        response = self.call_solr('POST', self.update_query, json_data=update_json)
+        response = self.call_solr('POST', self.update_query, json_data=update_json, force=force)
         return response
 
     def delete_all_docs(self):

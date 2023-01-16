@@ -27,7 +27,7 @@ def update_search_solr(identifier: str, event_type: SolrDocEventType) -> Dict[st
     doc_update = SolrDoc.find_most_recent_by_identifier(identifier)
     doc_event = SolrDocEvent(event_type=event_type, solr_doc_id=doc_update.id).save()
     try:
-        search_solr.create_or_replace_docs([BusinessDoc(**doc_update.doc)])
+        search_solr.create_or_replace_docs([BusinessDoc(**doc_update.doc)], force=True)
         doc_event.event_status = SolrDocEventStatus.COMPLETE
         doc_event.save()
 
