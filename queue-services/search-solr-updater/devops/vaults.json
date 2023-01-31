@@ -17,7 +17,8 @@
         "vault": "API",
         "application": [
             "legal-api",
-            "registries-search-api"
+            "registries-search-api",
+            "registries-search-api-internal"
         ]
     },
     {
