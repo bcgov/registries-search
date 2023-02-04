@@ -132,7 +132,7 @@ const navigate = (breadcrumb: BreadcrumbIF): void => {
   color: white !important;
   margin-bottom: 0;
 }
-:deep(.theme--light.v-btn.v-btn--disabled) {
+:deep(.theme--bcgov.v-btn.v-btn--disabled) {
   opacity: .4;
   .v-icon {
     color: $app-blue !important;

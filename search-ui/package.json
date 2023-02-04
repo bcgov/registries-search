@@ -18,7 +18,7 @@
     "http-status-codes": "^2.1.4",
     "moment": "^2.29.3",
     "roboto-fontface": "*",
-    "sbc-common-components": "^2.4.43",
+    "sbc-common-components": "^3.0.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vue-hotjar": "^1.4.0",

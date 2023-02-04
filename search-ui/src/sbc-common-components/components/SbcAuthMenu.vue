@@ -176,7 +176,6 @@ const login = (idpHint: string) => {
 
 <style lang="scss" scoped>
 @import "~sbc-common-components/src/assets/scss/theme.scss";
-
 .v-list--dense .v-subheader,
 .v-list-item {
   height: 40px !important;

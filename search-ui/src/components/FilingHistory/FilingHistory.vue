@@ -216,7 +216,7 @@
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
                   :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll"
-                  :isLocked=isLocked />
+                  :isLocked=!isLocked />
               </template>
 
               <!-- the details (comments) section -->
@@ -661,10 +661,6 @@ onMounted(async () => {
 
 :deep(.v-expansion-panel-title__overlay) {
   background-color: white;
-}
-
-:deep(.theme--light.v-list-item--disabled) {
-  opacity: 0.38 !important;
 }
 
 .court-order-section {

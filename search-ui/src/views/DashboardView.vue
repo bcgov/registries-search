@@ -61,7 +61,8 @@
     </v-row>
     <v-row class="mt-1 pt-2" justify="start" no-gutters>
       <v-col class="account-label pr-5" cols="auto">
-        {{ auth.currentAccount.label }}
+        <span v-if="auth.currentAccount.accountType === AccountTypes.STAFF">BC Registries Staff</span>
+        <span v-else>{{ auth.currentAccount.label }}</span>
       </v-col>
       <v-col class="account-name pl-5" cols="auto">
         {{ auth.currentAccount.name }}
@@ -197,6 +198,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { DocumentAccessRequestHistory, SearchBar, SearchResults } from '@/components'
 import { useAuth, useDocumentAccessRequest, useSearch } from '@/composables'
+import { AccountTypes } from '@/enums';
 
 const props = defineProps({ appReady: { type: Boolean } })
 
@@ -250,6 +252,10 @@ watch(() => props.appReady, (ready: boolean) => {
 
 #search-tab {
   border-right: 2.5px solid $gray1;
+}
+
+.account-label {
+  padding-left: 2px !important;
 }
 .account-label + .account-name {
   border-left: 1px solid $gray4;

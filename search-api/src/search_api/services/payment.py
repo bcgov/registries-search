@@ -71,8 +71,8 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
     payload = PAYMENT_REQUEST_TEMPLATE
     payload['filingInfo']['filingTypes'] = filing_types
 
-    if header.get('folioNumber', None):
-        payload['filingInfo']['folioNumber'] = header.get('folioNumber')
+    if folio_number := header.get('folioNumber', None):
+        payload['filingInfo']['folioNumber'] = folio_number
 
     if is_staff(user_jwt):
         special_role = UserRoles.STAFF
@@ -98,13 +98,13 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
         'label': f'{label_name}: ',
         'value': business_json.get('identifier')
     }]
+    payload['businessInfo']['businessIdentifier'] = business_json.get('identifier')
 
     try:
         token = user_jwt.get_token_auth_header()
         headers = {'Authorization': 'Bearer ' + token,
-                   'Content-Type': 'application/json'}
-        if not is_staff(user_jwt):
-            headers = {**headers, 'Account-Id': account_id}
+                   'Content-Type': 'application/json',
+                   'Account-Id': account_id}
         pay_api_timeout = current_app.config.get('PAY_API_TIMEOUT')
         payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=pay_api_timeout)
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:

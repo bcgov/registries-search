@@ -71,6 +71,7 @@ export default class AccountModule extends VuexModule {
   @Action({ rawError: true, commit: 'setUserSettings' })
   public async syncUserSettings (currentAccountId: string): Promise<UserSettings[]> {
     const response = await AccountService.getUserSettings(this.currentUser?.keycloakGuid)
+    console.log('syncUserSettings', response.data)
     if (response?.data) {
       const orgs = response.data.filter(userSettings => (userSettings.type === 'ACCOUNT'))
       const currentAccount = orgs.find(org => String(org.id) === currentAccountId)
@@ -143,14 +144,11 @@ export default class AccountModule extends VuexModule {
       const storageAccountId = currentAccount || JSON.parse(ConfigHelper.getFromSession(SessionStorageKeys.CurrentAccount) || '{}').id
       return orgIdFromUrl || String(storageAccountId || '') || ''
     }
+    const lastUsedAccount = getLastAccountId()
+    if (this.currentUser?.keycloakGuid) {
+      await this.syncUserSettings(lastUsedAccount)
 
-    if (!this.currentUser.roles.includes(Role.Staff)) {
-      const lastUsedAccount = getLastAccountId()
-      if (this.currentUser?.keycloakGuid) {
-        await this.syncUserSettings(lastUsedAccount)
-
-        ConfigHelper.addToSession(SessionStorageKeys.CurrentAccount, JSON.stringify(this.currentAccount || ''))
-      }
+      ConfigHelper.addToSession(SessionStorageKeys.CurrentAccount, JSON.stringify(this.currentAccount || ''))
     }
   }
 
