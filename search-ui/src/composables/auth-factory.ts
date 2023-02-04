@@ -25,8 +25,8 @@ export const useAuth = () => {
     if (!product) return false
     return true
   }
-  const isStaff = computed(() => auth.currentAccount.accountType === AccountTypes.STAFF)
-  const isStaffSBC = computed(() => auth.currentAccount.accountType === AccountTypes.SBC_STAFF)
+  const isStaff = computed(() => auth.currentAccount?.accountType === AccountTypes.STAFF)
+  const isStaffSBC = computed(() => auth.currentAccount?.accountType === AccountTypes.SBC_STAFF)
   const loadAuth = async () => {
     // set current account / set staff roles / get active products
     await _loadRoles()
