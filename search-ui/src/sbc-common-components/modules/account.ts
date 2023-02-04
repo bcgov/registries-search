@@ -71,7 +71,6 @@ export default class AccountModule extends VuexModule {
   @Action({ rawError: true, commit: 'setUserSettings' })
   public async syncUserSettings (currentAccountId: string): Promise<UserSettings[]> {
     const response = await AccountService.getUserSettings(this.currentUser?.keycloakGuid)
-    console.log('syncUserSettings', response.data)
     if (response?.data) {
       const orgs = response.data.filter(userSettings => (userSettings.type === 'ACCOUNT'))
       const currentAccount = orgs.find(org => String(org.id) === currentAccountId)
