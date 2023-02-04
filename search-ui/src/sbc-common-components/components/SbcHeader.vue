@@ -163,7 +163,7 @@
                       </v-avatar>
                       <div class="user-info">
                         <div class="user-name" data-test="user-name">{{ username }}</div>
-                        <div class="account-name" v-if="!isStaff" data-test="account-name">{{ accountName }}</div>
+                        <div class="account-name" data-test="account-name">{{ accountName }}</div>
                       </div>
                       <v-icon class="ml-1">mdi-menu-down</v-icon>
                     </v-btn>
@@ -184,7 +184,7 @@
                         <v-list-item class="user-info">
                           <v-list-item-title class="user-name" data-test="menu-user-name">
                             {{ username }}
-                            <v-list-item-subtitle class="account-name" v-if="!isStaff" data-test="menu-account-name">
+                            <v-list-item-subtitle class="account-name" data-test="menu-account-name">
                               {{ accountName }}
                             </v-list-item-subtitle>
                           </v-list-item-title>
@@ -209,7 +209,7 @@
                     <v-divider></v-divider>
 
                     <!-- Account Settings -->
-                    <v-list tile dense v-if="currentAccount && !isStaff">
+                    <v-list tile dense v-if="currentAccount">
                       <v-list-subheader>ACCOUNT SETTINGS</v-list-subheader>
                       <v-list-item @click="goToAccountInfo(currentAccount)">
                         <v-list-item-avatar left>
@@ -418,7 +418,9 @@ export default defineComponent({
     const disableBCEIDMultipleAccount = computed(() =>
         LaunchDarklyService.getFlag(LDFlags.DisableBCEIDMultipleAccount) as boolean || false)      
     const isWhatsNewOpen = computed(() => LaunchDarklyService.getFlag(LDFlags.WhatsNew) as boolean || false)       
-    const showTransactions = computed(() => currentAccount?.value?.accountType === Account.PREMIUM)      
+    const showTransactions = computed(() => {
+      return [Account.PREMIUM, Account.SBC_STAFF, Account.STAFF].includes(currentAccount?.value?.accountType as Account)
+    })
     const isStaff = computed(() => currentUser?.value?.roles?.includes(Role.Staff) as boolean || false)       
     const isGovmUser = computed(() => currentUser?.value?.roles?.includes(Role.GOVMAccountUser) as boolean ||
      false)      

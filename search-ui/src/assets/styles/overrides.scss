@@ -249,7 +249,7 @@ td {
   line-height: 1.5rem !important;
 }
 
-.v-simple-checkbox .theme--light.v-icon {
+.v-simple-checkbox .theme--bcgov.v-icon {
   color: $primary-blue;
 }
 
@@ -262,13 +262,13 @@ td {
   padding-bottom: 30px;
 }
 
-.theme--light.v-input input,
-.theme--light.v-input textarea {
+.theme--bcgov.v-input input,
+.theme--bcgov.v-input textarea {
   color: $gray9;
 }
 
-.theme--light.v-application .v-input--selection-controls__ripple,
-.theme--light.v-application .mdi-checkbox-blank-outline
+.theme--bcgov.v-application .v-input--selection-controls__ripple,
+.theme--bcgov.v-application .mdi-checkbox-blank-outline
  {
   color: $gray7 !important;
 }
@@ -284,7 +284,7 @@ td {
   opacity: 0.4 !important;
 }
 
-.theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+.theme--bcgov.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
   background-color: $primary-blue !important;
   opacity: 0.4 !important;
   color: white !important;
@@ -297,35 +297,35 @@ td {
   opacity: 0.4 !important;
 }
 
-.theme--light.v-btn.v-btn--disabled .v-icon,
-.theme--light.v-btn.v-btn--disabled .v-btn__loading,
-.theme--light.v-btn.v-btn--disabled .v-icon, .theme--light.v-btn.v-btn--disabled .v-btn__loading {
+.theme--bcgov.v-btn.v-btn--disabled .v-icon,
+.theme--bcgov.v-btn.v-btn--disabled .v-btn__loading,
+.theme--bcgov.v-btn.v-btn--disabled .v-icon, .theme--bcgov.v-btn.v-btn--disabled .v-btn__loading {
   color: #1669bb !important;
   opacity: 0.4 !important;
 }
 
 // list items
-.theme--light.v-list-item {
+.theme--bcgov.v-list-item {
   font-size: 0.875rem;
   padding-left: 16px;
 }
 
-.theme--light.v-divider {
+.theme--bcgov.v-divider {
   color: $gray3 !important;
   margin: 0 10px;
 }
 
-.theme--light.v-label:not(.v-label--is-disabled), .theme--light.v-messages {
+.theme--bcgov.v-label:not(.v-label--is-disabled), .theme--bcgov.v-messages {
   color: $gray7;
 }
 
-.theme--light.v-text-field.v-input--is-disabled .v-input__slot::before {
+.theme--bcgov.v-text-field.v-input--is-disabled .v-input__slot::before {
   border-color: rgba(0, 0, 0, 0.42);
   opacity: 0.4;
   border-image: none;
 }
 
-.theme--light.v-text-field--filled.v-input--is-disabled > .v-input__control > .v-input__slot {
+.theme--bcgov.v-text-field--filled.v-input--is-disabled > .v-input__control > .v-input__slot {
   background: rgba(0, 0, 0, 0.04);
 }
 
@@ -334,7 +334,12 @@ td {
   padding: 0;
 }
 
-.theme--light.v-list-item .v-list-item__mask {
+.v-list-item.v-list-item--link.v-theme--bcgov.v-list-item--density-default.v-list-item--one-line.v-list-item--variant-text {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.theme--bcgov.v-list-item .v-list-item__mask {
   color: inherit;
 }
 

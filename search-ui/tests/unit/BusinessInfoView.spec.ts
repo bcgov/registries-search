@@ -4,7 +4,7 @@ import { Router } from 'vue-router'
 // bcregistry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
-import { DocumentType, FeeCodes, RouteNames, StaffRoles } from '@/enums'
+import { AccountStatus, AccountTypes, DocumentType, FeeCodes, RouteNames, StaffRoles } from '@/enums'
 import { useAuth, useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
 import { DocumentTypeDescriptions } from '@/resources'
 import { createVueRouter } from '@/router'
@@ -145,7 +145,16 @@ describe('Registry Staff BusinessInfo tests', () => {
 
   beforeEach(async () => {
     setupBusInfoTest()
-    auth.staffRoles.push(StaffRoles.STAFF)
+    auth.currentAccount = {
+      accountStatus: AccountStatus.ACTIVE,
+      accountType: AccountTypes.STAFF,
+      id: 1,
+      label: 'bcreg staff',
+      productSettings: null,
+      type: '',
+      urlorigin: '',
+      urlpath: ''
+    }
     router = createVueRouter()
     await router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
     wrapper = mount(BusinessInfoView, {
@@ -175,7 +184,16 @@ describe('SBC Staff BusinessInfo tests', () => {
 
   beforeEach(async () => {
     setupBusInfoTest()
-    auth.staffRoles.push(StaffRoles.SBC)
+    auth.currentAccount = {
+      accountStatus: AccountStatus.ACTIVE,
+      accountType: AccountTypes.SBC_STAFF,
+      id: 1,
+      label: 'sbc staff',
+      productSettings: null,
+      type: '',
+      urlorigin: '',
+      urlpath: ''
+    }
     router = createVueRouter()
     await router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier } })
     wrapper = mount(BusinessInfoView, {

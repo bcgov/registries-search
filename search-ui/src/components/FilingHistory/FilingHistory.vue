@@ -318,8 +318,7 @@ const loadData = (): void => {
 
     // safety check for required fields
     if (!filing.name || !filing.displayName || !filing.effectiveDate || !filing.submittedDate || !filing.status) {
-      // eslint-disable-next-line no-console
-      console.log('Invalid filing =', filing)
+      console.warn('Invalid filing =', filing)
       continue
     }
     loadFiling(filing)
@@ -468,7 +467,7 @@ const loadComments = async (item: FilingHistoryItem): Promise<void> => {
     item.comments = flattenAndSortComments(comments)
   } catch (error) {
     item.comments = null
-    console.log('loadComments() error =', error)
+    console.warn('loadComments() error =', error)
   }
   item.commentsCount = item.comments?.length || 0
 }
@@ -661,10 +660,6 @@ onMounted(async () => {
 
 :deep(.v-expansion-panel-title__overlay) {
   background-color: white;
-}
-
-:deep(.theme--light.v-list-item--disabled) {
-  opacity: 0.38 !important;
 }
 
 .court-order-section {

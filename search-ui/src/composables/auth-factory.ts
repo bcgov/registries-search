@@ -2,9 +2,9 @@ import { computed, reactive } from 'vue'
 // bc registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // local
-import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, StaffRoles, UserRoles } from '@/enums'
+import { AccountTypes, ErrorCategories, ErrorCodes, ProductCode, ProductStatus, StaffRoles, UserRoles } from '@/enums'
 import { AuthI, CurrentAccountI } from '@/interfaces'
-import { getAccountProducts, getSbcFromAuth } from '@/requests'
+import { getAccountProducts } from '@/requests'
 import keycloakServices from '@/sbc-common-components/services/keycloak.services'
 import { getKeycloakName, getKeycloakRoles, updateLdUser } from '@/utils'
 
@@ -20,26 +20,18 @@ const auth = reactive({
 export const useAuth = () => {
   // manager for auth + common functions etc.
   const hasProductAccess = (code: ProductCode) => {
-    // check if product code in activeProducts or if staff access enables product code
-    if (isStaff.value) return true
+    // check if product code in activeProducts
     const product = auth.activeProducts.find(product => product.code === code)
     if (!product) return false
     return true
   }
-  const isStaff = computed(() => auth.staffRoles.includes(StaffRoles.STAFF))
-  const isStaffSBC = computed(() => auth.staffRoles.includes(StaffRoles.SBC))
+  const isStaff = computed(() => auth.currentAccount?.accountType === AccountTypes.STAFF)
+  const isStaffSBC = computed(() => auth.currentAccount?.accountType === AccountTypes.SBC_STAFF)
   const loadAuth = async () => {
     // set current account / set staff roles / get active products
     await _loadRoles()
     if (!auth._error) await _loadCurrentAccount()
-    // check sbc
-    if (!auth._error) {
-      if (!isStaff.value && auth.userRoles.includes(UserRoles.GOV_ACCOUNT)) {
-        const isSbc = await getSbcFromAuth()
-        if (isSbc) auth.staffRoles.push(StaffRoles.SBC)
-      }
-    }
-    if (!isStaff.value && !auth._error) await _loadProducts()
+    if (!auth._error) await _loadProducts()
     // update ldarkly user
     if (!auth._error) await updateLdUser(auth.currentAccount.name, '', '', '')
   }
@@ -72,10 +64,7 @@ export const useAuth = () => {
   }
   const _loadCurrentAccount = async () => {
     try {
-      let currentAccount = ''
-      // FUTURE: auth is making orgs for registry staff + sbc staff - once done we need to update this based on that org
-      if (isStaff.value) currentAccount = '{"id":"0", "label":"BC Registry Staff"}'
-      else currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
       // parse/set current account info
       if (!currentAccount) console.error(`Error: session ${SessionStorageKeys.CurrentAccount} expected, but not found.`)
       auth.currentAccount = JSON.parse(currentAccount) as CurrentAccountI

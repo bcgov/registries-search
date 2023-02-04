@@ -18,7 +18,7 @@ export function navigate (url: string): boolean {
 
     return true
   } catch (error) {
-    console.log('Error navigating =', error) // eslint-disable-line no-console
+    console.warn('Error navigating =', error) // eslint-disable-line no-console
 
     return false
   }
