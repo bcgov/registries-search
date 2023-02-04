@@ -63,8 +63,7 @@ export const fetchComments = async (url: string): Promise<CommentIF[]> => {
     .then(response => {
       const comments = response?.data?.comments
       if (!comments) {
-        // eslint-disable-next-line no-console
-        console.log('fetchComments() error - invalid response =', response)
+        console.warn('fetchComments() error - invalid response =', response)
         throw new Error('Invalid API response')
       }
       return comments

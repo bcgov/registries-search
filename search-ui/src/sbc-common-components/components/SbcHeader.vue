@@ -441,13 +441,11 @@ export default defineComponent({
       getModule(NotificationModule, store)
       syncWithSessionStorage()
       if (isAuthenticated?.value) {
-        console.log('sbc-header loading auth stuff')
         await loadUserInfo()
         await syncAccount()
         await updateProfile()
         // checking for account status
         await checkAccountStatus()
-        console.log('sbc-header done')
       }
 
       // fetching what's new information, need to wait the notifications load and get the counts

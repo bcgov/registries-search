@@ -216,7 +216,7 @@
                 <v-divider class="my-6" />
                 <DocumentsList :filing=filing :loadingOne=loadingOne :loadingAll=loadingAll
                   :loadingOneIndex=loadingOneIndex @downloadOne="downloadOne" @downloadAll="downloadAll"
-                  :isLocked=!isLocked />
+                  :isLocked=isLocked />
               </template>
 
               <!-- the details (comments) section -->
@@ -318,8 +318,7 @@ const loadData = (): void => {
 
     // safety check for required fields
     if (!filing.name || !filing.displayName || !filing.effectiveDate || !filing.submittedDate || !filing.status) {
-      // eslint-disable-next-line no-console
-      console.log('Invalid filing =', filing)
+      console.warn('Invalid filing =', filing)
       continue
     }
     loadFiling(filing)
@@ -468,7 +467,7 @@ const loadComments = async (item: FilingHistoryItem): Promise<void> => {
     item.comments = flattenAndSortComments(comments)
   } catch (error) {
     item.comments = null
-    console.log('loadComments() error =', error)
+    console.warn('loadComments() error =', error)
   }
   item.commentsCount = item.comments?.length || 0
 }
