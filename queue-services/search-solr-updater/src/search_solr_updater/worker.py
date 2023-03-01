@@ -97,7 +97,7 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
     token = get_bearer_token()
     headers = {'Authorization': 'Bearer ' + token}
     # get extra data from lear
-    business_info_url = f'{APP_CONFIG.LEAR_SVC_URL}/businesses/{identifier}?slim=true'
+    business_info_url = f'{APP_CONFIG.LEAR_SVC_URL}/businesses/{identifier}'
     parties_info_url = f'{APP_CONFIG.LEAR_SVC_URL}/businesses/{identifier}/parties'
     business_resp = get_business_info(business_info_url, headers)
     parties_resp = get_business_info(parties_info_url, headers)
