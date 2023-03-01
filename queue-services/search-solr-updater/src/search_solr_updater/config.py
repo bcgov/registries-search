@@ -90,13 +90,13 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # External API Timeouts
     try:
-        AUTH_API_TIMEOUT = int(os.getenv('AUTH_API_TIMEOUT', '20'))
+        AUTH_API_TIMEOUT = int(os.getenv('AUTH_API_TIMEOUT', '30'))
     except:  # pylint: disable=bare-except; # noqa: B901, E722
-        AUTH_API_TIMEOUT = 20
+        AUTH_API_TIMEOUT = 30
     try:
-        BUSINESS_API_TIMEOUT = int(os.getenv('BUSINESS_API_TIMEOUT', '20'))
+        BUSINESS_API_TIMEOUT = int(os.getenv('BUSINESS_API_TIMEOUT', '30'))
     except:  # pylint: disable=bare-except; # noqa: B901, E722
-        BUSINESS_API_TIMEOUT = 20
+        BUSINESS_API_TIMEOUT = 30
 
     # Service account details
     KEYCLOAK_AUTH_TOKEN_URL = os.getenv('KEYCLOAK_AUTH_TOKEN_URL')
