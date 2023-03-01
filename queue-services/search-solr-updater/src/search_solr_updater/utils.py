@@ -78,7 +78,7 @@ def get_bearer_token():
 def get_business_info(url: str, headers: Dict[str, str]):
     """Get business data from the legal-api."""
     try:
-        resp = requests.get(url=url, headers=headers, timeout=APP_CONFIG.BUSINESS_API_TIMEOUT)
+        resp = requests.get(url=url, headers=headers, params={'slim': True}, timeout=APP_CONFIG.BUSINESS_API_TIMEOUT)
         if resp.status_code != HTTPStatus.OK:
             raise QueueException(resp.status_code, 'Unable to get business data from legal-api.')
         return resp
