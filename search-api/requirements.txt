@@ -9,7 +9,7 @@ Jinja2==3.1.2
 Mako==1.2.0
 MarkupSafe==2.1.1
 SQLAlchemy==1.4.37
-Werkzeug==2.1.2
+Werkzeug==2.2.2
 alembic==1.8.0
 attrs==21.4.0
 blinker==1.4
