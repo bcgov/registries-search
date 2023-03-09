@@ -22,7 +22,7 @@ from registry_schemas import __version__ as registry_schemas_version
 
 from search_api.utils.run_version import get_run_version
 
-def test_info(session, client, jwt):
+def test_info(session, app, client, jwt):
     """Assert that ops ready check endpoint works."""
     # no setup
 
