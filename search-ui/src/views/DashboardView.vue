@@ -232,7 +232,6 @@ const unavailableMsg = 'Business Search is in the process of a scheduled ' +
 
 watch(() => showBetaTooltip.value, async (val) => {
   if (val) {
-    console.log(val)
     await nextTick()
     betaTooltipOpen.value = val
   }
