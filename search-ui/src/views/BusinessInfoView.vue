@@ -55,7 +55,7 @@
           </div>
           <v-divider class="my-10" />
         </div>
-        <span class="section-header">How to Access Business Documents</span>
+        <span ref="howToAccess" class="section-header">How to Access Business Documents</span>
         <p class="pt-3">
           1. Determine if the filing documents that you want are available for
           download or are on paper only.*
@@ -95,35 +95,45 @@
             <div v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
               <div class="document-list__label">
                 <div>
-                <v-tooltip
-                  v-if="item.tooltip"
-                  content-class="bottom-arrow"
-                  location="top left"
-                  transition="fade-transition"
-                >
-                  <template v-slot:activator="{ props }">
-                    <v-row v-bind="props" no-gutters>
-                      <v-col v-bind="props" cols="auto">
-                        <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
-                      </v-col>
-                      <v-col v-bind="props">
-                        <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                          {{ item.label }}</span><span>{{item.description}}</span>
-                      </v-col>
-                    </v-row>
-                  </template>
-                  <span>{{ item.tooltip }}</span>
-                </v-tooltip>
-                <v-row v-else no-gutters>
-                  <v-col cols="auto">
-                    <v-checkbox :disabled="!item.active" hide-details @change="toggleFee($event, item)" />
-                  </v-col>
-                  <v-col>
-                    <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                      {{ item.label }}</span> <span>{{item.description}}</span>
-                  </v-col>
-                </v-row>
-              </div>
+                  <v-tooltip
+                    v-if="item.tooltip"
+                    content-class="bottom-arrow"
+                    location="top left"
+                    transition="fade-transition"
+                  >
+                    <template v-slot:activator="{ props }">
+                      <v-row v-bind="props" no-gutters>
+                        <v-col v-bind="props" cols="auto">
+                          <v-checkbox
+                            density="compact"
+                            :disabled="!item.active"
+                            hide-details
+                            @change="toggleFee($event, item)"
+                          />
+                        </v-col>
+                        <v-col v-bind="props">
+                          <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
+                            {{ item.label }}</span><span>{{item.description}}</span>
+                        </v-col>
+                      </v-row>
+                    </template>
+                    <span>{{ item.tooltip }}</span>
+                  </v-tooltip>
+                  <v-row v-else no-gutters>
+                    <v-col cols="auto">
+                      <v-checkbox
+                        density="compact"
+                        :disabled="!item.active"
+                        hide-details
+                        @change="toggleFee($event, item)"
+                      />
+                    </v-col>
+                    <v-col>
+                      <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
+                        {{ item.label }}</span> <span>{{item.description}}</span>
+                    </v-col>
+                  </v-row>
+                </div>
               </div>
               <div class="document-list__fee">
                 <v-label :class="[item.active ? 'active-text' : 'disabled-text']" align-self="end"
@@ -138,12 +148,11 @@
         </div>
       </v-col>
       <v-col cols="3">
-        <div class="pt-2">
-          <base-fee-calculator :pre-select-item="feePreSelectItem" :fee-actions="feeActions" />
-          <div class="validation-messages pl-5 mt-2" v-if="!searchValidInput">
-            <div>&lt; {{ validationMsg }} </div>
-          </div>
-        </div>
+        <base-fee-calculator
+          :pre-select-item="feePreSelectItem"
+          :fee-actions="feeActions"
+          :error-message="!searchValidInput ? validationMsg : ''"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -168,6 +177,8 @@ const props = defineProps({
   appReady: { default: false },
   identifier: { type: String }  // passed with param value in route.push
 })
+
+const howToAccess = ref(null)
 
 const loading = ref(false)
 const pageLoaded = ref(false)
@@ -256,6 +267,7 @@ const submitSelected = () => {
   if (hasNoSelectedDocs.value) {
     searchValidInput.value = false
     validationMsg.value = "Select documents to download"
+    howToAccess.value?.scrollIntoView({ behavior: 'smooth'})
   } else {
     if (isStaff.value) showStaffPayment.value = true
     else payForDocuments()
@@ -443,6 +455,12 @@ const toggleFee = (event: any, item: any) => {
   height: 12px;
 }
 
+:deep(.v-checkbox.v-input--density-compact),
+:deep(.v-checkbox.v-input--density-compact .v-input__control .v-checkbox-btn) {
+  height: 24px;
+  --v-input-control-height: 24px;
+}
+
 :deep(.v-label) {
   color: $gray8;
   font-weight: 700;
@@ -458,16 +476,6 @@ const toggleFee = (event: any, item: any) => {
   color: #757575;
   font-weight: normal;
   opacity: 100%;
-}
-
-.validation-messages {
-  color: #D3272C;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  width: 320px;
 }
 
 .more-info {

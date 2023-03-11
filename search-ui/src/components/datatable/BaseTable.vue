@@ -35,6 +35,7 @@
                 v-for="header, i in headers"
                 :key="header.col + i"
                 :class="[header.class, 'base-table__header__item']"
+                :style="!header.col ? 'text-align: center;' : ''"
                 :width="header.width"
               >
                 <slot :name="'header-item-slot-' + header.slotId" :header="header">
@@ -65,18 +66,20 @@
               >
                 <slot :name="'header-filter-slot-' + header.slotId" :header="header">
                   <v-select
-                    :open-on-clear="true"
                     v-if="header.hasFilter && header.filter.type === 'select'"
                     :class="[filterClass, 'base-table__header__item__filter']"
+                    density="compact"
                     hide-details
                     :items="header.filter.items"
                     :label="!header.filter.value ? header.filter.label || '' : ''"
+                    :open-on-clear="true"
                     v-model="header.filter.value"
                     @update:modelValue="filter(header)"
                   />
                   <v-text-field
                     v-else-if="header.hasFilter && header.filter.type === 'text'"
                     :class="[filterClass, 'base-table__header__item__filter', header.filter.value ? 'active' : '']"
+                    density="compact"
                     hide-details
                     :placeholder="!header.filter.value ? header.filter.label || '' : ''"
                     v-model="header.filter.value"
@@ -166,7 +169,7 @@ const props = defineProps<{
   resetOnItemChange?: boolean,
   resultsDescription?: string,
   setHeaders: BaseTableHeaderI[],
-  setItems: object[],
+  setItems: any[],
   title?: string
   totalItems?: number
   subtitle?: string
@@ -281,6 +284,7 @@ td,
 th {
   min-width: 40px;
   max-width: 40px;
+  text-align: inherit;
   white-space: normal;
 }
 .base-table {
@@ -312,11 +316,11 @@ th {
 
       &__clear-btn {
         background-color: transparent;
+        bottom: 37%;
         box-shadow: none;
-        height: 30px;
+        height: 25px;
         position: absolute;
-        bottom: 25px;
-        width: 30px;
+        width: 25px;
       }
       &__clear-btn.header-select {
         right: 25px;
@@ -326,25 +330,26 @@ th {
       }
 
       &__filter {
-        :deep(.v-label.v-field-label) {
+        :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label) {
           font-size: 14px;
           margin: 11px 0 0 8px;
           max-width: none;
-          transition: none !important;
         }
-        :deep(.v-label.v-field-label.v-field-label--floating) {
+        :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label.v-field-label--floating) {
           color: $gray7;
           font-size: 14px;
           top: 0 !important;
         }
       }
 
-      &__filter :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
-        background-color: $blueSelected;
-        opacity: 1;
-      }
-      &__filter :deep(.v-field--variant-filled .v-field__overlay) {
-        transition: none;
+      &__filter.v-input--dirty {
+        :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
+          background-color: $blueSelected;
+          opacity: 1;
+        }
+        :deep(.v-input__control .v-field--active.v-field--dirty .v-field__input .v-select__selection) {
+          margin-bottom: 10px;
+        }
       }
 
       &__title,
@@ -419,17 +424,13 @@ th {
 :deep(.v-btn__overlay::after) {
   background-color: transparent !important;
 }
-:deep(.v-field__field) {
-  min-height: 40px;
-  min-width: 60px;
-  overflow: hidden;
-  padding: 0;
-}
 :deep(.v-field__input) {
   align-items: end;
   flex-wrap: nowrap;
   font-size: 0.875rem;
-  padding: 0 0 8px 8px;
+}
+:deep(.v-text-field .v-field__input) {
+  padding: 0 0 0 8px;
 }
 :deep(.v-field__append-inner) {
   margin: auto;

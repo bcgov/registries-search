@@ -8,7 +8,9 @@
             <v-tooltip
               content-class="tooltip__beta-version top-arrow px-2"
               location="bottom"
-              :model-value="showBetaTooltip"
+              open-on-click
+              :open-on-hover="false"
+              v-model="showBetaTooltip"
               transition="fade-transition"
             >
               <template v-slot:activator="{ props }">
@@ -158,7 +160,7 @@
             <div v-else>
               <p class="mb-7 mt-12 info-text">
                 Search for businesses
-                <v-tooltip location="top" content-class="tooltip bottom-arrow" transition="fade-transition">
+                <v-tooltip location="top" content-class="bottom-arrow" transition="fade-transition">
                   <template v-slot:activator="{ props }">
                     <span class="tooltip-search-tab" style="position: relative;">
                       <span class="tooltip-search-tab__text" v-bind="props">
@@ -230,6 +232,7 @@ const unavailableMsg = 'Business Search is in the process of a scheduled ' +
 
 watch(() => showBetaTooltip.value, async (val) => {
   if (val) {
+    console.log(val)
     await nextTick()
     betaTooltipOpen.value = val
   }

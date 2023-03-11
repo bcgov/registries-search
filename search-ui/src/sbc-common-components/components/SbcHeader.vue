@@ -78,17 +78,15 @@
                       <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
                       <v-divider></v-divider>
                     </div>
-                    <v-list tile dense>
+                    <v-list density="compact">
                       <v-list-item
                         v-for="loginOption in loginOptions"
+                        class="pr-6"
                         :key="loginOption.idpHint"
+                        :prepend-icon="loginOption.icon"
+                        :title="loginOption.option"
                         @click="login(loginOption.idpHint)"
-                        class="pr-6">
-                        <v-list-item-avatar left>
-                          <v-icon>{{loginOption.icon}}</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>{{loginOption.option}}</v-list-item-title>
-                      </v-list-item>
+                      />
                     </v-list>
                   </v-card>
                 </v-menu>
@@ -122,22 +120,16 @@
                       <v-card-title class="body-1">Notifications</v-card-title>
                       <v-divider></v-divider>
                     </div>
-                    <v-list tile dense>
-                      <!-- No Items -->
-                      <v-list-item v-if="pendingApprovalCount === 0">
-                        <v-list-item-title class="text-center">No notifications</v-list-item-title>
-                      </v-list-item>
-
-                      <v-list-item two-line v-if="pendingApprovalCount > 0" @click="goToTeamMembers()">
-                        <v-list-item>
-                          <v-list-item-title>You have {{ pendingApprovalCount }} pending approvals</v-list-item-title>
-                          <v-list-item-subtitle>
-                            {{ pendingApprovalCount }}
-                            <span>{{pendingApprovalCount == 1 ? 'team member' : 'team members'}}</span>
-                            require approval to access this account
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                      </v-list-item>
+                    <v-list tile density="compact">
+                      <v-list-item v-if="pendingApprovalCount === 0" :title="'No notifications'" />
+                      <v-list-item
+                        v-else
+                        :subtitle="`${pendingApprovalCount} ${pendingApprovalCount === 1 ?
+                          'team member' : 'team members'} require approval to access this account`"
+                        :title="`You have ${pendingApprovalCount} pending approvals`"
+                        two-line
+                        @click="goToTeamMembers()"
+                      />
                     </v-list>
                   </v-card>
                 </v-menu>
@@ -151,8 +143,7 @@
                   attach="#appHeader"
                   v-if="isAuthenticated">
                   <template v-slot:activator="{ props }">
-                    <v-btn variant="text"            
-                  size="large" class="user-account-btn" aria-label="my account" v-bind="props">
+                    <v-btn variant="text" size="large" class="user-account-btn" aria-label="my account" v-bind="props">
                       <v-avatar
                         tile
                         left
@@ -171,66 +162,62 @@
 
                   <v-card>
                     <!-- User Profile -->
-                    <v-list tile dense>
-                      <v-list-item two-line>
-                        <v-avatar
-                          tile
-                          left
-                          color="#4d7094"
-                          size="36"
-                          class="user-avatar white-text">
-                          {{ username.slice(0,1) }}
-                        </v-avatar>
-                        <v-list-item class="user-info">
-                          <v-list-item-title class="user-name" data-test="menu-user-name">
-                            {{ username }}
-                            <v-list-item-subtitle class="account-name" data-test="menu-account-name">
-                              {{ accountName }}
-                            </v-list-item-subtitle>
-                          </v-list-item-title>
-                        </v-list-item>
+                    <v-list density="compact" lines="two">
+                      <v-list-item class="user-info">
+                        <template v-slot:prepend>
+                          <v-avatar
+                            tile
+                            color="#4d7094"
+                            size="36"
+                            class="user-avatar white-text">
+                            {{ username.slice(0,1) }}
+                          </v-avatar>
+                        </template>
+                        <v-list-item-title class="user-name" data-test="menu-user-name">
+                          {{ username }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle class="account-name" data-test="menu-account-name">
+                          {{ accountName }}
+                        </v-list-item-subtitle>
                       </v-list-item>
+                    </v-list>
+                    <v-list density="compact">
                       <!-- BEGIN: Hide if authentication is IDIR -->
-                      <v-list-item @click="goToUserProfile()" v-if="isBcscOrBceid">
-                        <v-list-item-avatar left>
-                          <v-icon>mdi-account-outline</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Edit Profile</v-list-item-title>
-                      </v-list-item>
+                      <v-list-item
+                        v-if="isBcscOrBceid"
+                        prepend-icon="mdi-account-outline"
+                        title="Edit Profile"
+                        @click="goToUserProfile()"
+                      />
                       <!-- END -->
-                      <v-list-item @click="logout()">
-                        <v-list-item-avatar left>
-                          <v-icon>mdi-logout-variant</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Log out</v-list-item-title>
-                      </v-list-item>
+                      <v-list-item
+                        prepend-icon="mdi-logout-variant"
+                        title="Log out"
+                        @click="logout()"
+                      />
                     </v-list>
 
                     <v-divider></v-divider>
 
                     <!-- Account Settings -->
-                    <v-list tile dense v-if="currentAccount">
+                    <v-list v-if="currentAccount" density="compact">
                       <v-list-subheader>ACCOUNT SETTINGS</v-list-subheader>
-                      <v-list-item @click="goToAccountInfo(currentAccount)">
-                        <v-list-item-avatar left>
-                          <v-icon>mdi-information-outline</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Account Info</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="goToTeamMembers()">
-                        <v-list-item-avatar left>
-                          <v-icon>mdi-account-group-outline</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Team Members</v-list-item-title>
-                      </v-list-item>
+                      <v-list-item
+                        prepend-icon="mdi-information-outline"
+                        title="Account Info"
+                        @click="goToAccountInfo(currentAccount)"
+                      />
+                      <v-list-item
+                        prepend-icon="mdi-account-group-outline"
+                        title="Team Members"
+                        @click="goToTeamMembers()"
+                      />
                       <v-list-item
                         v-if="showTransactions"
-                        @click="goToTransactions()">
-                        <v-list-item-avatar left>
-                          <v-icon>mdi-file-document-outline</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-title>Transactions</v-list-item-title>
-                      </v-list-item>
+                        prepend-icon="mdi-file-document-outline"
+                        title="Transactions"
+                        @click="goToTransactions()"
+                      />
                     </v-list>
 
                     <v-divider></v-divider>
@@ -238,47 +225,47 @@
                     <!-- Switch Account -->
                     <div v-if="!isStaff ">
                       <v-list
-                        tile
-                        dense
                         v-if="switchableAccounts.length > 1"
-                        class="switch-account">
+                        class="switch-account"
+                        density="compact"
+                      >
                         <v-list-subheader>SWITCH ACCOUNT</v-list-subheader>
                         <v-list-item
-                          color="primary"
-                          :class="{'v-list-item--active' : settings.id === currentAccount.id}"
                           v-for="(settings, id) in switchableAccounts"
+                          :class="{ 'v-list-item--active': settings.id === currentAccount.id }"
+                          color="primary"
                           :key="id"
+                          :title="settings.label"
                           @click="switchAccount(settings, inAuth)"
-                          :two-line="settings.additionalLabel">
-
-                          <v-list-item-avatar left>
-                            <v-icon v-show="settings.id === currentAccount.id">mdi-check</v-icon>
-                          </v-list-item-avatar>
-                          <v-list-item>
-                          <v-list-item-title>{{ settings.label }}</v-list-item-title>
+                        >
+                          <template v-slot:prepend>
+                            <v-icon
+                              v-if="settings.id === currentAccount.id"
+                              :class="settings.additionalLabel ? 'mt-n4' : ''"
+                              color="primary"
+                            >
+                              mdi-check
+                            </v-icon>
+                          </template>
                           <v-list-item-subtitle
-                          class="font-italic"
-                          :class="{'primary--text' : settings.id === currentAccount.id}"
-                          v-if="settings.additionalLabel">{{ `- ${settings.additionalLabel}` }}</v-list-item-subtitle>
-                          </v-list-item>
+                            v-if="settings.additionalLabel"
+                            class="font-italic"
+                            :class="{'primary--text' : settings.id === currentAccount.id}"
+                          >
+                            {{ `- ${settings.additionalLabel}` }}
+                          </v-list-item-subtitle>
                         </v-list-item>
                       </v-list>
 
                       <v-divider></v-divider>
 
                       <!-- Create a New Account -->
-                      <v-list
-                        tile
-                        dense
-                        v-if="canCreateAccount">
-                        <v-list-item @click="goToCreateBCSCAccount()">
-                          <v-list-item-avatar left>
-                            <v-icon>mdi-plus</v-icon>
-                          </v-list-item-avatar>
-                          <v-list-item-title>
-                            Create account
-                          </v-list-item-title>
-                        </v-list-item>
+                      <v-list v-if="canCreateAccount" density="compact">
+                        <v-list-item
+                          prepend-icon="mdi-plus"
+                          title="Create account"
+                          @click="goToCreateBCSCAccount()"
+                        />
                       </v-list>
                     </div>
                   </v-card>
@@ -709,38 +696,6 @@ $app-header-font-color: #ffffff;
   .v-badge {
     margin-right: 0.25rem;
   }
-}
-
-.v-list {
-  border-radius: 0;
-
-  .v-list-item__title,
-  .v-list-item__subtitle {
-    line-height: normal !important;
-  }
-}
-
-.v-list .v-list-item__title.user-name,
-.user-name {
-  font-size: 0.875rem;
-  font-weight: 400;
-}
-
-.v-list .v-list-item__subtitle.account-name,
-.account-name {
-  font-size: 0.75rem;
-}
-
-.v-list--dense .v-list-subheader,
-.v-list-item {
-  padding-right: 1.25rem;
-  padding-left: 1.25rem;
-}
-
-.v-list-subheader,
-.v-list-item-title,
-.v-list-item-subtitle {
-  font-size: 0.875rem !important;
 }
 
 .v-list-subheader {

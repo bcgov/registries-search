@@ -30,18 +30,17 @@ export const useFilingHistory = () => {
         clearFilingHistory()
         filingHistory._identifier = identifier
         filingHistory._effective_date = effective_date
-        const filings = await getFilings(identifier, effective_date)
+        const filingsResp = await getFilings(identifier, effective_date)
         if (effective_date) {
             const all_filings = await getFilings(identifier, null)
             if (!all_filings.error) {                 
                 filingHistory.latestFiling = all_filings[0]
             }
         }
-        if (filings.error) {
-            filingHistory._error = filings.error
-        }
-        else {
-            filingHistory.filings = filings
+        if (filingsResp.error) {
+            filingHistory._error = filingsResp.error
+        } else {
+            filingHistory.filings = filingsResp.filings
         }
         filingHistory._loading = false
     }

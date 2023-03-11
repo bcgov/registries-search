@@ -15,7 +15,7 @@
     </base-dialog>
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
-    <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
+    <sbc-header v-if="auth.tokenInitialized" :in-auth="false" :show-login-menu="false" />
     <sbc-system-banner
       v-if="systemMessage != null"
       class="justify-center"
@@ -148,14 +148,14 @@ onMounted(async () => {
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
     }
-    if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
-      handleError({
-        category: ErrorCategories.ACCOUNT_ACCESS,
-        message: 'This account does not have access to Business Search',
-        statusCode: StatusCodes.UNAUTHORIZED,
-        type: null
-      })
-    }
+    // if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
+    //   handleError({
+    //     category: ErrorCategories.ACCOUNT_ACCESS,
+    //     message: 'This account does not have access to Business Search',
+    //     statusCode: StatusCodes.UNAUTHORIZED,
+    //     type: null
+    //   })
+    // }
     appReady.value = true
     console.info('App ready.')
   }

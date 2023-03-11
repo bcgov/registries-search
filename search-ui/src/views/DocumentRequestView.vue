@@ -28,7 +28,7 @@
                 </p>
                 <v-divider class="my-10" />
                 <span class="section-header">Business Documents</span>
-                <div class="document-list  mt-3 pa-3 pr-5 pt-2 pb-8">
+                <div class="document-list mt-3 pa-3 pr-5">
                     <v-list class="py-0" density="compact">
                         <v-list-item v-for="(document, index) in documents" :key="index">
                             <span class="app-blue doc-link pt-6" @click="downloadDoc(document)">
@@ -100,9 +100,13 @@ const gotoSearch = (): void => {
 @import '@/assets/styles/theme.scss';
 
 .document-list {
+  background-color: white;
+  border-radius: 5px;
+  width: 100%;
+
+  :deep(.v-list-item:hover) {
     background-color: white;
-    width: 100%;
-    border-radius: 5px;
+  }
 }
 
 .doc-link {
