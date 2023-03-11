@@ -22,7 +22,7 @@ export const useAuth = () => {
   const hasProductAccess = (code: ProductCode) => {
     // check if product code in activeProducts
     const product = auth.activeProducts.find(product => product.code === code)
-    if (!product) return true
+    if (!product) return false
     return true
   }
   const isStaff = computed(() => auth.currentAccount?.accountType === AccountTypes.STAFF)
