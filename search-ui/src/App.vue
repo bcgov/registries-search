@@ -15,7 +15,7 @@
     </base-dialog>
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
-    <sbc-header v-if="auth.tokenInitialized" class="sbc-header" :in-auth="false" :show-login-menu="false" />
+    <sbc-header v-if="auth.tokenInitialized" :in-auth="false" :show-login-menu="false" />
     <sbc-system-banner
       v-if="systemMessage != null"
       class="justify-center"

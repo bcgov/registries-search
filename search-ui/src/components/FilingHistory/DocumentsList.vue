@@ -96,10 +96,12 @@ const downloadAll = (): void => {
     margin-top: -31px !important;
 }
 .v-list-item {
-    padding-left: 0;
-    min-height: 1rem;
+  min-height: 1rem;
+  padding-left: 0;
 } 
-
+.v-list-item:hover {
+  background-color: white !important;
+}
 .download-all-active {
     margin-left: -5px;
 }
@@ -107,5 +109,9 @@ const downloadAll = (): void => {
 .doc-title-active{
    vertical-align: top;
    padding-top:2px
+}
+.download-one-btn,
+.download-all-btn {
+  opacity: 1;
 }
 </style>

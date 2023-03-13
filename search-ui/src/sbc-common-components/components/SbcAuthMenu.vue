@@ -5,21 +5,15 @@
       <v-card-title class="body-2 font-weight-bold">Select login method</v-card-title>
       <v-divider></v-divider>
     </div>
-    <v-list
-      tile
-      dense
-    >
+    <v-list density="compact">
       <v-list-item
         v-for="loginOption in loginOptions"
-        :key="loginOption.idpHint"
-        @click="login(loginOption.idpHint)"
         class="pr-6"
-      >
-        <v-list-item-avatar left>
-          <v-icon>{{loginOption.icon}}</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-title>{{loginOption.option}}</v-list-item-title>
-      </v-list-item>
+        :key="loginOption.idpHint"
+        :prepend-icon="loginOption.icon"
+        :title="loginOption.option"
+        @click="login(loginOption.idpHint)"
+      />
     </v-list>
   </v-card>
 </template>

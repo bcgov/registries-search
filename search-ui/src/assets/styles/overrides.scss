@@ -76,24 +76,39 @@ td {
   background-color: transparent !important;
 }
 
-// sbc-common-components
-.sbc-header {
-  .v-btn {
-    background-color: rgba(0, 0, 0, 0) !important;
-    text-transform: none !important;
-    font-weight: normal !important;
-    letter-spacing: normal !important;
-    font-size: 0.875rem !important;
-  }
+.v-btn.edit-btn:disabled {
+  color: $primary-blue !important;
+  opacity: 0.4 !important;
 }
 
-// Text Inputs
-.v-text-field--box .v-label--active,
-.v-text-field--full-width .v-label--active,
-.v-text-field--outline .v-label--active {
-  transform: translateY(-8px) scale(0.75);
+.v-btn.v-btn--outlined:disabled {
+  color: $primary-blue !important;
+  caret-color: $primary-blue !important;
+  border: thin solid currentColor;
+  opacity: 0.4 !important;
 }
 
+.v-application .v-btn.v-btn--outlined.remove-btn:disabled {
+  color: $error !important;
+  caret-color: $error !important;
+  opacity: 0.4 !important;
+}
+
+.theme--bcgov.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+  background-color: $primary-blue !important;
+  opacity: 0.4 !important;
+  color: white !important;
+}
+
+.theme--bcgov.v-btn.v-btn--disabled .v-icon,
+.theme--bcgov.v-btn.v-btn--disabled .v-btn__loading,
+.theme--bcgov.v-btn.v-btn--disabled .v-icon,
+.theme--bcgov.v-btn.v-btn--disabled .v-btn__loading {
+  color: $primary-blue !important;
+  opacity: 0.4 !important;
+}
+
+// Text Inputs / selects
 .v-field--variant-filled .v-field__overlay {
   background-color: $gray1;
   opacity: 1 !important;
@@ -109,18 +124,13 @@ td {
 
 .v-field .v-field__field {
 
-  .v-field__input {
-    color: $gray9;
-
-    input::placeholder {
-      color: $gray7;
-      opacity: 1;
-    }
-  }
-
-  .v-field-label {
+  input::placeholder {
     color: $gray7;
     opacity: 1;
+  }
+
+  .v-field__input {
+    color: $gray9;
   }
 }
 
@@ -129,8 +139,10 @@ td {
   opacity: 1;
 }
 
-.v-field--active:not(.v-field--error) .v-field__outline::after,
-.v-field--active:not(.v-field--error) .v-field__outline::before {
+.v-input:not(.v-select) .v-field--active:not(.v-field--error) .v-field__outline::after,
+.v-input.v-select .v-field--focused:not(.v-field--error) .v-field__outline::after,
+.v-input:not(.v-select) .v-field--active:not(.v-field--error) .v-field__outline::before,
+.v-input.v-select .v-field--focused:not(.v-field--error) .v-field__outline::before {
   border-color: $primary-blue;
   opacity: 1;
 }
@@ -159,6 +171,16 @@ td {
   }
 }
 
+// v-labels / v-messages
+.theme--bcgov.v-label:not(.v-label--is-disabled),
+.theme--bcgov.v-messages {
+  color: $gray7;
+}
+
+.folio-edit-txt .v-messages {
+  text-align: end !important;
+}
+
 // Expansion Panels
 .v-expansion-panel:before {
   box-shadow: none;
@@ -176,10 +198,12 @@ td {
     display: none;
   }
 }
+
 // loaders
 .v-loader {
   color: $primary-blue;
 }
+
 // tooltips
 .v-tooltip .v-overlay__content {
   width: 270px;
@@ -237,34 +261,9 @@ td {
   border-bottom: 8px solid RGBA(73, 80, 87, 0.95) !important;
 }
 
-.v-breadcrumbs__divider {
-  padding: 0 !important;
-}
-
-.v-data-table__selected {
-  background: $blueSelected !important;
-}
-
-.v-select__selections {
-  line-height: 1.5rem !important;
-}
-
+// checkboxes
 .v-simple-checkbox .theme--bcgov.v-icon {
   color: $primary-blue;
-}
-
-.folio-edit-txt .v-messages {
-  text-align: end !important;
-}
-
-.v-data-table__empty-wrapper {
-  padding-top: 30px;
-  padding-bottom: 30px;
-}
-
-.theme--bcgov.v-input input,
-.theme--bcgov.v-input textarea {
-  color: $gray9;
 }
 
 .theme--bcgov.v-application .v-input--selection-controls__ripple,
@@ -273,84 +272,62 @@ td {
   color: $gray7 !important;
 }
 
-.v-application .v-btn.v-btn--outlined.remove-btn:disabled {
-  color: #d3272c !important;
-  caret-color: #d3272c !important;
-  opacity: 0.4 !important;
+// v-list
+.v-list.switch-account .v-list-item:not(.v-list-item--active) .v-list-item-title,
+.v-list.switch-account .v-list-item:not(.v-list-item--active) .v-list-item-subtitle {
+  margin-left: 33px;
 }
 
-.v-btn.edit-btn:disabled {
-  color: $primary-blue !important;
-  opacity: 0.4 !important;
-}
-
-.theme--bcgov.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
-  background-color: $primary-blue !important;
-  opacity: 0.4 !important;
-  color: white !important;
-}
-
-.v-btn.v-btn--outlined:disabled {
-  color: #1669bb !important;
-  caret-color: #1669bb !important;
-  border: thin solid currentColor;
-  opacity: 0.4 !important;
-}
-
-.theme--bcgov.v-btn.v-btn--disabled .v-icon,
-.theme--bcgov.v-btn.v-btn--disabled .v-btn__loading,
-.theme--bcgov.v-btn.v-btn--disabled .v-icon, .theme--bcgov.v-btn.v-btn--disabled .v-btn__loading {
-  color: #1669bb !important;
-  opacity: 0.4 !important;
-}
-
-// list items
-.theme--bcgov.v-list-item {
+.v-list-item {
   font-size: 0.875rem;
   padding-left: 16px;
 }
 
-.theme--bcgov.v-divider {
-  color: $gray3 !important;
-  margin: 0 10px;
+.v-list-item:hover:not(.user-info) {
+  background-color: $gray1;
+
+  .v-list-item-title,
+  .v-list-item-subtitle {
+    color: $primary-blue;
+  }
 }
 
-.theme--bcgov.v-label:not(.v-label--is-disabled), .theme--bcgov.v-messages {
+.v-list-item.v-list-item--active {
+  background-color: $blueSelected;
+
+  .v-list-item__overlay {
+    color: transparent;
+  }
+
+  .v-list-item-title,
+  .v-list-item-subtitle {
+    color: $primary-blue;
+  }
+
+  .v-list-item-subtitle {
+    opacity: .7;
+  }
+}
+
+.v-list-item__prepend .v-icon {
+  margin-inline-end: 12px;
+}
+
+.v-list-item-title {
   color: $gray7;
+  font-family: "BCSans", Verdana, Arial, sans-serif !important;
+  font-size: 0.875rem;
 }
 
+// v-text-fields
 .theme--bcgov.v-text-field.v-input--is-disabled .v-input__slot::before {
   border-color: rgba(0, 0, 0, 0.42);
   opacity: 0.4;
   border-image: none;
 }
 
-.theme--bcgov.v-text-field--filled.v-input--is-disabled > .v-input__control > .v-input__slot {
+.theme--bcgov.v-text-field--filled.v-input--is-disabled>.v-input__control>.v-input__slot {
   background: rgba(0, 0, 0, 0.04);
-}
-
-.v-list--dense .list-item {
-  font-size: 0.875rem;
-  padding: 0;
-}
-
-.v-list-item.v-list-item--link.v-theme--bcgov.v-list-item--density-default.v-list-item--one-line.v-list-item--variant-text {
-  padding-bottom: 0;
-  padding-top: 0;
-}
-
-.theme--bcgov.v-list-item .v-list-item__mask {
-  color: inherit;
-}
-
-.v-list-item-title {
-  color: #495057 !important;
-  font-family: "BCSans", Verdana, Arial, sans-serif !important;
-  font-size: 0.875rem !important;
-}
-
-.v-list-item--link:before {
-  background-color: inherit;
 }
 
 // v-snackbar
@@ -373,16 +350,9 @@ td {
   width: 14px;
 }
 
-// v-select
-.v-overlay .v-overlay__content.v-select__content {
-  max-height: 350px !important;
-
-  .v-list-item--link:hover {
-    background-color: $gray1;
-
-    .v-list-item-header .v-list-item-title {
-      color: $primary-blue !important;
-    }
-  }
+// dividers
+.theme--bcgov.v-divider {
+  color: $gray3 !important;
+  margin: 0 10px;
 }
 

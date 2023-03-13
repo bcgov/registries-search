@@ -102,14 +102,16 @@
         </template>
       </base-table>
     </div>
-    <v-btn
-      v-if="hasMoreResults"
-      class="btn-basic-outlined mx-auto mt-30px"
-      :loading="search._loadingNext"
-      @click="getNextSearches()"
-    >
-      Load More Results
-    </v-btn>
+    <div style="text-align: center;">
+      <v-btn
+        v-if="hasMoreResults"
+        class="btn-basic-outlined mt-30px"
+        :loading="search._loadingNext"
+        @click="getNextSearches()"
+      >
+        Load More Results
+      </v-btn>
+    </div>
   </div>
 </template>
 

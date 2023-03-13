@@ -65,11 +65,13 @@
                 </div>
 
 
-                <div v-else-if="filing.isCompletedIa || filing.isCompletedAlteration || filing.isCompletedDissolution"
-                  class="item-header__subtitle">
-                  <span>FILED AND PAID
+                <div
+                  v-else-if="filing.isCompletedIa || filing.isCompletedAlteration || filing.isCompletedDissolution"
+                  class="item-header__subtitle"
+                >
+                  <div>FILED AND PAID
                     <FiledLabel :filing="filing" />
-                  </span>
+                  </div>
                   <v-btn class="details-btn" flat :ripple=false @click.stop="togglePanel(index, filing)">
                     <v-icon left class="app-blue">mdi-information-outline</v-icon>
                     <span class="app-blue">{{ (panel === index) ? "Hide Details" : "View Details" }}</span>
@@ -77,8 +79,10 @@
                 </div>
 
 
-                <div v-else-if="filing.isFutureEffectiveAlterationPending ||
-                filing.isFutureEffectiveDissolutionPending" class="item-header__subtitle">
+                <div
+                  v-else-if="filing.isFutureEffectiveAlterationPending || filing.isFutureEffectiveDissolutionPending"
+                  class="item-header__subtitle"
+                >
                   <span class="orange--text text--darken-2">FILED AND PENDING</span>
                   <span class="vert-pipe" />
                   <span>PAID
@@ -95,8 +99,10 @@
                 </div>
 
 
-                <div v-else-if="filing.isFutureEffectiveAlteration ||
-                filing.isFutureEffectiveDissolution" class="item-header__subtitle">
+                <div
+                  v-else-if="filing.isFutureEffectiveAlteration || filing.isFutureEffectiveDissolution"
+                  class="item-header__subtitle"
+                >
                   <span v-if="filing.isFutureEffectiveAlteration">FUTURE EFFECTIVE ALTERATION</span>
                   <span v-if="filing.isFutureEffectiveDissolution">FUTURE EFFECTIVE DISSOLUTION</span>
                   <span class="vert-pipe" />
@@ -490,7 +496,7 @@ const loadDocuments = async (item: FilingHistoryItem): Promise<void> => {
             pushDocument(title, filename, link)
           }
         }
-      } else {
+      } else if (prop !== 'receipt') {
         const title = camelCaseToWords(prop)
         const date = dateToYyyyMmDd(item.submittedDate)
         const filename = `${entity.identifier} ${title} - ${date}.pdf`

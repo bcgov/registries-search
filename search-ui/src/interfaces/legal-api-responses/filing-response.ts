@@ -1,4 +1,5 @@
 import { CorpTypeCd, EffectOfOrderTypes, FilingStatus, FilingTypes } from '@/enums'
+import { ErrorI } from '@/interfaces'
 
 /**
  * A list item from the API "filings" call (ie, API object).
@@ -95,4 +96,9 @@ export interface LegalFiling {
   // whose name is the filing type
   // eg, alteration, annualReport, etc
   [name: string]: string // link to fetch it
+}
+
+export interface ApiFilingsRespI {
+  error?: ErrorI
+  filings?: ApiFiling[]
 }

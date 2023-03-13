@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@bcrs-shared-components/breadcrumb": "^2.0.1",
+    "@bcrs-shared-components/corp-type-module": "1.0.6",
+    "@bcrs-shared-components/interfaces": "1.0.28",
     "@mdi/font": "^6.1.95",
     "@sentry/tracing": "^6.19.6",
     "@sentry/vue": "^6.19.6",
@@ -20,15 +22,13 @@
     "roboto-fontface": "*",
     "sbc-common-components": "^3.0.5",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
     "vue-hotjar": "^1.4.0",
-    "vuetify": "^3.0.0-beta.5",
+    "vue-router": "^4.0.3",
+    "vuetify": "^3.1.8",
     "vuex": "^4.0.0",
     "vuex-composition-helpers": "^2.0.3",
     "vuex-module-decorators": "^2.0.0",
-    "webfontloader": "^1.0.0",
-    "@bcrs-shared-components/interfaces": "1.0.28",
-    "@bcrs-shared-components/corp-type-module": "1.0.6"
+    "webfontloader": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
@@ -50,7 +50,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
-    "jest": "^27.0.5",
+    "jest": "^27.5.0",
     "prettier": "^2.4.1",
     "sass": "^1.38.0",
     "sass-loader": "^10.0.0",

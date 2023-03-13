@@ -12,7 +12,7 @@
     <template v-slot:activator="{ isActive, props }">
       <div class="action-div">
         <v-fade-transition>
-          <div v-if="isActive" class="top-tooltip-arrow table-tooltip-arrow" />
+          <div v-if="isActive" class="table-tooltip-arrow" />
         </v-fade-transition>
         <v-icon color="primary" size="24" v-bind="props">mdi-information-outline</v-icon>
       </div>
@@ -54,7 +54,6 @@ const emit = defineEmits<{ (e: 'action', value: boolean): void }>()
   left: 2px;
   margin-top: -10px !important;
   position: absolute;
-  transition:  0.1s !important;
   width: 20px;
 }
 </style>

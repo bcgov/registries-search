@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 // local
 import { ErrorCategories, ErrorCodes } from '@/enums'
 import { CommentIF, EntityRespI } from '@/interfaces'
+import { ApiFilingsRespI } from '@/interfaces/legal-api-responses'
 import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
@@ -26,7 +27,7 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
     })
 }
 
-export async function getFilings(identifier: string, effective_date: string): Promise<any> {
+export async function getFilings(identifier: string, effective_date: string): Promise<ApiFilingsRespI> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
   const config = { baseURL: url }
   let filings_url = `businesses/${identifier}/filings`
@@ -40,7 +41,7 @@ export async function getFilings(identifier: string, effective_date: string): Pr
       if (!data) {
         throw new Error('Invalid API response')
       }
-      return data?.filings || []
+      return { 'filings': data?.filings || [] }
     }).catch(error => {
       return {
         error: {
