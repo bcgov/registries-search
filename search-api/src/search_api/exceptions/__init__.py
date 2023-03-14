@@ -74,7 +74,7 @@ class ApiConnectionException(Exception):
         """Initialize the error object."""
         super(ApiConnectionException, self).__init__()  # pylint: disable=super-with-arguments
         self.code = code
-        self.detail = detail
+        self.detail = str(detail)
 
 
 class StorageException(Exception):

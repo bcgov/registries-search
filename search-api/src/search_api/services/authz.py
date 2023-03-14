@@ -52,7 +52,6 @@ def _call_auth_api(path: str, token: str) -> dict:
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json'
         }
-        # current_app.logger.debug('Auth get user orgs url=' + url)
         with Session() as http:
             retries = Retry(total=3,
                             backoff_factor=0.1,
@@ -85,16 +84,19 @@ def get_bearer_token():
                             headers={'content-type': 'application/x-www-form-urlencoded'},
                             auth=(client_id, client_secret),
                             timeout=auth_api_timeout)
-
+        if res.status_code != HTTPStatus.OK:
+            raise ConnectionError({'statusCode': res.status_code, 'json': res.json()})
         return res.json().get('access_token')
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.error('AUTH connection failure:', err)
+    except exceptions.Timeout as err:
+        current_app.logger.debug('AUTH connection failure: %s', err.with_traceback(None))
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get service account token from auth.'}]) from err
+                                     [{'message': 'Unable to get service account token from auth.',
+                                       'reason': err.with_traceback(None)}]) from err
     except Exception as err:  # noqa: B902
-        current_app.logger.error('AUTH connection failure:', err)
-        raise ApiConnectionException(HTTPStatus.INTERNAL_SERVER_ERROR,
-                                     [{'message': 'Unable to get service account token from auth.'}]) from err
+        current_app.logger.debug('AUTH connection failure: %s', err.with_traceback(None))
+        raise ApiConnectionException(HTTPStatus.SERVICE_UNAVAILABLE,
+                                     [{'message': 'Unable to get service account token from auth.',
+                                       'reason': err.with_traceback(None)}]) from err
 
 
 def user_info(token: str) -> dict:

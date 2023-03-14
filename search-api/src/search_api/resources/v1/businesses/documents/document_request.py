@@ -19,6 +19,7 @@ from flask_cors import cross_origin
 from simple_cloudevent import to_queue_message
 
 import search_api.resources.utils as resource_utils
+from search_api.exceptions import ApiConnectionException
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 from search_api.services import get_role
@@ -65,7 +66,7 @@ def get(business_identifier, request_id=None):
 @bp.post('')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def post(business_identifier):
+def post(business_identifier):  # pylint: disable=too-many-return-statements
     """Create a new request for the business."""
     try:
         account_id = request.headers.get('Account-Id', None)
@@ -119,9 +120,12 @@ def post(business_identifier):
         except Exception as err:  # noqa: B902
             # will need to decide on how to best notify there is an error
             msg = f'Identifier: {business_identifier} Unable to put document request on Queue'
-            current_app.logger.error(msg, err)
+            current_app.logger.error(msg, err.with_traceback(None))
 
         return jsonify(document_access_request.json), pay_code
+
+    except ApiConnectionException as err:
+        return jsonify({'message': 'Error creating new business request.', 'detail': err.detail}), err.code
 
     except Exception as default_exception:   # noqa: B902
         return resource_utils.default_exception_response(default_exception)

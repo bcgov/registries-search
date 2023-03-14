@@ -194,6 +194,8 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
             return jsonify({'message': f"Expected '{SolrField.PARTY_ROLE.value}:' with values 'partner' and/or " +
                                        "'proprietor'. Other partyRoles are not implemented."}), HTTPStatus.BAD_REQUEST
 
+        start = None
+        rows = None
         try:
             with suppress(TypeError):  # suprress int cast over None
                 start = int(request.args.get('start', None))
