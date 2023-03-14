@@ -125,7 +125,9 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
         return jsonify(document_access_request.json), pay_code
 
     except ApiConnectionException as err:
+        current_app.logger.error(err)
         return jsonify({'message': 'Error creating new business request.', 'detail': err.detail}), err.code
 
     except Exception as default_exception:   # noqa: B902
+        current_app.logger.error(default_exception.with_traceback(None))
         return resource_utils.default_exception_response(default_exception)

@@ -106,6 +106,7 @@ def get_document_data(business_identifier, document_key):
         return content, resp.status_code
 
     except ApiConnectionException as api_exception:
+        current_app.logger.error(api_exception)
         return jsonify({'message': 'Error getting document data.', 'detail': api_exception.detail}), api_exception.code
     except StorageException as storage_exception:
         return resource_utils.gcp_storage_service_error(storage_exception)
