@@ -87,13 +87,13 @@ def get_business_filing_document_list(identifier: str, filing_id: int):
 
 
 def get_business(identifier: str):
-    """Get the business filing document list for the given identifier and id."""
+    """Get the business json for the given identifier."""
     lear_svc_url = current_app.config.get('LEAR_SVC_URL') + f'/businesses/{identifier}'
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
         business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
+        lear_response = requests.get(url=lear_svc_url, headers=headers, params={'slim': True}, timeout=business_api_timeout)
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
