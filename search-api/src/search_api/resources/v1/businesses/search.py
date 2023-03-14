@@ -96,11 +96,13 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         # TODO: add parties filter
         # parse paging params
         start = None
-        with suppress(TypeError):
-            start = int(request.args.get('start', None))
         rows = None
-        with suppress(TypeError):
-            rows = int(request.args.get('rows', None))
+        try:
+            with suppress(TypeError):  # suprress int cast over None
+                start = int(request.args.get('start', None))
+                rows = int(request.args.get('rows', None))
+        except ValueError as err:  # catch invalid start/row entry
+            return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
         # create solr search params obj from parsed params
         params = SearchParams(query, start, rows, legal_types, states)
@@ -192,12 +194,12 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
             return jsonify({'message': f"Expected '{SolrField.PARTY_ROLE.value}:' with values 'partner' and/or " +
                                        "'proprietor'. Other partyRoles are not implemented."}), HTTPStatus.BAD_REQUEST
 
-        start = None
-        with suppress(TypeError):
-            start = int(request.args.get('start', None))
-        rows = None
-        with suppress(TypeError):
-            rows = int(request.args.get('rows', None))
+        try:
+            with suppress(TypeError):  # suprress int cast over None
+                start = int(request.args.get('start', None))
+                rows = int(request.args.get('rows', None))
+        except ValueError as err:  # catch invalid start/row entry
+            return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
         params = SearchParams(query, start, rows, legal_types, states, party_roles)
         results = parties_search(params)
