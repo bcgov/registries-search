@@ -13,7 +13,7 @@
 # limitations under the License.
 """API endpoints for Document json/pdfs."""
 # from http import HTTPStatus
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
