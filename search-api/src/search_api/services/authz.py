@@ -90,11 +90,11 @@ def get_bearer_token():
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('AUTH connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get service account token from auth.'}])
+                                     [{'message': 'Unable to get service account token from auth.'}]) from err
     except Exception as err:  # noqa: B902
         current_app.logger.error('AUTH connection failure:', err)
         raise ApiConnectionException(HTTPStatus.INTERNAL_SERVER_ERROR,
-                                     [{'message': 'Unable to get service account token from auth.'}])
+                                     [{'message': 'Unable to get service account token from auth.'}]) from err
 
 
 def user_info(token: str) -> dict:

@@ -22,13 +22,13 @@ def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) 
         solr_parties = []
         for party in parties:
             party_doc = {
-                SolrField.PARENT_BN: bn,
-                SolrField.PARENT_NAME: name,
-                SolrField.PARENT_STATE: state,
-                SolrField.PARENT_TYPE: legal_type,
-                SolrField.PARTY_NAME: party[0],
-                SolrField.PARTY_ROLE: [party[1]],
-                SolrField.PARTY_TYPE: party[2],
+                SolrField.PARENT_BN.value: bn,
+                SolrField.PARENT_NAME.value: name,
+                SolrField.PARENT_STATE.value: state,
+                SolrField.PARENT_TYPE.value: legal_type,
+                SolrField.PARTY_NAME.value: party[0],
+                SolrField.PARTY_ROLE.value: [party[1]],
+                SolrField.PARTY_TYPE.value: party[2],
             }
             solr_parties.append(PartyDoc(**party_doc))
     return BusinessDoc(

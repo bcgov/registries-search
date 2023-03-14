@@ -48,7 +48,7 @@ def get_business_document(identifier: str, document_type: DocumentType, content_
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document from lear.'}])
+                                     [{'message': 'Unable to get business document from lear.'}]) from err
     return lear_response
 
 
@@ -65,7 +65,7 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get business document pdf from lear.'}]) from err
     return lear_response
 
 
@@ -82,7 +82,7 @@ def get_business_filing_document_list(identifier: str, filing_id: int):
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get business document pdf from lear.'}]) from err
     return lear_response
 
 
@@ -97,5 +97,5 @@ def get_business(identifier: str):
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
         current_app.logger.error('LEAR connection failure:', err)
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get business document pdf from lear.'}]) from err
     return lear_response

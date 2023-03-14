@@ -71,7 +71,6 @@ def post(business_identifier):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
-
         business_response = get_business(business_identifier)
         if business_response.status_code not in [HTTPStatus.OK]:
             return resource_utils.bad_request_response('Business not found.')
@@ -111,7 +110,7 @@ def post(business_identifier):
                     # noqa: E117
                     project_id = current_app.config.get('QUEUE_PROJECT_ID')  # noqa: E117
                     topic = current_app.config.get('QUEUE_TOPIC')   # noqa: E117
-                    ce = create_doc_request_ce(document_access_request)   # noqa: E117
+                    ce = create_doc_request_ce(document_access_request)   # pylint: disable=invalid-name; noqa: E117
 
                     queue.publish(
                         subject=queue.create_subject(project_id, topic),
@@ -119,8 +118,7 @@ def post(business_identifier):
                     )
         except Exception as err:  # noqa: B902
             # will need to decide on how to best notify there is an error
-            msg = 'Identifier: {identifier} Unable to put document request on Queue' \
-                  .format(identifier=business_identifier)
+            msg = f'Identifier: {business_identifier} Unable to put document request on Queue'
             current_app.logger.error(msg, err)
 
         return jsonify(document_access_request.json), pay_code

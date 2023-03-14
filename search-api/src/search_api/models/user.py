@@ -113,6 +113,7 @@ class User(db.Model):
                 login_source=token.get('loginSource', 'unknown'),
                 idp_userid=token.get('idp_userid', 'unknown'),
             )
+            # pylint: disable=consider-using-f-string
             current_app.logger.debug('Creating user from JWT:{}; User:{}'.format(token, user))
             db.session.add(user)
             db.session.commit()

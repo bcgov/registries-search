@@ -21,6 +21,7 @@ from dateutil.relativedelta import relativedelta
 
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
+from search_api.services import queue
 from search_api.services.authz import STAFF_ROLE
 from search_api.services.validator import RequestValidator
 from search_api.services.flags import Flags
@@ -213,12 +214,12 @@ def create_document_access_request(identifier: str, account_id: int, is_paid: bo
     if is_paid:
         document_access_request.payment_token=567
         document_access_request.payment_completion_date=datetime.utcnow()
-        document_access_request.status=DocumentAccessRequest.Status.PAID.value
+        document_access_request.status=DocumentAccessRequest.Status.PAID
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     document_access_request.submitter = user
 
-    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL.value, document_key='test')
+    document = Document(document_type=DocumentType.LETTER_UNDER_SEAL, document_key='test')
     document_access_request.documents.append(document)
 
     document_access_request.save()
@@ -287,8 +288,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
     mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_business',
                  return_value=business_mock_response)
     
-    mock_pub = mocker.patch('search_api.services.queue.publish',
-                 return_value=[])
+    mock_pub = mocker.patch.object(queue, 'publish', return_value=[])
 
     # set the test data for the flag
     TEST_FLAG_NAME = 'ff_queue_doc_request_name'

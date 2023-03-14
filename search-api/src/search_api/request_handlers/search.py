@@ -44,12 +44,12 @@ def business_search(params: SearchParams):
     solr_query_params = Solr.build_split_query(
         params.query,
         [
-            SolrField.NAME_Q,
-            SolrField.NAME_STEM_AGRO,
-            SolrField.IDENTIFIER_Q,
-            SolrField.BN_Q
+            SolrField.NAME_Q.value,
+            SolrField.NAME_STEM_AGRO.value,
+            SolrField.IDENTIFIER_Q.value,
+            SolrField.BN_Q.value
         ],
-        [SolrField.NAME_Q]
+        [SolrField.NAME_Q.value]
     )
     # TODO: add nested parties query
     # NB: keeping for future: build a query based on child values and return parent doc
@@ -70,9 +70,9 @@ def business_search(params: SearchParams):
     # filter queries
     filter_q = ''
     if params.legal_types:
-        filter_q = '(' + Solr.build_filter_query(SolrField.TYPE, [x.upper() for x in params.legal_types])
+        filter_q = '(' + Solr.build_filter_query(SolrField.TYPE.value, [x.upper() for x in params.legal_types])
     if params.states:
-        filter_str = Solr.build_filter_query(SolrField.STATE, [x.upper() for x in params.states])
+        filter_str = Solr.build_filter_query(SolrField.STATE.value, [x.upper() for x in params.states])
         filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
 
     filter_q = filter_q + ')' if filter_q else ''
@@ -83,10 +83,10 @@ def business_search(params: SearchParams):
             solr_query_params['fq'] = filter_q
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
-    solr_query_params['bq'] = f'{SolrField.NAME_Q}:("{params.query["value"]}"~10)^30.0' + \
-        f' AND {SolrField.NAME_STEM_AGRO}:("{params.query["value"]}"~10)^20.0' + \
-        f' AND {SolrField.NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
-        f' AND {SolrField.NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
+    solr_query_params['bq'] = f'{SolrField.NAME_Q.value}:("{params.query["value"]}"~10)^30.0' + \
+        f' AND {SolrField.NAME_STEM_AGRO.value}:("{params.query["value"]}"~10)^20.0' + \
+        f' AND {SolrField.NAME_Q.value}:({params.query["value"].split()[0]}*)^10.0' + \
+        f' AND {SolrField.NAME_SUGGEST.value}:({params.query["value"].split()[0]}*)^5.0'
 
     solr_query_params['fl'] = search_solr.base_fields
     return search_solr.query(solr_query_params, params.start, params.rows)
@@ -103,10 +103,10 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
-        name_select_params = Solr.build_split_query({'value': query}, [SolrField.NAME_SINGLE], [])
+        name_select_params = Solr.build_split_query({'value': query}, [SolrField.NAME_SINGLE.value], [])
         name_select_params['fl'] = search_solr.base_fields
         name_docs = search_solr.query(name_select_params, rows).get('response', {}).get('docs', [])
-        extra_name_suggestions = [x.get(SolrField.NAME).upper() for x in name_docs if x.get(SolrField.NAME)]
+        extra_name_suggestions = [x.get(SolrField.NAME.value).upper() for x in name_docs if x.get(SolrField.NAME.value)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
     query = query.upper()  # NOTE: needed for bn/identifier processing too
@@ -119,28 +119,29 @@ def business_suggest(query: str, highlight: bool, rows: int) -> List:
     bn_suggestions = []
     if len(name_suggestions) < rows:
         bn_id_params = {
-            'q': f'{SolrField.IDENTIFIER_Q}:{query} OR {SolrField.BN_Q}:{query}',
+            'q': f'{SolrField.IDENTIFIER_Q.value}:{query} OR {SolrField.BN_Q.value}:{query}',
             'fl': search_solr.base_fields}
         bn_id_docs = search_solr.query(bn_id_params, 0, rows).get('response', {}).get('docs', [])
         if highlight:
             # return list of identifier strings with highlighted query
             identifier_suggestions = [
-                x.get(SolrField.IDENTIFIER).replace(query, f'<b>{query}</b>')
-                for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
+                x.get(SolrField.IDENTIFIER.value).replace(query, f'<b>{query}</b>')
+                for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER.value)]
             # return list of bn strings with highlighted query
             bn_suggestions = [
-                x.get(SolrField.BN).replace(query, f'<b>{query}</b>')
-                for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
+                x.get(SolrField.BN.value).replace(query, f'<b>{query}</b>')
+                for x in bn_id_docs if x.get(SolrField.BN.value) and query in x.get(SolrField.BN.value, '')]
         else:
             identifier_suggestions = [
-                x.get(SolrField.IDENTIFIER) for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER)]
+                x.get(SolrField.IDENTIFIER.value) for x in bn_id_docs if query in x.get(SolrField.IDENTIFIER.value)]
             bn_suggestions = [
-                x.get(SolrField.BN) for x in bn_id_docs if x.get(SolrField.BN) and query in x.get(SolrField.BN, '')]
+                x.get(SolrField.BN.value) for x in bn_id_docs
+                if x.get(SolrField.BN.value) and query in x.get(SolrField.BN.value, '')]
 
     # format/combine response
-    suggestions = [{'type': SolrField.NAME, 'value': x} for x in name_suggestions]
-    suggestions += [{'type': SolrField.IDENTIFIER, 'value': x} for x in identifier_suggestions]
-    suggestions += [{'type': SolrField.BN, 'value': x} for x in bn_suggestions]
+    suggestions = [{'type': SolrField.NAME.value, 'value': x} for x in name_suggestions]
+    suggestions += [{'type': SolrField.IDENTIFIER.value, 'value': x} for x in identifier_suggestions]
+    suggestions += [{'type': SolrField.BN.value, 'value': x} for x in bn_suggestions]
     return suggestions[:rows]
 
 
@@ -148,20 +149,20 @@ def parties_search(params: SearchParams):
     """Return the list of parties from Solr that match the query."""
     # build base query
     solr_query_params = Solr.build_split_query(params.query,
-                                               [SolrField.PARTY_NAME_Q, SolrField.PARTY_NAME_STEM_AGRO],
-                                               [SolrField.PARTY_NAME_Q, SolrField.PARENT_NAME_Q])
+                                               [SolrField.PARTY_NAME_Q.value, SolrField.PARTY_NAME_STEM_AGRO.value],
+                                               [SolrField.PARTY_NAME_Q.value, SolrField.PARENT_NAME_Q.value])
     # facets
     solr_query_params['facet'] = 'on'
     solr_query_params['json.facet'] = search_solr.party_facets
     # filters
     filter_q = ''
     if params.party_roles:
-        filter_q = '(' + Solr.build_filter_query(SolrField.PARTY_ROLE, [x.lower() for x in params.party_roles])
+        filter_q = '(' + Solr.build_filter_query(SolrField.PARTY_ROLE.value, [x.lower() for x in params.party_roles])
     if params.legal_types:
-        filter_str = Solr.build_filter_query(SolrField.PARENT_TYPE, [x.upper() for x in params.legal_types])
+        filter_str = Solr.build_filter_query(SolrField.PARENT_TYPE.value, [x.upper() for x in params.legal_types])
         filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
     if params.states:
-        filter_str = Solr.build_filter_query(SolrField.PARENT_STATE, [x.upper() for x in params.states])
+        filter_str = Solr.build_filter_query(SolrField.PARENT_STATE.value, [x.upper() for x in params.states])
         filter_q = filter_q + ' AND ' + filter_str if filter_q else '(' + filter_str
 
     filter_q = filter_q + ')' if filter_q else ''
@@ -173,10 +174,10 @@ def parties_search(params: SearchParams):
 
     # boosts for result ordering
     solr_query_params['defType'] = 'edismax'
-    solr_query_params['bq'] = f'{SolrField.PARTY_NAME_Q}:("{params.query["value"]}"~10)^30.0' + \
-        f' AND {SolrField.PARTY_NAME_STEM_AGRO}:("{params.query["value"]}"~10)^20.0' + \
-        f' AND {SolrField.PARTY_NAME_Q}:({params.query["value"].split()[0]}*)^10.0' + \
-        f' AND {SolrField.PARTY_NAME_SUGGEST}:({params.query["value"].split()[0]}*)^5.0'
+    solr_query_params['bq'] = f'{SolrField.PARTY_NAME_Q.value}:("{params.query["value"]}"~10)^30.0' + \
+        f' AND {SolrField.PARTY_NAME_STEM_AGRO.value}:("{params.query["value"]}"~10)^20.0' + \
+        f' AND {SolrField.PARTY_NAME_Q.value}:({params.query["value"].split()[0]}*)^10.0' + \
+        f' AND {SolrField.PARTY_NAME_SUGGEST.value}:({params.query["value"].split()[0]}*)^5.0'
 
     solr_query_params['fl'] = search_solr.party_fields
 

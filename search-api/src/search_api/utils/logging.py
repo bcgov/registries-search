@@ -32,6 +32,7 @@ def setup_logging(conf):
 
     TODO should be reworked to load in the proper loggers and remove others
     """
+    # pylint: disable=consider-using-f-string
     # log_file_path = path.join(path.abspath(path.dirname(__file__)), conf)
 
     if conf and path.isfile(conf):
@@ -56,7 +57,7 @@ def get_logging_flag_name():
     try:
         return current_app.config.get('OPS_LOGGER_LEVEL')
     except:  # pylint: disable=bare-except; # noqa: E722, B901
-        return 'ops-{name}-log-level'.format(name=__name__)
+        return f'ops-{__name__}-log-level'
 
 
 def set_log_level_by_flag():

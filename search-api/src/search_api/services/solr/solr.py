@@ -43,20 +43,20 @@ class Solr:
         self.default_rows = 10
         # facets
         self.base_facets = json.dumps({
-            SolrField.TYPE: {'type': 'terms', 'field': SolrField.TYPE},
-            SolrField.STATE: {'type': 'terms', 'field': SolrField.STATE}})
+            SolrField.TYPE.value: {'type': 'terms', 'field': SolrField.TYPE.value},
+            SolrField.STATE.value: {'type': 'terms', 'field': SolrField.STATE.value}})
         self.party_facets = json.dumps({
-            SolrField.PARTY_ROLE: {'type': 'terms', 'field': SolrField.PARTY_ROLE},
-            SolrField.PARENT_STATE: {'type': 'terms', 'field': SolrField.PARENT_STATE},
-            SolrField.PARENT_TYPE: {'type': 'terms', 'field': SolrField.PARENT_TYPE}})
+            SolrField.PARTY_ROLE.value: {'type': 'terms', 'field': SolrField.PARTY_ROLE.value},
+            SolrField.PARENT_STATE.value: {'type': 'terms', 'field': SolrField.PARENT_STATE.value},
+            SolrField.PARENT_TYPE.value: {'type': 'terms', 'field': SolrField.PARENT_TYPE.value}})
         # fields
-        self.base_fields = f'{SolrField.BN},{SolrField.IDENTIFIER},{SolrField.NAME},{SolrField.STATE},' + \
-            f'{SolrField.TYPE},{SolrField.SCORE}'
-        self.nest_fields_party = f'{SolrField.PARTIES},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
-            f'{SolrField.PARTY_TYPE},[child childFilter=' + '{filter}]'
-        self.party_fields = f'{SolrField.PARENT_BN},{SolrField.PARENT_IDENTIFIER},{SolrField.PARENT_NAME},' + \
-            f'{SolrField.PARENT_STATE},{SolrField.PARENT_TYPE},{SolrField.PARTY_NAME},{SolrField.PARTY_ROLE},' + \
-            f'{SolrField.PARTY_TYPE}'
+        self.base_fields = f'{SolrField.BN.value},{SolrField.IDENTIFIER.value},{SolrField.NAME.value},' + \
+            f'{SolrField.STATE.value},{SolrField.TYPE.value},{SolrField.SCORE.value}'
+        self.nest_fields_party = f'{SolrField.PARTIES.value},{SolrField.PARTY_NAME.value},' + \
+            f'{SolrField.PARTY_ROLE.value},{SolrField.PARTY_TYPE.value},[child childFilter=' + '{filter}]'
+        self.party_fields = f'{SolrField.PARENT_BN.value},{SolrField.PARENT_IDENTIFIER.value},' + \
+            f'{SolrField.PARENT_NAME.value},{SolrField.PARENT_STATE.value},{SolrField.PARENT_TYPE.value},' + \
+            f'{SolrField.PARTY_NAME.value},{SolrField.PARTY_ROLE.value},{SolrField.PARTY_TYPE.value}'
         # query urls
         self.search_query = '{url}/{core}/query'
         self.suggest_query = '{url}/{core}/suggest'
@@ -88,14 +88,14 @@ class Solr:
             response = None
             url = query.format(url=self.solr_url, core=self.core)
             if method == 'GET':
-                response = requests.get(url, params=params)
+                response = requests.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
-                response = requests.post(url=url, json=json_data)
+                response = requests.post(url=url, json=json_data, timeout=30)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
-                response = requests.post(url=url, data=xml_data, headers=headers)
+                response = requests.post(url=url, data=xml_data, headers=headers, timeout=30)
             else:
-                raise Exception('Invalid params given.')
+                raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
             if response.status_code != HTTPStatus.OK:
                 error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
@@ -116,7 +116,7 @@ class Solr:
                 msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
             raise SolrException(
                 error=msg,
-                status_code=status_code)
+                status_code=status_code) from err
 
     def create_or_replace_docs(self, docs: List[BusinessDoc], force=False):
         """Create or replace solr docs in the core."""
@@ -134,9 +134,9 @@ class Solr:
         """Delete solr docs from the core."""
         payload = '<delete><query>'
         if identifiers:
-            payload += f'{SolrField.IDENTIFIER}:{identifiers[0].upper()}'
+            payload += f'{SolrField.IDENTIFIER.value}:{identifiers[0].upper()}'
         for identifier in identifiers[1:]:
-            payload += f' OR {SolrField.IDENTIFIER}:{identifier.upper()}'
+            payload += f' OR {SolrField.IDENTIFIER.value}:{identifier.upper()}'
         payload += '</query></delete>'
 
         response = self.call_solr('POST', self.update_query, xml_data=payload)
@@ -222,9 +222,9 @@ class Solr:
                 return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
             return f'{field}:{term}'
 
-        def add_to_q(q: str, fields: List[SolrField], term: str):
+        def add_to_q(q: str, fields: List[SolrField], term: str):  # pylint: disable=invalid-name
             """Return an updated solr q param with extra clauses."""
-            identifier_fields = [SolrField.IDENTIFIER_Q, SolrField.PARENT_IDENTIFIER_Q]
+            identifier_fields = [SolrField.IDENTIFIER_Q.value, SolrField.PARENT_IDENTIFIER_Q.value]
 
             first_clause = f'({fields[0]}:{term}'
             if fields[0] in identifier_fields:

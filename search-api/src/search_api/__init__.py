@@ -28,7 +28,8 @@ from flask_migrate import Migrate
 from registry_schemas import __version__ as registry_schemas_version
 from registry_schemas.flask import SchemaServices  # noqa: I001
 
-from search_api import config, errorhandlers, models
+from search_api import errorhandlers, models
+from search_api.config import config
 from search_api.models import db
 from search_api.resources import v1_endpoint
 from search_api.schemas import rsbc_schemas
@@ -43,10 +44,10 @@ setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.
 migrate = Migrate()  # pylint: disable=invalid-name
 
 
-def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
+def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app.config.from_object(config.CONFIGURATION[run_mode])
+    app.config.from_object(config[config_name])
 
     # Configure Sentry
     if dsn := app.config.get('SENTRY_DSN'):
@@ -59,7 +60,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production'), **kwargs):
         )
 
     # td is testData instance passed in to support testing
-    td = kwargs.get('ld_test_data', None)
+    td = kwargs.get('ld_test_data', None)  # pylint: disable=invalid-name;
     Flags().init_app(app, td)
 
     errorhandlers.init_app(app)

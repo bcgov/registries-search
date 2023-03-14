@@ -44,7 +44,7 @@ class DocumentAccessRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     business_identifier = db.Column('business_identifier', db.String(10), index=True)
     business_name = db.Column('business_name', db.String(1000))
-    status = db.Column('status', db.Enum(Status), default=Status.CREATED.value)
+    status = db.Column('status', db.Enum(Status), default=Status.CREATED)
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
     _payment_token = db.Column('payment_id', db.String(4096))

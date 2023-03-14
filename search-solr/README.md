@@ -21,7 +21,7 @@ BC Registries Registry Search SOLR
     - `docker build . -t solr-test`
     - `docker run -it --name=solr-test -p 8999:8983 solr-test` (it will be available on port 8999)
 - else
-  - `docker start solr-local/test`
+  - `docker start solr-local` or `docker start solr-test`
 
 3. Check logs for errors
 

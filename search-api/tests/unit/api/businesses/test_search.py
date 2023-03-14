@@ -37,10 +37,10 @@ def test_business_suggest_identifier(session, client, requests_mock, test_name, 
     # setup solr mock
     mocked_docs = [asdict(create_solr_doc(x, 'test doc', 'ACTIVE', 'BEN')) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}%3A{query})", json={})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE.value}%3A{query})", json={})
     requests_mock.get(
-        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}%3A{query} " +
-        f'OR {SolrField.BN_Q}:{query}', json={'response': {'docs': mocked_docs}})
+        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q.value}%3A{query} " +
+        f'OR {SolrField.BN_Q.value}:{query}', json={'response': {'docs': mocked_docs}})
     # call select
     suggestions = business_suggest(query, True, None)
     # test
@@ -57,10 +57,10 @@ def test_business_suggest_bn(session, client, requests_mock, test_name, query, m
     # setup solr mock
     mocked_docs = [asdict(create_solr_doc('BC1234567', 'test doc', 'ACTIVE', 'BEN', x)) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})", json={})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE.value}:{query})", json={})
     requests_mock.get(
-        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " +
-        f'OR {SolrField.BN_Q}:{query}', json={'response': {'docs': mocked_docs}})
+        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q.value}:{query} " +
+        f'OR {SolrField.BN_Q.value}:{query}', json={'response': {'docs': mocked_docs}})
     # call select
     suggestions = business_suggest(query, True, None)
     # test
@@ -77,10 +77,10 @@ def test_business_suggest_name(session, client, requests_mock, test_name, query,
     # setup solr mock
     mocked_docs = [asdict(create_solr_doc('BC1234567', x, 'ACTIVE', 'BEN')) for x in mocked_terms]
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={'suggest': {'name': {query: {'suggestions': [{'term': mocked_terms[0]}]}}}})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query.split()[0]})", json={'response': {'docs': [mocked_docs[1]]}})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE.value}:{query.split()[0]})", json={'response': {'docs': [mocked_docs[1]]}})
     requests_mock.get(
-        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " +
-        f'OR {SolrField.BN_Q}:{query}', json={'response': {'docs': []}})
+        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q.value}:{query} " +
+        f'OR {SolrField.BN_Q.value}:{query}', json={'response': {'docs': []}})
     # call select
     suggestions = business_suggest(query, True, None)
     # test
@@ -100,10 +100,10 @@ def test_business_suggest_all(session, client, requests_mock, test_name, query, 
     mocked_bn_docs = [asdict(create_solr_doc('BC0004567', 'test bn match', 'ACTIVE', 'BEN', x)) for x in mock_bns]
 
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={'suggest': {'name': {query: {'suggestions': []}}}})
-    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE}:{query})", json={'response': {'docs': mocked_name_docs}})
+    requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q=({SolrField.NAME_SINGLE.value}:{query})", json={'response': {'docs': mocked_name_docs}})
     requests_mock.get(
-        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q}:{query} " +
-        f'OR {SolrField.BN_Q}:{query}', json={'response': {'docs': mocked_identifier_docs + mocked_bn_docs}})
+        f"{current_app.config.get('SOLR_SVC_URL')}/search/query?q={SolrField.IDENTIFIER_Q.value}:{query} " +
+        f'OR {SolrField.BN_Q.value}:{query}', json={'response': {'docs': mocked_identifier_docs + mocked_bn_docs}})
     # call select
     suggestions = business_suggest(query, True, None)
     # test
@@ -157,21 +157,21 @@ def test_parties_search(session, client, requests_mock, test_name, query, mock_d
 
 
 @pytest.mark.parametrize('test_name,query,mocks,highlight,expected', [
-    ('test-single-result', '123', ['123 test name'], False, [{'type': SolrField.NAME, 'value': '123 TEST NAME'}]),
-    ('test-single-result-highlight', '123', ['123 test name'], True, [{'type': SolrField.NAME, 'value': '<b>123</b> TEST NAME'}]),
-    ('test-two-results', '123', ['123 test name', 'BC0001234'], False, [{'type': SolrField.NAME, 'value': '123 TEST NAME'}, {'type': SolrField.IDENTIFIER, 'value': 'BC0001234'}]),
-    ('test-two-results-highlight', '123', ['123 test name', 'BC0001234'], True, [{'type': SolrField.NAME, 'value': '<b>123</b> TEST NAME'}, {'type': SolrField.IDENTIFIER, 'value': 'BC000<b>123</b>4'}]),
-    ('test-three-results', '123', ['123 test name', 'BC0001234', '123456789BC0001'], False, [{'type': SolrField.NAME, 'value': '123 TEST NAME'}, {'type': SolrField.IDENTIFIER, 'value': 'BC0001234'}, {'type': SolrField.BN, 'value': '123456789BC0001'}]),
-    ('test-three-results-highlight', '123', ['123 test name', 'BC0001234', '123456789BC0001'], True, [{'type': SolrField.NAME, 'value': '<b>123</b> TEST NAME'}, {'type': SolrField.IDENTIFIER, 'value': 'BC000<b>123</b>4'}, {'type': SolrField.BN, 'value': '<b>123</b>456789BC0001'}]),
+    ('test-single-result', '123', ['123 test name'], False, [{'type': SolrField.NAME.value, 'value': '123 TEST NAME'}]),
+    ('test-single-result-highlight', '123', ['123 test name'], True, [{'type': SolrField.NAME.value, 'value': '<b>123</b> TEST NAME'}]),
+    ('test-two-results', '123', ['123 test name', 'BC0001234'], False, [{'type': SolrField.NAME.value, 'value': '123 TEST NAME'}, {'type': SolrField.IDENTIFIER.value, 'value': 'BC0001234'}]),
+    ('test-two-results-highlight', '123', ['123 test name', 'BC0001234'], True, [{'type': SolrField.NAME.value, 'value': '<b>123</b> TEST NAME'}, {'type': SolrField.IDENTIFIER.value, 'value': 'BC000<b>123</b>4'}]),
+    ('test-three-results', '123', ['123 test name', 'BC0001234', '123456789BC0001'], False, [{'type': SolrField.NAME.value, 'value': '123 TEST NAME'}, {'type': SolrField.IDENTIFIER.value, 'value': 'BC0001234'}, {'type': SolrField.BN.value, 'value': '123456789BC0001'}]),
+    ('test-three-results-highlight', '123', ['123 test name', 'BC0001234', '123456789BC0001'], True, [{'type': SolrField.NAME.value, 'value': '<b>123</b> TEST NAME'}, {'type': SolrField.IDENTIFIER.value, 'value': 'BC000<b>123</b>4'}, {'type': SolrField.BN.value, 'value': '<b>123</b>456789BC0001'}]),
 ])
 def test_endpoint_suggest(session, client, requests_mock, test_name, query, mocks, highlight, expected):
     """Assert that search suggest endpoint works as expected."""
     # setup mock - need to add more here if max_results > 1
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/suggest", json={'suggest': {'name': {query: {'suggestions': [{'term': mocks[0]}]}}}})
     if len(mocks) > 2:
-        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': [{SolrField.IDENTIFIER: mocks[1]}, {SolrField.IDENTIFIER: '', SolrField.BN: mocks[2]}]}})
+        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': [{SolrField.IDENTIFIER.value: mocks[1]}, {SolrField.IDENTIFIER.value: '', SolrField.BN.value: mocks[2]}]}})
     elif len(mocks) > 1:
-        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': [{SolrField.IDENTIFIER: mocks[1]}]}})
+        requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': [{SolrField.IDENTIFIER.value: mocks[1]}]}})
     # call endpoint
     url = f'/api/v1/businesses/search/suggest?query={query}&rows={len(mocks)}'
     if highlight:
@@ -197,7 +197,7 @@ def test_endpoint_facets(session, client, requests_mock, test_name, query_params
     """Assert that search facets endpoint works as expected."""
     # setup mock
     num_found = len(expected_docs)
-    facets_mock = {'facet_counts': {'facet_fields': {SolrField.TYPE: ['BEN', 23, 'CP', 10, 'SP', 102], SolrField.STATE: ['ACTIVE', 23, 'HISTORICAL', 10]}}}
+    facets_mock = {'facet_counts': {'facet_fields': {SolrField.TYPE.value: ['BEN', 23, 'CP', 10, 'SP', 102], SolrField.STATE.value: ['ACTIVE', 23, 'HISTORICAL', 10]}}}
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': mock_names + mock_ids + mock_bns, 'numFound': num_found, 'start': 0}, **facets_mock})
     # call endpoint
     query = query_params['query']
@@ -227,7 +227,7 @@ def test_endpoint_parties(session, client, requests_mock, test_name, query_param
     for doc in mock_docs:
         parties_docs += doc['parties']
     num_found = len(parties_docs)
-    facets_mock = {'facet_counts': {'facet_fields': {SolrField.TYPE: ['SP', 2, 'GP', 10], SolrField.STATE: ['ACTIVE', 7, 'HISTORICAL', 5], SolrField.PARTY_ROLE: ['proprietor', 2, 'partner', 13]}}}
+    facets_mock = {'facet_counts': {'facet_fields': {SolrField.TYPE.value: ['SP', 2, 'GP', 10], SolrField.STATE.value: ['ACTIVE', 7, 'HISTORICAL', 5], SolrField.PARTY_ROLE.value: ['proprietor', 2, 'partner', 13]}}}
     requests_mock.get(f"{current_app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': parties_docs, 'numFound': num_found, 'start': 0}, **facets_mock})
     # call endpoint
     query = query_params['query']

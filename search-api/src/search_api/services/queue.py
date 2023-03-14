@@ -67,7 +67,7 @@ class Queue():
             self.driver = pubsub.PublisherClient()
             app.extensions[EXTENSION_NAME] = self.driver
         except Exception as err:  # noqa: B902
-            app.logger.warn('flask_pub.init_app called but unable to create driver.', err)
+            app.logger.warn('flask_pub.init_app called but unable to create driver. %s', err)
 
         @app.teardown_appcontext
         def shutdown(response_or_exc):  # pylint: disable=W0612
@@ -97,10 +97,7 @@ class Queue():
             topic: str,
     ) -> str:
         """Return a fully-qualified topic string."""
-        return 'projects/{project}/topics/{topic}'.format(
-            project=project,
-            topic=topic,
-        )
+        return f'projects/{project}/topics/{topic}'
 
     @staticmethod
     def _get_queue(app):
