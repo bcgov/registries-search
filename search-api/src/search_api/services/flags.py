@@ -45,7 +45,7 @@ class Flags():
         if app:
             self.init_app(app)
 
-    def init_app(self, app: Flask, td: TestData = None):
+    def init_app(self, app: Flask, td: TestData = None):  # pylint: disable=invalid-name;
         """Initialize the Feature Flag environment.
 
         Provide TD for TestData.
@@ -67,7 +67,7 @@ class Flags():
         except Exception as err:  # noqa: B902
             current_app.logger.warn('issue registering flag service', err)
 
-    def teardown(self, exception):  # pylint: disable=unused-argument,no-self-use; flask method signature
+    def teardown(self, exception):  # pylint: disable=unused-argument; flask method signature
         """Destroy all objects created by this extension.
 
         Ensure we close the client connection nicely.
@@ -131,6 +131,7 @@ class Flags():
         try:
             return client.variation(flag, flag_user, None)
         except Exception as err:  # noqa: B902
+            # pylint: disable=consider-using-f-string
             current_app.logger.error('Unable to read flags: %s' % repr(err), exc_info=True)
             return None
 

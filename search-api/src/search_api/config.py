@@ -20,44 +20,18 @@ Flask config, rather than reading environment variables directly
 or by accessing this configuration directly.
 """
 import os
-import sys
 import json
 
-from dotenv import find_dotenv, load_dotenv
 
-
-# this will load all the envars from a .env file located in the project root (api)
-load_dotenv(find_dotenv())
-
-CONFIGURATION = {
-    'development': 'search_api.config.DevConfig',
-    'testing': 'search_api.config.TestConfig',
-    'production': 'search_api.config.ProdConfig',
-    'default': 'search_api.config.ProdConfig'
-}
-
-
-def get_named_config(config_name: str = 'production'):
-    """Return the configuration object based on the name.
-
-    :raise: KeyError: if an unknown configuration is requested
-    """
-    if config_name in ['production', 'staging', 'default']:
-        config = ProdConfig()
-    elif config_name == 'testing':
-        config = TestConfig()
-    elif config_name == 'development':
-        config = DevConfig()
-    else:
-        raise KeyError(f'Unknown configuration: {config_name}')
-    return config
-
-
-class _Config():  # pylint: disable=too-few-public-methods
+class Config():  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults.
 
     Used as the base for all the other configurations.
     """
+
+    DEBUG = False
+    DEVELOPMENT = False
+    TESTING = False
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -81,8 +55,6 @@ class _Config():  # pylint: disable=too-few-public-methods
     # Flag Names
     FF_QUEUE_DOC_REQUEST_NAME = os.getenv('FF_QUEUE_DOC_REQUEST_NAME', None)
     OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
-
-    SECRET_KEY = 'a secret'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ALEMBIC_INI = 'migrations/alembic.ini'
@@ -151,9 +123,6 @@ class _Config():  # pylint: disable=too-few-public-methods
     ACCOUNT_SVC_AUTH_URL = os.getenv('ACCOUNT_SVC_AUTH_URL')
     ACCOUNT_SVC_CLIENT_ID = os.getenv('ACCOUNT_SVC_CLIENT_ID')
     ACCOUNT_SVC_CLIENT_SECRET = os.getenv('ACCOUNT_SVC_CLIENT_SECRET')
-    # ACCOUNT_SVC_TIMEOUT = os.g
-    TESTING = False
-    DEBUG = False
 
     # Event tracking max retries before human intervention.
     EVENT_MAX_RETRIES: int = int(os.getenv('EVENT_MAX_RETRIES', '3'))
@@ -179,20 +148,19 @@ class _Config():  # pylint: disable=too-few-public-methods
     SOLR_REINDEX_LENGTH = int(os.getenv('SOLR_REINDEX_LENGTH')) if os.getenv('SOLR_REINDEX_LENGTH', None) else 0
 
 
-class DevConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Creates the Development Config object."""
+class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for development environment."""
 
+    DEBUG = True
+    DEVELOPMENT = True
     TESTING = False
-    DEBUG = True
 
 
-class TestConfig(_Config):  # pylint: disable=too-few-public-methods
-    """In support of testing only.
-
-    Used by the py.test suite
-    """
+class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for unit testing environment."""
 
     DEBUG = True
+    DEVELOPMENT = False
     TESTING = True
     # SOLR
     SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
@@ -202,6 +170,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     DB_NAME = os.getenv('DATABASE_TEST_NAME', '')
     DB_HOST = os.getenv('DATABASE_TEST_HOST', '')
     DB_PORT = os.getenv('DATABASE_TEST_PORT', '5432')
+    # pylint: disable=consider-using-f-string;
     SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{password}@{host}:{port}/{name}'.format(
         user=DB_USER,
         password=DB_PASSWORD,
@@ -265,14 +234,16 @@ NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
 -----END RSA PRIVATE KEY-----"""
 
 
-class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Production environment configuration."""
+class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for production environment."""
 
-    SECRET_KEY = os.getenv('SECRET_KEY', None)
-
-    if not SECRET_KEY:
-        SECRET_KEY = os.urandom(24)
-        print('WARNING: SECRET_KEY being set as a one-shot', file=sys.stderr)
-
-    TESTING = False
     DEBUG = False
+    DEVELOPMENT = False
+    TESTING = False
+
+
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'unitTesting': UnitTestingConfig,
+}

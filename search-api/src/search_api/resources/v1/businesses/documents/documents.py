@@ -13,7 +13,7 @@
 # limitations under the License.
 """API endpoints for Document json/pdfs."""
 # from http import HTTPStatus
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
@@ -62,7 +62,7 @@ def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
         return resp.content, resp.status_code
 
     except ApiConnectionException as api_exception:
-        return resource_utils.default_exception_response(api_exception)
+        return jsonify({'message': 'Error getting document data.', 'detail': api_exception.detail}), api_exception.code
     except Exception as default_exception:  # noqa: B902
         return resource_utils.default_exception_response(default_exception)
 
@@ -106,7 +106,8 @@ def get_document_data(business_identifier, document_key):
         return content, resp.status_code
 
     except ApiConnectionException as api_exception:
-        return resource_utils.default_exception_response(api_exception)
+        current_app.logger.error(api_exception)
+        return jsonify({'message': 'Error getting document data.', 'detail': api_exception.detail}), api_exception.code
     except StorageException as storage_exception:
         return resource_utils.gcp_storage_service_error(storage_exception)
     except Exception as default_exception:  # noqa: B902

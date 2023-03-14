@@ -43,6 +43,6 @@ def create_doc_request_ce(document_request: DocumentAccessRequest) -> SimpleClou
                     }
         sce_documents.append(document)
 
-    ce = SimpleCloudEvent(**sce_dict)
+    ce = SimpleCloudEvent(**sce_dict)  # pylint: disable=invalid-name;
 
     return ce

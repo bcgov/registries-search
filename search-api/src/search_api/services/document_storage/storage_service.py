@@ -48,7 +48,7 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
 
         except Exception as err:  # pylint: disable=broad-except # noqa F841;
             current_app.logger.error(str(err))
-            raise StorageException(f'GET document failed for doc type={doc_type}, name={name}.')
+            raise StorageException(f'GET document failed for doc type={doc_type}, name={name}.') from err
 
     @classmethod
     def __get_bucket_id(cls, doc_type: DocumentType = None):

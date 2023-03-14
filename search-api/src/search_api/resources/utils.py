@@ -129,7 +129,7 @@ def business_exception_response(exception):
 
 def solr_exception_response(exception):
     """Build solr exception error response."""
-    current_app.logger.debug(exception.with_traceback(None).error)
+    current_app.logger.error(exception)
     message = SOLR.format(code=ResourceErrorCodes.SOLR_ERR, status=exception.status_code)
     status_code = HTTPStatus.INTERNAL_SERVER_ERROR
     if exception.status_code == HTTPStatus.SERVICE_UNAVAILABLE:
@@ -153,9 +153,9 @@ def solr_exception_response(exception):
 
 def default_exception_response(exception):
     """Build default 500 exception error response."""
-    current_app.logger.error(str(exception))
+    current_app.logger.error(exception.with_traceback(None))
     message = DEFAULT.format(code=ResourceErrorCodes.DEFAULT_ERR)
-    return jsonify({'message': message, 'detail': str(exception)}), HTTPStatus.INTERNAL_SERVER_ERROR
+    return jsonify({'message': message, 'detail': exception.with_traceback(None)}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 def service_exception_response(message):

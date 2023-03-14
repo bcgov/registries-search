@@ -44,7 +44,7 @@ def save_request(account_id, business_identifier, request_json) -> DocumentAcces
     for doc in request_json.get('documentAccessRequest', {}).get('documents', []):
         document_type = DocumentType.get_enum_by_name(doc.get('type'))
         document = Document(
-            document_type=document_type.value,
+            document_type=document_type,
             document_key=_generate_key()
         )
         document_access_request.documents.append(document)
@@ -89,9 +89,9 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             document_access_request.save()
             return {'error': payment_response.json()}, HTTPStatus.PAYMENT_REQUIRED
 
-        current_app.logger.error('Received unhandled pay-api error.')
         current_app.logger.debug(f'status: {payment_response.status_code}, json: {payment_response.json()}.')
-        return {'error': 'Unable to create invoice for payment.'}, HTTPStatus.PAYMENT_REQUIRED
+        current_app.logger.error('Received unhandled pay-api error.')
+        return {'error': {'detail': payment_response.json(), 'type': 'UNHANDLED'}}, HTTPStatus.PAYMENT_REQUIRED
     except ApiConnectionException as connection_error:
         return {'error': connection_error.detail}, HTTPStatus.PAYMENT_REQUIRED
 

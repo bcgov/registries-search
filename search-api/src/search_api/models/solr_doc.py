@@ -46,7 +46,7 @@ class SolrDoc(db.Model):
     @staticmethod
     def get_updated_identifiers_after_date(date: datetime) -> List[str]:
         """Return all identifiers with a submitted SolrDoc after the date."""
-        return [x['identifier'] for x in db.session.query(SolrDoc.identifier)
+        return [x[0] for x in db.session.query(SolrDoc.identifier)
                 .filter(SolrDoc.submission_date > date)
                 .group_by(SolrDoc.identifier).all()]
 

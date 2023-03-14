@@ -106,7 +106,7 @@ def test_document_access_request_json(session):
         payment_completion_date=datetime.utcnow(),
         submission_date=datetime.utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
-        status=DocumentAccessRequest.Status.PAID.value
+        status=DocumentAccessRequest.Status.PAID
     )
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')

@@ -26,8 +26,8 @@ class BaseMeta(EnumMeta):
             self(other)  # pylint: disable=no-value-for-parameter
         except ValueError:
             return False
-        else:
-            return True
+
+        return True
 
 
 class BaseEnum(str, Enum, metaclass=BaseMeta):

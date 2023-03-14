@@ -25,10 +25,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages solr fields for search solr."""
-from enum import Enum
+from search_api.utils.base import BaseEnum
 
 
-class SolrField(str, Enum):
+class SolrField(BaseEnum):
     """Enum of the fields available in the solr search core."""
 
     # base doc stored fields

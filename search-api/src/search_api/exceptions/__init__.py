@@ -48,7 +48,7 @@ class BusinessException(Exception):
 
     def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
         """Return a valid BusinessException."""
-        super(BusinessException, self).__init__(*args, **kwargs)
+        super(BusinessException, self).__init__(*args, **kwargs)  # pylint: disable=super-with-arguments
         self.error = error
         self.status_code = status_code
 
@@ -62,7 +62,7 @@ class SolrException(Exception):
 
     def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
         """Return a valid SolrException."""
-        super(SolrException, self).__init__(*args, **kwargs)
+        super(SolrException, self).__init__(*args, **kwargs)  # pylint: disable=super-with-arguments
         self.error = error
         self.status_code = status_code
 
@@ -72,9 +72,9 @@ class ApiConnectionException(Exception):
 
     def __init__(self, code: int, detail: List[Dict]):
         """Initialize the error object."""
-        super(ApiConnectionException, self).__init__()
+        super(ApiConnectionException, self).__init__()  # pylint: disable=super-with-arguments
         self.code = code
-        self.detail = detail
+        self.detail = str(detail)
 
 
 class StorageException(Exception):

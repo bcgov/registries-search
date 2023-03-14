@@ -45,10 +45,19 @@ def get_business_document(identifier: str, document_type: DocumentType, content_
         headers = {'Authorization': 'Bearer ' + token, 'Accept': content_type}
         business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
         lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.error('LEAR connection failure:', err)
+    except exceptions.Timeout as err:
+        current_app.logger.debug(err.with_traceback(None))
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document from lear.'}])
+                                     [{'message': 'Unable to get business document from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
+    except ApiConnectionException as err:
+        # pass along auth exception
+        raise err
+    except Exception as err:  # noqa: B902
+        current_app.logger.debug(err.with_traceback(None))
+        raise ApiConnectionException(HTTPStatus.SERVICE_UNAVAILABLE,
+                                     [{'message': 'Unable to get business document from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
     return lear_response
 
 
@@ -62,10 +71,19 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/pdf'}
         business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
         lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.error('LEAR connection failure:', err)
+    except exceptions.Timeout as err:
+        current_app.logger.debug(err.with_traceback(None))
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get filing document pdf from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
+    except ApiConnectionException as err:
+        # pass along auth exception
+        raise err
+    except Exception as err:  # noqa: B902
+        current_app.logger.debug(err.with_traceback(None))
+        raise ApiConnectionException(HTTPStatus.SERVICE_UNAVAILABLE,
+                                     [{'message': 'Unable to get filing document pdf from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
     return lear_response
 
 
@@ -79,23 +97,44 @@ def get_business_filing_document_list(identifier: str, filing_id: int):
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
         business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
         lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.error('LEAR connection failure:', err)
+    except exceptions.Timeout as err:
+        current_app.logger.debug(err.with_traceback(None))
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get filing document list from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
+    except ApiConnectionException as err:
+        # pass along auth exception
+        raise err
+    except Exception as err:  # noqa: B902
+        current_app.logger.debug(err.with_traceback(None))
+        raise ApiConnectionException(HTTPStatus.SERVICE_UNAVAILABLE,
+                                     [{'message': 'Unable to get filing document list from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
     return lear_response
 
 
 def get_business(identifier: str):
-    """Get the business filing document list for the given identifier and id."""
+    """Get the business json for the given identifier."""
     lear_svc_url = current_app.config.get('LEAR_SVC_URL') + f'/businesses/{identifier}'
     try:
         token = get_bearer_token()
         headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
         business_api_timeout = current_app.config.get('BUSINESS_API_TIMEOUT')
-        lear_response = requests.get(url=lear_svc_url, headers=headers, timeout=business_api_timeout)
-    except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.error('LEAR connection failure:', err)
+        lear_response = requests.get(url=lear_svc_url,
+                                     headers=headers,
+                                     params={'slim': True},
+                                     timeout=business_api_timeout)
+    except exceptions.Timeout as err:
+        current_app.logger.debug(err.with_traceback(None))
         raise ApiConnectionException(HTTPStatus.GATEWAY_TIMEOUT,
-                                     [{'message': 'Unable to get business document pdf from lear.'}])
+                                     [{'message': 'Unable to get business json from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
+    except ApiConnectionException as err:
+        # pass along auth exception
+        raise err
+    except Exception as err:  # noqa: B902
+        current_app.logger.debug(err.with_traceback(None))
+        raise ApiConnectionException(HTTPStatus.SERVICE_UNAVAILABLE,
+                                     [{'message': 'Unable to get business json from lear.',
+                                       'reason': err.with_traceback(None)}]) from err
     return lear_response

@@ -110,5 +110,5 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:
         current_app.logger.error('Payment connection failure:', err)
         raise ApiConnectionException(HTTPStatus.PAYMENT_REQUIRED,
-                                     [{'message': 'Unable to create invoice for payment.'}])
+                                     [{'message': 'Unable to create invoice for payment.'}]) from err
     return payment_response
