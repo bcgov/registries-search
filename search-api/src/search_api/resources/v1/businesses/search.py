@@ -101,7 +101,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
             with suppress(TypeError):  # suprress int cast over None
                 start = int(request.args.get('start', None))
                 rows = int(request.args.get('rows', None))
-        except ValueError as err:  # catch invalid start/row entry
+        except ValueError:  # catch invalid start/row entry
             return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
         # create solr search params obj from parsed params
@@ -198,7 +198,7 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
             with suppress(TypeError):  # suprress int cast over None
                 start = int(request.args.get('start', None))
                 rows = int(request.args.get('rows', None))
-        except ValueError as err:  # catch invalid start/row entry
+        except ValueError:  # catch invalid start/row entry
             return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
         params = SearchParams(query, start, rows, legal_types, states, party_roles)
