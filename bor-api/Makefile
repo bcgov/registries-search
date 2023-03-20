@@ -80,6 +80,15 @@ test: ## Unit testing
 mac-cov: test ## Run the coverage report and display in a browser window (mac)
 	@open -a "Google Chrome" htmlcov/index.html
 
+build: ## Build the docker container
+	docker build . -t $(DOCKER_NAME) \
+	    --platform linux/amd64 \
+	    --build-arg VCS_REF=$(shell git rev-parse --short HEAD) \
+	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+build-nc: ## Build the docker container without caching
+	docker build --no-cache -t $(DOCKER_NAME) .
+
 #################################################################################
 # COMMANDS - Local                                                              #
 #################################################################################
