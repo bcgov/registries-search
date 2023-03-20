@@ -1,0 +1,14 @@
+Flask
+Flask-Cors
+Flask-Migrate
+Flask-SQLAlchemy
+attrs
+dpath
+flask-jwt-oidc
+gunicorn
+launchdarkly-server-sdk
+psycopg2-binary
+python-dotenv
+requests
+sentry-sdk[flask]
+Werkzeug
