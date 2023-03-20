@@ -1,0 +1,90 @@
+@import 'theme.scss';
+
+// sbc-common
+.v-application--wrap .app-header {
+  position: -webkit-sticky; // Safari
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 8 !important;
+}
+
+.view-container {
+  color: $gray7;
+  display: flex;
+  flex-flow: column nowrap;
+  max-width: none;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+
+  article {
+    flex: 1 1 auto;
+
+    section {
+      margin-top: 2.25rem;
+    }
+  }
+}
+
+// app level defaults
+.app-container {
+  background-color: #f1f3f5;
+  color: #495057;
+  display: flex;
+  flex-flow: column nowrap;
+  min-height: 100vh;
+}
+
+.app-body {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+// Page Layout
+.container {
+  max-width: 1360px; // should match auth-web, etc
+}
+
+// Form Layout
+.form__row + .form__row {
+  margin-top: 0.25rem;
+}
+
+.form__btns {
+  display: flex;
+
+  .v-btn {
+    margin: 0;
+
+    + .v-btn {
+      margin-left: 0.5rem;
+    }
+
+    &.form-primary-btn {
+      margin-left: auto;
+    }
+  }
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
+}
+
+// common padding/margin classes
+.mt-10px { margin-top: 10px !important; }
+.mt-30px { margin-top: 30px !important; }
+.mt-50px { margin-top: 50px !important; }
+
+.pb-30px {
+  padding-bottom: 30px !important;
+}
+
+.pt-10px { padding-top: 10px !important; }
+.pt-30px { padding-top: 30px !important; }
+.pt-50px { padding-top: 50px !important; }
+
+.py-30px {
+  padding-bottom: 30px !important;
+  padding-top: 30px !important;
+}

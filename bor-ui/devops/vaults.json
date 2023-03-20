@@ -1,0 +1,44 @@
+[
+    {
+        "vault": "keycloak",
+        "application": [
+            "base",
+            "web-base",
+            "registries-search-web"
+        ]
+    },
+    {
+        "vault": "sentry",
+        "application": [
+            "bor-web"
+        ]
+    },
+    {
+        "vault": "launchdarkly",
+        "application": [
+            "bor"
+        ]
+    },
+    {
+        "vault": "API",
+        "application": [
+            "bor-api",
+            "status-api"
+        ]
+    },
+    {
+        "vault": "web-url",
+        "application": [
+            "auth-web",
+            "business",
+            "registry"
+        ]
+    },
+    {
+        "vault": "bor",
+        "application": [
+            "shared",
+            "bor-ui"
+        ]
+    }
+]
