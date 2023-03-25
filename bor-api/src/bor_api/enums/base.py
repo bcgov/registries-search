@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Enum Utilities."""
-
 from enum import Enum, EnumMeta, auto  # pylint: disable=W0611;# noqa: F401
-from typing import Optional
 
 
 class BaseMeta(EnumMeta):
@@ -34,7 +32,7 @@ class BaseEnum(str, Enum, metaclass=BaseMeta):
     """Replace autoname from Enum class."""
 
     @classmethod
-    def get_enum_by_value(cls, value: str) -> Optional[str]:
+    def get_enum_by_value(cls, value: str) -> str | None:
         """Return the enum by value."""
         for enum_value in cls:
             if enum_value.value == value:
@@ -42,7 +40,7 @@ class BaseEnum(str, Enum, metaclass=BaseMeta):
         return None
 
     @classmethod
-    def get_enum_by_name(cls, value: str) -> Optional[str]:
+    def get_enum_by_name(cls, value: str) -> str | None:
         """Return the enum by value."""
         for enum_value in cls:
             if enum_value.name == value:

@@ -11,7 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Application Specific Exceptions/Responses, to manage handled errors."""
-from .exceptions import (AuthorizationException, BusinessException, DatabaseException,  # noqa: I001
-                         ExternalServiceException, SolrException)  # noqa: I001
-from .responses import bad_request_response, exception_response
+# pylint: disable=invalid-name
+"""Manages dataclass for the solr entity role doc."""
+from dataclasses import dataclass
+
+from .date_range import DateRange
+
+
+@dataclass
+class EntityRole:
+    """Class representation for a solr entity role doc."""
+
+    active: bool
+    relatedEntityType: str
+    relatedIdentifier: str
+    relatedLegalType: str
+    relatedName: str
+    relatedState: str
+    roleDates: list[DateRange]
+    roleType: str  # i.e. director, partner, beneficial owner, incorporator, etc.
+    relatedBN: str | None = None

@@ -17,6 +17,9 @@ Test-Suite to ensure that the /ops endpoint is working as expected.
 """
 from http import HTTPStatus
 
+from tests import integration_solr
+
+
 def test_ready_check(session, client, jwt):
     """Assert that ops ready check endpoint works."""
     # no setup
@@ -27,6 +30,8 @@ def test_ready_check(session, client, jwt):
     assert rv.status_code == HTTPStatus.OK
     assert rv.json['message'] == 'api is ready'
 
+
+@integration_solr
 def test_health_check(session, client, jwt):
     """Assert that ops health check endpoint works."""
     # no setup

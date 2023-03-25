@@ -16,16 +16,24 @@ from http import HTTPStatus
 
 from flask import jsonify, current_app
 
+from .exceptions import BaseExceptionE
+
 
 def bad_request_response(message: str):
     """Build generic bad request response."""
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
 
 
-def exception_response(exception: Exception):
+def exception_response(exception: BaseExceptionE):
     """Build exception error response."""
-    current_app.logger.error(str(exception))
-    message = exception.get('message', 'Error processing request.')
-    detail = exception.get('error', '')
-    status_code = exception.get('status_code', HTTPStatus.INTERNAL_SERVER_ERROR)
+    current_app.logger.error(repr(exception))
+    try:
+        message = exception.message or 'Error processing request.'
+        detail = exception.error or repr(exception)
+        status_code = exception.status_code or HTTPStatus.INTERNAL_SERVER_ERROR
+    except Exception:  # noqa B902; Catch all scenario.
+        # uncaught exception
+        message = 'Error processing request.'
+        detail = repr(exception)
+        status_code = HTTPStatus.INTERNAL_SERVER_ERROR
     return jsonify({'message': message, 'detail': detail}), status_code

@@ -33,43 +33,57 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
 
     # base entity doc stored fields
     BN = 'bn'
+    BN_SP = 'bnSP'
     ENTITY_ADDRESSES = 'entityAddresses'
     ENTITY_TYPE = 'entityType'
     IDENTIFIER = 'identifier'
+    LEGAL_NAME = 'legalName'
     LEGAL_TYPE = 'legalType'
-    NAMES = 'names'
-    PARTIES = 'parties'
+    OPERATING_NAME = 'operatingName'
     ROLES = 'roles'
     STATE = 'state'
     # entity doc query fields
     BN_Q = 'bn_q'
+    BN_SP_Q = 'bnSP_q'
     IDENTIFIER_Q = 'identifier_q'
-
-    # name doc stored fields
-    NAME = 'name'
-    NAME_BN = 'nameBn'
-    NAME_TYPE = 'nameType'
-    # name doc query fields
-    NAME_Q = 'name_q'
-    NAME_AGRO_Q = 'name_agro_q'
-    NAME_SINGLE_Q = 'name_single_q'
+    LEGAL_NAME_Q = 'legalName_q'
+    LEGAL_NAME_AGRO_Q = 'legalName_agro_q'
+    LEGAL_NAME_SINGLE_Q = 'legalName_single_term'
+    OPERATING_NAME_Q = 'operatingName'
+    OPERATING_NAME_AGRO_Q = 'operatingName_agro_q'
+    OPERATING_NAME_SINGLE_Q = 'operatingName_single_term'
 
     # entity role doc stored fields
     ACTIVE = 'active'
-    ACTIVE_DATES = 'activeDates'
-    ROLE_ADDRESSES = 'roleAddresses'
-    ROLE_ENTITY = 'roleEntity'
+    RELATED_BN = 'relatedBN'
+    RELATED_ENTITY_TYPE = 'relatedEntityType'
+    RELATED_IDENTIFIER = 'relatedIdentifier'
+    RELATED_LEGAL_TYPE = 'relatedLegalType'
+    RELATED_NAME = 'relatedName'
+    RELATED_STATE = 'relatedState'
+    ROLE_DATES = 'roleDates'
     ROLE_TYPE = 'roleType'
+    # entity role doc query fields
+    RELATED_BN_Q = 'relatedBN_q'
+    RELATED_IDENTIFIER_Q = 'relatedIdentifier_q'
+    RELATED_NAME_Q = 'relatedName_q'
+    RELATED_NAME_AGRO_Q = 'relatedName_agro_q'
+    RELATED_NAME_SINGLE_Q = 'relatedName_single_term'
 
     # address doc stored/query fields
     ADDRESS_TYPE = 'addressType'
-    CITY = 'city'
-    COUNTRY = 'country'
+    ADDRESS_CITY = 'addressCity'
+    ADDRESS_COUNTRY = 'addressCountry'
+    ADDRESS_REGION = 'addressRegion'
     POSTAL_CODE = 'postalCode'
-    PROVINCE = 'province'
-    STREET = 'street'
+    STREET_ADDRESS = 'streetAddress'
     # address doc query fields
     ADDRESS_Q = 'address_q'
+    POSTAL_CODE_Q = 'postalCode_q'
+
+    # date range fields
+    START = 'start'
+    END = 'end'
 
     # shared built in fields
     SCORE = 'score'

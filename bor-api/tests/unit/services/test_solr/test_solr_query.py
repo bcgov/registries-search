@@ -64,7 +64,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
 #     ('test_partial_1', 'tester', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['tester 1111']),
 #     ('test_partial_2', 'tester 11', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['tester 1111']),
 #     ('test_partial_3', 'lots of wor', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['lots of words in here']),
-#     ('test_partial_4', 'ots of ords', SolrField.NAME_SINGLE.value, True, SolrField.NAME.value, ['lots of words in here']),
+#     ('test_partial_4', 'ots of ords', SolrField.LEGAL_NAME_Q.value, True, SolrField.NAME.value, ['lots of words in here']),
 #     ('test_all_words_match', 'tests oops 2222', SolrField.NAME_Q.value, True, SolrField.NAME.value, []),
 #     ('test_multiple_matches', 'test 1', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['test 1234', 'tester 1111']),
 #     ('test_parties_1', 'org', SolrField.PARTY_NAME_Q.value, False, SolrField.PARTY_NAME.value, ['org 1', 'test org partner']),
@@ -88,7 +88,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
 #     ('test_special_operators_OR', 'special OR operator', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['special OR AND NOT operators']),
 #     ('test_special_operators_AND', 'special AND operator', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['special OR AND NOT operators']),
 #     ('test_special_operators_NOT', 'special NOT operator', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['special OR AND NOT operators']),
-#     ('test_accented_character_1', 'EBENISTERIE', SolrField.NAME_SINGLE.value, True, SolrField.NAME.value, ['DIVINE ÉBÉNISTERIE INC.']),
+#     ('test_accented_character_1', 'EBENISTERIE', SolrField.LEGAL_NAME_Q.value, True, SolrField.NAME.value, ['DIVINE ÉBÉNISTERIE INC.']),
 #     ('test_accented_character_2', 'EBENISTERIE', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['DIVINE ÉBÉNISTERIE INC.']),
 #     ('test_accented_character_4', 'EBENISTERIE', SolrField.NAME_STEM_AGRO.value, True, SolrField.NAME.value, ['DIVINE ÉBÉNISTERIE INC.']),
 #     ('test_+&and_+_1', 'special + match', SolrField.NAME_Q.value, True, SolrField.NAME.value, ['special and match 1', 'special + match 2', 'special+match 3', 'special & match 4', 'special&match 5']),
@@ -108,7 +108,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
 #     bor_solr.create_or_replace_docs(SOLR_TEST_DOCS)
 #     time.sleep(1)  # wait for solr to register update
 #     query = {'value': Solr.prep_query_str(query)}
-#     search_params = Solr.build_split_query(query, [query_field, SolrField.NAME_STEM_AGRO.value], [SolrField.NAME_Q.value])
+#     search_params = Solr.build_base_query(query, [query_field, SolrField.NAME_STEM_AGRO.value], [SolrField.NAME_Q.value])
 #     search_params['fl'] = bor_solr.base_fields if base_fields else bor_solr.party_fields
 #     # call select
 #     resp = bor_solr.query(search_params, 0, 10)

@@ -12,13 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages solr class for using search solr."""
-import json
-import re
 from contextlib import suppress
 from datetime import datetime, timedelta
 from dataclasses import asdict
 from http import HTTPStatus
-from typing import Dict, List
 
 import requests
 from requests import Response
@@ -26,8 +23,8 @@ from flask import current_app
 
 from bor_api.exceptions import SolrException
 
-from .bor_solr_docs import Entity
 from .bor_solr_fields import SolrField as Field
+from .solr_docs import Entity
 
 
 class Solr:
@@ -41,23 +38,27 @@ class Solr:
         self.core = 'bor'
         self.default_start = 0
         self.default_rows = 10
-        # facets
-        self.base_facets = json.dumps({
-            Field.LEGAL_TYPE.value: {'type': 'terms', 'field': Field.LEGAL_TYPE.value},
-            Field.STATE.value: {'type': 'terms', 'field': Field.STATE.value}})
-        # fields
-        self.entity_fields = ','.join([
-            Field.BN.value, Field.ENTITY_TYPE.value, Field.IDENTIFIER.value,
-            Field.LEGAL_TYPE.value, Field.NAMES.value, Field.STATE.value,
-            Field.SCORE.value
-        ])
-        self.entity_nest_fields = ','.join([
-            Field.ENTITY_ADDRESSES.value, Field.NAMES.value, Field.ROLES.value,
-            '[child childFilter={filter}]'
-        ])
-        # query urls
-        self.search_query = '{url}/{core}/query'
-        self.update_query = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
+        # field selections
+        self.entity_fields = [
+            Field.BN.value, Field.BN_SP.value, Field.ENTITY_ADDRESSES.value,
+            Field.ENTITY_TYPE.value, Field.IDENTIFIER_Q.value, Field.LEGAL_NAME.value,
+            Field.LEGAL_TYPE.value, Field.OPERATING_NAME.value, Field.ROLES.value,
+            Field.STATE.value, Field.SCORE.value, '[child]'
+        ]
+        self.address_fields = [
+            Field.ADDRESS_CITY.value, Field.ADDRESS_COUNTRY.value,
+            Field.ADDRESS_REGION.value, Field.ADDRESS_TYPE.value,
+            Field.POSTAL_CODE.value, Field.STREET_ADDRESS.value
+        ]
+        self.entity_role_fields = [
+            Field.ACTIVE.value, Field.RELATED_BN.value, Field.RELATED_ENTITY_TYPE.value,
+            Field.RELATED_IDENTIFIER.value, Field.RELATED_NAME.value,
+            Field.RELATED_STATE.value, Field.ROLE_DATES.value, Field.ROLE_TYPE.value
+        ]
+        self.date_fields = [Field.START.value, Field.END.value]
+        # base urls
+        self.search_url = '{url}/{core}/query'
+        self.update_url = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
 
         if app:
             self.init_app(app)
@@ -81,7 +82,6 @@ class Solr:
                 err_msg = 'This resource is undergoing scheduled maintenance and will be ' \
                     f'unavailable for up to {self.app.config.get("SOLR_REINDEX_LENGTH")} minutes.'
                 raise SolrException(err_msg, HTTPStatus.SERVICE_UNAVAILABLE)
-
             response = None
             url = query.format(url=self.solr_url, core=self.core)
             if method == 'GET':
@@ -96,38 +96,31 @@ class Solr:
             # check for error
             if response.status_code != HTTPStatus.OK:
                 error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-                self.app.logger.error(f'{error}, {response.status_code}')
-                raise SolrException(
-                    error=error,
-                    status_code=response.status_code)
+                raise Exception(error)  # pylint: disable=broad-exception-raised;
             return response
-        except SolrException as err:
-            # pass along
-            raise err
         except Exception as err:  # noqa B902
-            current_app.logger.error(err.with_traceback(None))
             msg = 'Error handling Solr request.'
+            current_app.logger.debug(msg)
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):
                 status_code = response.status_code
-                msg = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-            raise SolrException(
-                error=msg,
-                status_code=status_code) from err
+                msg = response.json().get('error', {}).get('msg', msg)
 
-    def create_or_replace_docs(self, docs: List[Entity], force=False):
+            raise SolrException(error=msg, status_code=status_code) from err
+
+    def create_or_replace_docs(self, docs: list[Entity], force=False):
         """Create or replace solr docs in the core."""
         update_json = [asdict(doc) for doc in docs]
-        response = self.call_solr('POST', self.update_query, json_data=update_json, force=force)
+        response = self.call_solr('POST', self.update_url, json_data=update_json, force=force)
         return response
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
-        response = self.call_solr('POST', self.update_query, xml_data=payload)
+        response = self.call_solr('POST', self.update_url, xml_data=payload)
         return response
 
-    def delete_docs(self, identifiers: List[str]):
+    def delete_docs(self, identifiers: list[str]):
         """Delete solr docs from the core."""
         payload = '<delete><query>'
         if identifiers:
@@ -136,11 +129,12 @@ class Solr:
             payload += f' OR {Field.IDENTIFIER.value}:{identifier.upper()}'
         payload += '</query></delete>'
 
-        response = self.call_solr('POST', self.update_query, xml_data=payload)
+        response = self.call_solr('POST', self.update_url, xml_data=payload)
         return response
 
     def is_reindexing(self) -> bool:
         """Return True if this instance of solr is in the process of reindexing."""
+        print('is_reindexing')
         current_weekday = datetime.utcnow().weekday()
         timeout_start_weekday = self.app.config.get('SOLR_REINDEX_WEEKDAY')
         current_day = datetime.utcnow().strftime('%d')
@@ -154,109 +148,10 @@ class Solr:
                 return True
         return False
 
-    def query(self, params: str, start: int = None, rows: int = None) -> List:
+    def query(self, payload: dict[str, str], start: int = None, rows: int = None) -> dict:
         """Return a list of solr docs from the solr query handler for the given params."""
-        params['start'] = start if start else self.default_start
-        params['rows'] = rows if rows else self.default_rows
+        payload['offset'] = start if start else self.default_start
+        payload['limit'] = rows if rows else self.default_rows
 
-        response = self.call_solr('GET', self.search_query, params=params)
+        response = self.call_solr('POST', self.search_url, json_data=payload)
         return response.json()
-
-    @staticmethod
-    def build_child_query(query: str,
-                          nest_field: Field,
-                          boost_fields: List[Field],
-                          search_field: Field) -> str:
-        """Return a solr child query with fqs for each subsequent term."""
-        terms = query.split()
-        params = 'q={!parent which="*:* -_nest_path_:\\\\/' + f'{nest_field.value}' + '" score=Max}'
-        params += f'(+_nest_path_:"/{nest_field.value}"'
-        # add boosters
-        for field in boost_fields:
-            params += f' +{field.value}: "{query}"'
-            params += f' +{field.value}: "{query}"~1'
-            params += f' +{field.value}: "{query}"~2'
-            params += f' +{field.value}: "{query}"~3'
-            params += f' +{field.value}: "{query}"~10'
-        # add main search match (should be less specific than booster fields in most cases)
-        params += f' +{search_field.value}:{terms[0]}'
-        for term in terms[1:]:
-            params += f' AND {search_field.value}:{term}'
-        return params + ')'
-
-    @staticmethod
-    def build_filter_query(field: Field, values: List[str]):
-        """Return the solr filter clause for the given params."""
-        filter_q = f'{field}:("{values[0]}"'
-        for val in values[1:]:
-            filter_q += f' OR "{val}"'
-        return filter_q + ')'
-
-    @staticmethod
-    def build_split_query(query: Dict[str, str], fields: List[Field], wild_card_fields: List[Field]) -> Dict:
-        """Return a solr query with fqs for each subsequent term."""
-        def add_identifier(field: Field, term: str):
-            """Return a special identifier query."""
-            corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
-            if identifier := re.search(corp_prefix_regex, term):
-                prefix = identifier.group(1)
-                new_term = term.replace(prefix, '', 1)
-                return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
-            return f'{field}:{term}'
-
-        def add_to_q(q: str, fields: List[Field], term: str):  # pylint: disable=invalid-name
-            """Return an updated solr q param with extra clauses."""
-            identifier_fields = [Field.IDENTIFIER_Q.value]
-
-            first_clause = f'({fields[0]}:{term}'
-            if fields[0] in identifier_fields:
-                first_clause = f'({add_identifier(fields[0], term)}'
-
-            if not q:
-                q = f'{first_clause}'
-            else:
-                q += f' AND {first_clause}'
-            if fields[0] in wild_card_fields and fields[0] not in identifier_fields:
-                q += '*'
-            for field in fields[1:]:
-                new_clause = f'{field}:{term}'
-                if field in identifier_fields:
-                    new_clause = f'{add_identifier(field, term)}'
-                q += f' OR {new_clause}'
-                if field in wild_card_fields and field not in identifier_fields:
-                    q += '*'
-            return q + ')'
-
-        def add_to_fq(fq: str, fields: List[Field], terms: str):  # pylint: disable=invalid-name
-            """Return an updated solr fq param with extra clauses."""
-            for term in terms:
-                if fq:
-                    fq += f' AND ({fields[0]}:{term}'
-                else:
-                    fq = f'({fields[0]}:{term}'
-                if fields[0] in wild_card_fields:
-                    fq += '*'
-                for field in fields[1:]:
-                    fq += f' OR {field}:{term}'
-                    if field in wild_card_fields:
-                        fq += '*'
-                fq += ')'
-            return fq
-
-        terms = query['value'].split()
-        # add initial q param
-        params = {'q': add_to_q('', fields, terms[0])}
-        # add initial filter param for subsequent terms
-        params['fq'] = add_to_fq('', fields, terms[1:])
-
-        # add query clause and subsequent filter clauses for extra query items
-        for key in query:
-            if key == 'value' or not query[key]:
-                continue
-            extra_terms = query[key].split()
-            # add query clause for 1st term in query[key]
-            params['q'] = add_to_q(params['q'], [key], extra_terms[0])
-            # add filter clause for subsequent terms in query[key]
-            params['fq'] = add_to_fq(params['fq'], [key], extra_terms[1:])
-
-        return params

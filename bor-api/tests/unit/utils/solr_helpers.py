@@ -12,34 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from typing import List
-
-from bor_api.services.solr.bor_solr_docs import Address, Entity, EntityName, EntityRole
 from bor_api.services.solr.bor_solr_fields import SolrField
+from bor_api.services.solr.solr_docs import Address, Entity, EntityRole
 
 
 def create_solr_doc(name: str,
-                    addresses: List[Address] = None,
+                    addresses: list[Address] = None,
                     bn: str = None,
                     entityType: str = 'person',
                     identifier: str = None,
                     legal_type: str = None,
-                    names: List[EntityName] = None,
-                    parties: List[Entity] = None,
-                    roles: List[EntityRole] = None,
+                    roles: list[EntityRole] = None,
                     state: str = 'ACTIVE') -> Entity:
     """Create a base entity doc."""
-    if not names:
-        names = []
-    names.append(EntityName(name=name, nameType='primary'))
     return Entity(
         bn=bn,
         entityAddresses=addresses,
         entityType=entityType,
         identifier=identifier,
+        legalName=name,
         legalType=legal_type,
-        names=names,
-        parties=parties,
         roles=roles,
         state=state
     )

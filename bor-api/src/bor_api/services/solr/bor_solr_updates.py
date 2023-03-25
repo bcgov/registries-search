@@ -12,17 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API request handlers for solr updates / resyncs."""
-from typing import Dict
-
 from flask import current_app
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc, SolrDocEvent
 from bor_api.services import bor_solr
-from bor_api.services.solr.bor_solr_docs import Entity
+from bor_api.services.solr.solr_docs import Entity
 
 
-def update_bor_solr(identifier: str, event_type: SolrDocEventType) -> Dict[str, str]:
+def update_bor_solr(identifier: str, event_type: SolrDocEventType) -> dict[str, str]:
     """Update the doc for the identifier in the solr instance."""
     doc_update = SolrDoc.find_most_recent_by_identifier(identifier)
     doc_event = SolrDocEvent(event_type=event_type, solr_doc_id=doc_update.id).save()

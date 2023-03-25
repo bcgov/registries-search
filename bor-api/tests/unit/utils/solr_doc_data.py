@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from typing import List
-
 from .solr_helpers import create_solr_doc
 
 

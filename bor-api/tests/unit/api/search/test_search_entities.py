@@ -22,8 +22,7 @@ from flask import Flask
 from bor_api.services import bor_solr
 from bor_api.services.solr import Solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.bor_solr_search_params import SearchParams
-from bor_api.services.solr.bor_solr_search_util import entities_search
+from bor_api.services.solr.utils import SearchParams, entities_search
 
 from tests import integration_solr
 from tests.unit.utils import create_solr_doc, SOLR_TEST_DOCS
@@ -44,7 +43,7 @@ def test_entities_search(app, session, client, requests_mock, test_name, query, 
     num_found = len(expected)
     requests_mock.get(f"{app.config.get('SOLR_SVC_URL')}/search/query", json={'response': {'docs': mock_names + mock_ids + mock_bns, 'numFound': num_found, 'start': 0}})
     # call select
-    params = SearchParams({Field.NAME.value: query}, None, None)
+    params = SearchParams({Field.LEGAL_NAME.value: query}, None, None)
     results = business_search(params)
     # test
     assert results['response']['docs'] == expected

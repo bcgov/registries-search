@@ -1,0 +1,1629 @@
+{
+	"info": {
+		"_postman_id": "b71d0123-723f-4133-ad3b-4f3ba7f27c64",
+		"name": "BOR API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6835935"
+	},
+	"item": [
+		{
+			"name": "authenticate",
+			"item": [
+				{
+					"name": "authenticate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.access_token);",
+									"pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+									"",
+									"pm.environment.set(\"token_expires\", Date.now()+(jsonData.expires_in * 1000));",
+									"pm.environment.set(\"refresh_token_expires\", Date.now()+(jsonData.refresh_expires_in * 1000));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{client_id}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{client_secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "grant_type=client_credentials"
+						},
+						"url": {
+							"raw": "{{kc_url}}/auth/realms/{{realm}}/protocol/openid-connect/token",
+							"host": [
+								"{{kc_url}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"{{realm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ops",
+			"item": [
+				{
+					"name": "readyz",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/ops/readyz",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"ops",
+								"readyz"
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "readyz",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/ops/readyz",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"ops",
+										"readyz"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:03:58 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "27"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"api is ready\"\n}"
+						}
+					]
+				},
+				{
+					"name": "healthz",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/ops/healthz",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"ops",
+								"healthz"
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "healthz",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/ops/healthz",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"ops",
+										"healthz"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.1.2 Python/3.8.2"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 May 2022 19:04:31 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "API",
+									"value": "search_api/0.0.1"
+								},
+								{
+									"key": "SCHEMAS",
+									"value": "registry_schemas/1.1.0"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"api is healthy\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "meta",
+			"item": [
+				{
+					"name": "info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{version}}/meta/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"meta",
+								"info"
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": [
+						{
+							"name": "info",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{version}}/meta/info",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"meta",
+										"info"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/2.2.3 Python/3.11.2"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 23 Mar 2023 18:22:16 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "API",
+									"value": "bor_api/1.0.0a1.dev1"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"API\": \"bor_api/1.0.0a1.dev1\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "search",
+			"item": [
+				{
+					"name": "entities",
+					"item": [
+						{
+							"name": "basic",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"business name kils\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "basic",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"business name kils\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:07:10 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1403"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Coquitlam\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedEntityType\": [],\n            \"relatedLegalType\": [],\n            \"relatedState\": [],\n            \"roleType\": [],\n            \"state\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"business name kils\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"123456789BC0001\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-435 North Rd\"\n                    },\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-436 North Rd\"\n                    }\n                ],\n                \"entityType\": \"BUSINESS\",\n                \"identifier_q\": \"BC0871330\",\n                \"legalName\": \"KIALS BUSINESS NAME CORP.\",\n                \"legalType\": \"BEN\",\n                \"score\": 11.459389,\n                \"state\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent filters",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"KIAL\",\n        \"identifier\": \"BC0871330\",\n        \"bn\": \"56789\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent filters",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"KIAL\",\n        \"identifier\": \"BC0871330\",\n        \"bn\": \"56789\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:07:32 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1403"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Coquitlam\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedEntityType\": [],\n            \"relatedLegalType\": [],\n            \"relatedState\": [],\n            \"roleType\": [],\n            \"state\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"56789\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"bc0871330\",\n                \"legalName\": \"kial\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"123456789BC0001\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-435 North Rd\"\n                    },\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-436 North Rd\"\n                    }\n                ],\n                \"entityType\": \"BUSINESS\",\n                \"identifier_q\": \"BC0871330\",\n                \"legalName\": \"KIALS BUSINESS NAME CORP.\",\n                \"legalType\": \"BEN\",\n                \"score\": 1.412559,\n                \"state\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityType\": [\"business\", \"person\"],\n        \"legalType\": [\"BEN\",\"BC\"],\n        \"state\": [\"ACTIVE\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityType\": [\"business\", \"person\"],\n        \"legalType\": [\"BEN\",\"BC\"],\n        \"state\": [\"ACTIVE\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:07:43 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1416"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Coquitlam\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedEntityType\": [],\n            \"relatedLegalType\": [],\n            \"relatedState\": [],\n            \"roleType\": [],\n            \"state\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": [\n                    \"business\",\n                    \"person\"\n                ],\n                \"legalType\": [\n                    \"BEN\",\n                    \"BC\"\n                ],\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"123456789BC0001\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-435 North Rd\"\n                    },\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-436 North Rd\"\n                    }\n                ],\n                \"entityType\": \"BUSINESS\",\n                \"identifier_q\": \"BC0871330\",\n                \"legalName\": \"KIALS BUSINESS NAME CORP.\",\n                \"legalType\": \"BEN\",\n                \"score\": 1.412559,\n                \"state\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent filters/categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"KIAL\",\n        \"identifier\": \"BC0871330\",\n        \"bn\": \"56789\"\n    },\n    \"categories\": {\n        \"entityType\": [\"business\", \"person\"],\n        \"legalType\": [\"BEN\",\"BC\"],\n        \"state\": [\"ACTIVE\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "base filters/categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"KIAL\",\n        \"identifier\": \"BC0871330\",\n        \"bn\": \"56789\"\n    },\n    \"categories\": {\n        \"entityType\": [\"business\", \"person\"],\n        \"legalType\": [\"BEN\",\"BC\"],\n        \"state\": [\"ACTIVE\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:07:49 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1434"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Coquitlam\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedEntityType\": [],\n            \"relatedLegalType\": [],\n            \"relatedState\": [],\n            \"roleType\": [],\n            \"state\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": [\n                    \"business\",\n                    \"person\"\n                ],\n                \"legalType\": [\n                    \"BEN\",\n                    \"BC\"\n                ],\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"56789\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"bc0871330\",\n                \"legalName\": \"kial\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"123456789BC0001\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-435 North Rd\"\n                    },\n                    {\n                        \"addressCity\": \"Coquitlam\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"V3K 3V9\",\n                        \"score\": 0,\n                        \"streetAddress\": \"Bc-436 North Rd\"\n                    }\n                ],\n                \"entityType\": \"BUSINESS\",\n                \"identifier_q\": \"BC0871330\",\n                \"legalName\": \"KIALS BUSINESS NAME CORP.\",\n                \"legalType\": \"BEN\",\n                \"score\": 1.412559,\n                \"state\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "child filters",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"calgary\",\n        \"roles\": {\n            \"relatedBN\": \"1234\",\n            \"relatedIdentifier\": \"0871\",\n            \"relatedName\": \"Kial\",\n            \"roleDates\": {\n                \"start\": \"2023-03-20\",\n                \"end\": \"*\"\n            }\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "child filters",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"calgary\",\n        \"roles\": {\n            \"relatedBN\": \"1234\",\n            \"relatedIdentifier\": \"0871\",\n            \"relatedName\": \"Kial\",\n            \"roleDates\": {\n                \"start\": \"2023-03-20\",\n                \"end\": \"*\"\n            }\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:07:54 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2396"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"calgary\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"1234\",\n                    \"relatedIdentifier\": \"0871\",\n                    \"relatedName\": \"kial\",\n                    \"roleDates\": {\n                        \"end\": \"*\",\n                        \"start\": \"2023-03-20\"\n                    }\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "child categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityAddresses\": {\n            \"addressCountry\": [\"CA\"]\n        },\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "child categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityAddresses\": {\n            \"addressCountry\": [\"CA\"]\n        },\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:08:00 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2375"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": [\n                        \"CA\"\n                    ],\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": [\n                        \"business\"\n                    ],\n                    \"relatedState\": [\n                        \"ACTIVE\"\n                    ],\n                    \"roleType\": [\n                        \"incorporator\"\n                    ]\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "child filters/categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"ab\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "child filters/categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"ab\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:08:06 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2375"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": [\n                        \"business\"\n                    ],\n                    \"relatedState\": [\n                        \"ACTIVE\"\n                    ],\n                    \"roleType\": [\n                        \"incorporator\"\n                    ]\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"ab\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent/child filters",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"bc\",\n        \"entityAddresses\": \"calgary\",\n        \"roles\": {\n            \"relatedName\": \"kials\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent/child filters",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"bc\",\n        \"entityAddresses\": \"calgary\",\n        \"roles\": {\n            \"relatedName\": \"kials\"\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:08:11 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2361"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"calgary\",\n                \"identifier\": \"\",\n                \"legalName\": \"bc\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"kials\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent/child categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityType\": [\"person\"],\n        \"entityAddresses\": {\n            \"addressRegion\": [\"AB\"]\n        },\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent/child categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityType\": [\"person\"],\n        \"entityAddresses\": {\n            \"addressRegion\": [\"AB\"]\n        },\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:08:17 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2381"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": [\n                        \"AB\"\n                    ]\n                },\n                \"entityType\": [\n                    \"person\"\n                ],\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": [\n                        \"business\"\n                    ],\n                    \"relatedState\": [\n                        \"ACTIVE\"\n                    ],\n                    \"roleType\": [\n                        \"incorporator\"\n                    ]\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent/child filters/categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent/child filters/categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 25 Mar 2023 22:08:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2373"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"addressCity\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"Calgary\"\n                }\n            ],\n            \"addressCountry\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"CA\"\n                }\n            ],\n            \"addressRegion\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"AB\"\n                }\n            ],\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 3,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 2,\n                    \"parentCount\": 1,\n                    \"value\": \"DIRECTOR\"\n                },\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"INCORPORATOR\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": [\n                        \"business\"\n                    ],\n                    \"relatedState\": [\n                        \"ACTIVE\"\n                    ],\n                    \"roleType\": [\n                        \"incorporator\"\n                    ]\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"MAILING\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    },\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"T3J 3Z5\",\n                        \"score\": 0,\n                        \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"BCREG2 LIANG FORTY\",\n                \"roles\": [\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"end\": \"2023-02-13\",\n                                \"score\": 0,\n                                \"start\": \"2023-01-01\"\n                            },\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456789BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871330\",\n                        \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2022-05-01\"\n                            }\n                        ],\n                        \"roleType\": \"INCORPORATOR\",\n                        \"score\": 0\n                    },\n                    {\n                        \"active\": true,\n                        \"relatedBN\": \"123456788BC0001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"CP1234567\",\n                        \"relatedName\": \"KIALS COOP\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"score\": 0,\n                                \"start\": \"2023-03-01\"\n                            }\n                        ],\n                        \"roleType\": \"DIRECTOR\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.5425178\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "internal",
+			"item": [
+				{
+					"name": "business entity update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entityType\": \"business\",\r\n    \"identifier\": \"BC0871330\",\r\n    \"legalType\": \"BEN\",\r\n    \"state\": \"ACTIVE\",\r\n    \"legalName\": \"KIALS BUSINESS NAME CORP.\",\r\n    \"bn\": \"123456789BC0001\",\r\n    \"addresses\": [\r\n        {\r\n            \"addressCity\": \"Coquitlam\",\r\n            \"addressCountry\": \"CA\",\r\n            \"addressRegion\": \"BC\",\r\n            \"addressType\": \"delivery\",\r\n            \"postalCode\": \"V3K 3V9\",\r\n            \"streetAddress\": \"Bc-435 North Rd\",\r\n            \"address_q\": \"Bc-435 North Rd Coquitlam BC CA V3K 3V9\"\r\n        },\r\n        {\r\n            \"addressCity\": \"Coquitlam\",\r\n            \"addressCountry\": \"CA\",\r\n            \"addressRegion\": \"BC\",\r\n            \"addressType\": \"mailing\",\r\n            \"postalCode\": \"V3K 3V9\",\r\n            \"streetAddress\": \"Bc-436 North Rd\",\r\n            \"address_q\": \"Bc-436 North Rd Coquitlam BC CA V3K 3V9\"\r\n        }\r\n    ],\r\n    \"roles\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "person entity update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entityType\": \"person\",\r\n    \"identifier\": \"LEAR12345\",\r\n    \"legalName\": \"BCREG2 LIANG FORTY\",\r\n    \"addresses\": [\r\n        {\r\n            \"addressType\": \"mailing\",\r\n            \"addressCity\": \"Calgary\",\r\n            \"addressCountry\": \"CA\",\r\n            \"addressRegion\": \"AB\",\r\n            \"postalCode\": \"T3J 3Z5\",\r\n            \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n            \"address_q\": \"1234-4818 Westwinds Dr NE Calgary AB CA T3J 3Z5\"\r\n        },\r\n        {\r\n            \"addressType\": \"delivery\",\r\n            \"addressCity\": \"Calgary\",\r\n            \"addressCountry\": \"CA\",\r\n            \"addressRegion\": \"AB\",\r\n            \"postalCode\": \"T3J 3Z5\",\r\n            \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n            \"address_q\": \"1234-4818 Westwinds Dr NE Calgary AB CA T3J 3Z5\"\r\n        }\r\n    ],\r\n    \"roles\": [\r\n        {\r\n            \"active\": true,\r\n            \"relatedEntityType\": \"business\",\r\n            \"relatedIdentifier\": \"BC0871330\",\r\n            \"relatedLegalType\": \"BEN\",\r\n            \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n            \"relatedState\": \"ACTIVE\",\r\n            \"relatedBN\": \"123456789BC0001\",\r\n            \"roleDates\": [\r\n                {\r\n                    \"start\": \"2023-01-01\",\r\n                    \"end\": \"2023-02-13\"\r\n                },\r\n                {\r\n                    \"start\": \"2023-03-01\",\r\n                    \"end\": \"*\"\r\n                }\r\n            ],\r\n            \"roleType\": \"director\"\r\n        },\r\n        {\r\n            \"active\": true,\r\n            \"relatedEntityType\": \"business\",\r\n            \"relatedIdentifier\": \"BC0871330\",\r\n            \"relatedLegalType\": \"BEN\",\r\n            \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n            \"relatedState\": \"ACTIVE\",\r\n            \"relatedBN\": \"123456789BC0001\",\r\n            \"roleDates\": [\r\n                {\r\n                    \"start\": \"2022-05-01\",\r\n                    \"end\": \"*\"\r\n                }\r\n            ],\r\n            \"roleType\": \"incorporator\"\r\n        },\r\n        {\r\n            \"active\": true,\r\n            \"relatedEntityType\": \"business\",\r\n            \"relatedIdentifier\": \"CP1234567\",\r\n            \"relatedLegalType\": \"CP\",\r\n            \"relatedName\": \"KIALS COOP\",\r\n            \"relatedState\": \"ACTIVE\",\r\n            \"relatedBN\": \"123456788BC0001\",\r\n            \"roleDates\": [\r\n                {\r\n                    \"start\": \"2023-03-01\",\r\n                    \"end\": \"*\"\r\n                }\r\n            ],\r\n            \"roleType\": \"director\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resync",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(201);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update",
+								"resync"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "identifier",
+			"value": "1"
+		}
+	]
+}

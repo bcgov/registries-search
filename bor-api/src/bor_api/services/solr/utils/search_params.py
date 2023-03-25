@@ -13,17 +13,18 @@
 # limitations under the License.
 """BOR solr search params."""
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+
+from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 
 @dataclass
 class SearchParams:  # pylint: disable=too-few-public-methods
     """Class definition of search params."""
 
-    query: Dict[str, str | List[str]]
-    start: int
+    query: dict[str, str]
     rows: int
-    entity_types: Optional[List[str]] = None
-    legal_types: Optional[List[str]] = None
-    roles: Optional[List[str]] = None
-    states: Optional[List[str]] = None
+    start: int
+    categories: dict[Field, list[str]]
+    child_query: dict[str, str]
+    child_categories: dict[Field, list[str]]
+    child_date_ranges: dict[Field, str]

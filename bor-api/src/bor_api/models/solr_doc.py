@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import backref
@@ -44,7 +43,7 @@ class SolrDoc(db.Model):
         return cls.query.filter_by(identifier=identifier).order_by(cls.submission_date.desc()).first()
 
     @staticmethod
-    def get_updated_identifiers_after_date(date: datetime) -> List[str]:
+    def get_updated_identifiers_after_date(date: datetime) -> list[str]:
         """Return all identifiers with a submitted SolrDoc after the date."""
         return [x[0] for x in db.session.query(SolrDoc.identifier)
                 .filter(SolrDoc.submission_date > date)

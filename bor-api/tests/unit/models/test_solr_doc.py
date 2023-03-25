@@ -18,8 +18,8 @@ from dataclasses import asdict
 from datetime import datetime, timedelta
 
 from bor_api.models import SolrDoc
-from bor_api.services.solr.bor_solr_docs import Entity
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.solr.solr_docs import Entity
 
 from tests.unit.utils import SOLR_TEST_DOCS
 
@@ -39,9 +39,9 @@ def test_find_most_recent_by_identifier(session):
     """Assert find_most_recent_by_identifier works as expected."""
     entity_doc_1 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_2 = deepcopy(SOLR_TEST_DOCS[0])
-    entity_doc_2.names[0].name += '2'
+    entity_doc_2.legalName += '2'
     entity_doc_3 = deepcopy(SOLR_TEST_DOCS[0])
-    entity_doc_3.names[0].name += '3'
+    entity_doc_3.legalName += '3'
 
     solr_doc_1 = SolrDoc(doc=asdict(entity_doc_1), identifier=entity_doc_1.identifier).save()
     solr_doc_2 = SolrDoc(doc=asdict(entity_doc_2), identifier=entity_doc_2.identifier).save()
@@ -51,7 +51,7 @@ def test_find_most_recent_by_identifier(session):
     solr_doc = SolrDoc.find_most_recent_by_identifier(entity_doc_1.identifier)
     assert solr_doc.id is not None
     assert solr_doc.id == solr_doc_3.id
-    assert Entity(**solr_doc.doc).names[0]['name'] == entity_doc_3.names[0].name
+    assert Entity(**solr_doc.doc).legalName == entity_doc_3.legalName
 
 
 def test_get_updated_identifiers_after_date(session):

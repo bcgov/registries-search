@@ -16,9 +16,6 @@
 
 A simple decorator to add the options method to a Request Class.
 """
-# from functools import wraps
-from typing import Dict
-
 import dpath.util
 
 
@@ -36,11 +33,11 @@ def cors_preflight(methods: str = 'GET'):
     return wrapper
 
 
-def get_str(payload: Dict, path: str) -> str:
+def get_str(payload: dict, path: str) -> str:
     """Extract a str from the JSON filing, at the provided path.
 
     Args:
-        d (Dict): any dictionary.
+        d (dict): any dictionary.
         path (str): The path to the nested value.
 
     Examples:

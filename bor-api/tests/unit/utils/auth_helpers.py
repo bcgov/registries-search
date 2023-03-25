@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Data for the JWT tokens."""
-from typing import List
 
 
 def helper_create_jwt(jwt_manager,
-                      roles: List[str] = [],
+                      roles: list[str] = [],
                       username: str = 'test-user',
                       email: str = None,
                       firstname: str =None,
@@ -53,7 +52,7 @@ def helper_create_jwt(jwt_manager,
 
 
 def create_header(jwt_manager,
-                  roles: List[str] = [],
+                  roles: list[str] = [],
                   username: str = 'test-user',
                   firstname: str =None,
                   lastname: str = None,
@@ -78,7 +77,7 @@ def create_header(jwt_manager,
 
 
 def create_header_account(jwt_manager,
-                          roles: List[str] = [],
+                          roles: list[str] = [],
                           username: str = 'test-user',
                           account_id: str = 'PS12345', **kwargs):
     """Return a header containing a JWT bearer token and an account ID."""

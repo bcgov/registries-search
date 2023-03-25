@@ -11,7 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Application Specific Exceptions/Responses, to manage handled errors."""
-from .exceptions import (AuthorizationException, BusinessException, DatabaseException,  # noqa: I001
-                         ExternalServiceException, SolrException)  # noqa: I001
-from .responses import bad_request_response, exception_response
+# pylint: disable=invalid-name
+"""Manages dataclass for the solr date range doc."""
+from dataclasses import dataclass
+from datetime import datetime
+
+
+@dataclass
+class DateRange:
+    """Class representation for a solr date range."""
+
+    start: datetime  # query i.e. ['[2022-03-21 TO 2022-10-05]','[2023-01-01 TO *]']
+    end: datetime

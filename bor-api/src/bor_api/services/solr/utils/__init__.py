@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Application Specific Exceptions/Responses, to manage handled errors."""
-from .exceptions import (AuthorizationException, BusinessException, DatabaseException,  # noqa: I001
-                         ExternalServiceException, SolrException)  # noqa: I001
-from .responses import bad_request_response, exception_response
+"""This module manages helpful util functions for using the solr service."""
+from .formatting_helpers import parse_facets, prep_query_str
+from .query_builders import build_base_query, build_child_query, build_facet, build_facet_query
+from .search_helpers import entities_search
+from .search_params import SearchParams
