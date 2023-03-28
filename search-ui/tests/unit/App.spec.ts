@@ -7,7 +7,7 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import App from '@/App.vue'
 import { EntityInfo } from '@/components'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
-import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
+import { SbcHeader, SbcFooter } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
 import { useAuth, useDocumentAccessRequest, useEntity } from '@/composables'
 import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, RouteNames } from '@/enums'
@@ -51,7 +51,6 @@ describe('App tests', () => {
     // banner will only exist when systemMessage is not null
     expect(sessionStorage.getItem('SYSTEM_MESSAGE')).toBe(null)
     expect(wrapper.vm.systemMessage).toBe(null)
-    expect(wrapper.findComponent(SbcSystemBanner).exists()).toBe(false)
     // entity info will only exist specific pages - should be on search page and hidden
     expect(wrapper.findComponent(EntityInfo).exists()).toBe(false)
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
