@@ -23,7 +23,9 @@ by NATS Streaming and using AWAIT on the default loop.
 import json
 import logging
 import os
+from contextlib import suppress
 from http import HTTPStatus
+from time import sleep
 from typing import Dict
 
 import nats
@@ -92,7 +94,11 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
     identifier = event_message.get('identifier')
     if not identifier:
         raise QueueException('Unable to parse identifier from message payload.')
-
+    with suppress(Exception):
+        if filings := event_message.get('data', {}).get('filing', {}).get('legalFilings', []):
+            # if alteration, then give it 5 seconds (lear will still be processing it in some cases)
+            if 'alteration' in filings:
+                sleep(5)
     # get token
     token = get_bearer_token()
     headers = {'Authorization': 'Bearer ' + token}
