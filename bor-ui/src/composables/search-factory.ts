@@ -1,8 +1,8 @@
 import { computed, reactive } from 'vue'
 // local
-import { ErrorI, SearchFilterI, SearchI, SearchPartyFilterI, SearchResponseI } from '@/interfaces'
-import { searchBusiness, searchParties } from '@/requests'
-import { ErrorCategories } from '@/enums'
+import { ErrorI, FacetI, SearchI, SearchResponseI } from '@/interfaces'
+import { searchEntities } from '@/requests'
+import { EntityType, ErrorCategory } from '@/enums'
 
 const DEFAULT_SEARCH_ROWS = 100
 
@@ -17,9 +17,16 @@ const _readOnly = reactive({
 
 // globals TODO: try moving to pinia
 const search = reactive({
-  filters: {},
+  facetsResult: {},
+  filters: {
+    query: { roles: {} },
+    categories: {
+      entityAddresses: {},
+      entityType: [EntityType.BUSINESS, EntityType.PERSON],
+      roles:{}
+    }
+  },
   results: null,
-  searchType: 'business',
   totalResults: null,
   unavailable: false,
   _error: computed(() => _readOnly.error),
@@ -34,37 +41,79 @@ const _searchErrorHandler = async (searchResp: SearchResponseI) => {
   search.results = []
   search.totalResults = null
   _readOnly.error = searchResp.error
-  if (searchResp.error.category === ErrorCategories.SEARCH_UNAVAILABLE) {
+  if (searchResp.error.category === ErrorCategory.SEARCH_UNAVAILABLE) {
     search.unavailable = true
   } else search.unavailable = false
 }
 
 export const useSearch = () => {
-  const filtering = computed(() => {
-    for (const i in search.filters) if (search.filters[i] !== '') return true
-    return false
+  /** The amount of results to return in each search batch. */
+  const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
+
+  /** Returns true if any filter has a value. */
+  const isFilteringActive = computed(() => {
+    const findActiveInObject = (object: object) => {
+      for (const i in object) {
+        // skip entity type filter
+        if (['entityType', 'value'].includes(i)) continue
+
+        if (['string','array'].includes(typeof(object[i]))) {
+          if (object[i]) console.log(i, object[i]); return true
+        } else {
+          if (findActiveInObject(object[i])) return true
+        }
+      }
+      return false
+    }
+    return findActiveInObject(search.filters)
   })
+
+  /** Returns true there are more results to be returned from the api. */
   const hasMoreResults = computed(() => {
     return search.totalResults && search.results?.length < search.totalResults
   })
-  const filterSearch = async (filterField: string, val: string) => {
-    // FUTURE: verify filterField is valid
-    search.filters[filterField] = val
-    if (search._value) await getSearchResults(search._value)
+
+  /** Return the count of the facet value. */
+  const facetCount = (facet: string, value: string) => {
+    if (search.facetsResult.fields) {
+      const facetItems = search.facetsResult.fields[facet] as FacetI[]
+      if (facetItems) {
+        const facetItem = facetItems.find((facetItem) => facetItem.value.toLowerCase() === value.toLowerCase())
+        if (facetItem) return facetItem.parentCount || facetItem.count
+      }
+    }
+    return 0
   }
+
+  /** Return the list of facet items of the facet field. */
+  const facetItems = (facet: string) => {
+    if (search.facetsResult.fields) {
+      return search.facetsResult.fields[facet] as FacetI[] || []
+    }
+    return []
+  }
+
+  /** Apply filter and get results set. */
+  const filterSearch = async (path: string[], val: any) => {
+    // path will have length of 3 at most
+    // i.e. search.filters['start'] = val
+    if (path.length === 1) search.filters[path[0]] = val
+    // i.e. search.filters['query']['bn'] = val
+    else if (path.length === 2) {
+      search.filters[path[0]][path[1]] = val
+    }
+    // i.e. search.filters['query']['roles']['relatedBN'] = val
+    else search.filters[path[0]][path[1]][path[2]] = val
+
+    if (search._value) await getSearchResults(search._value, false)
+  }
+
+  /** Get next batch of results from the api and update the results. */
   const getNextResults = async () => {
     if (!hasMoreResults.value) return
     _readOnly.loadingNext = true
-    let searchResp: SearchResponseI = null
-    // FUTURE: add SEARCH_ROWS to enum
-    const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
-    if (search.searchType === 'business') {
       // business search
-      searchResp = await searchBusiness(search._value, search.filters as SearchFilterI, rows, search._start + 1)
-    } else {
-      // owner search
-      searchResp = await searchParties(search._value, search.filters as SearchPartyFilterI, rows, search._start + 1)
-    }
+    const searchResp = await searchEntities(search._value, search.filters, rows, search._start + 1)
     if (searchResp) {
       if (!searchResp.error) {
         // success
@@ -76,51 +125,56 @@ export const useSearch = () => {
     } else console.error('Error getting getNextSearchResults') // should never get here
     _readOnly.loadingNext = false
   }
-  const getSearchResults = async (val: string) => {
+
+  /** Get the first batch of results from the api and set the results. */
+  const getSearchResults = async (val: string, updateFacets = true) => {
     if (!val) {
-      resetSearch(search.searchType)
+      resetSearch()
       return
     }
     search.totalResults = null
     _readOnly.loading = true
     _readOnly.value = val
     if (search.results === null && !search.unavailable) search.results = []
-    let searchResp: SearchResponseI = null
     // FUTURE: add SEARCH_ROWS to enum
-    const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
-    if (search.searchType === 'business') {
-      // business search
-      searchResp = await searchBusiness(val, search.filters as SearchFilterI, rows, 0)
-    } else {
-      // owner search
-      searchResp = await searchParties(val, search.filters as SearchPartyFilterI, rows, 0)
-    }
+    const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
       if (!searchResp.error) {
         // success
         _readOnly.value = searchResp.searchResults.queryInfo.query.value
+        console.log(searchResp)
+        if (updateFacets) search.facetsResult = searchResp.facets
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults
         _readOnly.error = null
         search.unavailable = false
+        console.log('search:', search)
       } else _searchErrorHandler(searchResp)
     } else {
       // unhandled response error (should never get here)
+      search.facetsResult = {}
       search.results = []
       search.totalResults = null
       console.error('Nothing returned from search request fn.')
     }
     _readOnly.loading = false
   }
+
+  /** Return the highlighted search value within the match */
   const highlightMatch = (match: string) => {
     if (!search._value) return match
     if (!match) return ''
     return match.replaceAll(search._value.toUpperCase(), `<b>${search._value.toUpperCase()}</b>`)
   }
-  const resetSearch = (searchType: 'business' | 'partner' = 'business') => {
-    search.filters = {} as SearchFilterI
+
+  /** Reset all search values */
+  const resetSearch = () => {
+    search.facetsResult = {}
+    search.filters = {
+      query: { roles: {} },
+      categories: { entityAddresses: {}, roles:{} }
+    }
     search.results = null
-    search.searchType = searchType
     search.totalResults = null
     search.unavailable = false
     _readOnly.error = null
@@ -130,8 +184,10 @@ export const useSearch = () => {
   }
   return {
     search,
-    filtering,
+    isFilteringActive,
     hasMoreResults,
+    facetCount,
+    facetItems,
     filterSearch,
     getNextResults,
     getSearchResults,

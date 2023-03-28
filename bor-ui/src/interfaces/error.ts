@@ -1,9 +1,9 @@
 // generic error interface
-import { ErrorCodes, ErrorCategories } from '@/enums'
+import { ErrorCode, ErrorCategory } from '@/enums'
 export interface ErrorI {
-  category: ErrorCategories,
+  category: ErrorCategory,
   detail?: string,
   message: string,
   statusCode: number,
-  type: ErrorCodes
+  type: ErrorCode
 }

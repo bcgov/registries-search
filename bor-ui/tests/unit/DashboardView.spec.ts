@@ -6,7 +6,7 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { SearchBar, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
-import { RouteNames } from '@/enums'
+import { RouteName } from '@/enums'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 import { axios } from '@/utils'
@@ -33,7 +33,7 @@ describe('DashboardView tests', () => {
     auth.currentAccount = testAccount
     resetSearch()
     router = createVueRouter()
-    await router.push({ name: RouteNames.SEARCH })
+    await router.push({ name: RouteName.SEARCH })
     wrapper = mount(DashboardView, {
       props: { appReady: true },
       global: {
@@ -58,7 +58,7 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('.account-label').text()).toContain(testAccount.label)
     expect(wrapper.find('.account-name').text()).toContain(testAccount.name)
     // check documents help
-    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business Search')
+    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business and Person Search')
     expect(wrapper.find('.doc-help-info').exists()).toBe(false)
     // check tab headers
     expect(wrapper.html()).toContain('Find a Business')
@@ -67,7 +67,6 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('#search-tab').classes()).toContain('tab-item-active')
     expect(wrapper.html()).toContain('Search for businesses')
     expect(wrapper.findComponent(SearchBar).exists()).toBe(true)
-    expect(search.searchType).toBe('business')
     // search results should not render before a search is made
     expect(search.results).toBe(null)
     expect(search.totalResults).toBe(null)
@@ -81,7 +80,7 @@ describe('DashboardView tests', () => {
     // clicking again sets it back
     wrapper.find('.doc-help-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business Search')
+    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business and Person Search')
     expect(wrapper.find('.doc-help-info').exists()).toBe(false)
   })
   it('shows the results table when results are populated', async () => {

@@ -13,7 +13,7 @@
     </v-row>
     <v-row class="mt-1 pt-2" justify="start" no-gutters>
       <v-col class="account-label pr-5" cols="auto">
-        <span v-if="auth.currentAccount.accountType === AccountTypes.STAFF">BC Registries Staff</span>
+        <span v-if="auth.currentAccount.accountType === AccountType.STAFF">BC Registries Staff</span>
         <span v-else>{{ auth.currentAccount.label }}</span>
       </v-col>
       <v-col class="account-name pl-5" cols="auto">
@@ -22,16 +22,15 @@
     </v-row>
     <v-btn class="doc-help-btn copy-normal primary px-0 text" flat :ripple="false" @click="showDocHelp = !showDocHelp">
       <v-icon>mdi-help-circle-outline</v-icon>
-      <span v-if="!showDocHelp">Help with Business Search</span>
+      <span v-if="!showDocHelp">Help with Business and Person Search</span>
       <span v-else>Hide Help</span>
     </v-btn>
     <v-slide-y-transition>
       <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
         <div class="doc-help-info__content mx-auto">
-          <h3 style="text-align: center;">Help with Business Search</h3>
+          <h3 style="text-align: center;">Help with Business and Person Search</h3>
           <p class="mt-5">
-            In the Beta version of Business Search you can access documents for
-            the following active and historical business types:
+            This text has not been updated for Business and Person Search
           </p>
           <ul class="ml-4 mt-6">
             <li>Benefit Companies</li>
@@ -131,7 +130,7 @@ import { ref } from 'vue'
 // local
 import { SearchBar, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
-import { AccountTypes } from '@/enums';
+import { AccountType } from '@/enums';
 
 // eslint-disable-next-line
 const props = defineProps({ appReady: { type: Boolean } })

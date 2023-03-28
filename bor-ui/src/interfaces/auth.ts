@@ -1,5 +1,5 @@
 import { ComputedRef } from 'vue'
-import { AccountStatus, AccountTypes } from '@/enums'
+import { AccountStatus, AccountType } from '@/enums'
 import { ErrorI } from './error'
 
 export interface AuthI {
@@ -10,7 +10,7 @@ export interface AuthI {
 
 export interface CurrentAccountI {
   accountStatus: AccountStatus
-  accountType: AccountTypes
+  accountType: AccountType
   id: number
   label: string
   name?: string  // currently added from jwt

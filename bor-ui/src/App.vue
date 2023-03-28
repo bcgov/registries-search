@@ -51,7 +51,7 @@ import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-comm
 // Bcrs shared components
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
-import { ErrorCategories, RouteNames } from '@/enums'
+import { ErrorCategory, RouteName } from '@/enums'
 import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { BaseDialog } from '@/components'
@@ -94,15 +94,15 @@ const breadcrumbs = computed((): Array<BreadcrumbIF> => {
 onMounted(async () => {
   appLoading.value = true
   await router.isReady() // otherwise below will process before route name is determined
-  const searchRoutes = [RouteNames.SEARCH]
-  if (searchRoutes.includes(route.name as RouteNames)) {
+  const searchRoutes = [RouteName.SEARCH]
+  if (searchRoutes.includes(route.name as RouteName)) {
     // do any preload items here
     if (!appReady.value && !isJestRunning.value) {
       // intitialize token
       await startTokenService()
       // if no token then push to the login page
       if (!sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)) {
-        await router.push({ name: RouteNames.LOGIN, query: { redirect: '/' } })
+        await router.push({ name: RouteName.LOGIN, query: { redirect: '/' } })
         appLoading.value = false
         return
       }
@@ -123,7 +123,7 @@ onMounted(async () => {
     console.info('Verifying user access...')
     if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
       handleError({
-        category: ErrorCategories.ACCOUNT_ACCESS,
+        category: ErrorCategory.ACCOUNT_ACCESS,
         message: 'This account does not have access to Business and Person Search',
         statusCode: StatusCodes.UNAUTHORIZED,
         type: null
@@ -138,7 +138,7 @@ onMounted(async () => {
 const handleError = (error: ErrorI) => {
   console.info(error)
   switch (error.category) {
-    case ErrorCategories.ACCOUNT_ACCESS:
+    case ErrorCategory.ACCOUNT_ACCESS:
       errorInfo.value = {...AuthAccessError}
       if (error.statusCode === StatusCodes.UNAUTHORIZED) {
         errorInfo.value.text = 'This account does not have Business Search selected as an active product.'
@@ -153,17 +153,17 @@ const handleError = (error: ErrorI) => {
       errorContactInfo.value = true
       errorDisplay.value = true
       break
-    case ErrorCategories.ACCOUNT_SETTINGS:
+    case ErrorCategory.ACCOUNT_SETTINGS:
       errorInfo.value = {...DefaultError}
       errorContactInfo.value = true
       errorDisplay.value = true
       Sentry.captureException(error)
       break
-    case ErrorCategories.SEARCH:
+    case ErrorCategory.SEARCH:
       // handled inline
       Sentry.captureException(error)
       break
-    case ErrorCategories.SEARCH_UNAVAILABLE:
+    case ErrorCategory.SEARCH_UNAVAILABLE:
       // handled inline and no error msg needed
       break
     default:

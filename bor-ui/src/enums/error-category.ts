@@ -1,4 +1,4 @@
-export enum ErrorCategories {
+export enum ErrorCategory {
   ACCOUNT_ACCESS = 'account-access',
   ACCOUNT_SETTINGS = 'account-settings',
   DOCUMENT_ACCESS_REQUEST_CREATE = 'document-access-request-create',

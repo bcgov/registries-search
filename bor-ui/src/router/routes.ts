@@ -7,14 +7,14 @@ import {
   SignIn,
   SignOut
  } from '@/views'
-import { RouteNames } from '@/enums'
+import { RouteName } from '@/enums'
 import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 
 export const routes: RouteRecordRaw[] = [
   {
     // router.beforeEach() routes here:
     path: '/login',
-    name: RouteNames.LOGIN,
+    name: RouteName.LOGIN,
     component: LogIn,
     props: true,
     meta: {
@@ -25,7 +25,7 @@ export const routes: RouteRecordRaw[] = [
   {
     // router.beforeEach() routes here:
     path: '/signin',
-    name: RouteNames.SIGN_IN,
+    name: RouteName.SIGN_IN,
     component: SignIn,
     props: true,
     meta: {
@@ -35,7 +35,7 @@ export const routes: RouteRecordRaw[] = [
   {
     // SbcHeader.logout() redirects here:
     path: '/signout',
-    name: RouteNames.SIGN_OUT,
+    name: RouteName.SIGN_OUT,
     component: SignOut,
     props: true,
     meta: {
@@ -44,7 +44,7 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
-    name: RouteNames.SEARCH,
+    name: RouteName.SEARCH,
     component: DashboardView,
     meta: {
       requiresAuth: false, // landing page so needs chance to load without auth

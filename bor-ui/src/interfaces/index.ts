@@ -1,3 +1,4 @@
+export * from './address'
 export * from './auth'
 export * from './base-dialog'
 export * from './contact-info'

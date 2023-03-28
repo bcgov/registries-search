@@ -5,7 +5,7 @@ import { createRouter, createWebHistory, Router } from 'vue-router'
 // BC registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
-import { RouteNames } from '@/enums'
+import { RouteName } from '@/enums'
 import { routes } from './routes'
 
 export function createVueRouter (): Router {
@@ -18,20 +18,20 @@ export function createVueRouter (): Router {
     if (isLoginSuccess(to)) {
       // this route is to verify login
       next({
-        name: RouteNames.SIGN_IN,
+        name: RouteName.SIGN_IN,
         query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
       })
     } else {
       if (requiresAuth(to) && !isAuthenticated()) {
         // this route needs authentication, so re-route to login
         next({
-          name: RouteNames.LOGIN,
+          name: RouteName.LOGIN,
           query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
         })
       } else {
         if (isLogin(to) && isAuthenticated()) {
           // this route is to login
-          next({ name: RouteNames.SEARCH })
+          next({ name: RouteName.SEARCH })
         } else {
           // proceed normally
           next()
@@ -62,12 +62,12 @@ export function createVueRouter (): Router {
   
   /** Returns True if route is Login success, else False. */
   function isLogin(route: RouteLocationNormalized): boolean {
-    return Boolean(route.name === RouteNames.LOGIN)
+    return Boolean(route.name === RouteName.LOGIN)
   }
   
   /** Returns True if route is Login success, else False. */
   function isLoginSuccess(route: RouteLocationNormalized): boolean {
-    return Boolean(route.name === RouteNames.LOGIN && route.hash)
+    return Boolean(route.name === RouteName.LOGIN && route.hash)
   }
 
   return router

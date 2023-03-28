@@ -26,6 +26,7 @@ def _add_category_filters(solr_payload: dict, categories: dict[Field, list[str]]
         if category_filters := categories[category]:
             # build_method = build_child_facet_query if child else build_facet_query
             filter_str = build_facet_query(category, [x.upper() for x in category_filters], is_nested)
+            print(filter_str)
             solr_payload['filter'].append(filter_str)
 
 

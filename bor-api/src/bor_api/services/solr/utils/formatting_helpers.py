@@ -35,6 +35,8 @@ def parse_facets(facet_data: dict) -> dict:
 def prep_query_str(query: str) -> str:
     """Return query string prepped for solr call."""
     # replace solr specific special chars
+    if not query:
+        return ''
     rmv_spec_chars_rgx = r'([\[\]!()\"~*?:/\\={}^%`#|<>,.@$;_\-])'
     handled_spec_chars_rgx = r'([&+]+)'
     query = re.sub(rmv_spec_chars_rgx, ' ', query.lower())

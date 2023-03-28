@@ -62,11 +62,16 @@ def build_facet(field: Field, is_nested: bool):
 
 def build_facet_query(field: Field, values: list[str], is_nested: bool = False):
     """Return the solr filter clause for the given params."""
-    filter_q = f'{field.value}:"{values[0]}"'
+    filter_q = f'{field.value}:("{values[0]}"'
     if is_nested:
-        filter_q = PRE_CHILD_FILTER_CLAUSE + filter_q
+        filter_q = PRE_CHILD_FILTER_CLAUSE + f'{field.value}:"{values[0]}"'
     for val in values[1:]:
-        filter_q += f' OR "{val}"'
+        if is_nested:
+            filter_q += f' OR {field.value}: "{val}"'
+        else:
+            filter_q += f' OR "{val}"'
+    if not is_nested:
+        filter_q += ')'
     return filter_q
 
 

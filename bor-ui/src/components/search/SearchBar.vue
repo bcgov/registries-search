@@ -15,58 +15,84 @@
       @keyup.enter="toggleErrorMsg()"
       :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
-    <v-radio-group class="search-radios ml-n2 pt-1" :direction="'horizontal'" hide-details v-model="search.searchType">
-      <v-radio class="search-radios__btn" color="primary" key="business" label="Search Businesses" value="business" />
-      <v-radio class="search-radios__btn" color="primary" key="partner" label="Search Firm Owners" value="partner" />
-    </v-radio-group>
+    <v-row class="mt-3" no-gutters>
+      <v-col cols="auto">
+        <v-checkbox color="primary" density="compact" label="Person" v-model="facets.entityType.person" />
+      </v-col>
+      <v-col class="ml-3" cols="auto">
+        <v-checkbox color="primary" density="compact" label="Business" v-model="facets.entityType.business" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import _ from 'lodash'
 // local
 import { useSearch } from '@/composables'
 
 // Composables
-const { search, getSearchResults } = useSearch()
+const { search, filterSearch, getSearchResults } = useSearch()
 
-const searchErrorMsg = computed(() => {
-  if (search.searchType === 'partner') return 'Enter an owner name'
-  return 'Enter a business name or number'
-})
+// search field stuff
+const searchErrorMsg = 'Enter a name or number'
+const searchHint = 'Example: "John Smith, Test Construction Inc.", "BC0000123", "987654321"'
+const searchLabel = 'Entity Name or Incorporation/Registration Number or CRA Business Number'
 
-const searchHint = computed(() => {
-  if (search.searchType === 'partner') return 'Example: "John Smith"'
-  return 'Example: "Test Construction Inc.", "BC0000123", "987654321"'
-})
-
-const searchLabel = computed(() => {
-  if (search.searchType === 'partner') return 'Firm Owner Name'
-  return 'Business Name or Incorporation/Registration Number or CRA Business Number'
-})
-
+// search value stuff
 const searchVal = ref('')
 
-const showErrors = ref(false)
+onMounted(() => { searchVal.value = search._value })
 
 const submitSearch = _.debounce(async () => {
   await getSearchResults(searchVal.value)
 }, 500)
 
-const toggleErrorMsg = () => {
-  if (!searchVal.value) showErrors.value = true
-}
-
-onMounted(() => { searchVal.value = search._value })
-
-watch(() => searchVal.value, () => { showErrors.value = false })
-
-watch(() => search.searchType, () => {
-  showErrors.value = false
-  if (searchVal.value) getSearchResults(searchVal.value)
+// search error stuff
+const showErrors = ref(false)
+watch(() => searchVal.value, () => {
+  if (searchVal.value.trim()) showErrors.value = false
 })
 
+const toggleErrorMsg = () => {
+  if (!searchVal.value.trim()) showErrors.value = true
+}
+
+// facets / checkbox stuff
+const facets = reactive({
+  entityType: {
+    business: true,
+    person: true
+  }
+})
+
+// use below if facet counts move to checkboxes
+// const checkboxLabelBusiness = computed(() => {
+//   if ((facets.entityType.business || !facets.entityType.person)) {
+//     return `Business (${facetCount('entityType', 'BUSINESS')})`
+//   }
+//   return 'Business'
+// })
+
+// const checkboxLabelPerson = computed(() => {
+//   if ((facets.entityType.person || !facets.entityType.business)) {
+//     return `Person (${facetCount('entityType', 'PERSON')})`
+//   }
+//   return 'Person'
+// })
+
+watch(() => facets.entityType, (val) => {
+  if (searchVal.value) showErrors.value = false
+
+  const entityTypes = []
+  if (val.business) entityTypes.push('BUSINESS')
+  if (val.person) entityTypes.push('PERSON')
+  console.log('watch entityTypes', entityTypes)
+  filterSearch(['categories','entityType'], entityTypes)
+}, { deep: true })
+
+// unavailable scenario (when search is reindexing / reimporting)
 watch(() => search.unavailable, async (val) => {
   if (val) {
     // retry every 10s until search is available again

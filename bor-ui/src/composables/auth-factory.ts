@@ -2,7 +2,7 @@ import { computed, reactive } from 'vue'
 // bc registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // local
-import { AccountTypes, ErrorCategories, ErrorCodes } from '@/enums'
+import { AccountType, ErrorCategory, ErrorCode } from '@/enums'
 import { AuthI, CurrentAccountI, ErrorI } from '@/interfaces'
 import keycloakServices from '@/sbc-common-components/services/keycloak.services'
 import { getKeycloakName, updateLdUser } from '@/utils'
@@ -38,18 +38,18 @@ const _loadCurrentAccount = async () => {
   } catch (error) {
     console.warn(error)
     _readOnly.error = {
-      category: ErrorCategories.ACCOUNT_SETTINGS,
+      category: ErrorCategory.ACCOUNT_SETTINGS,
       message: 'Error getting/setting current account.',
       statusCode: null,
-      type: ErrorCodes.ACCOUNT_SETUP_ERROR
+      type: ErrorCode.ACCOUNT_SETUP_ERROR
     }
   }
 }
 
 export const useAuth = () => {
   // manager for auth + common functions etc.
-  const isStaff = computed(() => auth.currentAccount?.accountType === AccountTypes.STAFF)
-  const isStaffSBC = computed(() => auth.currentAccount?.accountType === AccountTypes.SBC_STAFF)
+  const isStaff = computed(() => auth.currentAccount?.accountType === AccountType.STAFF)
+  const isStaffSBC = computed(() => auth.currentAccount?.accountType === AccountType.SBC_STAFF)
   const loadAuth = async () => {
     // set current account
     if (!auth._error) await _loadCurrentAccount()

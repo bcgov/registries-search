@@ -1,66 +1,28 @@
 import { axios } from '@/utils'
 import { StatusCodes } from 'http-status-codes'
 // local
-import { ErrorCategories } from '@/enums'
-import { SearchResponseI, SearchFilterI, SearchPartyFilterI } from '@/interfaces'
+import { ErrorCategory } from '@/enums'
+import { SearchResponseI, SearchPayloadI } from '@/interfaces'
 // internal
-import { addSearchBusFilters, addSearchPartyFilters, getSearchConfig, parseGatewayError } from './search-api-utils'
+import { getSearchConfig, parseGatewayError } from './search-api-utils'
 
-export async function searchBusiness(
+export async function searchEntities(
   searchValue: string,
-  filters: SearchFilterI,
+  filters: SearchPayloadI,
   rows: number,
   start: number
 ): Promise<SearchResponseI> {
   if (!searchValue) return
-  // basic params
-  const params = { query: `value:${searchValue}`, start: start * rows, rows: rows }
-  // add filters
-  const filterParams = addSearchBusFilters(filters)
-  if (filterParams.query) params.query += filterParams.query
-  if (filterParams.categories) params['categories'] = filterParams.categories
-  // add search-api config stuff
-  const config = getSearchConfig(params)
-  return axios.get<SearchResponseI>('businesses/search/facets', config)
-    .then(response => {
-      const data: SearchResponseI = response?.data
-      if (!data) {
-        throw new Error('Invalid API response')
-      }
-      return data
-    }).catch(error => {
-      let category = ErrorCategories.SEARCH
-      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
-
-      return {
-        searchResults: null,
-        error: parseGatewayError(category, StatusCodes.NOT_FOUND, error)
-      }
-    })
-}
-
-export async function searchParties(
-  searchValue: string,
-  filters: SearchPartyFilterI,
-  rows: number,
-  start: number
-): Promise<SearchResponseI> {
-  if (!searchValue) return
-
-  // basic params
-  const params = {
-    query: `value:${searchValue}`,
-    categories: 'partyRoles:partner,proprietor',
-    start: start * rows,
-    rows: rows
+  // set payload
+  const payload: SearchPayloadI = {
+    ...filters,
+    'rows': rows,
+    'start': start * rows
   }
-  // add filters
-  const filterParams = addSearchPartyFilters(filters)
-  if (filterParams.query) params.query += filterParams.query
-  if (filterParams.categories) params.categories = filterParams.categories
+  payload.query.value = searchValue
   // add search-api config stuff
-  const config = getSearchConfig(params)
-  return axios.get<SearchResponseI>('businesses/search/parties', config)
+  const config = getSearchConfig()
+  return axios.post<SearchResponseI>('search/entities', payload, config)
     .then(response => {
       const data: SearchResponseI = response?.data
       if (!data) {
@@ -68,12 +30,13 @@ export async function searchParties(
       }
       return data
     }).catch(error => {
-      let category = ErrorCategories.SEARCH
-      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategories.SEARCH_UNAVAILABLE
+      let category = ErrorCategory.SEARCH
+      if (error?.response?.status === StatusCodes.SERVICE_UNAVAILABLE) category = ErrorCategory.SEARCH_UNAVAILABLE
 
       return {
+        facets: null,
         searchResults: null,
-        error: parseGatewayError(category, StatusCodes.NOT_FOUND, error)
+        error: parseGatewayError(category, StatusCodes.INTERNAL_SERVER_ERROR, error)
       }
     })
 }

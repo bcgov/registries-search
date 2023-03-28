@@ -1,5 +1,5 @@
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
-import { RouteNames } from '@/enums'
+import { RouteName } from '@/enums'
 
 export const SearchHomeBreadCrumb: BreadcrumbIF = {
     text: 'BC Registries Dashboard',
@@ -8,6 +8,6 @@ export const SearchHomeBreadCrumb: BreadcrumbIF = {
 
 export const SearchDashboardBreadcrumb: BreadcrumbIF = {
     text: 'Business and Person Search',
-    to: { name: RouteNames.SEARCH },
+    to: { name: RouteName.SEARCH },
     href: '/search'
 }

@@ -1,4 +1,4 @@
-export enum BusinessStatuses {
+export enum BusinessState {
     ACTIVE = 'ACTIVE',
     HISTORICAL = 'HISTORICAL'
 }

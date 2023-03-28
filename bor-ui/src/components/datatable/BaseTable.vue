@@ -12,8 +12,8 @@
                     <span class="ml-1" v-if="loading">
                       <v-progress-circular color="primary" indeterminate size="22" />
                     </span>
-                    <span v-else-if="totalItems && resultsDescription" style="font-weight: normal">
-                      ({{ totalItems }} {{ resultsDescription }})
+                    <span v-else-if="resultsDescription" style="font-weight: normal">
+                      ({{ resultsDescription }})
                     </span>
                     <span v-else-if="totalItems" style="font-weight: normal">({{ totalItems }})</span>
                   </h2>
@@ -68,10 +68,14 @@
                   <v-select
                     v-if="header.hasFilter && header.filter.type === 'select'"
                     :class="[filterClass, 'base-table__header__item__filter']"
+                    clear-icon="mdi-close"
                     density="compact"
                     hide-details
-                    :items="header.filter.items"
+                    :items="header.filter.items || header.filter.itemsFn(header.filter.itemsFnVal)"
+                    :item-title="header.filter.itemValue || ''"
+                    :item-value="header.filter.itemValue || ''"
                     :label="!header.filter.value ? header.filter.label || '' : ''"
+                    :multiple="header.filter.multiple"
                     :open-on-clear="true"
                     v-model="header.filter.value"
                     @update:modelValue="filter(header)"
@@ -90,7 +94,7 @@
                     class="base-table__header__item__clear-btn"
                     :class="header.filter.type === 'text' ? 'header-text-field' : 'header-select'"
                     icon
-                    @click="header.filter.value=''; filter(header)"
+                    @click="header.filter.value=header.filter.type === 'text' ? '' : null; filter(header)"
                   >
                     <v-icon color="primary" size="20">mdi-close</v-icon>
                   </v-btn>
@@ -100,7 +104,7 @@
           </slot>
         </slot>
       </thead>
-      <tbody v-if="loading && !filtering" class="base-table__body">
+      <tbody v-if="loading && !isFilteringActive" class="base-table__body">
         <tr class="base-table__body__loader">
           <td :colspan="headers.length">
             <v-row class="my-15" justify="center" no-gutters>
@@ -112,7 +116,7 @@
         </tr>
       </tbody>
       <tbody v-else class="base-table__body">
-        <tr v-if="filtering">
+        <tr v-if="isFilteringActive">
           <td :colspan="headers.length">
             <v-progress-linear color="primary" indeterminate />
           </td>
@@ -125,7 +129,7 @@
                 :class="[header.itemClass, 'base-table__body__item']"
               >
                 <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
-                  <span v-if="header.itemFn" v-html="header.itemFn(item[header.col])" />
+                  <span v-if="header.itemFn" v-html="header.itemFn(item)" />
                   <span v-else>{{ item[header.col] }}</span>
                 </slot>
               </td>
@@ -184,7 +188,7 @@ const headers = reactive(_.cloneDeep(props.setHeaders) as BaseTableHeaderI[])
 const sortedItems = ref([...props.setItems])
 
 const emptyText = computed(() => props.noResultsText || 'No results found')
-const filtering = ref(false)
+const isFilteringActive = ref(false)
 const filterActive = computed(() => {
   for (const i in headers) if (headers[i].filter?.value) return true
   return false
@@ -234,11 +238,14 @@ const toggleSort = (header: BaseTableHeaderI) => {
 }
 
 const filter = _.debounce(async (header: BaseTableHeaderI) => {
-  // rely on custom filterApiFn to alter result set if given (meant for server side filtering)
+  // rely on custom filterApiFn to alter result set if given (meant for server side isFilteringActive)
+  if (header.filter.value?.length === 0) {
+    header.filter.value = null
+  }
   if (header.filter.filterApiFn) {
-    filtering.value = true
+    isFilteringActive.value = true
     await header.filter.filterApiFn(header.filter.value)
-    filtering.value = false
+    isFilteringActive.value = false
   } else {
     // client side custom or base filter
     sortedItems.value = props.setItems.filter((item) => {
@@ -332,13 +339,19 @@ th {
       &__filter {
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label) {
           font-size: 14px;
-          margin: 11px 0 0 8px;
+          margin: 2px 0 0 8px;
           max-width: none;
         }
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label.v-field-label--floating) {
           color: $gray7;
           font-size: 14px;
+          margin: 11px 0 0 8px;
           top: 0 !important;
+        }
+        :deep(.v-label.v-field-label) {
+          transform: none;
+          transform-origin: none;
+          transition: none;
         }
       }
 

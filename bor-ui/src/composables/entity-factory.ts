@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 // Local
-import { BusinessTypes, CorpTypeCd } from '@/enums'
+import { BusinessType, CorpTypeCd } from '@/enums'
 import { CorpInfoArray } from '@/resources'
 
 export const useEntity = () => {
@@ -23,8 +23,8 @@ export const useEntity = () => {
   })
 
   const learBusinessTypes = computed(() => {
-    return Object.keys(BusinessTypes).map((key) => {
-      if (BusinessTypes[key] !== BusinessTypes.BC_LIMITED_COMPANY) return BusinessTypes[key]
+    return Object.keys(BusinessType).map((key) => {
+      if (BusinessType[key] !== BusinessType.BC_LIMITED_COMPANY) return BusinessType[key]
     })
   })
 

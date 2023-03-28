@@ -1,4 +1,4 @@
-export enum BusinessTypes {
+export enum BusinessType {
     COOPERATIVE_ASSOCIATION = 'CP',
     BENEFIT_COMPANY = 'BEN',
     SOLE_PROPRIETOR = 'SP', 

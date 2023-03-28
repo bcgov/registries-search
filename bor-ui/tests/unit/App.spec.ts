@@ -8,7 +8,7 @@ import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
 import { useAuth, _readOnly } from '@/composables'
-import { ErrorCategories, ErrorCodes, RouteNames } from '@/enums'
+import { ErrorCategory, ErrorCode, RouteName } from '@/enums'
 import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 import { DefaultError } from '@/resources/error-dialog-options'
 import { createVueRouter } from '@/router'
@@ -28,7 +28,7 @@ describe('App tests', () => {
     _readOnly.tokenInitialized = true
     // set router
     router = createVueRouter()
-    await router.push(RouteNames.SEARCH)
+    await router.push(RouteName.SEARCH)
 
     wrapper = mount(App, {
       global: {
@@ -55,7 +55,7 @@ describe('App tests', () => {
   it('passes correct breadcrumbs depending on route', async () => {
     const expectedSearchBreadcrumbs = [SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     // currently on search route
-    expect(router.currentRoute.value.name).toBe(RouteNames.SEARCH)
+    expect(router.currentRoute.value.name).toBe(RouteName.SEARCH)
     expect(wrapper.findComponent(BcrsBreadcrumb).props().breadcrumbs).toEqual(expectedSearchBreadcrumbs)
   })
   it('registers jest running', () => {
@@ -69,10 +69,10 @@ describe('App tests', () => {
     expect(wrapper.vm.errorInfo).toBe(null)
     // set error
     _readOnly.error = {
-      category: ErrorCategories.ACCOUNT_SETTINGS,
+      category: ErrorCategory.ACCOUNT_SETTINGS,
       message: 'Error getting/setting current account.',
       statusCode: null,
-      type: ErrorCodes.ACCOUNT_SETUP_ERROR
+      type: ErrorCode.ACCOUNT_SETUP_ERROR
     }
     await flushPromises()
     // check error dialog values have updated
