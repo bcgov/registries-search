@@ -84,7 +84,7 @@ def resync_solr():
 
         if minutes_offset:
             # get all updates since the from_datetime
-            resync_date = from_datetime - timedelta(minutes=minutes)
+            resync_date = from_datetime - timedelta(minutes=minutes_offset)
             identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
 
         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
@@ -92,7 +92,7 @@ def resync_solr():
         for identifier in identifiers_to_resync:
             try:
                 update_search_solr(identifier, SolrDocEventType.RESYNC)
-            except SolrException as err:
+            except SolrException:
                 # log error so that ops can resync the business without redoing the whole batch
                 current_app.logger.error('Failed to resync %s', identifier)
 
