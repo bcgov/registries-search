@@ -72,20 +72,29 @@ def resync_solr():
     try:
         request_json = request.json
         from_datetime = datetime.utcnow()
-        if not request_json.get('minutesOffset'):
-            return resource_utils.bad_request_response('Missing required field "minutesOffset".')
+        minutes_offset = request_json.get('minutesOffset', None)
+        identifiers_to_resync = request_json.get('identifiers', None)
+        if not minutes_offset and not identifiers_to_resync:
+            return resource_utils.bad_request_response('Missing required field "minutesOffset" or "identifiers".')
         try:
-            minutes = float(request_json.get('minutesOffset'))
+            minutes_offset = float(minutes_offset)
         except ValueError:
-            return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
+            if not identifiers_to_resync:
+                return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
 
-        # get all updates since the from_datetime
-        resync_date = from_datetime - timedelta(minutes=minutes)
-        identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
+        if minutes_offset:
+            # get all updates since the from_datetime
+            resync_date = from_datetime - timedelta(minutes=minutes)
+            identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
+
         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
         # update docs
         for identifier in identifiers_to_resync:
-            update_search_solr(identifier, SolrDocEventType.RESYNC)
+            try:
+                update_search_solr(identifier, SolrDocEventType.RESYNC)
+            except SolrException as err:
+                # log error so that ops can resync the business without redoing the whole batch
+                current_app.logger.error('Failed to resync %s', identifier)
 
         return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
 
