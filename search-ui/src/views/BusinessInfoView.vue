@@ -200,7 +200,7 @@ const feePreSelectItem: Ref<FeeI> = ref({
   fee: 0,
   label: 'Select From Available Documents',
   quantity: 0,
-  serviceFee: 1.5
+  serviceFee: 0
 })
 
 // staff payment
@@ -331,7 +331,10 @@ onMounted(async () => {
 
 const loadPurchasableDocs = async () => {
   const feeData = await getDocFees([bsrchCode.value, FeeCodes.CGOOD, FeeCodes.CSTAT, FeeCodes.LSEAL])
-
+  if (!isStaff.value && !isStaffSBC.value) {
+    // set fee preselect serviceFee based on service fee of first item in fees
+    feePreSelectItem.value.serviceFee = feeData[0].serviceFee
+  }
   purchasableDocs.value.push({
     code: bsrchCode.value,
     fee: displayFee(feeData[0].fee, false),
