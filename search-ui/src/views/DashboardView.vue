@@ -2,57 +2,7 @@
   <v-container v-if="appReady" id="dashboard" class="container" fluid>
     <v-row no-gutters>
       <v-col>
-        <h1 style="display: flex;">
-          Business Search
-          <span class="beta-version">
-            <v-tooltip
-              content-class="tooltip__beta-version top-arrow px-2"
-              location="bottom"
-              open-on-click
-              :open-on-hover="false"
-              v-model="showBetaTooltip"
-              transition="fade-transition"
-            >
-              <template v-slot:activator="{ props }">
-                <span v-bind="props" class="beta-version__text pl-2" @click="showBetaTooltip = true">BETA</span>
-              </template>
-              <div
-                v-if="betaTooltipOpen"
-                class="pa-1"
-                style="pointer-events: all"
-                v-click-outside="triggerBetaTooltipOff"
-              >
-                <v-btn class="beta-version__close-btn float-right" icon @click="triggerBetaTooltipOff">
-                  <v-icon siz="24">mdi-window-close</v-icon>
-                </v-btn>
-                <div class="beta-version__info pb-5 pt-4 px-5">
-                  <p class="pt-2">
-                    Business Search is available as a Beta version. The Business
-                    Search Beta allows you to search for most businesses types
-                    registered in B.C., but you can only retrieve full information
-                    for Benefit Companies, active Cooperative Associations, Sole
-                    proprietorships, and General partnerships.
-                  </p>
-                  <p class="pt-4">
-                    Some features of this site may not function as intended,
-                    and if you encounter this, please contact us:
-                  </p>
-                  <p class="pt-4"><b>Toll Free:</b> 1-877-526-1526</p>
-                  <p><b>Victoria Office:</b> 250-387-7848</p>
-                  <p>
-                    <b>Email: </b>
-                    <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
-                  </p>
-                  <p class="pt-4">
-                    As part of a modern agile software development process the
-                    Business Search website will be continually updated and improved
-                    based on feedback from citizens and businesses in B.C.
-                  </p>
-                </div>
-              </div>
-            </v-tooltip>
-          </span>
-        </h1>
+        <h1>Business Search</h1>
       </v-col>
       <v-col class="pt-3" cols="auto">
         <a class="learn-more" :href="learnMoreURL" target="_blank">
@@ -197,7 +147,7 @@
 
 <script setup lang="ts">
 // local
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { DocumentAccessRequestHistory, SearchBar, SearchResults } from '@/components'
 import { useAuth, useDocumentAccessRequest, useSearch } from '@/composables'
 import { AccountTypes } from '@/enums';
@@ -217,25 +167,8 @@ const tab = ref('0')
 
 const totalDocAccessLength = computed(() => documentAccessRequest.requests?.length)
 
-const showBetaTooltip = ref(false)
-// NB: needed for v-click-outside to work properly
-const betaTooltipOpen = ref(false)
-const triggerBetaTooltipOff = () => {
-  if (betaTooltipOpen.value) {
-    showBetaTooltip.value = false
-    betaTooltipOpen.value = false
-  }
-}
-
 const unavailableMsg = 'Business Search is in the process of a scheduled ' +
   ' update. Searching will be unavailable for up to 15 minutes.'
-
-watch(() => showBetaTooltip.value, async (val) => {
-  if (val) {
-    await nextTick()
-    betaTooltipOpen.value = val
-  }
-})
 
 watch(() => props.appReady, (ready: boolean) => {
   if (ready) {

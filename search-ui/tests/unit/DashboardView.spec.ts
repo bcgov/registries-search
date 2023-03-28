@@ -52,9 +52,6 @@ describe('DashboardView tests', () => {
   it('renders Dashboard with expected child components', async () => {
     // check header is there
     expect(wrapper.find('h1').text()).toContain('Business Search')
-    expect(wrapper.find('.beta-version').exists()).toBe(true)
-    expect(wrapper.find('.beta-version__close-btn').exists()).toBe(false)
-    expect(wrapper.find('.beta-version__info').exists()).toBe(false)
     // check learn more is there
     expect(wrapper.find('.learn-more').text()).toContain('Learn More')
     expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.learnMoreURL)
