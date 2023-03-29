@@ -62,7 +62,7 @@ const toggleErrorMsg = () => {
 // facets / checkbox stuff
 const facets = reactive({
   entityType: {
-    business: true,
+    business: false,
     person: true
   }
 })

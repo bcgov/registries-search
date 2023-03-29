@@ -121,7 +121,7 @@ onMounted(async () => {
     }
     if (auth._error) return
     console.info('Verifying user access...')
-    if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
+    if (!isJestRunning.value && !getFeatureFlag('enable-director-search')) {
       handleError({
         category: ErrorCategory.ACCOUNT_ACCESS,
         message: 'This account does not have access to Business and Person Search',

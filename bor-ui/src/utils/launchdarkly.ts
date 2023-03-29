@@ -4,7 +4,7 @@ import { initialize, LDClient, LDFlagSet, LDOptions, LDUser } from 'launchdarkly
  * Default feature flags in case LD env key is not defined (eg, local development).
  */
 const defaultFlagSet: LDFlagSet = {
-  'ui-enabled': false,
+  'enable-director-search': false,
   'banner-text': ' ',
   'sentry-enable': false
 }
