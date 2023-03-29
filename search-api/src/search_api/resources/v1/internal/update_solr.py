@@ -78,7 +78,7 @@ def resync_solr():
             return resource_utils.bad_request_response('Missing required field "minutesOffset" or "identifiers".')
         try:
             minutes_offset = float(minutes_offset)
-        except ValueError:
+        except:  # pylint: disable=bare-except # noqa F841;
             if not identifiers_to_resync:
                 return resource_utils.bad_request_response(
                     'Invalid value for field "minutesOffset". Expecting a number.')
