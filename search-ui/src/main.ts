@@ -8,7 +8,7 @@ import Hotjar from 'vue-hotjar'
 import App from '@/App.vue'
 import { createVueRouter } from '@/router'
 import store from '@/store'
-import { fetchConfig, initLdClient } from '@/utils'
+import { fetchConfig, getFeatureFlag, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
 
 // Styles
@@ -36,8 +36,13 @@ async function start() {
   const keycloakConfigPath = sessionStorage.getItem('KEYCLOAK_CONFIG_PATH')
   await KeycloakService.setKeycloakConfigUrl(keycloakConfigPath)
 
+  // initialize Launch Darkly
+  if (window.ldClientId) {
+    await initLdClient()
+  }
+
   // init sentry if applicable
-  if (window.sentryEnable === 'true') {
+  if (getFeatureFlag('sentry-enable')) {
     console.info('Initializing Sentry...') // eslint-disable-line no-console
     Sentry.init({
       app,
@@ -56,11 +61,6 @@ async function start() {
       // We recommend adjusting this value in production
       tracesSampleRate: window.sentryTSR,
     })
-  }
-
-  // initialize Launch Darkly
-  if (window.ldClientId) {
-    await initLdClient()
   }
 
   // Initialize Hotjar

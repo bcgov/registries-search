@@ -37,9 +37,12 @@ export const useFeeCalculator = () => {
     fees.items = []
     fees._error = null
   }
-  const displayFee = (fee: number, noFee: boolean) => {
-    if (fee === 0 && noFee) return 'No Fee'
-    if (fee === 0) return '$ &#8211;'
+  const displayFee = (fee: number, noFee: boolean, displayZero = false) => {
+    if (!displayZero) {
+      if (fee === 0 && noFee) return 'No Fee'
+      if (fee === 0) return '$ &#8211;'
+    }
+
     // split decimal for padding zeros
     const feeParts = String(fee).split('.')
     if (feeParts.length === 1) feeParts.push('00')

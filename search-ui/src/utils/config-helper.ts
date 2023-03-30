@@ -1,6 +1,5 @@
 /* eslint-disable no-console, @typescript-eslint/no-explicit-any */
 import Axios from 'axios'
-import { getFeatureFlag } from '@/utils'
 
 // basic axios obj used for config call
 const axios = Axios.create()
@@ -85,17 +84,14 @@ export async function fetchConfig(): Promise<any> {
     console.info('Set Launch Darkly Client ID.')
   }
 
-  const sentryEnable = getFeatureFlag('sentry-enable')
-  ;(<any>window).sentryEnable = sentryEnable
-
   const sentryDsn = response.data.SENTRY_DSN
-  if (sentryDsn && sentryEnable) {
+  if (sentryDsn) {
     (<any>window).sentryDsn = sentryDsn
     console.info('Set Sentry DSN.')
   }
 
   const sentryTSR = response.data.SENTRY_TRACE_SAMPLE_RATE
-  if (sentryTSR && sentryEnable) {
+  if (sentryTSR) {
     (<any>window).sentryTSR = sentryDsn
     console.info('Set Sentry Trace Sample Rate to', sentryTSR)
   }
