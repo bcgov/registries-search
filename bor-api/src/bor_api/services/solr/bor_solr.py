@@ -100,12 +100,11 @@ class Solr:
             return response
         except Exception as err:  # noqa B902
             msg = 'Error handling Solr request.'
-            current_app.logger.debug(msg)
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):
                 status_code = response.status_code
                 msg = response.json().get('error', {}).get('msg', msg)
-
+            current_app.logger.debug(msg)
             raise SolrException(error=msg, status_code=status_code) from err
 
     def create_or_replace_docs(self, docs: list[Entity], force=False):
@@ -134,7 +133,6 @@ class Solr:
 
     def is_reindexing(self) -> bool:
         """Return True if this instance of solr is in the process of reindexing."""
-        print('is_reindexing')
         current_weekday = datetime.utcnow().weekday()
         timeout_start_weekday = self.app.config.get('SOLR_REINDEX_WEEKDAY')
         current_day = datetime.utcnow().strftime('%d')

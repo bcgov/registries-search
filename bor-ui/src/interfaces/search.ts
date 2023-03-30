@@ -33,7 +33,7 @@ export interface SearchResultI {
     relatedIdentifier: string
     relatedName: string
     relatedState: BusinessState
-    roleDates: { end?: string, start: string }[]
+    roleDates: { end?: Date, start: Date }[]
     roleType: RoleType
   }[],
   state?: BusinessState

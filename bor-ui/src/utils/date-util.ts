@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { isDate } from 'lodash'
 
 /**
@@ -145,5 +146,12 @@ export function isEffectiveDatePast(effectiveDate: Date): boolean {
 /** Whether the subject effective date/time is in the future. */
 export function isEffectiveDateFuture(effectiveDate: Date): boolean {
   return (effectiveDate > new Date())
+}
+
+/**  Return the date string in the desired format */
+export function toDateStr (date: Date, format?: string) {
+  return (date) ? moment(
+    date.toLocaleString('en-US', { timeZone: 'America/Vancouver' })
+    ).format(format || 'YYYY-MM-DD') : ''
 }
 

@@ -88,7 +88,6 @@ watch(() => facets.entityType, (val) => {
   const entityTypes = []
   if (val.business) entityTypes.push('BUSINESS')
   if (val.person) entityTypes.push('PERSON')
-  console.log('watch entityTypes', entityTypes)
   filterSearch(['categories','entityType'], entityTypes)
 }, { deep: true })
 

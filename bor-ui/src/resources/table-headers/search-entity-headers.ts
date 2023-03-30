@@ -1,6 +1,7 @@
 import { useSearch } from '@/composables'
 import { SearchResultI } from '@/interfaces'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
+import { toDateStr } from '@/utils'
 
 const { facetItems, filterSearch, highlightMatch } = useSearch()
 
@@ -72,11 +73,14 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     hasFilter: false,
     hasSort: false,
     itemFn: (val: SearchResultI) => {
-      if (val.roles) {
+      if (val.roles && val.roles.length > 0) {
+        // only 1 role per item for now
         let dates = ''
         for (const i in val.roles[0].roleDates) {
           if (i !== '0') dates += '<br/>'
-          dates += `${val.roles[0].roleDates[i].start} To ${val.roles[0].roleDates[i].end || 'Current'}`  
+          const start = toDateStr(val.roles[0].roleDates[i].start)
+          const end = toDateStr(val.roles[0].roleDates[i].end) || 'Current'
+          dates += `${start} To ${end}`  
         }
         return dates
       }
@@ -115,7 +119,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       itemsFnVal: 'relatedState',
       multiple: true,
       type: 'select',
-      value: ''
+      value: null
     },
     hasFilter: true,
     hasSort: false,

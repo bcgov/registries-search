@@ -66,7 +66,7 @@ import { computed, onMounted, ref } from 'vue'
 import _ from 'lodash'
 // local
 import { BaseTable, ErrorRetry } from '@/components'
-import { useSearch } from '@/composables'
+import { STARTING_FILTERS, useSearch } from '@/composables'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 // internal
 import { SearchTableAction, SearchTableName } from './common'
@@ -95,7 +95,7 @@ const tooltipMsg = 'You can access this business through BC OnLine or by contact
   'See "Help with Business and Person Search" for details.'
 
 const clearFilters = () => {
-  for (const i in search.filters) { search.filters[i] = '' }
+  search.filters = STARTING_FILTERS.value
   updateTableHeaderFilters()
   resetFilters.value = true
 }

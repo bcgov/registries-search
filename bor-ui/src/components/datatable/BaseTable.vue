@@ -71,6 +71,7 @@
                     clear-icon="mdi-close"
                     density="compact"
                     hide-details
+                    hide-no-data
                     :items="header.filter.items || header.filter.itemsFn(header.filter.itemsFnVal)"
                     :item-title="header.filter.itemValue || ''"
                     :item-value="header.filter.itemValue || ''"
@@ -79,7 +80,13 @@
                     :open-on-clear="true"
                     v-model="header.filter.value"
                     @update:modelValue="filter(header)"
-                  />
+                  >
+                    <template v-slot:selection="{ item }">
+                      <span style="font-size: 0.825rem;">
+                        {{ capFirstLetter(item.title) }},
+                      </span>
+                    </template>
+                  </v-select>
                   <v-text-field
                     v-else-if="header.hasFilter && header.filter.type === 'text'"
                     :class="[filterClass, 'base-table__header__item__filter', header.filter.value ? 'active' : '']"
@@ -203,13 +210,15 @@ const sortIcon = computed(() => {
   return 'mdi-chevron-up'
 })
 
+const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
+
 const resetAll = () => {
   // reset sort
   sortBy.value = ''
   sortDirection.value = 'desc'
   // reset filters
   for (const i in headers) {
-    if (headers[i]?.filter?.value) headers[i].filter.value = ''
+    if (headers[i]?.filter?.value) headers[i].filter.value = null
   }
 }
 
@@ -271,7 +280,7 @@ watch(() => props.resetFilters, (val) => {
     for (const i in headers) {
       if (headers[i]?.filter?.value) {
         usedFilter = i
-        headers[i].filter.value = ''
+        headers[i].filter.value = null
       }
     }
     if (usedFilter !== null) filter(headers[usedFilter])
@@ -339,7 +348,7 @@ th {
       &__filter {
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label) {
           font-size: 14px;
-          margin: 2px 0 0 8px;
+          margin: 3px 0 0 8px;
           max-width: none;
         }
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label.v-field-label--floating) {
@@ -347,6 +356,7 @@ th {
           font-size: 14px;
           margin: 11px 0 0 8px;
           top: 0 !important;
+          --v-field-label-scale: 1;
         }
         :deep(.v-label.v-field-label) {
           transform: none;

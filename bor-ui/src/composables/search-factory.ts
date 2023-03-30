@@ -4,6 +4,17 @@ import { ErrorI, FacetI, SearchI, SearchResponseI } from '@/interfaces'
 import { searchEntities } from '@/requests'
 import { EntityType, ErrorCategory } from '@/enums'
 
+export const STARTING_FILTERS = computed(() => {
+  return {
+    query: { roles: {} },
+    categories: {
+      entityAddresses: {},
+      entityType: [EntityType.PERSON],
+      roles:{}
+    }
+  }
+})
+
 const DEFAULT_SEARCH_ROWS = 100
 
 // read only globals
@@ -18,14 +29,7 @@ const _readOnly = reactive({
 // globals TODO: try moving to pinia
 const search = reactive({
   facetsResult: {},
-  filters: {
-    query: { roles: {} },
-    categories: {
-      entityAddresses: {},
-      entityType: [EntityType.BUSINESS, EntityType.PERSON],
-      roles:{}
-    }
-  },
+  filters: STARTING_FILTERS.value,
   results: null,
   totalResults: null,
   unavailable: false,
@@ -58,7 +62,7 @@ export const useSearch = () => {
         if (['entityType', 'value'].includes(i)) continue
 
         if (['string','array'].includes(typeof(object[i]))) {
-          if (object[i]) console.log(i, object[i]); return true
+          if (object[i]) return true
         } else {
           if (findActiveInObject(object[i])) return true
         }
@@ -95,9 +99,12 @@ export const useSearch = () => {
 
   /** Apply filter and get results set. */
   const filterSearch = async (path: string[], val: any) => {
+    const increasing_scope = !val
     // path will have length of 3 at most
     // i.e. search.filters['start'] = val
-    if (path.length === 1) search.filters[path[0]] = val
+    if (path.length === 1) {
+      search.filters[path[0]] = val
+    }
     // i.e. search.filters['query']['bn'] = val
     else if (path.length === 2) {
       search.filters[path[0]][path[1]] = val
@@ -105,7 +112,7 @@ export const useSearch = () => {
     // i.e. search.filters['query']['roles']['relatedBN'] = val
     else search.filters[path[0]][path[1]][path[2]] = val
 
-    if (search._value) await getSearchResults(search._value, false)
+    if (search._value) await getSearchResults(search._value, increasing_scope)
   }
 
   /** Get next batch of results from the api and update the results. */
@@ -170,10 +177,7 @@ export const useSearch = () => {
   /** Reset all search values */
   const resetSearch = () => {
     search.facetsResult = {}
-    search.filters = {
-      query: { roles: {} },
-      categories: { entityAddresses: {}, roles:{} }
-    }
+    search.filters = STARTING_FILTERS.value
     search.results = null
     search.totalResults = null
     search.unavailable = false

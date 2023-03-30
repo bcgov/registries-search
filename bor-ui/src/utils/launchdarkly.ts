@@ -35,14 +35,10 @@ export async function initLdClient (): Promise<void> {
     }
 
     ldClient = initialize(envKey, user, options)
-    console.log(ldClient)
 
     try {
-      console.log('await for init')
       await ldClient.waitForInitialization()
-      console.log('done')
     } catch (e) {
-      console.log('error', e)
       // shut down client -- `variation()` will return undefined values
       await ldClient.close()
       // NB: LD logs its own errors

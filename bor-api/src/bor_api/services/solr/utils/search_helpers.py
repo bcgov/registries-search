@@ -63,7 +63,7 @@ def entities_search(params: SearchParams):
     # boosts for term order result ordering
     initial_queries['query'] += f' OR ({Field.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({Field.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({Field.LEGAL_NAME_SINGLE_Q.value}:"{params.query["value"].split()[0]}"^2)'
+    initial_queries['query'] += f' OR ({Field.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults
     solr_payload = {
