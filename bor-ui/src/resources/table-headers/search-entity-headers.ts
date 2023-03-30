@@ -1,4 +1,5 @@
 import { useSearch } from '@/composables'
+import { RoleType } from '@/enums'
 import { SearchResultI } from '@/interfaces'
 import { BaseTableHeaderI } from '@/interfaces/base-table'
 import { toDateStr } from '@/utils'
@@ -75,12 +76,18 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     itemFn: (val: SearchResultI) => {
       if (val.roles && val.roles.length > 0) {
         // only 1 role per item for now
+        const roleType = val.roles[0].roleType
         let dates = ''
         for (const i in val.roles[0].roleDates) {
           if (i !== '0') dates += '<br/>'
           const start = toDateStr(val.roles[0].roleDates[i].start)
-          const end = toDateStr(val.roles[0].roleDates[i].end) || 'Current'
-          dates += `${start} To ${end}`  
+          const end = toDateStr(val.roles[0].roleDates[i].end)
+  
+          if (roleType === RoleType.INCORPORATOR) {
+            dates += start
+          } else {
+            dates += `${start} To ${end || 'Current'}`  
+          }
         }
         return dates
       }

@@ -1,5 +1,6 @@
 export enum RoleType {
-  DIRECTOR = 'director',
-  INCORPORATOR = 'incorporator',
-  PARTNER = 'partner'
+  COMPLETING_PARTY = 'COMPLETING PARTY',
+  DIRECTOR = 'DIRECTOR',
+  INCORPORATOR = 'INCORPORATOR',
+  PARTNER = 'PARTNER'
 }
