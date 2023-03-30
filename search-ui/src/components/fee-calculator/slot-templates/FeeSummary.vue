@@ -29,7 +29,7 @@
       <v-col class="fee-total__currency">CAD</v-col>
       <v-col class="fee-total__value" cols="auto" align-self="end">
         <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div v-html="displayFee(totalFees, false)" />
+          <div v-html="displayFee(totalFees, false, fees.items.length > 0)" />
         </v-slide-y-reverse-transition>
       </v-col>
     </v-row>

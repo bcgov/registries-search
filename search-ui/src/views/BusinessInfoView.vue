@@ -337,7 +337,7 @@ const loadPurchasableDocs = async () => {
   }
   purchasableDocs.value.push({
     code: bsrchCode.value,
-    fee: displayFee(feeData[0].fee, false),
+    fee: displayFee(feeData[0].fee, false, true),
     label: 'Business Summary and Filing History Documents',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
     active: true,
@@ -348,7 +348,7 @@ const loadPurchasableDocs = async () => {
   if (isCogsAvailable()) {
     purchasableDocs.value.push({
       code: FeeCodes.CGOOD,
-      fee: displayFee(feeData[1].fee, false),
+      fee: displayFee(feeData[1].fee, false, true),
       label: 'Certificate of Good Standing',
       documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
       active: entity.goodStanding,
@@ -361,7 +361,7 @@ const loadPurchasableDocs = async () => {
   if (isCstatAvailable()) {
     purchasableDocs.value.push({
       code: FeeCodes.CSTAT,
-      fee: displayFee(feeData[2].fee, false),
+      fee: displayFee(feeData[2].fee, false, true),
       label: 'Certificate of Status',
       documentType: DocumentType.CERTIFICATE_OF_STATUS,
       active: true,
@@ -372,7 +372,7 @@ const loadPurchasableDocs = async () => {
   // letter under seal is always available
   purchasableDocs.value.push({
     code: FeeCodes.LSEAL,
-    fee: displayFee(feeData[3].fee, false),
+    fee: displayFee(feeData[3].fee, false, true),
     label: 'Letter Under Seal',
     documentType: DocumentType.LETTER_UNDER_SEAL,
     active: true,
