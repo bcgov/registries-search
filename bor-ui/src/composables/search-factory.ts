@@ -148,14 +148,14 @@ export const useSearch = () => {
     if (searchResp) {
       if (!searchResp.error) {
         // success
-        _readOnly.value = searchResp.searchResults.queryInfo.query.value
-        console.log(searchResp)
         if (updateFacets) search.facetsResult = searchResp.facets
+
+        _readOnly.value = searchResp.searchResults.queryInfo.query.value
+        _readOnly.error = null
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults
-        _readOnly.error = null
         search.unavailable = false
-        console.log('search:', search)
+
       } else _searchErrorHandler(searchResp)
     } else {
       // unhandled response error (should never get here)
