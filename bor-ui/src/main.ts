@@ -8,7 +8,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import { createVueRouter } from '@/router'
 import store from '@/store'
-import { fetchConfig, initLdClient } from '@/utils'
+import { fetchConfig, getFeatureFlag, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
 
 // Styles
@@ -33,11 +33,21 @@ async function start() {
 
   // configure Keycloak Service
   console.info('Starting Keycloak service...') // eslint-disable-line no-console
-  const keycloakConfigPath = sessionStorage.getItem('KEYCLOAK_CONFIG_PATH')
-  await KeycloakService.setKeycloakConfigUrl(keycloakConfigPath)
+  const keycloakConfig: any = {
+    url: `${window['keycloakAuthUrl']}`,
+    realm: `${window['keycloakRealm']}`,
+    clientId: `${window['keycloakClientId']}`
+  }
+
+  await KeycloakService.setKeycloakConfigUrl(keycloakConfig)
+
+  // initialize Launch Darkly
+  if (window.ldClientId) {
+    await initLdClient()
+  }
 
   // init sentry if applicable
-  if (window.sentryEnable === 'true') {
+  if (getFeatureFlag('sentry-enable')) {
     console.info('Initializing Sentry...') // eslint-disable-line no-console
     Sentry.init({
       app,
@@ -56,11 +66,6 @@ async function start() {
       // We recommend adjusting this value in production
       tracesSampleRate: window.sentryTSR,
     })
-  }
-
-  // initialize Launch Darkly
-  if (window.ldClientId) {
-    await initLdClient()
   }
 
   // Initialize Hotjar
