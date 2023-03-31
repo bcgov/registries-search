@@ -630,7 +630,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:9::identifier:62::name:te equip stor&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:1::identifier:62::name:lab&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
 							"host": [
 								"{{base_url}}"
 							],
@@ -643,7 +643,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:test::bn:9::identifier:62::name:te equip stor"
+									"value": "value:test::bn:1::identifier:62::name:lab"
 								},
 								{
 									"key": "start",
@@ -2338,7 +2338,7 @@
 					"response": []
 				},
 				{
-					"name": "resync",
+					"name": "resync mins offset",
 					"event": [
 						{
 							"listen": "test",
@@ -2347,7 +2347,7 @@
 									"var jsonData = pm.response.json()\r",
 									"\r",
 									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
+									"    pm.response.to.have.status(201);    \r",
 									"});\r",
 									"\r",
 									"pm.test('should return JSON', function () {\r",
@@ -2386,6 +2386,77 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update",
+								"resync"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resync identifiers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(201);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"identifiers\": [\"BC0871330\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
