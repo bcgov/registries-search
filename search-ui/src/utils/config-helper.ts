@@ -1,5 +1,3 @@
-import { getFeatureFlag } from '@/utils'
-
 /**
  * Fetches config from environment and API.
  * @returns A promise to get & set session storage keys with appropriate values.
@@ -52,16 +50,14 @@ export async function fetchConfig(): Promise<any> {
     (<any>window).ldClientId = ldClientId
   }
 
-  const sentryEnable = getFeatureFlag('sentry-enable')
-
   const sentryDsn = process.env.VUE_APP_SENTRY_DSN
-  if (sentryDsn && sentryEnable) {
+  if (sentryDsn) {
     (<any>window).sentryDsn = sentryDsn
   }
 
   const sentryTSR = process.env.VUE_APP_SENTRY_TRACE_SAMPLE_RATE
-  if (sentryTSR && sentryEnable) {
-    (<any>window).sentryTSR = sentryDsn
+  if (sentryTSR) {
+    (<any>window).sentryTSR = sentryTSR
   }
 
   const hotjarId: string = process.env.VUE_APP_HOTJAR_ID
