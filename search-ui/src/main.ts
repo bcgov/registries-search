@@ -33,8 +33,13 @@ async function start() {
 
   // configure Keycloak Service
   console.info('Starting Keycloak service...') // eslint-disable-line no-console
-  const keycloakConfigPath = sessionStorage.getItem('KEYCLOAK_CONFIG_PATH')
-  await KeycloakService.setKeycloakConfigUrl(keycloakConfigPath)
+  const keycloakConfig: any = {
+    url: `${window['keycloakAuthUrl']}`,
+    realm: `${window['keycloakRealm']}`,
+    clientId: `${window['keycloakClientId']}`
+  }
+
+  await KeycloakService.setKeycloakConfigUrl(keycloakConfig)
 
   // initialize Launch Darkly
   if (window.ldClientId) {
