@@ -130,3 +130,5 @@ search-solr/test_solr
 .idea/
 
 .DS_Store
+
+.history

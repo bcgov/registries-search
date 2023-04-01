@@ -58,7 +58,7 @@ const feeArr: Fee[] = [{
   total: 26.50
 }]
 
-const setupBusInfoTest = (goodStanding: boolean = true) => {
+const setupBusInfoTest = (goodStanding = true) => {
   const mockGet = jest.spyOn(axios, 'get')
   if(!goodStanding){
     mockedBusinessResp.goodStanding = false

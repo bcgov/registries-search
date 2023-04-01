@@ -16,13 +16,15 @@
 
     <loading-screen v-if="appLoading" :is-loading="appLoading" />
     <sbc-header v-if="auth.tokenInitialized" :in-auth="false" :show-login-menu="false" />
-    <sbc-system-banner
-      v-if="systemMessage != null"
-      class="justify-center"
-      :setShow="systemMessage != null"
-      :setMessage="systemMessage"
-      setType="warning"
-    />
+
+    <!-- Alert banner -->
+    <v-alert
+      tile dense
+      type="warning"
+      v-if="bannerText">
+      <div v-html="bannerText" class="mb-0 text-center colour-dk-text"></div>
+    </v-alert>
+
     <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
     <v-expand-transition>
       <div v-if="showEntityInfo">
@@ -52,7 +54,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
 // BC Registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components'
+import { LoadingScreen, SbcFooter, SbcHeader } from '@/sbc-common-components'
 // Bcrs shared components
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
@@ -92,11 +94,8 @@ const isJestRunning = computed((): boolean => {
   return (process.env.JEST_WORKER_ID !== undefined)
 })
 
-const systemMessage = computed((): string => {
-  // if SYSTEM_MESSAGE does not exist this will return 'undefined'. Needs to be null or str
-  const systemMessage = getFeatureFlag('banner-text')
-  if (systemMessage?.trim()) return systemMessage?.trim()
-  return null
+const bannerText = computed((): string => {
+  return getFeatureFlag('banner-text')?.trim() || null
 })
 
 const breadcrumbs = computed((): Array<BreadcrumbIF> => {
