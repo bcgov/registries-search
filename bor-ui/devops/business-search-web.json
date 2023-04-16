@@ -1,6 +1,6 @@
 {
     "clientId": "business-search-web",
-    "rootUrl": "https://dev.bcregistry.ca/business/search",
+    "rootUrl": "https://yfjq17-dev.web.app",
     "adminUrl": "/",
     "baseUrl": "/*",
     "surrogateAuthRequired": false,
@@ -11,13 +11,15 @@
         "http://localhost:8081/*",
         "http://localhost:8080/*",
         "http://localhost:8082/*",
-        "https://dev.bcregistry.ca/*"
+        "https://dev.bcregistry.ca/*",
+        "https://yfjq17-dev.web.app"
     ],
     "webOrigins": [
         "http://localhost:8080",
         "https://dev.bcregistry.ca",
         "http://localhost:8082",
-        "http://localhost:8081"
+        "http://localhost:8081",
+        "https://yfjq17-dev.web.app"
     ],
     "notBefore": 0,
     "bearerOnly": false,
