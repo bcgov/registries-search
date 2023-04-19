@@ -34,8 +34,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
         request_json = request.get_json()
         query_json = request_json.get('query', {})
         value = query_json.get('value', None)
+        # TODO: validate the rest of the payload
         if not value or not isinstance(value, str):
-            # update this later once we have other filters going
             return jsonify({'message': "Expected a string for 'value'."}), HTTPStatus.BAD_REQUEST
 
         # set base query params

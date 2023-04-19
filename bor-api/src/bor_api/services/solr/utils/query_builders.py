@@ -17,13 +17,14 @@ import re
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 
+IDENTIFIER_FIELDS = [Field.IDENTIFIER_Q, Field.RELATED_IDENTIFIER_Q]
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + Field.ENTITY_TYPE.value + ":*'}"
 
 
 def _add_identifier(field: str, term: str):
     """Return a special identifier query."""
     corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
-    if identifier := re.search(corp_prefix_regex, term):
+    if field in IDENTIFIER_FIELDS and (identifier := re.search(corp_prefix_regex, term)):
         prefix = identifier.group(1)
         new_term = term.replace(prefix, '', 1)
         return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
@@ -50,7 +51,7 @@ def build_child_query(child_query: dict[str, str]) -> str | None:
     return f'({child_q})'
 
 
-def build_facet(field: Field, is_nested: bool):
+def build_facet(field: Field, is_nested: bool) -> dict[str, dict]:
     """Return the facet dict for the field."""
     facet = {field.value: {'type': 'terms', 'field': field.value}}
     if is_nested:
@@ -60,8 +61,8 @@ def build_facet(field: Field, is_nested: bool):
     return facet
 
 
-def build_facet_query(field: Field, values: list[str], is_nested: bool = False):
-    """Return the solr filter clause for the given params."""
+def build_facet_query(field: Field, values: list[str], is_nested: bool = False) -> str:
+    """Return the facet filter clause for the given params."""
     filter_q = f'{field.value}:("{values[0]}"'
     if is_nested:
         filter_q = PRE_CHILD_FILTER_CLAUSE + f'{field.value}:"{values[0]}"'
@@ -80,17 +81,13 @@ def build_base_query(query: dict[str, str],
                      boost_fields: dict[Field, int],
                      fuzzy_fields: dict[Field, int]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
-    identifier_fields = [Field.IDENTIFIER_Q, Field.RELATED_IDENTIFIER_Q]
-
     terms = query['value'].split()
     query_str = ''
     for term in terms:
         # each term only needs to match one of the given fields, but all terms must match at least 1
         term_str = ''
         for field in fields:
-            field_str = f'{field.value}:{term}'
-            if field in identifier_fields:
-                field_str = f'{_add_identifier(field.value, term)}'
+            field_str = _add_identifier(field.value, term)
             # fuzzy_str used later (need it without boost)
             fuzzy_str = field_str
             # add boost
@@ -115,9 +112,6 @@ def build_base_query(query: dict[str, str],
             continue
         terms = query[key].split()
         for term in terms:
-            filter_str = f'{key}:{term}'
-            if key in identifier_fields:
-                filter_str = f'{_add_identifier(key, term)}'
-            filters.append(filter_str)
+            filters.append(_add_identifier(key, term))
 
     return {'query': query_str, 'filter': filters}

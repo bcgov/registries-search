@@ -43,8 +43,8 @@ def test_find_most_recent_by_identifier(session):
     entity_doc_3 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_3.legalName += '3'
 
-    solr_doc_1 = SolrDoc(doc=asdict(entity_doc_1), identifier=entity_doc_1.identifier).save()
-    solr_doc_2 = SolrDoc(doc=asdict(entity_doc_2), identifier=entity_doc_2.identifier).save()
+    SolrDoc(doc=asdict(entity_doc_1), identifier=entity_doc_1.identifier).save()
+    SolrDoc(doc=asdict(entity_doc_2), identifier=entity_doc_2.identifier).save()
     solr_doc_3 = SolrDoc(doc=asdict(entity_doc_3), identifier=entity_doc_3.identifier).save()
 
     # test method

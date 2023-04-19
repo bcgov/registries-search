@@ -42,5 +42,5 @@ class Entity:
         Needed here because identifier is the unique key in all docs (addresses,roles,etc.),
         so it can't be copied over via the index copyfields without adding in unwanted data.
         """
-        if self.entityType == 'business':
+        if self.entityType.lower() == 'business':
             self.identifier_q = self.identifier
