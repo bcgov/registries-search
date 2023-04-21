@@ -29,7 +29,7 @@
         <template v-slot:item-slot-name="{ header, item}">
           <search-table-name
             :icon="item.entityType.toLowerCase() === EntityType.PERSON ? 'mdi-account' : 'mdi-domain'"
-            :name="header.itemFn(item[header.col])" />
+            :name="header.itemFn(item)" />
         </template>
         <template v-slot:item-slot-action>
           <!-- @action="goToBusinessInfo(item)" -->

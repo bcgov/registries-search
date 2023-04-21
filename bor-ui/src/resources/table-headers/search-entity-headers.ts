@@ -20,7 +20,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     },
     hasFilter: true,
     hasSort: false,
-    itemFn: highlightMatch,
+    itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
     slotId: 'name',
     value: 'Name',
     width: '20%'
@@ -38,9 +38,9 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     hasSort: false,
     itemFn: (val: SearchResultI) => {
       if (!val.entityAddresses) return 'N/A'
-      return `${val.entityAddresses[0].streetAddress}<br/>${val.entityAddresses[0].addressCity} ` +
+      return `${val.entityAddresses[0].streetAddress}<br>${val.entityAddresses[0].addressCity} ` +
         `${val.entityAddresses[0].addressRegion} ${val.entityAddresses[0].postalCode}` +
-        `<br/>${val.entityAddresses[0].addressCountry}`
+        `<br>${val.entityAddresses[0].addressCountry}`
     },
     value: 'Address',
     width: '17%'
@@ -79,7 +79,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
         const roleType = val.roles[0].roleType
         let dates = ''
         for (const i in val.roles[0].roleDates) {
-          if (i !== '0') dates += '<br/>'
+          if (i !== '0') dates += '<br>'
           const start = toDateStr(val.roles[0].roleDates[i].start)
           const end = toDateStr(val.roles[0].roleDates[i].end)
   
@@ -109,7 +109,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     hasSort: false,
     itemFn: (val: SearchResultI) => {
       if (val.roles) return `<u>${val.roles[0].relatedName}</u>` +
-        `<br/>${val.roles[0].relatedIdentifier}<br/>${val.roles[0].relatedBN || ''}`
+        `<br>${val.roles[0].relatedIdentifier}<br>${val.roles[0].relatedBN || ''}`
       return 'N/A'
     },
     value: 'Business Details',

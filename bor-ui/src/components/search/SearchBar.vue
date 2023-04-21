@@ -15,7 +15,7 @@
       @keyup.enter="toggleErrorMsg()"
       :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
-    <v-row class="mt-3" no-gutters>
+    <v-row id="search-bar-checkboxes" class="mt-3" no-gutters>
       <v-col cols="auto">
         <v-checkbox color="primary" density="compact" label="Person" v-model="facets.entityType.person" />
       </v-col>

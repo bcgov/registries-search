@@ -133,7 +133,7 @@ import { useAuth, useSearch } from '@/composables'
 import { AccountType } from '@/enums';
 
 // eslint-disable-next-line
-const props = defineProps({ appReady: { type: Boolean } })
+const props = defineProps<{ appReady: boolean }>()
 
 const { auth } = useAuth()
 const { search } = useSearch()
