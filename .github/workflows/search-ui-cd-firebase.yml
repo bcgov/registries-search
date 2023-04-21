@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH UI CD
+name: REGISTRIES SEARCH UI CD - GCP
 
 on:
   push:
