@@ -168,6 +168,11 @@ def test_search_entities_solr_mock(app, client, requests_mock, test_name, query,
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'CA', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'active': True, 'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
+    ('test_basic_name_match_spellcheck',
+     {'value': 'pirson ttree'},
+     {},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'CA', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three', 'roles': [{'active': True, 'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+    ),
     ('test_basic_name_match_stem_1',
      {'value': 'persons one'},
      {},
