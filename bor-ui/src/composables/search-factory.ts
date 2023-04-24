@@ -119,12 +119,12 @@ export const useSearch = () => {
   const getNextResults = async () => {
     if (!hasMoreResults.value) return
     _readOnly.loadingNext = true
-      // business search
+    // search
     const searchResp = await searchEntities(search._value, search.filters, rows, search._start + 1)
     if (searchResp) {
       if (!searchResp.error) {
         // success
-        search._start += 1
+        _readOnly.start += 1
         search.results = [...search.results, ...searchResp.searchResults.results]
         _readOnly.error = null
         search.unavailable = false
@@ -147,6 +147,7 @@ export const useSearch = () => {
     const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
       if (!searchResp.error) {
+        console.log(searchResp.searchResults.results)
         // success
         if (updateFacets) search.facetsResult = searchResp.facets
 

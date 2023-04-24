@@ -1,6 +1,7 @@
 // External
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { StatusCodes } from 'http-status-codes'
+import _ from 'lodash'
 // bcregistry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
@@ -18,7 +19,7 @@ describe('SearchResults tests', () => {
   let mockPost: jest.SpyInstance<Promise<unknown>, [url: string, data?: unknown, config?: any]>
 
   const mockUrl = 'http://mock-url.ca'
-  const mockResp = { ...SearchResponseMock }
+  const mockResp = _.cloneDeep(SearchResponseMock)
 
   sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
   sessionStorage.setItem('BOR_API_URL', mockUrl)
@@ -92,6 +93,8 @@ describe('SearchResults tests', () => {
     // does not show error retry
     expect(search._error).toBe(null)
     expect(table.findComponent(ErrorRetry).exists()).toBe(false)
+    // does not show load more results btn
+    expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
   })
   it('Populates data correctly results contain matches', async () => {
     // trigger search
@@ -184,5 +187,43 @@ describe('SearchResults tests', () => {
     expect(search.results.length).toBe(mockResp.searchResults.results.length)
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(search.results.length)
+  })
+  it('Shows load more results button when applicable', async () => {
+    // set rows asked for to 1
+    sessionStorage.setItem('SEARCH_ROWS', '1')
+    // set mock to one result
+    mockResp.searchResults.results = [{ ...SearchResponseMock.searchResults.results[0] }]
+    // assert mock total results is 2 (if this changes then code below will need to be altered)
+    expect(mockResp.searchResults.totalResults).toBe(2)
+    // trigger search
+    await getSearchResults('test')
+    // sanity check
+    expect(mockPost).toHaveBeenCalledTimes(1)
+    expect(search.totalResults).toBe(mockResp.searchResults.totalResults)
+    expect(search.results.length).toBe(1)
+    expect(wrapper.vm.hasMoreResults).toBe(true)
+
+    // check load more results is displayed
+    const moreResultsDiv = wrapper.find('#load-more-results')
+    expect(moreResultsDiv.exists()).toBe(true)
+    // button is there
+    expect(moreResultsDiv.find('v-btn').exists()).toBe(true)
+
+    // load more results
+    // set mock for second part of response
+    mockResp.searchResults.results = [{ ...SearchResponseMock.searchResults.results[1] }]
+    // click load more
+    moreResultsDiv.find('v-btn').trigger('click')
+    // it will await 50 milliseconds
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await flushPromises()
+    // triggered call
+    expect(mockPost).toHaveBeenCalledTimes(2)
+    // added result to existing
+    expect(search.results.length).toBe(2)
+    // has more results should be false
+    expect(wrapper.vm.hasMoreResults).toBe(false)
+    // load more button should not be there anymore
+    expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
   })
 })

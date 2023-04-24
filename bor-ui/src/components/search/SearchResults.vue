@@ -48,7 +48,7 @@
         </template>
       </base-table>
     </div>
-    <div style="text-align: center;">
+    <div id="load-more-results" style="text-align: center;">
       <v-btn
         v-if="hasMoreResults"
         class="btn-basic-outlined mt-30px"
