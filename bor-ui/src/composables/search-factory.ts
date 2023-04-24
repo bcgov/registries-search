@@ -147,7 +147,6 @@ export const useSearch = () => {
     const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
       if (!searchResp.error) {
-        console.log(searchResp.searchResults.results)
         // success
         if (updateFacets) search.facetsResult = searchResp.facets
 
