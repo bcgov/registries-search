@@ -28,7 +28,6 @@ from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRo
 from bor_api.utils.request_validators import validate_solr_update_request
 
 
-
 bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable=invalid-name
 
 
@@ -96,7 +95,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         numbers_only_rgx = r'^[0-9]+$'
         # TODO: get legal types from shared enum
         return legal_type in ['BEN', 'BC', 'CC', 'ULC'] and re.search(numbers_only_rgx, identifier)
-    
+
     def get_delivery_address(address_info: dict) -> Address:
         """Return the delivery address as an Address doc."""
         return Address(addressType=address_info.get('addressType', ''),
@@ -118,7 +117,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         if officer.get('lastName'):
             person_name += ' ' + officer['lastName'].strip()
         return person_name.strip()
-    
+
     entities = []
 
     address_info = request_json['businessAddresses']
@@ -142,12 +141,12 @@ def _parse_entities(request_json: dict) -> list[Entity]:
     for party in party_info:
         address = get_delivery_address(party['deliveryAddress'])
         name = get_party_name(party['officer'])
-        
+
         # NOTE: business parties are ignored for now -- waiting for LEAR update
         identifier = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
         for role in party.get('roles'):
-            active = False if role.get('cessationDate', None) else True
+            active = not role.get('cessationDate', None)
             entities.append(Entity(entityAddresses=[address],
                                    entityType='PERSON',
                                    identifier=identifier,

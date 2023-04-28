@@ -15,7 +15,7 @@
 from .util import get_str
 
 
-def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches
+def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches,too-many-statements
     """Validate solr doc update request."""
     err = []
     # validate business info
@@ -39,15 +39,17 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     business_status = get_str(request_json, business_status_path)
     if business_status is None or business_status not in ['ACTIVE', 'HISTORICAL']:
         err.append({'error': 'A valid business state is required.', 'path': business_status_path})
-    
+
     # validate address info
     if not request_json.get('businessAddresses'):
         err.append({'error': 'Business Addresses are required.', 'path': '/businessAddresses'})
         return err
     if not request_json['businessAddresses'].get('registeredOffice', {}).get('deliveryAddress'):
-        err.append({'error': 'Delivery Address is required.', 'path': '/businessAddresses/registeredOffice/deliveryAddress'})
+        err.append({'error': 'Delivery Address is required.',
+                    'path': '/businessAddresses/registeredOffice/deliveryAddress'})
         return err
-    required_address_fields = ['addressType', 'addressCity', 'addressCountry', 'addressRegion', 'postalCode', 'streetAddress']
+    required_address_fields = ['addressType', 'addressCity', 'addressCountry', 'addressRegion',
+                               'postalCode', 'streetAddress']
     for field in required_address_fields:
         path = f'/businessAddresses/registeredOffice/deliveryAddress/{field}'
         if not get_str(request_json, path):
@@ -57,7 +59,7 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     for index, party in enumerate(request_json.get('parties', [])):
         if not party.get('deliveryAddress'):
             err.append({'error': 'Party Delivery Address is required.', 'path': f'/parties/{index}/deliveryAddress'})
-        
+
         if not party.get('source'):
             err.append({'error': 'Party Source is required.', 'path': f'/parties/{index}/source'})
         elif party['source'] not in ['LEAR', 'COLIN']:
@@ -72,7 +74,8 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
                     {'error': 'Role Type is required.', 'path': f'/parties/{index}/roles/{role_index}/roleType'})
             if not role.get('appointmentDate'):
                 err.append(
-                    {'error': 'Appointment Date is required.', 'path': f'/parties/{index}/roles/{role_index}/appointmentDate'})
+                    {'error': 'Appointment Date is required.',
+                     'path': f'/parties/{index}/roles/{role_index}/appointmentDate'})
 
         officer_path = f'/parties/{index}/officer'
         officer = party.get('officer', {})
