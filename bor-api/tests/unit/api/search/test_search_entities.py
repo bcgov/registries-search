@@ -347,7 +347,7 @@ def test_search_entities(client, test_name, query, categories, expected):
     bor_solr.delete_all_docs()
     time.sleep(1)
     bor_solr.create_or_replace_docs(SOLR_TEST_DOCS)
-    time.sleep(1)
+    time.sleep(2)
     # format payload
     payload = {'query': query}
     if categories:

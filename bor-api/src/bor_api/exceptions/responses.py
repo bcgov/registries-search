@@ -19,9 +19,9 @@ from flask import jsonify, current_app
 from .exceptions import BaseExceptionE
 
 
-def bad_request_response(message: str):
+def bad_request_response(message: str, errors: list[dict[str, str]] = []):
     """Build generic bad request response."""
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
+    return jsonify({'message': message, 'details': errors}), HTTPStatus.BAD_REQUEST
 
 
 def exception_response(exception: BaseExceptionE):

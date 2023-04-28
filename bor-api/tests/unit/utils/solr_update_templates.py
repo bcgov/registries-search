@@ -21,12 +21,130 @@ SOLR_UPDATE_REQUEST_TEMPLATE = {
         "taxId": "123456789",
         "state": "ACTIVE"
     },
-    "parties": [{
-        "officer": {
-            "id": 1,
-            "partyType": "organization",
-            "organizationName": "TEST ABC"
+    "businessAddresses": {
+        "recordsOffice": {
+            "deliveryAddress": {
+                "addressCity": "Coquitlam",
+                "addressCountry": "CA",
+                "addressRegion": "BC",
+                "addressType": "delivery",
+                "deliveryInstructions": "",
+                "id": 2664211,
+                "postalCode": "V3K 3V9",
+                "streetAddress": "Bc-435 North Rd",
+                "streetAddressAdditional": ""
+            },
+            "mailingAddress": {
+                "addressCity": "Coquitlam",
+                "addressCountry": "CA",
+                "addressRegion": "BC",
+                "addressType": "mailing",
+                "deliveryInstructions": "",
+                "id": 2664210,
+                "postalCode": "V3K 3V9",
+                "streetAddress": "Bc-435 North Rd",
+                "streetAddressAdditional": ""
+            }
         },
-        "roles": [{"roleType": "proprietor"}]
-    }]
+        "registeredOffice": {
+            "deliveryAddress": {
+                "addressCity": "Coquitlam",
+                "addressCountry": "CA",
+                "addressRegion": "BC",
+                "addressType": "delivery",
+                "deliveryInstructions": "",
+                "id": 2664213,
+                "postalCode": "V3K 3V9",
+                "streetAddress": "Bc-435 North Rd",
+                "streetAddressAdditional": ""
+            },
+            "mailingAddress": {
+                "addressCity": "Coquitlam",
+                "addressCountry": "CA",
+                "addressRegion": "BC",
+                "addressType": "mailing",
+                "deliveryInstructions": "",
+                "id": 2664212,
+                "postalCode": "V3K 3V9",
+                "streetAddress": "Bc-435 North Rd",
+                "streetAddressAdditional": ""
+            }
+        }
+    },
+    "parties": [
+        {
+            "deliveryAddress": {
+                "addressCity": "Calgary",
+                "addressCountry": "CA",
+                "addressRegion": "AB",
+                "deliveryInstructions": None,
+                "id": 2664208,
+                "postalCode": "T3J 3Z5",
+                "streetAddress": "1234-4818 Westwinds Dr NE",
+                "streetAddressAdditional": ""
+            },
+            "mailingAddress": {
+                "addressCity": "Calgary",
+                "addressCountry": "CA",
+                "addressRegion": "AB",
+                "deliveryInstructions": None,
+                "id": 2664209,
+                "postalCode": "T3J 3Z5",
+                "streetAddress": "1234-4818 Westwinds Dr NE",
+                "streetAddressAdditional": ""
+            },
+            "officer": {
+                "email": "ppr@dev.com",
+                "firstName": "BCREG2 LIANG",
+                "id": 570343,
+                "lastName": "FORTY",
+                "partyType": "person"
+            },
+            "roles": [
+                {
+                    "appointmentDate": "2023-03-06",
+                    "cessationDate": None,
+                    "roleType": "Director"
+                }
+            ],
+            "source": "LEAR"
+        },
+        {
+            "deliveryAddress": {
+                "addressCity": "Québec",
+                "addressCountry": "CA",
+                "addressRegion": "QC",
+                "deliveryInstructions": None,
+                "id": 2669641,
+                "postalCode": "G1N 1C1",
+                "streetAddress": "W-558 Rue Saint-Vallier O",
+                "streetAddressAdditional": ""
+            },
+            "mailingAddress": {
+                "addressCity": "Québec",
+                "addressCountry": "CA",
+                "addressRegion": "QC",
+                "deliveryInstructions": None,
+                "id": 2669642,
+                "postalCode": "G1N 1C1",
+                "streetAddress": "W-558 Rue Saint-Vallier O",
+                "streetAddressAdditional": ""
+            },
+            "officer": {
+                "email": None,
+                "firstName": "BLIPPITY",
+                "id": 570721,
+                "lastName": "BOP",
+                "partyType": "person"
+            },
+            "roles": [
+                {
+                    "appointmentDate": "2023-03-20",
+                    "cessationDate": None,
+                    "roleType": "Director"
+                }
+            ],
+            "source": "LEAR"
+        }
+    ]
 }

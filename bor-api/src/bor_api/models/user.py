@@ -84,7 +84,6 @@ class User(db.Model):
         Use the values found in the vaild JWT for the realm
         to populate the User audit data
         """
-        print(token)
         if token:
             firstname = token.get(current_app.config.get('JWT_OIDC_FIRSTNAME'), None)
             lastname = token.get(current_app.config.get('JWT_OIDC_LASTNAME'), None)
@@ -114,9 +113,7 @@ class User(db.Model):
         """Return a valid user for audit tracking purposes."""
         # GET existing or CREATE new user based on the JWT info
         try:
-            print(jwt_oidc_token)
             user = User.find_by_jwt_token(jwt_oidc_token)
-            print(user)
             current_app.logger.debug(f'finding user: {jwt_oidc_token}')
             if not user:
                 current_app.logger.debug(f'didnt find user, attempting to create new user:{jwt_oidc_token}')

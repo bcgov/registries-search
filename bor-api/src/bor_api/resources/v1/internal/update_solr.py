@@ -12,44 +12,50 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoint for updating/adding business record in solr."""
+import re
+from dataclasses import asdict
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
-from bor_api.services import SYSTEM_ROLE
-from bor_api.services import jwt
+from bor_api.enums import SolrDocEventType
+from bor_api.exceptions import bad_request_response, exception_response
+from bor_api.models import SolrDoc, User
+from bor_api.services import SYSTEM_ROLE, jwt
+from bor_api.services.solr.bor_solr_updates import update_bor_solr
+from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
+from bor_api.utils.request_validators import validate_solr_update_request
+
 
 
 bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable=invalid-name
 
 
-# uncomment / alter when implementing trickle feed queue
 @bp.put('')
 @cross_origin(origin='*')
 @jwt.requires_roles([SYSTEM_ROLE])
 def update_solr():
     """Add/Update business in solr."""
-    return jsonify({'message': 'Not implemented yet.'}), HTTPStatus.NOT_IMPLEMENTED
-#     try:
-#         request_json = request.json
-#         errors = RequestValidator.validate_solr_update_request(request_json)
-#         if errors:
-#             return resource_utils.bad_request_response(errors)
+    try:
+        request_json: dict = request.json
+        errors = validate_solr_update_request(request_json)
+        if errors:
+            return bad_request_response('Invalid payload.', errors)
 
-#         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
+        user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
 
-#         solr_doc = _prepare_data(request_json)
-#         # commit so that other flows will take this record as most recent for this identifier
-#         solr_doc_update = SolrDoc(doc=asdict(solr_doc), identifier=solr_doc.identifier, _submitter_id=user.id).save()
+        entities = _parse_entities(request_json)
+        for entity in entities:
+            # commit each entity. Ensures other flows (i.e. resync) will use the current data
+            SolrDoc(doc=asdict(entity), identifier=entity.identifier, _submitter_id=user.id).save()
+            # trigger solr update
+            update_bor_solr(entity.identifier, SolrDocEventType.UPDATE)
 
-#         update_bor_solr(solr_doc_update.identifier, SolrDocEventType.UPDATE)
-#         return jsonify({'message': 'Update successful'}), HTTPStatus.OK
+        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
 
-#     except SolrException as solr_exception:
-#         return resource_utils.solr_exception_response(solr_exception)
-#     except Exception as default_exception:  # noqa: B902
-#         return resource_utils.default_exception_response(default_exception)
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)
 
 
 @bp.post('/resync')
@@ -58,82 +64,103 @@ def update_solr():
 def resync_solr():
     """Resync solr docs from the given date."""
     return jsonify({'message': 'Not implemented yet.'}), HTTPStatus.NOT_IMPLEMENTED
-#     try:
-#         request_json = request.json
-#         from_datetime = datetime.utcnow()
-#         if not request_json.get('minutesOffset'):
-#             return resource_utils.bad_request_response('Missing required field "minutesOffset".')
-#         try:
-#             minutes = float(request_json.get('minutesOffset'))
-#         except ValueError:
-#             return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
+    # try:
+    #     request_json = request.json
+    #     from_datetime = datetime.utcnow()
+    #     # TODO: apply most recent business search code here
+    #     if not request_json.get('minutesOffset'):
+    #         return bad_request_response('Missing required field "minutesOffset".')
+    #     try:
+    #         minutes = float(request_json.get('minutesOffset'))
+    #     except ValueError:
+    #         return bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
 
-#         # get all updates since the from_datetime
-#         resync_date = from_datetime - timedelta(minutes=minutes)
-#         identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
-#         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
-#         # update docs
-#         for identifier in identifiers_to_resync:
-#             update_bor_solr(identifier, SolrDocEventType.RESYNC)
+    #     # get all updates since the from_datetime
+    #     resync_date = from_datetime - timedelta(minutes=minutes)
+    #     identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
+    #     current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+    #     # update docs
+    #     for identifier in identifiers_to_resync:
+    #         update_bor_solr(identifier, SolrDocEventType.RESYNC)
 
-#         return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+    #     return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
 
-#     except SolrException as solr_exception:
-#         return resource_utils.solr_exception_response(solr_exception)
-#     except Exception as default_exception:  # noqa: B902
-#         return resource_utils.default_exception_response(default_exception)
+    # except Exception as exception:  # noqa: B902
+    #     return exception_response(exception)
 
 
-# def _prepare_data(request_json: Dict) -> BusinessDoc:
-#     """Return the solr doc for the json data."""
-#     def needs_bc_prefix(identifier: str, legal_type: str) -> bool:
-#         """Return if the identifier should have the BC prefix or not."""
-#         numbers_only_rgx = r'^[0-9]+$'
-#         # TODO: get legal types from shared enum
-#         return legal_type in ['BEN', 'BC', 'CC', 'ULC'] and re.search(numbers_only_rgx, identifier)
+def _parse_entities(request_json: dict) -> list[Entity]:
+    """Return the entity docs for the given data."""
+    def needs_bc_prefix(identifier: str, legal_type: str) -> bool:
+        """Return if the identifier should have the BC prefix or not."""
+        numbers_only_rgx = r'^[0-9]+$'
+        # TODO: get legal types from shared enum
+        return legal_type in ['BEN', 'BC', 'CC', 'ULC'] and re.search(numbers_only_rgx, identifier)
+    
+    def get_delivery_address(address_info: dict) -> Address:
+        """Return the delivery address as an Address doc."""
+        return Address(addressType=address_info.get('addressType', ''),
+                       addressCity=address_info.get('addressCity', ''),
+                       addressCountry=address_info.get('addressCountry', ''),
+                       addressRegion=address_info.get('addressRegion', ''),
+                       postalCode=address_info.get('postalCode', ''),
+                       streetAddress=address_info.get('streetAddress', ''))
 
-#     def get_party_name(officer: Dict[str, str]) -> str:
-#         """Return the parsed name of the party in the given doc info."""
-#         if officer.get('organizationName'):
-#             return officer['organizationName'].strip()
-#         person_name = ''
-#         if officer.get('firstName'):
-#             person_name += officer['firstName'].strip()
-#         if officer.get('middleInitial'):
-#             person_name += ' ' + officer['middleInitial'].strip()
-#         if officer.get('lastName'):
-#             person_name += ' ' + officer['lastName'].strip()
-#         return person_name.strip()
+    def get_party_name(officer: dict[str, str]) -> str:
+        """Return the parsed name of the party in the given doc info."""
+        if officer.get('organizationName'):
+            return officer['organizationName'].strip()
+        person_name = ''
+        if officer.get('firstName'):
+            person_name += officer['firstName'].strip()
+        if officer.get('middleInitial'):
+            person_name += ' ' + officer['middleInitial'].strip()
+        if officer.get('lastName'):
+            person_name += ' ' + officer['lastName'].strip()
+        return person_name.strip()
+    
+    entities = []
 
-#     business_info = request_json.get('business')
-#     party_info = request_json.get('parties')
+    address_info = request_json['businessAddresses']
+    business_info = request_json['business']
+    party_info = request_json.get('parties', [])
 
-#     # add new base doc
-#     identifier = business_info['identifier']
-#     legal_type = business_info['legalType']
-#     business_doc = BusinessDoc(
-#         bn=business_info.get('taxId'),
-#         identifier=f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
-#         legalType=legal_type,
-#         name=business_info['legalName'],
-#         status=business_info['state'])
+    # add new business doc
+    business_address = get_delivery_address(address_info['registeredOffice']['deliveryAddress'])
+    identifier = business_info['identifier']
+    if needs_bc_prefix(identifier, business_info['legalType']):
+        # set prefix to BC
+        identifier = f'BC{identifier}'
+    business = Entity(entityAddresses=[business_address],
+                      entityType='BUSINESS',
+                      identifier=identifier,
+                      legalName=business_info['legalName'],
+                      bn=business_info.get('taxId'),
+                      legalType=business_info['legalType'],
+                      state=business_info['state'])
+    entities.append(business)
+    for party in party_info:
+        address = get_delivery_address(party['deliveryAddress'])
+        name = get_party_name(party['officer'])
+        
+        # NOTE: business parties are ignored for now -- waiting for LEAR update
+        identifier = f"{party['source']}{party['officer']['id']}"
+        # add a doc for each role
+        for role in party.get('roles'):
+            active = False if role.get('cessationDate', None) else True
+            entities.append(Entity(entityAddresses=[address],
+                                   entityType='PERSON',
+                                   identifier=identifier,
+                                   legalName=name,
+                                   roles=[EntityRole(active=active,
+                                                     relatedEntityType='BUSINESS',
+                                                     relatedIdentifier=business.identifier,
+                                                     relatedLegalType=business.legalType,
+                                                     relatedName=business.legalName,
+                                                     relatedState=business.state,
+                                                     roleDates=[DateRange(start=role['appointmentDate'],
+                                                                          end=role.get('cessationDate', None))],
+                                                     roleType=role['roleType'],
+                                                     relatedBN=business.bn)]))
 
-#     if party_info:
-#         party_list = []
-#         # add party doc to base doc
-#         for party in party_info:
-#             party_doc = PartyDoc(
-#                 parentBN=business_info.get('taxId'),
-#                 parentLegalType=business_info['legalType'],
-#                 parentName=business_info['legalName'],
-#                 parentStatus=business_info['state'],
-#                 partyName=get_party_name(party['officer']),
-#                 partyRoles=[x['roleType'].lower() for x in party['roles']],
-#                 partyType=party['officer']['partyType']
-#             )
-#             party_list.append(party_doc)
-
-#         if party_list:
-#             business_doc.parties = party_list
-#     # add doc to updates table
-#     return business_doc
+    return entities
