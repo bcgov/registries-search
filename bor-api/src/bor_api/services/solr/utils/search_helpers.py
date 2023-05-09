@@ -34,17 +34,13 @@ def entities_search(params: SearchParams):
     # initialize payload with base doc query (init query / filter)
     initial_queries = build_base_query(
         query=params.query,
-        fields=[Field.LEGAL_NAME_Q, Field.LEGAL_NAME_AGRO_Q,
-                Field.LEGAL_NAME_SINGLE_Q, Field.OPERATING_NAME_SINGLE_Q,
-                Field.OPERATING_NAME_AGRO_Q, Field.OPERATING_NAME_Q,
+        fields=[Field.LEGAL_NAME_Q, Field.LEGAL_NAME_AGRO_Q, Field.LEGAL_NAME_SINGLE_Q,
                 Field.IDENTIFIER_Q, Field.BN_Q],
+        nested_fields=[Field.ADDRESS_Q],
         boost_fields={
             Field.LEGAL_NAME_Q: 2,
             Field.LEGAL_NAME_AGRO_Q: 2,
             Field.LEGAL_NAME_SINGLE_Q: 2,
-            Field.OPERATING_NAME_Q: 2,
-            Field.OPERATING_NAME_AGRO_Q: 2,
-            Field.OPERATING_NAME_SINGLE_Q: 2,
             Field.IDENTIFIER_Q: 2,
             Field.BN_Q: 2
         },
@@ -52,11 +48,9 @@ def entities_search(params: SearchParams):
             Field.LEGAL_NAME_Q: 2,
             Field.LEGAL_NAME_AGRO_Q: 2,
             Field.LEGAL_NAME_SINGLE_Q: 2,
-            Field.OPERATING_NAME_Q: 2,
-            Field.OPERATING_NAME_AGRO_Q: 2,
-            Field.OPERATING_NAME_SINGLE_Q: 2,
             Field.IDENTIFIER_Q: 1,
-            Field.BN_Q: 1
+            Field.BN_Q: 1,
+            Field.ADDRESS_Q: 1
         })
 
     # boosts for term order result ordering
@@ -75,10 +69,6 @@ def entities_search(params: SearchParams):
             **build_facet(Field.ENTITY_TYPE, False),
             **build_facet(Field.LEGAL_TYPE, False),
             **build_facet(Field.STATE, False),
-            # facets addresses
-            **build_facet(Field.ADDRESS_CITY, True),
-            **build_facet(Field.ADDRESS_COUNTRY, True),
-            **build_facet(Field.ADDRESS_REGION, True),
             # facets roles
             **build_facet(Field.RELATED_ENTITY_TYPE, True),
             **build_facet(Field.RELATED_LEGAL_TYPE, True),

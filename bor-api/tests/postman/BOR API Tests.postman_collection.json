@@ -465,6 +465,110 @@
 							]
 						},
 						{
+							"name": "basic match address",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"pacific oak Dallhousie\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/search/entities",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"entities"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "basic match address",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"pacific oak Dallhousie\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/{{version}}/search/entities",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"entities"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.2.3 Python/3.11.2"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 09 May 2023 20:18:14 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1020"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.0.0a1.dev4"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"relatedEntityType\": [],\n            \"relatedLegalType\": [],\n            \"relatedState\": [],\n            \"roleType\": [],\n            \"state\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {}\n                },\n                \"value\": \"pacific oak dallhousie\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"VANCOUVER\",\n                        \"addressCountry\": \"CA\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"DELIVERY\",\n                        \"postalCode\": \"V6T 1W4\",\n                        \"score\": 0,\n                        \"streetAddress\": \"33 5658 DALHOUSIE RD\"\n                    }\n                ],\n                \"entityType\": \"BUSINESS\",\n                \"legalName\": \"PACIFIC OAK - IMPORT_TEST\",\n                \"legalType\": \"SP\",\n                \"score\": 73.16963,\n                \"state\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
 							"name": "parent filters",
 							"request": {
 								"method": "POST",

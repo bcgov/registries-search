@@ -78,6 +78,7 @@ def build_facet_query(field: Field, values: list[str], is_nested: bool = False) 
 
 def build_base_query(query: dict[str, str],
                      fields: list[Field],
+                     nested_fields: list[Field],
                      boost_fields: dict[Field, int],
                      fuzzy_fields: dict[Field, int]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
@@ -101,6 +102,16 @@ def build_base_query(query: dict[str, str],
                 # add another with fuzzy (this one will give a lower score on a hit if the original has a boost)
                 fuzzy_str += f'~{fuzzy_fields[field]}'
                 term_str += f' OR {fuzzy_str}'
+        # add nested field clauses
+        for nested_field in nested_fields:
+            nested_field_str = build_child_query({nested_field.value: term})
+            if nested_field in fuzzy_fields and len(term) > 3:
+                # add fuzzy match chars before ending bracket
+                nested_field_str = f'{nested_field_str[:-1]}~{fuzzy_fields[nested_field]})'
+            if term_str:
+                term_str += ' OR '
+            term_str += nested_field_str
+
         if query_str:
             query_str += ' AND '
         query_str += f'({term_str})'
