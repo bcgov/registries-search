@@ -10,7 +10,7 @@ steps:
     dir: "bor-ui"
     script: |
       #!/usr/bin/env bash
-      cp .env.example .env
+      cp .env.sample .env
 
   #
   # Generate the statis site
