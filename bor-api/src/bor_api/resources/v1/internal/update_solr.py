@@ -14,13 +14,15 @@
 """API endpoint for updating/adding business record in solr."""
 import re
 from dataclasses import asdict
+from datetime import datetime, timedelta
 from http import HTTPStatus
+from time import sleep
 
-from flask import Blueprint, g, jsonify, request
+from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.enums import SolrDocEventType
-from bor_api.exceptions import bad_request_response, exception_response
+from bor_api.exceptions import SolrException, bad_request_response, exception_response
 from bor_api.models import SolrDoc, User
 from bor_api.services import SYSTEM_ROLE, jwt
 from bor_api.services.solr.bor_solr_updates import update_bor_solr
@@ -62,30 +64,39 @@ def update_solr():
 @jwt.requires_roles([SYSTEM_ROLE])
 def resync_solr():
     """Resync solr docs from the given date."""
-    return jsonify({'message': 'Not implemented yet.'}), HTTPStatus.NOT_IMPLEMENTED
-    # try:
-    #     request_json = request.json
-    #     from_datetime = datetime.utcnow()
-    #     # TODO: apply most recent business search code here
-    #     if not request_json.get('minutesOffset'):
-    #         return bad_request_response('Missing required field "minutesOffset".')
-    #     try:
-    #         minutes = float(request_json.get('minutesOffset'))
-    #     except ValueError:
-    #         return bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
+    try:
+        request_json = request.json
+        from_datetime = datetime.utcnow()
+        minutes_offset = request_json.get('minutesOffset', None)
+        identifiers_to_resync = request_json.get('identifiers', None)
+        if not minutes_offset and not identifiers_to_resync:
+            return bad_request_response('Missing required field "minutesOffset" or "identifiers".')
+        try:
+            minutes_offset = float(minutes_offset)
+        except:  # pylint: disable=bare-except # noqa F841;
+            if not identifiers_to_resync:
+                return bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
 
-    #     # get all updates since the from_datetime
-    #     resync_date = from_datetime - timedelta(minutes=minutes)
-    #     identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
-    #     current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
-    #     # update docs
-    #     for identifier in identifiers_to_resync:
-    #         update_bor_solr(identifier, SolrDocEventType.RESYNC)
+        if minutes_offset:
+            # get all updates since the from_datetime
+            resync_date = from_datetime - timedelta(minutes=minutes_offset)
+            identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
 
-    #     return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+        current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+        # update docs
+        for identifier in identifiers_to_resync:
+            try:
+                update_bor_solr(identifier, SolrDocEventType.RESYNC)
+            except SolrException:
+                # log error so that ops can resync the business without redoing the whole batch
+                current_app.logger.error('Failed to resync %s', identifier)
+            # pause for 1 second so that solr doesn't get overloaded on large batches
+            sleep(1)
 
-    # except Exception as exception:  # noqa: B902
-    #     return exception_response(exception)
+        return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)
 
 
 def _parse_entities(request_json: dict) -> list[Entity]:

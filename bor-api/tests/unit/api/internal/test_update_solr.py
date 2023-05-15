@@ -15,8 +15,6 @@
 import json
 import time
 from copy import deepcopy
-# from dataclasses import asdict
-# from datetime import datetime, timedelta
 from http import HTTPStatus
 
 import pytest
@@ -328,38 +326,3 @@ def test_update_solr_unauthorized(client, jwt):
                                                                            'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.UNAUTHORIZED
-
-
-# @integration_solr
-# def test_resync(session, client, jwt, mocker):
-#     """Assert that the resync update operation is successful."""
-#     # prep data (one record to find and one record to miss)
-#     business_doc = deepcopy(SOLR_TEST_DOCS[0])
-#     business_doc.name = 'test_update_business_in_solr'
-#     solr_doc = SolrDoc(doc=asdict(business_doc), identifier=business_doc.identifier).save()
-#     business_doc_old = deepcopy(SOLR_TEST_DOCS[1])
-#     business_doc_old.name = 'test_update_business_in_solr should_not_find'
-#     solr_doc_old = SolrDoc(doc=asdict(business_doc_old), identifier=business_doc_old.identifier).save()
-#     solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
-#     solr_doc_old.save()
-
-#     api_response = client.post(f'/api/v1/internal/solr/update/resync', json={'minutesOffset': 5})
-#     # check
-#     assert api_response.status_code == HTTPStatus.CREATED
-
-#     doc_events = solr_doc.solr_doc_events.all()
-#     assert len(doc_events) == 1
-#     assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
-#     assert doc_events[0].event_type == SolrDocEventType.RESYNC
-#     # did not update the older record
-#     assert len(solr_doc_old.solr_doc_events.all()) == 0
-
-#     time.sleep(2)  # wait for solr to register update
-#     identifier = REQUEST_TEMPLATE['business']['identifier']
-#     search_response = client.get(f'/api/v1/businesses/search/facets?query=value:{business_doc.identifier}',
-#                                  headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-#                                                                               'content-type': 'application/json'})
-#                                  )
-#     assert search_response.status_code == HTTPStatus.OK
-#     assert len(search_response.json['searchResults']['results']) == 1
-#     assert search_response.json['searchResults']['results'][0]['name'] == business_doc.name
