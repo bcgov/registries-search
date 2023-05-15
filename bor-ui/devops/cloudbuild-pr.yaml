@@ -48,7 +48,7 @@ steps:
         echo "this is the body:"
         echo '{"body": "Temporary Url for review:'"$url"'"}'
         curl -X POST \
-        https://api.github.com/repos/bcgov-registries/analytics/beneficial-ownership/$_PR_NUMBER/comments \
+        https://api.github.com/repos/bcgov-registries/beneficial-ownership/issues/$_PR_NUMBER/comments \
         --header "Authorization: Token $$TOKEN" \
         --header "Accept: application/vnd.github.v3+json" \
         --data-binary '{"body": "Temporary Url for review: '"$url"'"}'
