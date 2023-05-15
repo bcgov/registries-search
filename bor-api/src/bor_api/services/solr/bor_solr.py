@@ -17,7 +17,6 @@ from datetime import datetime, timedelta
 from dataclasses import asdict
 from http import HTTPStatus
 
-import requests
 from requests import Response, Session
 from requests.adapters import HTTPAdapter, Retry
 from flask import current_app
@@ -79,26 +78,21 @@ class Solr:
                   force=False) -> Response:
         """Call solr instance with given params."""
         try:
-            print(2)
             if self.is_reindexing() and not force:
                 err_msg = 'This resource is undergoing scheduled maintenance and will be ' \
                     f'unavailable for up to {self.app.config.get("SOLR_REINDEX_LENGTH")} minutes.'
                 raise SolrException(err_msg, HTTPStatus.SERVICE_UNAVAILABLE)
             response = None
             url = query.format(url=self.solr_url, core=self.core)
-            print(3)
             retry_times = 3 if method == 'GET' else 5
             backoff_factor = 1 if method == 'GET' else 2
             retries = Retry(total=retry_times, backoff_factor=backoff_factor, status_forcelist=[500, 502, 503, 504])
             session = Session()
             session.mount(url, HTTPAdapter(max_retries=retries))
-            print(4)
             if method == 'GET':
                 response = session.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
-                print(5)
                 response = session.post(url=url, json=json_data, timeout=30)
-                print(6)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
                 response = session.post(url=url, data=xml_data, headers=headers, timeout=30)
@@ -106,12 +100,8 @@ class Solr:
                 raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
             if response.status_code != HTTPStatus.OK:
-                print(response.status_code)
-                print(response.json())
-                print(7)
                 error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
                 raise Exception(error)  # pylint: disable=broad-exception-raised;
-            print(8)
             return response
         except Exception as err:  # noqa B902
             msg = 'Error handling Solr request.'
@@ -125,9 +115,7 @@ class Solr:
     def create_or_replace_docs(self, docs: list[Entity], force=False):
         """Create or replace solr docs in the core."""
         update_json = [asdict(doc) for doc in docs]
-        print(1)
         response = self.call_solr('POST', self.update_url, json_data=update_json, force=force)
-        print(9)
         return response
 
     def delete_all_docs(self):
