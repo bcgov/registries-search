@@ -15,20 +15,14 @@
 
 This module is the API for the BC Registries Registry Search system.
 """
-import logging
-import logging.config
 import os
-from http import HTTPStatus
 
 import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
 from flask import Flask  # noqa: I001
-# from legal_api.models import db
-from registry_schemas import __version__ as registry_schemas_version
-from registry_schemas.flask import SchemaServices  # noqa: I001
 from search_api.services import search_solr
 
-from search_solr_importer import config
+from search_solr_importer.config import config
 from search_solr_importer.logging import setup_logging
 from search_solr_importer.oracle import oracle_db
 from search_solr_importer.translations import babel
@@ -59,10 +53,10 @@ def register_shellcontext(app):
     app.shell_context_processor(shell_context)
 
 
-def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
+def create_app(config_name: str = os.getenv('APP_ENV') or 'production'):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app.config.from_object(config.CONFIGURATION[run_mode])
+    app.config.from_object(config[config_name])
 
     # Configure Sentry
     if dsn := app.config.get('SENTRY_DSN'):

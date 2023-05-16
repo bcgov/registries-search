@@ -1,10 +1,14 @@
 cx_Oracle
-Flask
-Flask-Babel
+# Flask
+# psycopg2-binary
 python-dotenv
-sentry-sdk[flask]
-# for search-api dependency
-jsonschema==3.2.0
-Babel==2.10.1
-certifi==2022.5.18.1
-requests
+# requests
+# sentry-sdk[flask]
+### search-api dependencies (need to match)
+Flask==2.2.3
+Werkzeug==2.2.3
+blinker==1.5
+certifi==2022.12.7
+psycopg2-binary==2.9.5
+requests==2.28.2
+sentry-sdk==1.20.0
