@@ -214,44 +214,44 @@ def update_solr(base_docs: list[BusinessDoc], data_name: str) -> int:
 def load_search_core():  # pylint: disable=too-many-statements
     """Load data from LEAR and COLIN into the search core."""
     try:
-        # colin_data_cur = collect_colin_data()
-        # colin_data = colin_data_cur.fetchall()
-        # current_app.logger.debug('Prepping COLIN data...')
-        # prepped_colin_data = prep_data(colin_data, colin_data_cur, 'COLIN')
-        # current_app.logger.debug(f'{len(prepped_colin_data)} COLIN records ready for import.')
-        # lear_data_cur = collect_lear_data()
-        # lear_data = lear_data_cur.fetchall()
-        # current_app.logger.debug('Prepping LEAR data...')
-        # prepped_lear_data = prep_data(lear_data, lear_data_cur, 'LEAR')
-        # current_app.logger.debug(f'{len(prepped_lear_data)} LEAR records ready for import.')
-        # if current_app.config.get('REINDEX_CORE', False):
-        #     # delete existing index
-        #     current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
-        #     search_solr.delete_all_docs()
-        # # execute update to solr in batches
-        # current_app.logger.debug('Importing records from COLIN...')
-        # count = update_solr(prepped_colin_data, 'COLIN')
-        # current_app.logger.debug('COLIN import completed.')
-        # current_app.logger.debug('Importing records from LEAR...')
-        # count += update_solr(prepped_lear_data, 'LEAR')
-        # current_app.logger.debug('LEAR import completed.')
-        # current_app.logger.debug(f'Total records imported: {count}')
+        colin_data_cur = collect_colin_data()
+        colin_data = colin_data_cur.fetchall()
+        current_app.logger.debug('Prepping COLIN data...')
+        prepped_colin_data = prep_data(colin_data, colin_data_cur, 'COLIN')
+        current_app.logger.debug(f'{len(prepped_colin_data)} COLIN records ready for import.')
+        lear_data_cur = collect_lear_data()
+        lear_data = lear_data_cur.fetchall()
+        current_app.logger.debug('Prepping LEAR data...')
+        prepped_lear_data = prep_data(lear_data, lear_data_cur, 'LEAR')
+        current_app.logger.debug(f'{len(prepped_lear_data)} LEAR records ready for import.')
+        if current_app.config.get('REINDEX_CORE', False):
+            # delete existing index
+            current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
+            search_solr.delete_all_docs()
+        # execute update to solr in batches
+        current_app.logger.debug('Importing records from COLIN...')
+        count = update_solr(prepped_colin_data, 'COLIN')
+        current_app.logger.debug('COLIN import completed.')
+        current_app.logger.debug('Importing records from LEAR...')
+        count += update_solr(prepped_lear_data, 'LEAR')
+        current_app.logger.debug('LEAR import completed.')
+        current_app.logger.debug(f'Total records imported: {count}')
 
-        # if not current_app.config.get('PRELOADER_JOB', False):
-        #     try:
-        #         current_app.logger.debug('Resyncing any overwritten docs during import...')
-        #         search_api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
-        #         resync_resp = requests.post(url=f'{search_api_url}/internal/solr/update/resync',
-        #                                     json={'minutesOffset': 60})
-        #         if resync_resp.status_code != HTTPStatus.CREATED:
-        #             if resync_resp.status_code == HTTPStatus.GATEWAY_TIMEOUT:
-        #                 current_app.logger.debug('Resync timed out -- check api for any individual failures.')
-        #             else:
-        #                 current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
-        #         current_app.logger.debug('Resync complete.')
-        #     except Exception as error:  # noqa: B902
-        #         current_app.logger.debug(error.with_traceback(None))
-        #         current_app.logger.error('Resync failed.')
+        if not current_app.config.get('PRELOADER_JOB', False):
+            try:
+                current_app.logger.debug('Resyncing any overwritten docs during import...')
+                search_api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
+                resync_resp = requests.post(url=f'{search_api_url}/internal/solr/update/resync',
+                                            json={'minutesOffset': 60})
+                if resync_resp.status_code != HTTPStatus.CREATED:
+                    if resync_resp.status_code == HTTPStatus.GATEWAY_TIMEOUT:
+                        current_app.logger.debug('Resync timed out -- check api for any individual failures.')
+                    else:
+                        current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
+                current_app.logger.debug('Resync complete.')
+            except Exception as error:  # noqa: B902
+                current_app.logger.debug(error.with_traceback(None))
+                current_app.logger.error('Resync failed.')
 
         if current_app.config.get('REINDEX_CORE', False):
             current_app.logger.debug('Building suggester...')
