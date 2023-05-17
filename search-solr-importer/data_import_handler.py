@@ -186,7 +186,8 @@ def update_solr(base_docs: list[BusinessDoc], data_name: str) -> int:
     retry_count = 0
     erred_record_count = 0
     while count < len(base_docs) and rows > 0 and len(base_docs) - offset > 0:
-        count += min(rows, len(base_docs) - offset)
+        batch_amount = min(rows, len(base_docs) - offset)
+        count += batch_amount
         # send batch to solr
         try:
             search_solr.create_or_replace_docs(base_docs[offset:count])
@@ -195,8 +196,10 @@ def update_solr(base_docs: list[BusinessDoc], data_name: str) -> int:
             current_app.logger.debug(err)
             if retry_count < 3:
                 # retry
-                current_app.logger.debug('Failed to update solr. Trying again...')
+                current_app.logger.debug('Failed to update solr. Trying again (%s of 3)...', retry_count + 1)
                 retry_count += 1
+                # set count back
+                count -= batch_amount
                 continue
             else:
                 # log error and skip
@@ -241,7 +244,10 @@ def load_search_core():  # pylint: disable=too-many-statements
                 resync_resp = requests.post(url=f'{search_api_url}/internal/solr/update/resync',
                                             json={'minutesOffset': 60})
                 if resync_resp.status_code != HTTPStatus.CREATED:
-                    current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
+                    if resync_resp.status_code == HTTPStatus.GATEWAY_TIMEOUT:
+                        current_app.logger.debug('Resync timed out -- check api for any individual failures.')
+                    else:
+                        current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
                 current_app.logger.debug('Resync complete.')
             except Exception as error:  # noqa: B902
                 current_app.logger.debug(error.with_traceback(None))
