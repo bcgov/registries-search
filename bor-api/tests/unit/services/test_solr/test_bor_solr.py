@@ -16,8 +16,10 @@ import time
 from http import HTTPStatus
 
 import pytest
+import requests_mock
 from datetime import datetime, timedelta
 
+from bor_api.exceptions import SolrException
 from bor_api.services import bor_solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
@@ -144,3 +146,37 @@ def test_is_reindexing(app, test_name, env_start_weekday, env_start_day, env_sta
     bor_solr.init_app(app)
 
     assert bor_solr.is_reindexing() == expected
+
+
+@pytest.mark.parametrize('test_name,method,params,json_data,xml_data', [
+    ('test_GET_basic', 'GET', None, None, None),
+    ('test_GET_params', 'GET', {'param1': 'la', 'param2': 'blip'}, None, None),
+    ('test_POST_json', 'POST', None, {'test': {'json': 'is fun'}}, None),
+    ('test_POST_xml', 'POST', None, None, '<delete><query>test:test</query></delete>'),
+])
+def test_call_solr(app, session, test_name, method, params, json_data, xml_data):
+    """Assert that the call solr method creates the desired request."""
+    query = '{url}/{core}/test'
+    solr_url = app.config.get('SOLR_SVC_URL')
+    expected_url = query.format(url=solr_url, core='bor')
+
+    with requests_mock.mock() as m:
+        if method == 'GET':
+            m.get(expected_url)
+        else:
+            m.post(expected_url)
+        
+        bor_solr.call_solr(method, query, params, json_data, xml_data)
+        
+        # check call to solr mock
+        assert m.called == True
+        assert m.call_count == 1
+        assert m.request_history[0].method == method
+        assert expected_url in m.request_history[0].url
+        if params:
+            param_str = '&'.join([f'{x}={params[x]}' for x in params])
+            assert param_str in m.request_history[0].url
+        if json_data:
+            assert m.request_history[0].json() == json_data
+        elif xml_data:
+            assert m.request_history[0].text == xml_data

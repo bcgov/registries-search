@@ -86,16 +86,19 @@ class Solr:
             url = query.format(url=self.solr_url, core=self.core)
             retry_times = 3 if method == 'GET' else 5
             backoff_factor = 1 if method == 'GET' else 2
-            retries = Retry(total=retry_times, backoff_factor=backoff_factor, status_forcelist=[500, 502, 503, 504])
+            retries = Retry(total=retry_times,
+                            backoff_factor=backoff_factor,
+                            status_forcelist=[500, 502, 503, 504],
+                            allowed_methods=['GET', 'POST'])
             session = Session()
             session.mount(url, HTTPAdapter(max_retries=retries))
             if method == 'GET':
                 response = session.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
-                response = session.post(url=url, json=json_data, timeout=30)
+                response = session.post(url=url, json=json_data, timeout=60)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
-                response = session.post(url=url, data=xml_data, headers=headers, timeout=30)
+                response = session.post(url=url, data=xml_data, headers=headers, timeout=60)
             else:
                 raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
