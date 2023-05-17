@@ -20,9 +20,9 @@ from dataclasses import asdict
 from http import HTTPStatus
 from typing import Dict, List
 
-import requests
-from requests import Response
-from requests.adapters import HTTPAdapter, Retry
+from requests import Response, Session
+from requests.adapters import HTTPAdapter, Retry, ReadTimeoutError
+from requests.exceptions import ConnectionError
 from flask import current_app
 
 from search_api.exceptions import SolrException
@@ -94,7 +94,7 @@ class Solr:
                             backoff_factor=backoff_factor,
                             status_forcelist=[500, 502, 503, 504],
                             allowed_methods=['GET', 'POST'])
-            session = requests.Session()
+            session = Session()
             session.mount(url, HTTPAdapter(max_retries=retries))
             if method == 'GET':
                 response = session.get(url, params=params, timeout=30)
@@ -116,6 +116,11 @@ class Solr:
         except SolrException as err:
             # pass along
             raise err
+        except (ConnectionError, ReadTimeoutError) as err:
+            current_app.logger.error(err.with_traceback(None))
+            raise SolrException(
+                error='Read timeout error while handling Solr request.',
+                status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:  # noqa B902
             current_app.logger.error(err.with_traceback(None))
             msg = 'Error handling Solr request.'
