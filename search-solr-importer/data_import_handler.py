@@ -265,7 +265,6 @@ def load_search_core():  # pylint: disable=too-many-statements
                                              'and suggester build manually in the solr admin UI.')
                     sys.exit(0)
                 else:
-                    print(err)
                     raise err
             current_app.logger.debug('Suggester built.')
         current_app.logger.debug('SOLR import finished successfully.')
