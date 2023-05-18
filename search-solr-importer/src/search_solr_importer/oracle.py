@@ -49,7 +49,6 @@ class OracleDB:
                 pool.close()
             except cx_Oracle.DatabaseError as err:
                 current_app.logger.debug(err)
-                
 
     @staticmethod
     def _create_pool():
