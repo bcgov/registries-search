@@ -21,8 +21,8 @@ from http import HTTPStatus
 from typing import Dict, List
 
 from requests import Response, Session
-from requests.adapters import HTTPAdapter, Retry, ReadTimeoutError
-from requests.exceptions import ConnectionError
+from requests.adapters import HTTPAdapter, Retry
+from requests.exceptions import ConnectionError as SolrConnectionError
 from flask import current_app
 
 from search_api.exceptions import SolrException
@@ -116,7 +116,7 @@ class Solr:
         except SolrException as err:
             # pass along
             raise err
-        except (ConnectionError, ReadTimeoutError) as err:
+        except SolrConnectionError as err:
             current_app.logger.error(err.with_traceback(None))
             raise SolrException(
                 error='Read timeout error while handling Solr request.',
