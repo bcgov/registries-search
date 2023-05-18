@@ -1,4 +1,4 @@
-# Copyright © 2022 Province of British Columbia
+# Copyright © 2023 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ These will get initialized by the application.
 from __future__ import annotations
 
 import cx_Oracle
-from flask import _app_ctx_stack, current_app
+from flask import current_app, g
 
 
 class OracleDB:
@@ -39,12 +39,13 @@ class OracleDB:
         app.teardown_appcontext(self.teardown)
 
     @staticmethod
-    def teardown(ctx=None):
+    def teardown(exc=None):
         """Oracle session pool cleans up after itself."""
-        if not ctx:
-            ctx = _app_ctx_stack.top
-        if hasattr(ctx, '_oracle_pool'):
-            ctx._oracle_pool.close()  # pylint: disable=protected-access
+        print(f'teardown {exc}')
+        pool = g.pop('_oracle_pool', None)
+
+        if pool is not None:
+            pool.close()
 
     @staticmethod
     def _create_pool():
@@ -52,11 +53,6 @@ class OracleDB:
 
         :return: an instance of the OCI Session Pool
         """
-        # this uses the builtin session / connection pooling provided by
-        # the Oracle OCI driver
-        # setting threaded =True wraps the underlying calls in a Mutex
-        # so we don't have to that here
-
         def init_session(conn, *args):  # pylint: disable=unused-argument; Extra var being passed with call
             cursor = conn.cursor()
             cursor.execute("alter session set TIME_ZONE = 'America/Vancouver'")
@@ -69,14 +65,10 @@ class OracleDB:
                                      min=1,
                                      max=10,
                                      increment=1,
-                                     #  connectiontype=cx_Oracle.Connection,  # pylint:disable=c-extension-no-member
-                                     threaded=True,
                                      getmode=cx_Oracle.SPOOL_ATTRVAL_NOWAIT,  # pylint:disable=c-extension-no-member
-                                     waitTimeout=1500,
+                                     wait_timeout=1500,
                                      timeout=3600,
-                                     sessionCallback=init_session,
-                                     encoding='UTF-8',
-                                     nencoding='UTF-8')
+                                     session_callback=init_session)
 
     @property
     def connection(self):  # pylint: disable=inconsistent-return-statements
@@ -87,11 +79,10 @@ class OracleDB:
         and then return an acquired session
         :return: cx_Oracle.connection type
         """
-        ctx = _app_ctx_stack.top
-        if ctx is not None:
-            if not hasattr(ctx, '_oracle_pool'):
-                ctx._oracle_pool = self._create_pool()  # pylint: disable = protected-access; need this method
-            return ctx._oracle_pool.acquire()  # pylint: disable = protected-access; need this method
+        if '_oracle_pool' not in g:
+            g._oracle_pool = self._create_pool()  # pylint: disable=protected-access, assigning-non-slot
+
+        return g._oracle_pool.acquire()  # pylint: disable=protected-access
 
 
 # export instance of this class

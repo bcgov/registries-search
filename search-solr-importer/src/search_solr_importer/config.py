@@ -1,4 +1,4 @@
-# Copyright © 2022 Province of British Columbia
+# Copyright © 2023 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ Flask config, rather than reading environment variables directly
 or by accessing this configuration directly.
 """
 import os
-import sys
 
 from dotenv import find_dotenv, load_dotenv
 
@@ -28,49 +27,28 @@ from dotenv import find_dotenv, load_dotenv
 # this will load all the envars from a .env file located in the project root (api)
 load_dotenv(find_dotenv())
 
-CONFIGURATION = {
-    'development': 'search_solr_importer.config.DevConfig',
-    'testing': 'search_solr_importer.config.TestConfig',
-    'production': 'search_solr_importer.config.ProdConfig',
-    'default': 'search_solr_importer.config.ProdConfig'
-}
 
-
-def get_named_config(config_name: str = 'production'):
-    """Return the configuration object based on the name.
-
-    :raise: KeyError: if an unknown configuration is requested
-    """
-    if config_name in ['production', 'staging', 'default']:
-        config = ProdConfig()
-    elif config_name == 'testing':
-        config = TestConfig()
-    elif config_name == 'development':
-        config = DevConfig()
-    else:
-        raise KeyError(f'Unknown configuration: {config_name}')
-    return config
-
-
-class _Config():  # pylint: disable=too-few-public-methods
+class Config():  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults.
 
     Used as the base for all the other configurations.
     """
 
+    DEBUG = False
+    DEVELOPMENT = False
+    TESTING = False
+
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
-    SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
-    SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
+    BOR_API_URL = os.getenv('SEARCH_API_INTERNAL_URL', 'http://')
+    BOR_API_V1 = os.getenv('SEARCH_API_VERSION', '')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
-
-    SECRET_KEY = os.getenv('SECRET_KEY', 'a secret')
 
     BATCH_SIZE = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
@@ -83,14 +61,15 @@ class _Config():  # pylint: disable=too-few-public-methods
     ORACLE_HOST = os.getenv('ORACLE_HOST', '')
     ORACLE_PORT = int(os.getenv('ORACLE_PORT', '1521'))
 
+    # POSTGRESQL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
     DB_NAME = os.getenv('DATABASE_NAME', '')
     DB_HOST = os.getenv('DATABASE_HOST', '')
-    DB_PORT = os.getenv('DATABASE_PORT', '5432')  # POSTGRESQL
-    # POSTGRESQL
+    DB_PORT = os.getenv('DATABASE_PORT', '5432')
+
     if DB_UNIX_SOCKET := os.getenv('DATABASE_UNIX_SOCKET', None):
         SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host={DB_UNIX_SOCKET}'
     else:
@@ -111,28 +90,23 @@ class _Config():  # pylint: disable=too-few-public-methods
         'pool_timeout': int(DB_CONN_WAIT_TIMEOUT)
     }
 
-    # ACCOUNT_SVC_TIMEOUT = os.g
-    TESTING = False
-    DEBUG = False
-
     # Event tracking max retries before human intervention.
     EVENT_MAX_RETRIES: int = int(os.getenv('EVENT_MAX_RETRIES', '3'))
 
 
-class DevConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Creates the Development Config object."""
+class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for development environment."""
 
+    DEBUG = True
+    DEVELOPMENT = True
     TESTING = False
-    DEBUG = True
 
 
-class TestConfig(_Config):  # pylint: disable=too-few-public-methods
-    """In support of testing only.
-
-    Used by the py.test suite
-    """
+class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for unit testing environment."""
 
     DEBUG = True
+    DEVELOPMENT = False
     TESTING = True
     # SOLR
     SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
@@ -205,14 +179,16 @@ NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
 -----END RSA PRIVATE KEY-----"""
 
 
-class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Production environment configuration."""
+class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
+    """Config object for production environment."""
 
-    SECRET_KEY = os.getenv('SECRET_KEY', None)
-
-    if not SECRET_KEY:
-        SECRET_KEY = os.urandom(24)
-        print('WARNING: SECRET_KEY being set as a one-shot', file=sys.stderr)
-
-    TESTING = False
     DEBUG = False
+    DEVELOPMENT = False
+    TESTING = False
+
+
+config = {  # pylint: disable=invalid-name; Keeping name consistent with our other apps
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'unitTesting': UnitTestingConfig,
+}

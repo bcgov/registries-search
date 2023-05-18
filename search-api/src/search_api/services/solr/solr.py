@@ -20,8 +20,9 @@ from dataclasses import asdict
 from http import HTTPStatus
 from typing import Dict, List
 
-import requests
-from requests import Response
+from requests import Response, Session
+from requests.adapters import HTTPAdapter, Retry
+from requests.exceptions import ConnectionError as SolrConnectionError
 from flask import current_app
 
 from search_api.exceptions import SolrException
@@ -87,13 +88,21 @@ class Solr:
 
             response = None
             url = query.format(url=self.solr_url, core=self.core)
+            retry_times = 3 if method == 'GET' else 5
+            backoff_factor = 1 if method == 'GET' else 2
+            retries = Retry(total=retry_times,
+                            backoff_factor=backoff_factor,
+                            status_forcelist=[500, 502, 503, 504],
+                            allowed_methods=['GET', 'POST'])
+            session = Session()
+            session.mount(url, HTTPAdapter(max_retries=retries))
             if method == 'GET':
-                response = requests.get(url, params=params, timeout=30)
+                response = session.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
-                response = requests.post(url=url, json=json_data, timeout=30)
+                response = session.post(url=url, json=json_data, timeout=60)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
-                response = requests.post(url=url, data=xml_data, headers=headers, timeout=30)
+                response = session.post(url=url, data=xml_data, headers=headers, timeout=60)
             else:
                 raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
@@ -107,6 +116,11 @@ class Solr:
         except SolrException as err:
             # pass along
             raise err
+        except SolrConnectionError as err:
+            current_app.logger.error(err.with_traceback(None))
+            raise SolrException(
+                error='Read timeout error while handling Solr request.',
+                status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:  # noqa B902
             current_app.logger.error(err.with_traceback(None))
             msg = 'Error handling Solr request.'
@@ -127,7 +141,7 @@ class Solr:
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
-        response = self.call_solr('POST', self.update_query, xml_data=payload)
+        response = self.call_solr('POST', self.update_query, xml_data=payload, force=True)
         return response
 
     def delete_docs(self, identifiers: List[str]):
@@ -178,29 +192,6 @@ class Solr:
         suggestions = response.json() \
             .get('suggest', {}).get('name', {}).get(query, {}).get('suggestions', [])
         return [x.get('term', '').upper() for x in suggestions]  # i.e. returning list = ['COMPANY 1', 'COMPANY 2', ...]
-
-    # NB: to be used later for child doc searching enhancements.
-    # @staticmethod
-    # def build_child_query(query: str,
-    #                       nest_field: SolrField,
-    #                       boost_fields: List[SolrField],
-    #                       search_field: SolrField) -> str:
-    #     """Return a solr child query with fqs for each subsequent term."""
-    #     terms = query.split()
-    #     params = 'q={!parent which="*:* -_nest_path_:\\\\/' + f'{nest_field}' + '" score=Max}'
-    #     params += f'(+_nest_path_:"/{nest_field}"'
-    #     # add boosters
-    #     for field in boost_fields:
-    #         params += f' +{field}: "{query}"'
-    #         params += f' +{field}: "{query}"~1'
-    #         params += f' +{field}: "{query}"~2'
-    #         params += f' +{field}: "{query}"~3'
-    #         params += f' +{field}: "{query}"~10'
-    #     # add main search match (should be less specific than booster fields in most cases)
-    #     params += f' +{search_field}:{terms[0]}'
-    #     for term in terms[1:]:
-    #         params += f' AND {search_field}:{term}'
-    #     return params + ')'
 
     @staticmethod
     def build_filter_query(field: SolrField, values: List[str]):
