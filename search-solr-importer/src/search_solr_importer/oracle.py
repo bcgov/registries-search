@@ -45,7 +45,11 @@ class OracleDB:
         pool = g.pop('_oracle_pool', None)
 
         if pool is not None:
-            pool.close()
+            try:
+                pool.close()
+            except cx_Oracle.DatabaseError as err:
+                current_app.logger.debug(err)
+                
 
     @staticmethod
     def _create_pool():

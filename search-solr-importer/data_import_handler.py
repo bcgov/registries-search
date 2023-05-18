@@ -263,7 +263,7 @@ def load_search_core():  # pylint: disable=too-many-statements
                     current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
                                              'Please wait a couple minutes and then verify import '
                                              'and suggester build manually in the solr admin UI.')
-                    sys.exit(0)
+                    return
                 else:
                     raise err
             current_app.logger.debug('Suggester built.')
