@@ -41,8 +41,8 @@ class Config():  # pylint: disable=too-few-public-methods
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
     SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
-    SEARCH_API_URL = os.getenv('SEARCH_API_INTERNAL_URL', 'http://')
-    SEARCH_API_V1 = os.getenv('SEARCH_API_VERSION', '')
+    SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
+    SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
