@@ -19,6 +19,7 @@ from http import HTTPStatus
 
 from requests import Response, Session
 from requests.adapters import HTTPAdapter, Retry
+from requests.exceptions import ConnectionError as SolrConnectionError
 from flask import current_app
 
 from bor_api.exceptions import SolrException
@@ -106,6 +107,11 @@ class Solr:
                 error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
                 raise Exception(error)  # pylint: disable=broad-exception-raised;
             return response
+        except SolrConnectionError as err:
+            current_app.logger.debug(err.with_traceback(None))
+            raise SolrException(
+                error='Connection error while handling Solr request.',
+                status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:  # noqa B902
             msg = 'Error handling Solr request.'
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
