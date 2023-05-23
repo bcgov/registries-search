@@ -58,7 +58,7 @@ export async function fetchConfig(): Promise<any> {
   const keycloakClientId: string = process.env.VUE_APP_KEYCLOAK_CLIENTID;
   (<any>window).keycloakClientId = keycloakClientId
 
-  const ldClientId: string = process.env.VUE_APP_LD_CLIENT_ID
+  const ldClientId: string = process.env.VUE_APP_BOR_LD_CLIENT_ID
   if (ldClientId) {
     (<any>window).ldClientId = ldClientId
     console.info('Set Launch Darkly Client ID.')

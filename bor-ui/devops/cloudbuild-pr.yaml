@@ -15,12 +15,12 @@ steps:
   #
   # Generate the statis site
   #
-  - name: node:16.14.2
+  - name: node:18.14.2
     entrypoint: npm
     dir: "bor-ui"
     env:
       - 'VUE_APP_ADDRESS_COMPLETE_KEY=$_VUE_APP_ADDRESS_COMPLETE_KEY'
-      - 'VUE_APP_LD_CLIENT_ID=$_VUE_APP_LD_CLIENT_ID'
+      - 'VUE_APP_BOR_LD_CLIENT_ID=$_VUE_APP_BOR_LD_CLIENT_ID'
       - 'VUE_APP_BOR_API_KEY=$_VUE_APP_BOR_API_KEY'
     args: ['run', 'build']
 
