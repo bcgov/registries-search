@@ -66,7 +66,7 @@ def _call_auth_api(path: str, token: str) -> dict:
             Exception) as err:
         current_app.logger.debug(f'Auth api connection failure using svc:{api_url}', err)
         raise ExternalServiceException(HTTPStatus.SERVICE_UNAVAILABLE,
-                                       [{'message': 'Unable to get service account token from auth.',
+                                       [{'message': 'Unable to get information from auth.',
                                          'reason': err.with_traceback(None)}]) from err
     return response
 
@@ -76,7 +76,7 @@ def get_bearer_token():
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
     client_id = current_app.config.get('ACCOUNT_SVC_CLIENT_ID')
     client_secret = current_app.config.get('ACCOUNT_SVC_CLIENT_SECRET')
-    auth_api_timeout = current_app.config.get('AUTH_API_TIMEOUT')
+    account_svc_timeout = current_app.config.get('ACCOUNT_SVC_TIMEOUT')
 
     data = 'grant_type=client_credentials'
 
@@ -86,19 +86,19 @@ def get_bearer_token():
                             data=data,
                             headers={'content-type': 'application/x-www-form-urlencoded'},
                             auth=(client_id, client_secret),
-                            timeout=auth_api_timeout)
+                            timeout=account_svc_timeout)
         if res.status_code != HTTPStatus.OK:
             raise ConnectionError({'statusCode': res.status_code, 'json': res.json()})
         return res.json().get('access_token')
     except exceptions.Timeout as err:
-        current_app.logger.debug('AUTH connection failure: %s', err.with_traceback(None))
+        current_app.logger.debug('ACCOUNT SVC connection failure: %s', err.with_traceback(None))
         raise ExternalServiceException(HTTPStatus.GATEWAY_TIMEOUT,
-                                       [{'message': 'Unable to get service account token from auth.',
+                                       [{'message': 'Unable to get service account token.',
                                          'reason': err.with_traceback(None)}]) from err
     except Exception as err:  # noqa: B902
-        current_app.logger.debug('AUTH connection failure: %s', err.with_traceback(None))
+        current_app.logger.debug('ACCOUNT SVC connection failure: %s', err.with_traceback(None))
         raise ExternalServiceException(HTTPStatus.SERVICE_UNAVAILABLE,
-                                       [{'message': 'Unable to get service account token from auth.',
+                                       [{'message': 'Unable to get service account token.',
                                          'reason': err.with_traceback(None)}]) from err
 
 
