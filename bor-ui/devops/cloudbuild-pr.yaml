@@ -1,6 +1,6 @@
 steps:
   # install / setup ci
-  - name: node:16.14.2
+  - name: node:18.14.2
     entrypoint: npm
     dir: "bor-ui"
     args: ['install']
