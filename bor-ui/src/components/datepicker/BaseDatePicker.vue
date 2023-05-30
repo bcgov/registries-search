@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, Ref } from 'vue'
+import { computed, ref, Ref } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { watch } from 'vue';
@@ -197,10 +197,9 @@ watch(() => openYearsSelection.value, async (val) => {
   if (val) {
     openMonthsSelection.value = false
     // wait for refs to exist
-    await nextTick()
-    await nextTick()
-    await nextTick()
-    await nextTick()
+    // await nextTick()
+    // NB: nextTick is not waiting for the DOM to update in browser (only working locally)
+    await new Promise(resolve => setTimeout(resolve, 50))
     if (selectRef.value && yearRef.value) {
       const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
       const refTop = (yearRef.value[0].$el?.getBoundingClientRect())?.top
