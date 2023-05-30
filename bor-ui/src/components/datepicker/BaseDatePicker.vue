@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, Ref } from 'vue'
+import { computed, nextTick, ref, Ref } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { watch } from 'vue';
@@ -193,25 +193,27 @@ const headerMonthYearChange = (month: number, next: boolean) => {
   }
 }
 
-watch(() => openYearsSelection.value, async (val) => {
+const scrollToSelectedYear = async () => {
+  // wait for refs to exist
+  await nextTick()
+  if (selectRef.value && yearRef.value) {
+    const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
+    const refTop = (yearRef.value[0].$el?.getBoundingClientRect())?.top
+    if (selectRefTop && refTop) {
+      selectRef.value.scroll(0, refTop - selectRefTop - 135)
+      return
+    }
+  }
+  console.log('selectRef', selectRef.value)
+  console.log('yearRef', yearRef.value)
+  // log error so we know to debug this
+  console.error(`Datepicker YEAR scroll error.`)
+}
+
+watch(() => openYearsSelection.value, (val) => {
   if (val) {
     openMonthsSelection.value = false
-    // wait for refs to exist
-    // await nextTick()
-    // NB: nextTick is not waiting for the DOM to update in browser (only working locally)
-    await new Promise(resolve => setTimeout(resolve, 50))
-    if (selectRef.value && yearRef.value) {
-      const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
-      const refTop = (yearRef.value[0].$el?.getBoundingClientRect())?.top
-      if (selectRefTop && refTop) {
-        selectRef.value.scroll(0, refTop - selectRefTop - 135)
-        return
-      }
-    }
-    console.log('selectRef', selectRef.value)
-    console.log('yearRef', yearRef.value)
-    // log error so we know to debug this
-    console.error(`Datepicker YEAR scroll error.`)
+    scrollToSelectedYear()
   }
 })
 
