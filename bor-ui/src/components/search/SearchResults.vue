@@ -1,5 +1,13 @@
 <template>
   <div>
+    <BCRegDateRangePicker
+      v-show="showDatePicker"
+      ref="datePickerRef"
+      :defaultEndDate="dateRangeEnd"
+      :defaultStartDate="dateRangeStart"
+      :reset="dateRangeResetTrigger"
+      @submit="updateDateRange($event)"
+    />
     <div class="search-table">
       <base-table
         id="entity-results"
@@ -16,6 +24,26 @@
         :totalItems="search.totalResults"
         @resetFilters="resetFilters = false"
       >
+        <template v-slot:header-filter-slot-date>
+          <v-text-field
+            class="search-table__date-picker-filter active"
+            append-inner-icon="mdi-calendar"
+            density="compact"
+            hide-details
+            placeholder="Date"
+            readonly
+            v-model="dateFilterText"
+            @click="scrollToDatePicker()"
+          />
+          <v-btn
+            v-if="dateFilterText"
+            class="search-table__clear-btn"
+            icon
+            @click="dateRangeResetTrigger = !dateRangeResetTrigger"
+          >
+            <v-icon color="primary" size="20">mdi-close</v-icon>
+          </v-btn>
+        </template>
         <template v-slot:header-filter-slot-action>
           <v-btn
             v-if="isFilteringActive"
@@ -29,10 +57,10 @@
         <template v-slot:item-slot-name="{ header, item}">
           <search-table-name
             :icon="item.entityType.toLowerCase() === EntityType.PERSON ? 'mdi-account' : 'mdi-domain'"
-            :name="header.itemFn(item)" />
+            :name="header.itemFn(item)"
+          />
         </template>
         <template v-slot:item-slot-action>
-          <!-- @action="goToBusinessInfo(item)" -->
           <search-table-action
             :showBtn="false"
             :tooltipMsg="tooltipMsg"
@@ -62,20 +90,59 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import _ from 'lodash'
 // local
-import { BaseTable, ErrorRetry } from '@/components'
+import { BaseTable, BCRegDateRangePicker, ErrorRetry } from '@/components'
 import { STARTING_FILTERS, useSearch } from '@/composables'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 // internal
 import { SearchTableAction, SearchTableName } from './common'
 import { EntityType } from '@/enums'
+import { toDateStr } from '@/utils'
 
 // composables
-const { isFilteringActive, facetCount, getNextResults, getSearchResults, hasMoreResults, search } = useSearch()
+const {
+  isFilteringActive,
+  facetCount,
+  filterSearch,
+  getNextResults,
+  getSearchResults,
+  hasMoreResults,
+  search
+} = useSearch()
 
 const resetFilters = ref(false)
+
+// datepicker
+const datePickerRef = ref(null)
+const dateRangeResetTrigger = ref(false)
+const dateRangeStart = ref(null)
+const dateRangeEnd = ref(null)
+const dateRangeSelected = computed(() => (dateRangeStart.value && dateRangeEnd.value) || false)
+const dateFilterText = computed(() => {
+  if (!dateRangeSelected.value) return ''
+  const roleDates = search.filters?.query?.roles?.roleDates
+  return `${roleDates.start}, ...`
+})
+const showDatePicker = ref(false)
+const scrollToDatePicker = async () => {
+  showDatePicker.value = true
+  // await for datePicker ref to update
+  await nextTick()
+  datePickerRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
+  showDatePicker.value = false
+  dateRangeStart.value = val.startDate
+  dateRangeEnd.value = val.endDate
+  if (val.endDate && val.startDate) {
+    filterSearch(['query','roles','roleDates'], { start: toDateStr(val.startDate), end: toDateStr(val.endDate) })
+  } else {
+    filterSearch(['query','roles','roleDates'], {})
+  }
+}
 
 const resultsDesc = computed(() => {
   let desc = ''
@@ -98,6 +165,7 @@ const clearFilters = () => {
   search.filters = STARTING_FILTERS.value
   updateTableHeaderFilters()
   resetFilters.value = true
+  dateRangeResetTrigger.value = !dateRangeResetTrigger.value
 }
 
 const getNextSearches = _.debounce(async () => getNextResults(), 50)
@@ -111,6 +179,7 @@ const updateTableHeaderFilters = () => {
     // find header filter
     const header = SearchEntityHeaders.find((item) => item.col === activeFilters[i])
     // update filter value to match search composable
+    console.log(header?.filter?.value)
     if (header) header.filter.value = search.filters[activeFilters[i]]
   }
 }
@@ -133,6 +202,19 @@ onMounted(() => { updateTableHeaderFilters() })
 }
 
 .search-table {
+
+  &__date-picker-filter {
+    :deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {
+      cursor: pointer;
+    }
+  }
+  &__date-picker-filter.v-input--dirty {
+    :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
+      background-color: $blueSelected;
+      opacity: 1;
+    }
+  }
+
   &__clear {
     font-size: 14px;
     height: 36px;
@@ -143,6 +225,16 @@ onMounted(() => { updateTableHeaderFilters() })
   }
   &__clear :deep(.v-btn__content) {
     white-space: nowrap;
+  }
+
+  &__clear-btn {
+    background-color: transparent;
+    bottom: 37%;
+    box-shadow: none;
+    height: 25px;
+    position: absolute;
+    right: 20%;
+    width: 25px;
   }
 }
 </style>

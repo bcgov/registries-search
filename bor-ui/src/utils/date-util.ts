@@ -114,44 +114,8 @@ export function apiToDate(dateTimeString: string): Date {
   return new Date(dateTimeString)
 }
 
-/**
-* Converts a Date object to a date string (YYYY-MM-DD) in Pacific timezone.
-* @example "2021-01-01 07:00:00 GMT" -> "2020-12-31"
-* @example "2021-01-01 08:00:00 GMT" -> "2021-01-01"
-*/
-export function dateToYyyyMmDd(date: Date): string {
-  // safety check
-  if (!isDate(date) || isNaN(date.getTime())) return null
-
-  // NB: some versions of Node have only en-US locale
-  // so use that and convert results accordingly
-  const dateStr = date.toLocaleDateString('en-US', {
-    timeZone: 'America/Vancouver',
-    month: 'numeric', // 12
-    day: 'numeric', // 31
-    year: 'numeric' // 2020
-  })
-
-  // convert mm/dd/yyyy to yyyy-mm-dd
-  // and make sure month and day are 2 digits (eg, 03)
-  const [mm, dd, yyyy] = dateStr.split('/')
-  return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`
-}
-
-/** Whether the subject effective date/time is in the past. */
-export function isEffectiveDatePast(effectiveDate: Date): boolean {
-  return (effectiveDate <= new Date())
-}
-
-/** Whether the subject effective date/time is in the future. */
-export function isEffectiveDateFuture(effectiveDate: Date): boolean {
-  return (effectiveDate > new Date())
-}
-
 /**  Return the date string in the desired format */
 export function toDateStr (date: Date, format?: string) {
-  return (date) ? moment(
-    date.toLocaleString('en-US', { timeZone: 'America/Vancouver' })
-    ).format(format || 'YYYY-MM-DD') : ''
+  return (date) ? moment(date).local().format(format || 'YYYY-MM-DD') : ''
 }
 

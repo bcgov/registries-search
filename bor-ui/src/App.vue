@@ -141,9 +141,9 @@ const handleError = (error: ErrorI) => {
     case ErrorCategory.ACCOUNT_ACCESS:
       errorInfo.value = {...AuthAccessError}
       if (error.statusCode === StatusCodes.UNAUTHORIZED) {
-        errorInfo.value.text = 'This account does not have Business Search selected as an active product.'
+        errorInfo.value.text = 'This account does not have access to this application.'
         errorInfo.value.textExtra = [
-          'Please ensure Business Search is selected in account settings and try again.']
+          'Please contact the Beneficial Ownership team to request access.']
         // don't send error to sentry for ^
       } else {
         errorInfo.value.text = 'We are unable to determine your account access at this ' +

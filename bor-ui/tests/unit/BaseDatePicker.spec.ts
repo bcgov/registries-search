@@ -1,0 +1,103 @@
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+// local
+import { BaseDatePicker } from '@/components'
+
+describe('BaseDatePicker tests', () => {
+  let wrapper: VueWrapper<any>
+
+  beforeEach(async () => {
+    wrapper = mount(BaseDatePicker)
+  })
+  it('renders BaseDatePicker', () => {
+    // test everything renders
+    expect(wrapper.findComponent(BaseDatePicker).exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__header').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__header__year').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__header__year').text()).toBe(`${(new Date()).getFullYear()}`)
+    expect(wrapper.find('.base-date-picker__header__date').exists()).toBe(false)
+    expect(wrapper.find('.base-date-picker__month-year').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__month-year__prev-btn').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__month-year__date-btn').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__month-year__next-btn').exists()).toBe(true)
+    // month / year selections are not open
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
+    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
+  })
+
+  it('allows year selection from header', async () => {
+    wrapper.find('.base-date-picker__header__year').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(true)
+    // list of buttons is there
+    const year_btn_list = wrapper.findAll('.base-date-picker__select__year__btn')
+    expect(year_btn_list.length).toBe(201)
+    // default selection is current year
+    expect(wrapper.find('.base-date-picker__select__year__btn.selected').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__select__year__btn.selected').text()).toBe(`${(new Date()).getFullYear()}`)
+    // click different year
+    year_btn_list[0].trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
+    expect(wrapper.find('.base-date-picker__header__year').text()).toBe(`${year_btn_list[0].text()}`)
+    expect(wrapper.find('.base-date-picker__month-year').text()).toContain(`${year_btn_list[0].text()}`)
+  })
+
+  it('allows month/year prev/next/selection from month-year menu', async () => {
+    const startingMonth = wrapper.vm.selectedMonth
+    // click prev
+    wrapper.find('.base-date-picker__month-year__prev-btn').trigger('click')
+    await flushPromises()
+    expect(wrapper.vm.selectedMonth).not.toBe(startingMonth)
+    // click next
+    wrapper.find('.base-date-picker__month-year__next-btn').trigger('click')
+    await flushPromises()
+    expect(wrapper.vm.selectedMonth).toBe(startingMonth)
+    // click date
+    wrapper.find('.base-date-picker__month-year__date-btn').trigger('click')
+    await flushPromises()
+    // month menu should be open
+    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
+    const monthBtns = wrapper.findAll('.base-date-picker__select__month__btn')
+    expect(monthBtns.length).toBe(12)
+    expect(monthBtns[startingMonth].classes()).toContain('selected')
+    const selectedMonth = startingMonth < 11 ? 11 : 3
+    monthBtns[selectedMonth].trigger('click')
+    await flushPromises()
+    expect(wrapper.vm.selectedMonth).toBe(selectedMonth)
+    // year picker should be open
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(true)
+    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
+    const year_btn_list = wrapper.findAll('.base-date-picker__select__year__btn')
+    expect(year_btn_list.length).toBe(201)
+    // select new year
+    year_btn_list[0].trigger('click')
+    await flushPromises()
+    // menus should be closed, selected year/month should be shown
+    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
+    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
+    expect(wrapper.find('.base-date-picker__month-year__date-btn').text()).toContain(monthBtns[selectedMonth].text())
+    expect(wrapper.find('.base-date-picker__month-year__date-btn').text()).toContain(year_btn_list[0].text())
+  })
+
+  it('selects and emits date and resets', async () => {
+    const days = wrapper.findAll('.base-date-picker__calendar__day')
+    expect(days.length >= 30).toBe(true)
+    expect(wrapper.vm.selectedDate).toBe(null)
+    expect(wrapper.emitted('selectedDate')).toBeUndefined()
+    // click day
+    days[3].trigger('click')
+    await flushPromises()
+    // should have selected / emitted
+    expect(wrapper.vm.selectedDate).not.toBe(null)
+    expect(wrapper.emitted('selectedDate').length).toBe(1)
+    // reset
+    wrapper.setProps({ resetTrigger: true })
+    await flushPromises()
+    // selected date should be null / emitted
+    expect(wrapper.vm.selectedDate).toBe(null)
+    expect(wrapper.emitted('selectedDate').length).toBe(2)
+    expect(wrapper.emitted('selectedDate')[1]).toEqual([null])
+  })
+})

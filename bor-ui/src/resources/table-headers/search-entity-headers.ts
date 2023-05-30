@@ -93,6 +93,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       }
       return 'N/A'
     },
+    slotId: 'date',
     value: 'Effective Dates',
     width: '15%'
   },

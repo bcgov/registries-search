@@ -1,4 +1,5 @@
 export * from './common'
 export * from './datatable'
+export * from './datepicker'
 export * from './dialogs'
 export * from './search'
