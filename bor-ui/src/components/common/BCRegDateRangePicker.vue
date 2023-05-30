@@ -3,11 +3,11 @@
   <v-card class="date-selection registration-date" elevation="6" ref="datePicker">
     <v-row no-gutters>
       <v-col>
-        <span class="date-selection__heading" :class="{ 'picker-err': startDate === null && datePickerErr }">
+        <b class="date-selection__heading" :class="{ 'picker-err': startDate === null && datePickerErr }">
           Select Start Date:
-        </span>
+        </b>
         <BaseDatePicker
-          class="date-selection__picker"
+          class="date-selection__picker mt-2"
           :error="startDate === null && datePickerErr"
           :resetTrigger="resetTrigger"
           :setMaxDate="endDate"
@@ -15,11 +15,11 @@
         />
       </v-col>
       <v-col class="pl-4">
-        <span class="date-selection__heading" :class="{ 'picker-err': endDate === null && datePickerErr }">
+        <b class="date-selection__heading" :class="{ 'picker-err': endDate === null && datePickerErr }">
           Select End Date:
-        </span>
+        </b>
         <BaseDatePicker
-          class="date-selection__picker"
+          class="date-selection__picker mt-2"
           :error="endDate === null && datePickerErr"
           :resetTrigger="resetTrigger"
           :setMinDate="startDate"
@@ -31,14 +31,16 @@
       <v-col cols="auto">
         <v-btn
           class="date-selection-btn bold"
+          color="primary"
           small
           variant="text"
           @click="submitDateRange()"
         >
-          OK
+          <b>OK</b>
         </v-btn>
         <v-btn
           class="date-selection-btn ml-4"
+          color="primary"
           small
           variant="text"
           @click="resetDateRange()"

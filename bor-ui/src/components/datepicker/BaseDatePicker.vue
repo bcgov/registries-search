@@ -1,7 +1,7 @@
 <template>
   <div class="base-date-picker" :class="{ 'base-date-picker__err': error }">
     <div class="base-date-picker__header">
-      <v-btn class="base-date-picker__header__year" color="white" variant="text" @click="openYearsSelection = true">
+      <v-btn class="base-date-picker__header__year" variant="text" @click="openYearsSelection = true">
         {{ selectedYear }}
       </v-btn>
       <div v-if="selectedDate" class="base-date-picker__header__date">
@@ -16,6 +16,7 @@
       :day-names="['SUN', 'MON','TUE','WED','THU','FRI','SAT']"
       :enable-time-picker="false"
       format="yyyy-MM-dd"
+      hide-offset-dates
       inline
       :maxDate="maxDate"
       :minDate="minDate"
@@ -59,7 +60,7 @@
               style="width: 100%;"
               @click="openMonthsSelection = true"
             >
-              {{ localMonths[month] }} {{ year }}
+              <b>{{ localMonths[month] }} {{ year }}</b>
             </v-btn>
           </v-col>
           <v-col cols="2">
@@ -99,10 +100,11 @@
             </v-row>
           </div>
           <v-list v-else-if="openYearsSelection" class="base-date-picker__select__year">
-            <v-list-item v-for="y in years" :key="y.value" :ref="selectedYear === y.value ? 'yearRef' : ''">
+            <v-list-item v-for="y in years" :key="y.value">
               <v-btn
                 class="base-date-picker__select__year__btn"
                 :class="y.value === selectedYear ? 'selected' : ''"
+                ref="yearRef"
                 variant="text"
                 @click="updateMonthYear(selectedMonth, y.value); selectedYear = y.value; openYearsSelection = false;"
               >
@@ -117,10 +119,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, Ref } from 'vue'
+import { ComponentPublicInstance, Ref, computed, nextTick, ref, watch } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { watch } from 'vue';
 
 // props / emits
 const props = defineProps<{
@@ -133,12 +134,12 @@ const props = defineProps<{
 const emit = defineEmits<{ (e: 'selectedDate', value: Date): void }>()
 
 // refs
-const selectRef = ref(null)
-const yearRef = ref(null)
+const selectRef:Ref<HTMLInputElement> = ref(null)
+const yearRef:Ref<ComponentPublicInstance<HTMLInputElement>> = ref(null)
 
 // date
 const selectedDate: Ref<Date> = ref(props.defaultSelectedDate || null)
-watch(() => props.resetTrigger, () => { selectedDate.value = null })
+watch(() => props.resetTrigger, () => selectedDate.value = null)
 
 // max/min
 const maxDate: Ref<Date> = ref(props.setMaxDate || null)
@@ -197,15 +198,18 @@ const scrollToSelectedYear = async () => {
   // wait for refs to exist
   await nextTick()
   if (selectRef.value && yearRef.value) {
-    const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
-    const refTop = (yearRef.value[0].$el?.getBoundingClientRect())?.top
-    if (selectRefTop && refTop) {
-      selectRef.value.scroll(0, refTop - selectRefTop - 135)
-      return
+    // find selected ref
+    for (const i in yearRef.value) {
+      if (yearRef.value[i].$el.className.includes('selected')) {
+        const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
+        const refTop = (yearRef.value[i].$el?.getBoundingClientRect())?.top
+        if (selectRefTop && refTop) {
+          selectRef.value.scroll(0, refTop - selectRefTop - 135)
+          return
+        }
+      }
     }
   }
-  console.log('selectRef', selectRef.value)
-  console.log('yearRef', yearRef.value)
   // log error so we know to debug this
   console.error(`Datepicker YEAR scroll error.`)
 }
@@ -223,7 +227,7 @@ const getWeekDay = (d: Date) => {
 }
 
 const localMonths = ['January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December']
+  'July', 'August', 'September', 'October', 'November', 'December']
 
 const getMonth = (d: Date) => {
   return localMonths[d.getMonth()].slice(0, 3)
@@ -266,15 +270,29 @@ const getMonth = (d: Date) => {
       .dp__calendar_header_item {
         font-size: 12px;
         font-weight: 500;
-        color: $gray5;
+        color: $gray9 !important;
         padding: 4px 0 0 0;
         width: 40px;
       }
     }
   }
 
+  &__month-year {
+
+    &__prev-btn,
+    &__next-btn {
+      background-color: transparent !important;
+      color: $app-blue !important;
+    }
+
+    &__prev-btn:hover,
+    &__next-btn:hover {
+      background-color: $blueSelected !important;
+    }
+  }
+
   &__select {
-    height: 329px;
+    height: 321px;
     left: 0;
     overflow: scroll;
     position: absolute;
