@@ -179,7 +179,6 @@ const updateTableHeaderFilters = () => {
     // find header filter
     const header = SearchEntityHeaders.find((item) => item.col === activeFilters[i])
     // update filter value to match search composable
-    console.log(header?.filter?.value)
     if (header) header.filter.value = search.filters[activeFilters[i]]
   }
 }

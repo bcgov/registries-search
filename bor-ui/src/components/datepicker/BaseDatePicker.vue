@@ -196,6 +196,10 @@ const headerMonthYearChange = (month: number, next: boolean) => {
 watch(() => openYearsSelection.value, async (val) => {
   if (val) {
     openMonthsSelection.value = false
+    // wait for refs to exist
+    await nextTick()
+    await nextTick()
+    await nextTick()
     await nextTick()
     if (selectRef.value && yearRef.value) {
       const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
@@ -205,6 +209,8 @@ watch(() => openYearsSelection.value, async (val) => {
         return
       }
     }
+    console.log('selectRef', selectRef.value)
+    console.log('yearRef', yearRef.value)
     // log error so we know to debug this
     console.error(`Datepicker YEAR scroll error.`)
   }
