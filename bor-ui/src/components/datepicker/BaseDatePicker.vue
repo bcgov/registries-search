@@ -135,7 +135,7 @@ const emit = defineEmits<{ (e: 'selectedDate', value: Date): void }>()
 
 // refs
 const selectRef:Ref<HTMLInputElement> = ref(null)
-const yearRef:Ref<ComponentPublicInstance<HTMLInputElement>> = ref(null)
+const yearRef:Ref<ComponentPublicInstance<HTMLInputElement>[]> = ref(null)
 
 // date
 const selectedDate: Ref<Date> = ref(props.defaultSelectedDate || null)
