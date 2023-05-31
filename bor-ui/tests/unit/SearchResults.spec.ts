@@ -5,13 +5,14 @@ import _ from 'lodash'
 // bcregistry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
-import { BaseTable, ErrorRetry, SearchResults } from '@/components'
+import { BCRegDateRangePicker, BaseTable, ErrorRetry, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
 import { ErrorCategory } from '@/enums'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 import { axios } from '@/utils'
 // test data
 import { SearchResponseMock, testAccount } from './utils'
+import { nextTick } from 'vue'
 
 
 describe('SearchResults tests', () => {
@@ -85,6 +86,9 @@ describe('SearchResults tests', () => {
       filterIndex += 1
     }
 
+    // datepicker filter
+    expect(wrapper.find('.search-table__date-picker-filter').exists()).toBe(true)
+
     // renders no results found text
     expect(search.results).toEqual([])
     expect(table.find('.base-table__body__empty').exists()).toBe(true)
@@ -95,6 +99,8 @@ describe('SearchResults tests', () => {
     expect(table.findComponent(ErrorRetry).exists()).toBe(false)
     // does not show load more results btn
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
+    // does not show datepicker
+    expect(wrapper.findComponent(BCRegDateRangePicker).isVisible()).toBe(false)
   })
   it('Populates data correctly results contain matches', async () => {
     // trigger search
@@ -225,5 +231,31 @@ describe('SearchResults tests', () => {
     expect(wrapper.vm.hasMoreResults).toBe(false)
     // load more button should not be there anymore
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
+  })
+  it('shows datepicker and executes date filtering when selected', async () => {
+    wrapper.find('.search-table__date-picker-filter').trigger('click')
+    await flushPromises()
+    expect(wrapper.findComponent(BCRegDateRangePicker).isVisible()).toBe(true)
+    // trigger a search (will allow filter change to trigger a new search)
+    await getSearchResults('test')
+    expect(search.filters.query.roles).toEqual({})
+    expect(mockPost).toHaveBeenCalledTimes(1)
+    // emit date range selection
+    const startDate = new Date('2010-03-23T12:00:00')
+    const endDate = new Date('2020-05-11T12:00:00')
+    wrapper.findComponent(BCRegDateRangePicker).vm.$emit('submit', { endDate: endDate, startDate: startDate })
+    await flushPromises()
+    // check triggered search with date filter
+    expect(wrapper.findComponent(BCRegDateRangePicker).isVisible()).toBe(false)
+    expect(search.filters.query.roles).toEqual({ roleDates: { "end": "2020-05-11", "start": "2010-03-23" }})
+    expect(mockPost).toHaveBeenCalledTimes(2)
+    expect(mockPost).toHaveBeenLastCalledWith(
+      "search/entities",
+      {
+        "categories": {"entityAddresses": {}, "entityType": ["person"], "roles": {}},
+        "query": {"roles": {"roleDates": {"end": "2020-05-11", "start": "2010-03-23"}}, "value": "kial"},
+        "rows": 1, "start": 0
+      },
+      {"baseURL": "http://mock-url.ca", "headers": {"Account-Id": 1234, "x-apikey": "key"}})
   })
 })

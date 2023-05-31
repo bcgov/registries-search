@@ -130,7 +130,9 @@ const scrollToDatePicker = async () => {
   showDatePicker.value = true
   // await for datePicker ref to update
   await nextTick()
-  datePickerRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  if (datePickerRef.value?.$el?.scrollIntoView) {
+    datePickerRef.value.$el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 }
 
 const updateDateRange = (val: { endDate: Date, startDate: Date }) => {

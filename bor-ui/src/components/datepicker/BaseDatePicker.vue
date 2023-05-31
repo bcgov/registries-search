@@ -133,66 +133,40 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ (e: 'selectedDate', value: Date): void }>()
 
-// refs
-const selectRef:Ref<HTMLInputElement> = ref(null)
-const yearRef:Ref<ComponentPublicInstance<HTMLInputElement>[]> = ref(null)
-
-// date
+// date selection
 const selectedDate: Ref<Date> = ref(props.defaultSelectedDate || null)
-watch(() => props.resetTrigger, () => selectedDate.value = null)
 
-// max/min
-const maxDate: Ref<Date> = ref(props.setMaxDate || null)
-watch(() => props.setMaxDate, (val) => maxDate.value = val)
+// date defaults
+const defaultMonth = selectedDate.value?.getMonth() || (new Date()).getMonth()
+const defaultYear = selectedDate.value?.getFullYear() || (new Date()).getFullYear()
 
-const minDate: Ref<Date> = ref(props.setMinDate || null)
-watch(() => props.setMinDate, (val) => minDate.value = val)
+// date month/year selections
+const selectedMonth = ref(defaultMonth)
+const selectedYear = ref(defaultYear)
 
-// error
-const error = computed(() => props.error)
-
-// defaults
-const defaultMonth = computed(() => {
-  if (!selectedDate.value) return (new Date()).getMonth()
-  return selectedDate.value.getMonth()
+watch(() => props.resetTrigger, () => {
+  selectedDate.value = props.defaultSelectedDate || null
+  selectedMonth.value = defaultMonth
+  selectedYear.value = defaultYear
 })
-const defaultYear = computed(() => {
-  if (!selectedDate.value) return (new Date()).getFullYear()
-  return selectedDate.value.getFullYear()
-})
-
-// selections
-const selectedMonth = ref(defaultMonth.value)
-const selectedYear = ref(defaultYear.value)
 
 watch(() => selectedDate.value, (val) => {
   if (val) selectedYear.value = val.getFullYear()
   emit('selectedDate', val)
 })
 
+// month / year menus
+const selectRef:Ref<HTMLInputElement> = ref(null)
+const yearRef:Ref<ComponentPublicInstance<HTMLInputElement>[]> = ref(null)
+
 const openMonthsSelection = ref(false)
 const openYearsSelection = ref(false)
-
-const selectMonth = (m: number, updateMonthYear: (month: number, year: number) => void) => {
-  updateMonthYear(m, selectedYear.value)
-  selectedMonth.value = m
-  openYearsSelection.value = true
-  openMonthsSelection.value = false
-}
-
-const headerMonthYearChange = (month: number, next: boolean) => {
-  if (!selectedDate.value) {
-    if (month === 0 && !next) {
-      selectedYear.value--
-      selectedMonth.value = 11
-    } else if (month === 11 && next) {
-      selectedYear.value++
-      selectedMonth.value = 0
-    } else {
-      selectedMonth.value += next ? 1 : -1
-    }
+watch(() => openYearsSelection.value, (val) => {
+  if (val) {
+    openMonthsSelection.value = false
+    scrollToSelectedYear()
   }
-}
+})
 
 const scrollToSelectedYear = async () => {
   // wait for refs to exist
@@ -214,14 +188,39 @@ const scrollToSelectedYear = async () => {
   console.error(`Datepicker YEAR scroll error.`)
 }
 
-watch(() => openYearsSelection.value, (val) => {
-  if (val) {
-    openMonthsSelection.value = false
-    scrollToSelectedYear()
-  }
-})
+// max/min
+const maxDate: Ref<Date> = ref(props.setMaxDate || null)
+watch(() => props.setMaxDate, (val) => maxDate.value = val)
 
-// utility functions
+const minDate: Ref<Date> = ref(props.setMinDate || null)
+watch(() => props.setMinDate, (val) => minDate.value = val)
+
+// error
+const error = computed(() => props.error)
+
+// template functions
+const selectMonth = (m: number, updateMonthYear: (month: number, year: number) => void) => {
+  updateMonthYear(m, selectedYear.value)
+  selectedMonth.value = m
+  openYearsSelection.value = true
+  openMonthsSelection.value = false
+}
+
+const headerMonthYearChange = (month: number, next: boolean) => {
+  if (!selectedDate.value) {
+    if (month === 0 && !next) {
+      selectedYear.value--
+      selectedMonth.value = 11
+    } else if (month === 11 && next) {
+      selectedYear.value++
+      selectedMonth.value = 0
+    } else {
+      selectedMonth.value += next ? 1 : -1
+    }
+  }
+}
+
+// utility text functions
 const getWeekDay = (d: Date) => {
   return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()]
 }

@@ -19,14 +19,14 @@ export function createVueRouter (): Router {
       // this route is to verify login
       next({
         name: RouteName.SIGN_IN,
-        query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
+        query: { redirect: '/' },
       })
     } else {
       if (requiresAuth(to) && !isAuthenticated()) {
         // this route needs authentication, so re-route to login
         next({
           name: RouteName.LOGIN,
-          query: { redirect: sessionStorage.getItem('REGISTRY_URL') },
+          query: { redirect: '/' },
         })
       } else {
         if (isLogin(to) && isAuthenticated()) {
