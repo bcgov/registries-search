@@ -200,7 +200,7 @@ const scrollToSelectedYear = async () => {
   if (selectRef.value && yearRef.value) {
     // find selected ref
     for (const i in yearRef.value) {
-      if (yearRef.value[i].$el.className.includes('selected')) {
+      if (yearRef.value[i].$el?.className.includes('selected')) {
         const selectRefTop = (selectRef.value?.getBoundingClientRect())?.top
         const refTop = (yearRef.value[i].$el?.getBoundingClientRect())?.top
         if (selectRefTop && refTop) {
