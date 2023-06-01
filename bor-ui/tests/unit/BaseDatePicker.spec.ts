@@ -87,8 +87,8 @@ describe('BaseDatePicker tests', () => {
     expect(days.length >= 30).toBe(true)
     expect(wrapper.vm.selectedDate).toBe(null)
     expect(wrapper.emitted('selectedDate')).toBeUndefined()
-    // click day
-    days[3].trigger('click')
+    // click day (NB: make sure it is not a day from previous/next month)
+    days[9].trigger('click')
     await flushPromises()
     // should have selected / emitted
     expect(wrapper.vm.selectedDate).not.toBe(null)
@@ -140,14 +140,18 @@ describe('BaseDatePicker tests', () => {
     maxDate.setDate(maxDay)
     wrapper.setProps({ setMinDate: minDate, setMaxDate: maxDate })
     await nextTick()
-    // days 0-4 should be disabled
+    // days 1-4 and 11-* should be disabled
     const days = wrapper.findAll('.base-date-picker__calendar__day')
     expect(days.length >= 28).toBe(true)
     for (const i in days) {
-      if (parseInt(i) < minDay || parseInt(i) > maxDay) {
-        expect(days[i].classes()).toContain('dp__cell_disabled')    
+      if (days[i].classes().includes('dp__cell_offset')) {
+        // skip because it is a hidden day from the previous/next month
+        continue
+      }
+      if (parseInt(days[i].text()) < minDay || parseInt(days[i].text()) > maxDay) {
+        expect(days[i].classes()).toContain('dp__cell_disabled') 
       } else {
-        expect(days[i].classes()).not.toContain('dp__cell_disabled')    
+        expect(days[i].classes()).not.toContain('dp__cell_disabled')
       }
     }
   })
