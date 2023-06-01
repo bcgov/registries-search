@@ -76,7 +76,7 @@
                     :item-title="header.filter.itemValue || ''"
                     :item-value="header.filter.itemValue || ''"
                     :label="!header.filter.value ? header.filter.label || '' : ''"
-                    :multiple="header.filter.multiple"
+                    :multiple="(header.filter.multiple as any)"
                     :open-on-clear="true"
                     v-model="header.filter.value"
                     @update:modelValue="filter(header)"
@@ -176,7 +176,7 @@ const props = defineProps<{
   noResultsText?: string,
   pagination?: boolean,
   overflow?: string,
-  resetFilters?: boolean,
+  resetFiltersTrigger?: boolean,
   resetOnItemChange?: boolean,
   resultsDescription?: string,
   setHeaders: BaseTableHeaderI[],
@@ -186,20 +186,14 @@ const props = defineProps<{
   subtitle?: string
 }>()
 
-const emit = defineEmits<{
-  (e: 'filterActive', value: boolean): void
-  (e: 'resetFilters', value: boolean): void
-}>()
+const emit = defineEmits<{ (e: 'filterActive', value: boolean): void }>()
 
 const headers = reactive(_.cloneDeep(props.setHeaders) as BaseTableHeaderI[])
 const sortedItems = ref([...props.setItems])
 
 const emptyText = computed(() => props.noResultsText || 'No results found')
 const isFilteringActive = ref(false)
-const filterActive = computed(() => {
-  for (const i in headers) if (headers[i].filter?.value) return true
-  return false
-})
+
 const headerBg = computed(() => props.colors?.backgrounds?.header || 'white')
 const titleBg = computed(() => props.colors?.backgrounds?.title || '#e0e7ed')
 
@@ -212,7 +206,9 @@ const sortIcon = computed(() => {
 
 const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 
+const resettingFilters = ref(false)
 const resetAll = () => {
+  resettingFilters.value = true
   // reset sort
   sortBy.value = ''
   sortDirection.value = 'desc'
@@ -220,7 +216,9 @@ const resetAll = () => {
   for (const i in headers) {
     if (headers[i]?.filter?.value) headers[i].filter.value = null
   }
+  resettingFilters.value = false
 }
+watch(() => props.resetFiltersTrigger, () => { resetAll() })
 
 const sort = (itemFn: (val: any) => string) => {
   const compareFn = (item1: object, item2: object) => {
@@ -246,7 +244,14 @@ const toggleSort = (header: BaseTableHeaderI) => {
   sort(header.itemFn)
 }
 
+const filterActive = computed(() => {
+  for (const i in headers) if (headers[i].filter?.value) return true
+  return false
+})
+watch(() => filterActive.value, (val) => { emit('filterActive', val) })
+
 const filter = _.debounce(async (header: BaseTableHeaderI) => {
+  if (resettingFilters.value) return
   // rely on custom filterApiFn to alter result set if given (meant for server side isFilteringActive)
   if (header.filter.value?.length === 0) {
     header.filter.value = null
@@ -269,24 +274,6 @@ const filter = _.debounce(async (header: BaseTableHeaderI) => {
   sortBy.value = ''
   sortDirection.value = 'desc'
 }, 500)
-
-watch(() => filterActive.value, (val) => {
-  emit('filterActive', val)
-})
-
-watch(() => props.resetFilters, (val) => {
-  if (val) {
-    let usedFilter = null
-    for (const i in headers) {
-      if (headers[i]?.filter?.value) {
-        usedFilter = i
-        headers[i].filter.value = null
-      }
-    }
-    if (usedFilter !== null) filter(headers[usedFilter])
-    emit('resetFilters', true)
-  }
-})
 
 watch(() => props.setItems, () => {
   sortedItems.value = [...props.setItems]

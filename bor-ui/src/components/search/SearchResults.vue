@@ -16,13 +16,12 @@
         :itemKey="'legalName'"
         :loading="search._loading"
         overflow="hidden"
-        :resetFilters="resetFilters"
+        :resetFiltersTrigger="resetFiltersTrigger"
         :resultsDescription="resultsDesc"
         :setHeaders="SearchEntityHeaders"
         :setItems="search.results"
         title="Search Results"
         :totalItems="search.totalResults"
-        @resetFilters="resetFilters = false"
       >
         <template v-slot:header-filter-slot-date>
           <v-text-field
@@ -46,7 +45,7 @@
         </template>
         <template v-slot:header-filter-slot-action>
           <v-btn
-            v-if="isFilteringActive"
+            v-if="search._isFilteringActive"
             class="btn-basic-outlined search-table__clear"
             :append-icon="'mdi-window-close'"
             @click="clearFilters()"
@@ -56,7 +55,7 @@
         </template>
         <template v-slot:item-slot-name="{ header, item}">
           <search-table-name
-            :icon="item.entityType.toLowerCase() === EntityType.PERSON ? 'mdi-account' : 'mdi-domain'"
+            :icon="item.entityType.toUpperCase() === EntityType.PERSON ? 'mdi-account' : 'mdi-domain'"
             :name="header.itemFn(item)"
           />
         </template>
@@ -94,7 +93,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import _ from 'lodash'
 // local
 import { BaseTable, BCRegDateRangePicker, ErrorRetry } from '@/components'
-import { STARTING_FILTERS, useSearch } from '@/composables'
+import { useSearch } from '@/composables'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 // internal
 import { SearchTableAction, SearchTableName } from './common'
@@ -103,7 +102,6 @@ import { toDateStr } from '@/utils'
 
 // composables
 const {
-  isFilteringActive,
   facetCount,
   filterSearch,
   getNextResults,
@@ -111,8 +109,6 @@ const {
   hasMoreResults,
   search
 } = useSearch()
-
-const resetFilters = ref(false)
 
 // datepicker
 const datePickerRef = ref(null)
@@ -146,6 +142,7 @@ const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
   }
 }
 
+// text functions
 const resultsDesc = computed(() => {
   let desc = ''
   if (search.filters.categories.entityType?.includes(EntityType.PERSON)) {
@@ -163,14 +160,15 @@ const resultsDesc = computed(() => {
 const tooltipMsg = 'You can access this business through BC OnLine or by contacting BC Registries. ' +
   'See "Help with Business and Person Search" for details.'
 
-const clearFilters = () => {
-  search.filters = STARTING_FILTERS.value
-  updateTableHeaderFilters()
-  resetFilters.value = true
-  dateRangeResetTrigger.value = !dateRangeResetTrigger.value
-}
+// filter stuff
+const resetFiltersTrigger = ref(false)
 
-const getNextSearches = _.debounce(async () => getNextResults(), 50)
+const clearFilters = () => {
+  resetFiltersTrigger.value = !resetFiltersTrigger.value
+  dateRangeResetTrigger.value = !dateRangeResetTrigger.value
+  // search on reset filters
+  filterSearch(null, null, true)
+}
 
 /** Update the base table header filters to display what the current filters are.
  * (needed when leaving and coming back to the component)
@@ -188,6 +186,7 @@ const updateTableHeaderFilters = () => {
 // set table filters to session saved ones
 onMounted(() => { updateTableHeaderFilters() })
 
+const getNextSearches = _.debounce(async () => getNextResults(), 50)
 </script>
 
 <style lang="scss" scoped>

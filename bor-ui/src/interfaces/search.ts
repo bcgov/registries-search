@@ -13,6 +13,7 @@ export interface SearchI {
   totalResults: number
   unavailable: boolean
   _error: ComputedRef<ErrorI>
+  _isFilteringActive: ComputedRef<boolean>
   _loading: ComputedRef<boolean>
   _loadingNext: ComputedRef<boolean>
   _start: ComputedRef<number>,
@@ -59,7 +60,7 @@ export interface SearchPayloadI {
       relatedBN?: string
       relatedIdentifier?: string
       relatedName?: string
-      roleDates?: { start: string, end: string }  // ISO strings. Can be partial (i.e. 2023-10) or full datetime
+      roleDates?: { start?: string, end?: string }  // ISO strings. Can be partial (i.e. 2023-10) or full datetime
     }
     value?: string
   }

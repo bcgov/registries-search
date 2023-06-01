@@ -1,25 +1,25 @@
 import { computed, reactive } from 'vue'
+import _ from 'lodash'
 // local
 import { ErrorI, FacetI, SearchI, SearchResponseI } from '@/interfaces'
 import { searchEntities } from '@/requests'
 import { EntityType, ErrorCategory } from '@/enums'
 
-export const STARTING_FILTERS = computed(() => {
-  return {
-    query: { roles: {} },
-    categories: {
-      entityAddresses: {},
-      entityType: [EntityType.PERSON],
-      roles:{}
-    }
+const STARTING_FILTERS = {
+  query: { roles: { roleDates: {} }},
+  categories: {
+    entityAddresses: {},
+    entityType: [EntityType.PERSON],
+    roles:{}
   }
-})
+}
 
-const DEFAULT_SEARCH_ROWS = 100
+const DEFAULT_SEARCH_ROWS = 50
 
 // read only globals
 const _readOnly = reactive({
   error: null as ErrorI,
+  isFilteringActive: false,
   loading: false,
   loadingNext: false,
   start: 0,
@@ -29,11 +29,12 @@ const _readOnly = reactive({
 // globals TODO: try moving to pinia
 const search = reactive({
   facetsResult: {},
-  filters: STARTING_FILTERS.value,
+  filters: _.cloneDeep(STARTING_FILTERS),
   results: null,
   totalResults: null,
   unavailable: false,
   _error: computed(() => _readOnly.error),
+  _isFilteringActive: computed(() => _readOnly.isFilteringActive),
   _loading: computed(() => _readOnly.loading),
   _loadingNext: computed(() => _readOnly.loadingNext),
   _start: computed(() => _readOnly.start),
@@ -55,7 +56,7 @@ export const useSearch = () => {
   const rows = parseInt(sessionStorage.getItem('SEARCH_ROWS')) || DEFAULT_SEARCH_ROWS
 
   /** Returns true if any filter has a value. */
-  const isFilteringActive = computed(() => {
+  const hasActiveFilter = () => {
     const findActiveInObject = (object: object) => {
       for (const i in object) {
         // skip entity type filter
@@ -70,7 +71,7 @@ export const useSearch = () => {
       return false
     }
     return findActiveInObject(search.filters)
-  })
+  }
 
   /** Returns true there are more results to be returned from the api. */
   const hasMoreResults = computed(() => {
@@ -98,7 +99,12 @@ export const useSearch = () => {
   }
 
   /** Apply filter and get results set. */
-  const filterSearch = async (path: string[], val: any) => {
+  const filterSearch = async (path: string[], val: any, resetFilters = false) => {
+    if (resetFilters) {
+      search.filters = _.cloneDeep(STARTING_FILTERS)
+      await getSearchResults(search._value, true)
+      return
+    }
     const increasing_scope = !val
     // path will have length of 3 at most
     // i.e. search.filters['start'] = val
@@ -142,6 +148,7 @@ export const useSearch = () => {
     search.totalResults = null
     _readOnly.loading = true
     _readOnly.value = val
+    _readOnly.isFilteringActive = hasActiveFilter()
     if (search.results === null && !search.unavailable) search.results = []
     // FUTURE: add SEARCH_ROWS to enum
     const searchResp = await searchEntities(val, search.filters, rows, 0)
@@ -149,6 +156,10 @@ export const useSearch = () => {
       if (!searchResp.error) {
         // success
         if (updateFacets) search.facetsResult = searchResp.facets
+        else {
+          // always update entityType facets since overall counts are based off them
+          search.facetsResult.fields.entityType = searchResp.facets.fields.entityType
+        }
 
         _readOnly.value = searchResp.searchResults.queryInfo.query.value
         _readOnly.error = null
@@ -177,18 +188,18 @@ export const useSearch = () => {
   /** Reset all search values */
   const resetSearch = () => {
     search.facetsResult = {}
-    search.filters = STARTING_FILTERS.value
+    search.filters = _.cloneDeep(STARTING_FILTERS)
     search.results = null
     search.totalResults = null
     search.unavailable = false
     _readOnly.error = null
+    _readOnly.isFilteringActive = false
     _readOnly.loading = false
     _readOnly.start = 0
     _readOnly.value = ''
   }
   return {
     search,
-    isFilteringActive,
     hasMoreResults,
     facetCount,
     facetItems,

@@ -1,4 +1,4 @@
 export enum EntityType {
-  BUSINESS = 'business',
-  PERSON = 'person'
+  BUSINESS = 'BUSINESS',
+  PERSON = 'PERSON'
 }

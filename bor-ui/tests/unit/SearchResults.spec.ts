@@ -238,7 +238,7 @@ describe('SearchResults tests', () => {
     expect(wrapper.findComponent(BCRegDateRangePicker).isVisible()).toBe(true)
     // trigger a search (will allow filter change to trigger a new search)
     await getSearchResults('test')
-    expect(search.filters.query.roles).toEqual({})
+    expect(search.filters.query.roles).toEqual({ roleDates: {} })
     expect(mockPost).toHaveBeenCalledTimes(1)
     // emit date range selection
     const startDate = new Date('2010-03-23T12:00:00')
@@ -252,7 +252,7 @@ describe('SearchResults tests', () => {
     expect(mockPost).toHaveBeenLastCalledWith(
       "search/entities",
       {
-        "categories": {"entityAddresses": {}, "entityType": ["person"], "roles": {}},
+        "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
         "query": {"roles": {"roleDates": {"end": "2020-05-11", "start": "2010-03-23"}}, "value": "kial"},
         "rows": 1, "start": 0
       },
