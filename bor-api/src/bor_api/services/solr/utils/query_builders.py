@@ -17,37 +17,47 @@ import re
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 
-IDENTIFIER_FIELDS = [Field.IDENTIFIER_Q, Field.RELATED_IDENTIFIER_Q]
+IDENTIFIER_FIELDS: list[str] = [Field.IDENTIFIER_Q.value, Field.RELATED_IDENTIFIER_Q.value, Field.RELATED_Q.value]
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + Field.ENTITY_TYPE.value + ":*'}"
 
 
-def _add_identifier(field: str, term: str):
+def _add_identifier(field: str, term: str, is_child = False):
     """Return a special identifier query."""
     corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
+    legal_type_field = Field.LEGAL_TYPE.value
     if field in IDENTIFIER_FIELDS and (identifier := re.search(corp_prefix_regex, term)):
         prefix = identifier.group(1)
         new_term = term.replace(prefix, '', 1)
-        return f'({field}:"{new_term}" AND {field}:"{prefix.upper()}")'
+        if is_child:
+            field = PRE_CHILD_FILTER_CLAUSE + field
+            legal_type_field = PRE_CHILD_FILTER_CLAUSE + Field.RELATED_LEGAL_TYPE.value
+        return f'({field}:"{new_term}" AND {legal_type_field}:"{prefix.upper()}")'
+    if is_child:
+        field = PRE_CHILD_FILTER_CLAUSE + field
+
     return f'{field}:{term}'
 
 
-def build_child_query(child_query: dict[str, str]) -> str | None:
+def build_child_query(child_query: dict[str, str], ) -> str | None:
     """Return the child query fq."""
     # add filter clauses for child query items
     child_q = ''
     for key in child_query:
         if not child_query[key]:
             continue
+
         terms = child_query[key].split()
         if not child_q:
-            child_q = f'{PRE_CHILD_FILTER_CLAUSE}{key}:{terms[0]}'
+            child_q = _add_identifier(key, terms[0], True)
         else:
-            child_q += f' AND {PRE_CHILD_FILTER_CLAUSE}{key}:{terms[0]}'
+            child_q += f' AND {_add_identifier(key, terms[0], True)}'
 
         for term in terms[1:]:
-            child_q += f' AND {PRE_CHILD_FILTER_CLAUSE}{key}:{term}'
+            child_q += f' AND {_add_identifier(key, term, True)}'
+
     if not child_q:
         return None
+
     return f'({child_q})'
 
 

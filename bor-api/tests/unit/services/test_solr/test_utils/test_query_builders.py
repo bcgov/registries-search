@@ -14,34 +14,33 @@
 """Tests to ensure that the Solr Service query builders work as expected."""
 import pytest
 
-from bor_api.services.solr import Solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.utils.query_builders import (PRE_CHILD_FILTER_CLAUSE, _add_identifier, build_base_query,
                                                         build_child_query, build_facet, build_facet_query)
 
 
-@pytest.mark.parametrize('test_name,field,term,expected', [
-    ('test_basic_1', Field.IDENTIFIER_Q, 'BC1234', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")'),
-    ('test_basic_lowercase_1', Field.IDENTIFIER_Q, 'bc1234', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")'),
-    ('test_basic_2', Field.RELATED_IDENTIFIER_Q, 'BC1234', f'({Field.RELATED_IDENTIFIER_Q.value}:"1234" AND {Field.RELATED_IDENTIFIER_Q.value}:"BC")'),
-    ('test_basic_lowercase_2', Field.RELATED_IDENTIFIER_Q, 'BC1234', f'({Field.RELATED_IDENTIFIER_Q.value}:"1234" AND {Field.RELATED_IDENTIFIER_Q.value}:"BC")'),
-    ('test_other_types_1', Field.IDENTIFIER_Q, 'CP1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.IDENTIFIER_Q.value}:"CP")'),
-    ('test_other_types_2', Field.IDENTIFIER_Q, 'S1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.IDENTIFIER_Q.value}:"S")'),
-    ('test_other_types_3', Field.IDENTIFIER_Q, 'C1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.IDENTIFIER_Q.value}:"C")'),
-    ('test_other_types_4', Field.IDENTIFIER_Q, 'ABCD1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.IDENTIFIER_Q.value}:"ABCD")'),
-    ('test_number_only', Field.IDENTIFIER_Q, '1234567', f'{Field.IDENTIFIER_Q.value}:1234567'),
-    ('test_not_identifier_1', Field.IDENTIFIER_Q, 'not idenitifier 1234567', f'{Field.IDENTIFIER_Q.value}:not idenitifier 1234567'),
-    ('test_not_identifier_2', Field.IDENTIFIER_Q, '1234567notidentifier', f'{Field.IDENTIFIER_Q.value}:1234567notidentifier'),
-    ('test_not_identifier_3', Field.IDENTIFIER_Q, 'not1234567id', f'{Field.IDENTIFIER_Q.value}:not1234567id'),
-    ('test_not_identifier_4', Field.IDENTIFIER_Q, 'BC 1234567', f'{Field.IDENTIFIER_Q.value}:BC 1234567'),
-    ('test_legal_name_q', Field.LEGAL_NAME_Q, 'BC1234567', f'{Field.LEGAL_NAME_Q.value}:BC1234567'),
-    ('test_legal_name_agro_q', Field.LEGAL_NAME_AGRO_Q, 'BC1234567', f'{Field.LEGAL_NAME_AGRO_Q.value}:BC1234567'),
-    ('test_legal_name_single_q', Field.LEGAL_NAME_SINGLE_Q, 'BC1234567', f'{Field.LEGAL_NAME_SINGLE_Q.value}:BC1234567'),
-    ('test_bn_q', Field.BN_Q, 'BC1234567', f'{Field.BN_Q.value}:BC1234567'),
+@pytest.mark.parametrize('test_name,field,term,expected,is_child', [
+    ('test_basic_1', Field.IDENTIFIER_Q, 'BC1234', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.LEGAL_TYPE.value}:"BC")', False),
+    ('test_basic_lowercase_1', Field.IDENTIFIER_Q, 'bc1234', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.LEGAL_TYPE.value}:"BC")', False),
+    ('test_basic_2', Field.RELATED_IDENTIFIER_Q, 'BC1234', f'({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_IDENTIFIER_Q.value}:"1234" AND {PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_LEGAL_TYPE.value}:"BC")', True),
+    ('test_basic_lowercase_2', Field.RELATED_IDENTIFIER_Q, 'BC1234', f'({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_IDENTIFIER_Q.value}:"1234" AND {PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_LEGAL_TYPE.value}:"BC")', True),
+    ('test_other_types_1', Field.IDENTIFIER_Q, 'CP1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.LEGAL_TYPE.value}:"CP")', False),
+    ('test_other_types_2', Field.IDENTIFIER_Q, 'S1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.LEGAL_TYPE.value}:"S")', False),
+    ('test_other_types_3', Field.IDENTIFIER_Q, 'C1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.LEGAL_TYPE.value}:"C")', False),
+    ('test_other_types_4', Field.IDENTIFIER_Q, 'ABCD1234567', f'({Field.IDENTIFIER_Q.value}:"1234567" AND {Field.LEGAL_TYPE.value}:"ABCD")', False),
+    ('test_number_only', Field.IDENTIFIER_Q, '1234567', f'{Field.IDENTIFIER_Q.value}:1234567', False),
+    ('test_not_identifier_1', Field.IDENTIFIER_Q, 'not idenitifier 1234567', f'{Field.IDENTIFIER_Q.value}:not idenitifier 1234567', False),
+    ('test_not_identifier_2', Field.IDENTIFIER_Q, '1234567notidentifier', f'{Field.IDENTIFIER_Q.value}:1234567notidentifier', False),
+    ('test_not_identifier_3', Field.IDENTIFIER_Q, 'not1234567id', f'{Field.IDENTIFIER_Q.value}:not1234567id', False),
+    ('test_not_identifier_4', Field.IDENTIFIER_Q, 'BC 1234567', f'{Field.IDENTIFIER_Q.value}:BC 1234567', False),
+    ('test_legal_name_q', Field.LEGAL_NAME_Q, 'BC1234567', f'{Field.LEGAL_NAME_Q.value}:BC1234567', False),
+    ('test_legal_name_agro_q', Field.LEGAL_NAME_AGRO_Q, 'BC1234567', f'{Field.LEGAL_NAME_AGRO_Q.value}:BC1234567', False),
+    ('test_legal_name_single_q', Field.LEGAL_NAME_SINGLE_Q, 'BC1234567', f'{Field.LEGAL_NAME_SINGLE_Q.value}:BC1234567', False),
+    ('test_bn_q', Field.BN_Q, 'BC1234567', f'{Field.BN_Q.value}:BC1234567', False),
 ])
-def test_add_identifier(test_name, field: Field, term: str, expected: str):
+def test_add_identifier(test_name, field: Field, term: str, expected: str, is_child: bool):
     """Assert the _add_identifier function works as expected."""
-    assert _add_identifier(field.value, term) == expected
+    assert _add_identifier(field.value, term, is_child) == expected
 
 
 @pytest.mark.parametrize('test_name,params,expected', [
@@ -98,7 +97,7 @@ def test_add_identifier(test_name, field: Field, term: str, expected: str):
      {'query': f'({Field.LEGAL_NAME_Q.value}:name)', 'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca']}),
     ('test_filter_multi_2',
      {'query': {'value':'name', Field.ADDRESS_Q.value: 'bc ca', Field.IDENTIFIER_Q.value: 'bc1234'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}},
-     {'query': f'({Field.LEGAL_NAME_Q.value}:name)', 'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")']}),
+     {'query': f'({Field.LEGAL_NAME_Q.value}:name)', 'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.LEGAL_TYPE.value}:"BC")']}),
     ('test_all',
      {'query': {'value':'name1st name2nd', Field.ADDRESS_Q.value: 'bc ca', Field.IDENTIFIER_Q.value: 'bc1234'},
       'fields': [Field.LEGAL_NAME_Q, Field.LEGAL_NAME_AGRO_Q, Field.IDENTIFIER_Q],
@@ -107,7 +106,7 @@ def test_add_identifier(test_name, field: Field, term: str, expected: str):
       'fuzzy': {Field.LEGAL_NAME_Q: 2, Field.LEGAL_NAME_AGRO_Q:3, Field.ADDRESS_Q: 1}
      },
      {'query': f'({Field.LEGAL_NAME_Q.value}:name1st^5 OR {Field.LEGAL_NAME_Q.value}:name1st~2 OR {Field.LEGAL_NAME_AGRO_Q.value}:name1st^3 OR {Field.LEGAL_NAME_AGRO_Q.value}:name1st~3 OR {Field.IDENTIFIER_Q.value}:name1st OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:name1st~1) OR ({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_NAME.value}:name1st)) AND ({Field.LEGAL_NAME_Q.value}:name2nd^5 OR {Field.LEGAL_NAME_Q.value}:name2nd~2 OR {Field.LEGAL_NAME_AGRO_Q.value}:name2nd^3 OR {Field.LEGAL_NAME_AGRO_Q.value}:name2nd~3 OR {Field.IDENTIFIER_Q.value}:name2nd OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:name2nd~1) OR ({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_NAME.value}:name2nd))',
-      'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")']
+      'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.LEGAL_TYPE.value}:"BC")']
      }),
 ])
 def test_build_base_query(test_name, params, expected):

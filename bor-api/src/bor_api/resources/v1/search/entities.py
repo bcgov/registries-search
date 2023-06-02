@@ -60,7 +60,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
             # roles
             Field.RELATED_BN_Q.value: prep_query_str(roles_json.get(Field.RELATED_BN.value, '')),
             Field.RELATED_IDENTIFIER_Q.value: prep_query_str(roles_json.get(Field.RELATED_IDENTIFIER.value, '')),
-            Field.RELATED_NAME_SINGLE_Q.value: prep_query_str(roles_json.get(Field.RELATED_NAME.value, ''))
+            Field.RELATED_NAME_SINGLE_Q.value: prep_query_str(roles_json.get(Field.RELATED_NAME.value, '')),
+            Field.RELATED_Q.value: prep_query_str(roles_json.get('value', ''))
         }
         # set nested child faceted category params
         address_categories_json = categories_json.get(Field.ENTITY_ADDRESSES.value, {})
@@ -121,7 +122,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                             Field.RELATED_BN.value: child_query[Field.RELATED_BN_Q.value],
                             Field.RELATED_IDENTIFIER.value: child_query[Field.RELATED_IDENTIFIER_Q.value],
                             Field.RELATED_NAME.value: child_query[Field.RELATED_NAME_SINGLE_Q.value],
-                            Field.ROLE_DATES.value: child_date_ranges
+                            Field.ROLE_DATES.value: child_date_ranges,
+                            'value': child_query[Field.RELATED_Q.value]
                         }
                     },
                     'rows': rows or bor_solr.default_rows,

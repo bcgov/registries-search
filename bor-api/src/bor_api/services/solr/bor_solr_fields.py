@@ -69,6 +69,7 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     RELATED_NAME_Q = 'relatedName_q'
     RELATED_NAME_AGRO_Q = 'relatedName_agro_q'
     RELATED_NAME_SINGLE_Q = 'relatedName_single_term'
+    RELATED_Q = 'related_q'
 
     # address doc stored/query fields
     ADDRESS_TYPE = 'addressType'

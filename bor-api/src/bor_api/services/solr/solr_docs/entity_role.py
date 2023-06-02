@@ -31,3 +31,8 @@ class EntityRole:
     roleDates: list[DateRange]
     roleType: str  # i.e. director, partner, beneficial owner, incorporator, etc.
     relatedBN: str = None
+    related_q: str = None
+
+    def __post_init__(self):
+        """Set extra solr role search fields dependent on base fields."""
+        self.related_q = f"{self.relatedName} {self.relatedIdentifier} {self.relatedBN or ''}".strip()

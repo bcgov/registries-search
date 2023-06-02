@@ -101,8 +101,8 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     col: 'roles',
     filter: {
       clearable: true,
-      filterApiFn: (filterVal: string) => filterSearch(['query','roles', 'relatedName'], filterVal),
-      label: 'Business Name',
+      filterApiFn: (filterVal: string) => filterSearch(['query','roles', 'value'], filterVal),
+      label: 'Business Details',
       type: 'text',
       value: ''
     },

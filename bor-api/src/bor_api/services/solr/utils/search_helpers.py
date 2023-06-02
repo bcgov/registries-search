@@ -41,14 +41,12 @@ def entities_search(params: SearchParams):
             Field.LEGAL_NAME_Q: 2,
             Field.LEGAL_NAME_AGRO_Q: 2,
             Field.LEGAL_NAME_SINGLE_Q: 2,
-            Field.IDENTIFIER_Q: 2,
             Field.BN_Q: 2
         },
         fuzzy_fields={
             Field.LEGAL_NAME_Q: 2,
             Field.LEGAL_NAME_AGRO_Q: 2,
             Field.LEGAL_NAME_SINGLE_Q: 2,
-            Field.IDENTIFIER_Q: 1,
             Field.BN_Q: 1,
             Field.ADDRESS_Q: 1
         })

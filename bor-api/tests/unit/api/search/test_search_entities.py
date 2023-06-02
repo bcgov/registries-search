@@ -46,7 +46,8 @@ from tests.unit.utils import SOLR_TEST_DOCS, create_entity, create_header
             Field.RELATED_BN.value: '0424',
             Field.RELATED_IDENTIFIER.value: 'CP4332',
             Field.RELATED_NAME.value: 'related name',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'}
+            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
+            'value': 'CP4332 0424 related name'
         }
      },{}
     ),
@@ -76,7 +77,8 @@ from tests.unit.utils import SOLR_TEST_DOCS, create_entity, create_header
             Field.RELATED_BN.value: '0424',
             Field.RELATED_IDENTIFIER.value: 'CP4332',
             Field.RELATED_NAME.value: 'related name',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'}
+            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
+            'value': 'CP4332 0424 related name'
         }
      },
      {
@@ -132,7 +134,8 @@ def test_search_entities_solr_mock(app, client, requests_mock, test_name, query,
             'relatedBN': query.get(Field.ROLES.value, {}).get(Field.RELATED_BN.value, ''),
             'relatedIdentifier': query.get(Field.ROLES.value, {}).get(Field.RELATED_IDENTIFIER.value, '').lower(),
             'relatedName': query.get(Field.ROLES.value, {}).get(Field.RELATED_NAME.value, ''),
-            'roleDates': query.get(Field.ROLES.value, {}).get(Field.ROLE_DATES.value, {})},
+            'roleDates': query.get(Field.ROLES.value, {}).get(Field.ROLE_DATES.value, {}),
+            'value': query.get(Field.ROLES.value, {}).get('value', '').lower()},
         'value': query['value']
     }
     assert resp_json['searchResults']['queryInfo']['rows'] == 10
@@ -275,8 +278,18 @@ def test_search_entities_solr_mock(app, client, requests_mock, test_name, query,
             Field.RELATED_BN.value: '123',
             Field.RELATED_IDENTIFIER.value: 'CP123',
             Field.RELATED_NAME.value: 'test',
-            Field.ROLE_DATES.value:{Field.END.value: '2023-05-10', Field.START.value: '2020-01-28'}
+            Field.ROLE_DATES.value:{Field.END.value: '2023-05-10', Field.START.value: '2020-01-28'},
+            'value': 'CP123 test'
         }
+     },
+     {},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'CA', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'active': True, 'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+    ),
+    ('test_child_filters_related_value',
+     {
+        'value': 'person one',
+        Field.ENTITY_ADDRESSES.value: 'victoria bc',
+        Field.ROLES.value: {'value': 'CP123 test'}
      },
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'CA', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'active': True, 'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
@@ -334,7 +347,8 @@ def test_search_entities_solr_mock(app, client, requests_mock, test_name, query,
             Field.RELATED_BN.value: '123',
             Field.RELATED_IDENTIFIER.value: 'CP123',
             Field.RELATED_NAME.value: 'test',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2018-01-28'}
+            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2018-01-28'},
+            'value': 'CP123 test'
         }
      },
      {
