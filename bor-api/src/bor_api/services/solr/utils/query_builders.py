@@ -21,7 +21,7 @@ IDENTIFIER_FIELDS: list[str] = [Field.IDENTIFIER_Q.value, Field.RELATED_IDENTIFI
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + Field.ENTITY_TYPE.value + ":*'}"
 
 
-def _add_identifier(field: str, term: str, is_child = False):
+def _add_identifier(field: str, term: str, is_child=False):
     """Return a special identifier query."""
     corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
     legal_type_field = Field.LEGAL_TYPE.value
