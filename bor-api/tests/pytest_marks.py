@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""This creates the pymarks for the integrations used by the SEARCH API.
+"""This creates the pymarks for the integrations used by the BOR API.
 
-The database used by the SEARCH API is not considered an integration, as it is fully
+The database used by the BOR API is not considered an integration, as it is fully
 owned and managed by the API.
 
 The other integrations only run if their environment variables are set,

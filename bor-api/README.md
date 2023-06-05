@@ -51,7 +51,7 @@ to setup your local development environment.
    1. In your `venv` environment run: `flask db upgrade`
 1. Run a local solr instance: https://github.com/bcgov-registries/beneficial-ownership/tree/main/bor-solr
 
-### Running the SEARCH-API
+### Running the BOR-API
 
 Start the flask server with `(python -m flask run -p 5000)`
 
