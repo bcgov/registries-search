@@ -49,7 +49,7 @@ to setup your local development environment.
    1. create a database for development and a database for unit tests
    1. update your .env DATABASE_NAME/DATABASE_TEST_NAME/PASSWORD values to match
    1. In your `venv` environment run: `flask db upgrade`
-1. Run a local solr instance: https://github.com/bcgov-registries/beneficial-ownership/tree/main/search-solr
+1. Run a local solr instance: https://github.com/bcgov-registries/beneficial-ownership/tree/main/bor-solr
 
 ### Running the SEARCH-API
 
