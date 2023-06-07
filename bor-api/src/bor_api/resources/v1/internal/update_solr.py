@@ -131,12 +131,14 @@ def _parse_entities(request_json: dict) -> list[Entity]:
 
     entities = []
 
-    address_info = request_json['businessAddresses']
+    address_info = request_json['businessAddresses'].get('registeredOffice', None)
+    if not address_info:
+        address_info = request_json['businessAddresses']['businessOffice']
     business_info = request_json['business']
     party_info = request_json.get('parties', [])
 
     # add new business doc
-    business_address = get_delivery_address(address_info['registeredOffice']['deliveryAddress'])
+    business_address = get_delivery_address(address_info['deliveryAddress'])
     identifier = business_info['identifier']
     if needs_bc_prefix(identifier, business_info['legalType']):
         # set prefix to BC

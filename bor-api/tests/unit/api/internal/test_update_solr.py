@@ -85,7 +85,7 @@ def test_update_solr_mocked(app, session, client, jwt):
             'bn': '123456789',
             'bnSP': None,
             'identifier_q': 'FM1233334',
-            'legalType': 'SP',
+            'legalType': 'BEN',
             'operatingName': None,
             'roles': None,
             'state': 'ACTIVE'
@@ -115,7 +115,7 @@ def test_update_solr_mocked(app, session, client, jwt):
                 'relatedName': 'ABCD Prop',
                 'relatedState': 'ACTIVE',
                 'related_q': 'ABCD Prop FM1233334 123456789',
-                'relatedLegalType': 'SP',
+                'relatedLegalType': 'BEN',
                 'relatedEntityType': 'BUSINESS',
                 'relatedIdentifier': 'FM1233334'}],
             'state': None}]
@@ -144,7 +144,7 @@ def test_update_solr_mocked(app, session, client, jwt):
                 'relatedName': 'ABCD Prop',
                 'relatedState': 'ACTIVE',
                 'related_q': 'ABCD Prop FM1233334 123456789',
-                'relatedLegalType': 'SP',
+                'relatedLegalType': 'BEN',
                 'relatedEntityType': 'BUSINESS',
                 'relatedIdentifier': 'FM1233334'}],
             'state': None}]

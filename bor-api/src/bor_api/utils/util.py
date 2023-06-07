@@ -37,12 +37,12 @@ def get_str(payload: dict, path: str) -> str:
     """Extract a str from the JSON filing, at the provided path.
 
     Args:
-        d (dict): any dictionary.
+        payload (dict): any dictionary.
         path (str): The path to the nested value.
 
     Examples:
         >>>get_str(
-            d={'filing':{'header':{'name': 'annualReport'}}},
+            payload={'filing':{'header':{'name': 'annualReport'}}},
             path='filing/header/name')
         'annualReport'
 

@@ -17,7 +17,7 @@ SOLR_UPDATE_REQUEST_TEMPLATE = {
     "business": {
         "identifier": "FM1233334",
         "legalName": "ABCD Prop",
-        "legalType": "SP",
+        "legalType": "BEN",
         "taxId": "123456789",
         "state": "ACTIVE"
     },
