@@ -22,7 +22,6 @@ from .date_range import DateRange
 class EntityRole:
     """Class representation for a solr entity role doc."""
 
-    active: bool
     relatedEntityType: str
     relatedIdentifier: str
     relatedLegalType: str

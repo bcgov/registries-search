@@ -41,9 +41,6 @@ def test_date_range_doc(test_name, start, end):
 ])
 def test_date_range_doc_invalid(test_name, start, end):
     """Assert the Date Range solr doc class does not initialize when required fields are missing."""
-    # end
-    with pytest.raises(TypeError):
-        DateRange(start=start)
     # start
     with pytest.raises(TypeError):
         DateRange(end=end)

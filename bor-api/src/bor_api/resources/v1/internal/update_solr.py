@@ -157,13 +157,11 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         identifier = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
         for role in party.get('roles'):
-            active = not role.get('cessationDate', None)
             entities.append(Entity(entityAddresses=[address],
                                    entityType='PERSON',
                                    identifier=identifier,
                                    legalName=name,
-                                   roles=[EntityRole(active=active,
-                                                     relatedEntityType='BUSINESS',
+                                   roles=[EntityRole(relatedEntityType='BUSINESS',
                                                      relatedIdentifier=business.identifier,
                                                      relatedLegalType=business.legalType,
                                                      relatedName=business.legalName,

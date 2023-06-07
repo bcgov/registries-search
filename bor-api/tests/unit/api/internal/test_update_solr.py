@@ -109,10 +109,9 @@ def test_update_solr_mocked(app, session, client, jwt):
             'legalType': None,
             'operatingName': None,
             'roles': [{
-                'active': True,
                 'roleType': 'Director',
                 'relatedBN': '123456789',
-                'roleDates': [{'end': None, 'start': '2023-03-06'}],
+                'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
                 'relatedName': 'ABCD Prop',
                 'relatedState': 'ACTIVE',
                 'related_q': 'ABCD Prop FM1233334 123456789',
@@ -139,10 +138,9 @@ def test_update_solr_mocked(app, session, client, jwt):
             'legalType': None,
             'operatingName': None,
             'roles': [{
-                'active': True,
                 'roleType': 'Director',
                 'relatedBN': '123456789',
-                'roleDates': [{'end': None, 'start': '2023-03-20'}],
+                'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
                 'relatedName': 'ABCD Prop',
                 'relatedState': 'ACTIVE',
                 'related_q': 'ABCD Prop FM1233334 123456789',

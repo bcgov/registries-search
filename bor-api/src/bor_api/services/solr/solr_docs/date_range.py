@@ -22,4 +22,9 @@ class DateRange:
     """Class representation for a solr date range."""
 
     start: datetime  # query i.e. ['[2022-03-21 TO 2022-10-05]','[2023-01-01 TO *]']
-    end: datetime
+    end: datetime = None
+    active: bool = None
+
+    def __post_init__(self):
+        """Set solr date range fields dependent on base fields."""
+        self.active = not self.end
