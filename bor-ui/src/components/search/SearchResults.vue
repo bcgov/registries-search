@@ -33,6 +33,7 @@
             readonly
             v-model="dateFilterText"
             @click="scrollToDatePicker()"
+            @click:append-inner="scrollToDatePicker()"
           />
           <v-btn
             v-if="dateFilterText"
