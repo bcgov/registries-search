@@ -44,7 +44,9 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     if not request_json.get('businessAddresses'):
         err.append({'error': 'Business Addresses are required.', 'path': '/businessAddresses'})
         return err
-    office_type = 'businessOffice' if request_json['business'].get('legalType', '') in ['SP', 'GP'] else 'registeredOffice'
+    office_type = 'businessOffice' \
+        if request_json['business'].get('legalType', '') in ['SP', 'GP'] \
+        else 'registeredOffice'
     if not request_json['businessAddresses'].get(office_type, {}).get('deliveryAddress'):
         err.append({'error': 'Business Delivery Address is required.',
                     'path': f'/businessAddresses/{office_type}/deliveryAddress'})
