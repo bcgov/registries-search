@@ -30,6 +30,15 @@ from tests.unit.utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, c
 from tests import integration_solr
 
 
+# setup SP version of REQUEST_TEMPLATE
+SP_REQUEST_TEMPLATE = deepcopy(REQUEST_TEMPLATE)
+SP_REQUEST_TEMPLATE['business']['identifier'] = 'FM1233334'
+SP_REQUEST_TEMPLATE['business']['legalType'] = 'SP'
+SP_REQUEST_TEMPLATE['business']['legalName'] = 'ABCD Prop'
+SP_REQUEST_TEMPLATE['businessAddresses']['businessOffice'] = SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
+del SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
+del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
+
 def check_update_recorded(identifier: str, is_party: bool = False):
     """Assert the given identifier was recorded for an update."""
     solr_doc = SolrDoc.find_most_recent_by_identifier(identifier)
@@ -44,7 +53,11 @@ def check_update_recorded(identifier: str, is_party: bool = False):
     assert doc_events[0].event_type == SolrDocEventType.UPDATE
 
 
-def test_update_solr_mocked(app, session, client, jwt):
+@pytest.mark.parametrize('test_name,request_json', [
+    ('ben', REQUEST_TEMPLATE),
+    ('sp', SP_REQUEST_TEMPLATE),
+])
+def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     """Assert that update operation sends correct payload to solr."""
     solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
 
@@ -52,16 +65,16 @@ def test_update_solr_mocked(app, session, client, jwt):
         m.post(solr_url)
         
         api_response = client.put(f'/api/v1/internal/solr/update',
-                              data=json.dumps(REQUEST_TEMPLATE),
+                              data=json.dumps(request_json),
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                            'content-type': 'application/json'}))
 
         # check success
         assert api_response.status_code == HTTPStatus.OK
         # check business update
-        check_update_recorded(REQUEST_TEMPLATE['business']['identifier'])
+        check_update_recorded(request_json['business']['identifier'])
         # check parties update
-        for party in REQUEST_TEMPLATE['parties']:
+        for party in request_json['parties']:
             identifier = f"{party['source']}{party['officer']['id']}"
             check_update_recorded(identifier, True)
         
@@ -80,12 +93,12 @@ def test_update_solr_mocked(app, session, client, jwt):
                                   'streetAddress': 'Bc-435 North Rd',
                                   'addressCountry': 'CA'}],
             'entityType': 'BUSINESS',
-            'identifier': 'FM1233334',
-            'legalName': 'ABCD Prop',
+            'identifier': request_json['business']['identifier'],
+            'legalName': request_json['business']['legalName'],
             'bn': '123456789',
             'bnSP': None,
-            'identifier_q': 'FM1233334',
-            'legalType': 'BEN',
+            'identifier_q': request_json['business']['identifier'],
+            'legalType': request_json['business']['legalType'],
             'operatingName': None,
             'roles': None,
             'state': 'ACTIVE'
@@ -112,12 +125,12 @@ def test_update_solr_mocked(app, session, client, jwt):
                 'roleType': 'Director',
                 'relatedBN': '123456789',
                 'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
-                'relatedName': 'ABCD Prop',
+                'relatedName': request_json['business']['legalName'],
                 'relatedState': 'ACTIVE',
-                'related_q': 'ABCD Prop FM1233334 123456789',
-                'relatedLegalType': 'BEN',
+                'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                'relatedLegalType': request_json['business']['legalType'],
                 'relatedEntityType': 'BUSINESS',
-                'relatedIdentifier': 'FM1233334'}],
+                'relatedIdentifier': request_json['business']['identifier'],}],
             'state': None}]
         
         assert m.request_history[2].json() == [{
@@ -141,12 +154,12 @@ def test_update_solr_mocked(app, session, client, jwt):
                 'roleType': 'Director',
                 'relatedBN': '123456789',
                 'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
-                'relatedName': 'ABCD Prop',
+                'relatedName': request_json['business']['legalName'],
                 'relatedState': 'ACTIVE',
-                'related_q': 'ABCD Prop FM1233334 123456789',
-                'relatedLegalType': 'BEN',
+                'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                'relatedLegalType': request_json['business']['legalType'],
                 'relatedEntityType': 'BUSINESS',
-                'relatedIdentifier': 'FM1233334'}],
+                'relatedIdentifier': request_json['business']['identifier'],}],
             'state': None}]
 
 

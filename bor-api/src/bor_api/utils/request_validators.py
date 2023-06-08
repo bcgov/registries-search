@@ -54,7 +54,7 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     required_address_fields = ['addressType', 'addressCity', 'addressCountry', 'addressRegion',
                                'postalCode', 'streetAddress']
     for field in required_address_fields:
-        path = f'/businessAddresses/registeredOffice/deliveryAddress/{field}'
+        path = f'/businessAddresses/{office_type}/deliveryAddress/{field}'
         if not get_str(request_json, path):
             err.append({'error': f'{field} field is required.', 'path': path})
 
