@@ -146,11 +146,11 @@ export const useSearch = () => {
       return
     }
     search.totalResults = null
+    _readOnly.start = 0
     _readOnly.loading = true
     _readOnly.value = val
     _readOnly.isFilteringActive = hasActiveFilter()
     if (search.results === null && !search.unavailable) search.results = []
-    // FUTURE: add SEARCH_ROWS to enum
     const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
       if (!searchResp.error) {

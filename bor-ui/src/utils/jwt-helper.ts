@@ -32,8 +32,13 @@ function parseToken(token: string): any {
 
 /** Gets Keycloak name from JWT. */
 export function getKeycloakName(): string {
-  const jwt = getJWT()
-  const name = jwt.name
-  if (name) return name
-  throw new Error('Error getting Keycloak name')
+  try {
+    const jwt = getJWT()
+    const name = jwt.name
+    if (name) return name
+    throw new Error("Keycloak token is missing the 'name' attribute")
+  } catch (err) {
+    console.warn(err)
+    throw new Error('Error getting Keycloak name')
+  }
 }

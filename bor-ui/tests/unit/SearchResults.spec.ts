@@ -238,12 +238,18 @@ describe('SearchResults tests', () => {
     await flushPromises()
     // triggered call
     expect(mockPost).toHaveBeenCalledTimes(2)
+    expect(search._start).toBe(1)
     // added result to existing
     expect(search.results.length).toBe(2)
     // has more results should be false
     expect(wrapper.vm.hasMoreResults).toBe(false)
     // load more button should not be there anymore
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
+
+    // calling a new search should reset the start value and results
+    await getSearchResults('test 2')
+    expect(search._start).toBe(0)
+    expect(search.results.length).toBe(1)
   })
   it('shows datepicker and executes date filtering when selected', async () => {
     wrapper.find('.search-table__date-picker-filter').trigger('click')
