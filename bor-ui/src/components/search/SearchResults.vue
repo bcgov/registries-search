@@ -60,12 +60,27 @@
             :name="header.itemFn(item)"
           />
         </template>
-        <template v-slot:item-slot-action>
+        <template v-slot:item-slot-details="{ item } : { item: SearchResultI }">
+          <div v-if="item.roles">
+            <a
+              :href="`${businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`"
+              target="_blank"
+            >
+              {{ item.roles[0].relatedName }}
+            </a>
+            <br />
+            {{ item.roles[0].relatedIdentifier }}
+            <br />
+            {{ item.roles[0].relatedBN }}
+          </div>
+          <span v-else>N/A</span>
+        </template>
+        <!-- <template v-slot:item-slot-action>
           <search-table-action
             :showBtn="false"
             :tooltipMsg="tooltipMsg"
           />
-        </template>
+        </template> -->
         <template v-if="search._error" v-slot:body-empty>
           <error-retry
             class="my-5"
@@ -97,8 +112,10 @@ import { BaseTable, BCRegDateRangePicker, ErrorRetry } from '@/components'
 import { useSearch } from '@/composables'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 // internal
-import { SearchTableAction, SearchTableName } from './common'
+import { SearchTableName } from './common'
 import { EntityType } from '@/enums'
+// eslint-disable-next-line
+import { SearchResultI } from '@/interfaces'
 import { toDateStr } from '@/utils'
 
 // composables
@@ -143,6 +160,9 @@ const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
   }
 }
 
+// business details link
+const businessSearchURL = sessionStorage.getItem('REGISTRIES_SEARCH_URL')
+
 // text functions
 const resultsDesc = computed(() => {
   let desc = ''
@@ -158,8 +178,8 @@ const resultsDesc = computed(() => {
   return desc
 })
 
-const tooltipMsg = 'You can access this business through BC OnLine or by contacting BC Registries. ' +
-  'See "Help with Business and Person Search" for details.'
+// const tooltipMsg = 'You can access this business through BC OnLine or by contacting BC Registries. ' +
+//   'See "Help with Business and Person Search" for details.'
 
 // filter stuff
 const resetFiltersTrigger = ref(false)
@@ -203,6 +223,11 @@ const getNextSearches = _.debounce(async () => getNextResults(), 50)
 }
 
 .search-table {
+
+  a {
+    color: $gray7;
+    text-decoration: underline;
+  }
 
   &__date-picker-filter {
     :deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {

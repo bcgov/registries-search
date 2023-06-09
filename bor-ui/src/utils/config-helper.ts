@@ -28,6 +28,10 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
   console.info('Set REGISTRY URL to: ' + registryUrl)
 
+  const registriesSearchUrl: string = process.env.VUE_APP_REGISTRIES_SEARCH_URL
+  sessionStorage.setItem('REGISTRIES_SEARCH_URL', registriesSearchUrl)
+  console.info('Set REGISTRIES SEARCH URL to: ' + registriesSearchUrl)
+
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string =
     process.env.VUE_APP_STATUS_API_URL + process.env.VUE_APP_STATUS_API_VERSION
@@ -44,10 +48,6 @@ export async function fetchConfig(): Promise<any> {
   const authWebUrl: string = process.env.VUE_APP_AUTH_WEB_URL
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
   console.info('Set Auth Web URL to: ' + authWebUrl)
-
-  const entityWebUrl: string = process.env.VUE_APP_DASHBOARD_URL
-  sessionStorage.setItem('DASHBOARD_URL', entityWebUrl)
-  console.info('Set Entity Dashboard URL to: ' + entityWebUrl)
 
   const keycloakAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
   (<any>window).keycloakAuthUrl = keycloakAuthUrl

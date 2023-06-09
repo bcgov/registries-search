@@ -12,7 +12,6 @@ import { SearchEntityHeaders } from '@/resources/table-headers'
 import { axios } from '@/utils'
 // test data
 import { SearchResponseMock, testAccount } from './utils'
-import { nextTick } from 'vue'
 
 
 describe('SearchResults tests', () => {
@@ -20,10 +19,12 @@ describe('SearchResults tests', () => {
   let mockPost: jest.SpyInstance<Promise<unknown>, [url: string, data?: unknown, config?: any]>
 
   const mockUrl = 'http://mock-url.ca'
+  const mockBusinessSearchUrl = 'http://mock-search.ca'
   const mockResp = _.cloneDeep(SearchResponseMock)
 
   sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
   sessionStorage.setItem('BOR_API_URL', mockUrl)
+  sessionStorage.setItem('REGISTRIES_SEARCH_URL', mockBusinessSearchUrl)
   window['borApiKey'] = 'key'
 
   const { auth } = useAuth()
@@ -129,9 +130,21 @@ describe('SearchResults tests', () => {
             const expectedIcon = search.results[rowIndex].entityType === 'PERSON' ? 'mdi-account' : 'mdi-domain'
             expect(cols[i].find('.search-table__icon-name').text()).toContain(expectedIcon)
           }
+        } else if (SearchEntityHeaders[i].slotId === 'details') {
+          if (search.results[rowIndex].roles) {
+            const relatedName = search.results[rowIndex].roles[0].relatedName
+            const relatedIdentifier = search.results[rowIndex].roles[0].relatedIdentifier
+            const relatedBN = search.results[rowIndex].roles[0].relatedBN
+            expect(cols[i].text()).toBe(`${relatedName} ${relatedIdentifier} ${relatedBN || ''}`.trim())
+            expect(cols[i].find('a').text()).toBe(relatedName)
+            expect(cols[i].find('a').attributes().href).toBe(`${mockBusinessSearchUrl}?identifier=${relatedIdentifier}`)
+          } else {
+            expect(cols[i].text()).toBe('N/A')
+          }
         } else if (SearchEntityHeaders[i].slotId === 'action') {
-          // check action cell
-          expect(cols[i].find('v-tooltip').exists()).toBe(true)
+          // check action cell (should be empty)
+          expect(cols[i].find('v-tooltip').exists()).toBe(false)
+          expect(cols[i].text()).toBe('')
         } else {
           expect(cols[i].text()).toBe(search.results[rowIndex][SearchEntityHeaders[i].col])
         }

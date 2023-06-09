@@ -108,11 +108,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     },
     hasFilter: true,
     hasSort: false,
-    itemFn: (val: SearchResultI) => {
-      if (val.roles) return `<u>${val.roles[0].relatedName}</u>` +
-        `<br>${val.roles[0].relatedIdentifier}<br>${val.roles[0].relatedBN || ''}`
-      return 'N/A'
-    },
+    slotId: 'details',
     value: 'Business Details',
     width: '15%'
   },
