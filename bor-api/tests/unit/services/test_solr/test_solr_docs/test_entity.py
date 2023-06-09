@@ -31,9 +31,9 @@ def test_entity_doc(test_name, name, entity_type):
     entity = factory_entity_default(name=name, entity_type=entity_type)
     assert entity
     if entity_type == 'PERSON':
-        assert entity.identifier_q == None
+        assert entity.identifier == None
     else:
-        assert entity.identifier_q == entity.identifier
+        assert entity.identifier == entity.identifier
 
     json = asdict(entity)
     assert json
@@ -51,10 +51,13 @@ def test_entity_doc(test_name, name, entity_type):
 def test_entity_doc_invalid():
     """Assert the Entity solr doc class does not initialize when required fields are missing."""
     # assert minimum valid case
-    assert Entity(entityAddresses=[], entityType='PERSON', legalName='name', identifier='LEAR123456')
+    assert Entity(entityAddresses=[], entityType='PERSON', legalName='name', id='LEAR123456')
     # legal name missing
     with pytest.raises(TypeError):
-        Entity(entityType='PERSON')
+        Entity(entityAddresses=[], entityType='PERSON', id='1')
     # entity type missing
     with pytest.raises(TypeError):
-        Entity(legalName='name')
+        Entity(entityAddresses=[], legalName='name', id='1')
+    # entity id missing
+    with pytest.raises(TypeError):
+        Entity(entityAddresses=[], entityType='PERSON', legalName='name')

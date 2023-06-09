@@ -29,7 +29,7 @@ class SolrDoc(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     doc = db.Column(JSONB)
-    identifier = db.Column(db.String(10), nullable=False, index=True)
+    entity_id = db.Column(db.String(10), nullable=False, index=True)
     submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, index=True)
     _submitter_id = db.Column('submitter_id', db.Integer, db.ForeignKey('users.id'))
 
@@ -38,16 +38,16 @@ class SolrDoc(db.Model):
     solr_doc_events = db.relationship('SolrDocEvent', lazy='dynamic')
 
     @classmethod
-    def find_most_recent_by_identifier(cls, identifier: str) -> SolrDoc:
-        """Return most recently submitted SolrDoc by identifier."""
-        return cls.query.filter_by(identifier=identifier).order_by(cls.submission_date.desc()).first()
+    def find_most_recent_by_entity_id(cls, entity_id: str) -> SolrDoc:
+        """Return most recently submitted SolrDoc by entity id."""
+        return cls.query.filter_by(entity_id=entity_id).order_by(cls.submission_date.desc()).first()
 
     @staticmethod
-    def get_updated_identifiers_after_date(date: datetime) -> list[str]:
-        """Return all identifiers with a submitted SolrDoc after the date."""
-        return [x[0] for x in db.session.query(SolrDoc.identifier)
+    def get_updated_entity_ids_after_date(date: datetime) -> list[str]:
+        """Return all entity ids with a submitted SolrDoc after the date."""
+        return [x[0] for x in db.session.query(SolrDoc.entity_id)
                 .filter(SolrDoc.submission_date > date)
-                .group_by(SolrDoc.identifier).all()]
+                .group_by(SolrDoc.entity_id).all()]
 
     def save(self) -> SolrDoc:
         """Store the update into the db."""

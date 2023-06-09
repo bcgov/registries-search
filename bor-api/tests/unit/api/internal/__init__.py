@@ -17,13 +17,13 @@ from bor_api.models import SolrDoc
 from bor_api.services.solr.solr_docs import Entity
 
 
-def check_update_recorded(identifier: str, is_party: bool = False):
+def check_update_recorded(entity_id: str, is_party: bool = False):
     """Assert the given identifier was recorded for an update."""
-    solr_doc = SolrDoc.find_most_recent_by_identifier(identifier)
-    assert solr_doc.identifier == identifier
-    assert Entity(**solr_doc.doc).identifier == identifier
-    identifier_q_set = Entity(**solr_doc.doc).identifier_q == identifier
-    assert not identifier_q_set if is_party else identifier_q_set
+    solr_doc = SolrDoc.find_most_recent_by_entity_id(entity_id)
+    assert solr_doc.entity_id == entity_id
+    assert Entity(**solr_doc.doc).id == entity_id
+    identifier_set = Entity(**solr_doc.doc).identifier == entity_id
+    assert identifier_set != is_party
     assert solr_doc._submitter_id is not None
     doc_events = solr_doc.solr_doc_events.all()
     assert len(doc_events) == 1

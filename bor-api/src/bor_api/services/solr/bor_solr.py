@@ -42,7 +42,7 @@ class Solr:
         # field selections
         self.entity_fields = [
             Field.BN.value, Field.BN_SP.value, Field.ENTITY_ADDRESSES.value,
-            Field.ENTITY_TYPE.value, Field.IDENTIFIER_Q.value, Field.LEGAL_NAME.value,
+            Field.ENTITY_TYPE.value, Field.IDENTIFIER.value, Field.LEGAL_NAME.value,
             Field.LEGAL_TYPE.value, Field.OPERATING_NAME.value, Field.ROLES.value,
             Field.STATE.value, Field.SCORE.value, '[child]'
         ]
@@ -54,7 +54,8 @@ class Solr:
         self.entity_role_fields = [
             Field.ACTIVE.value, Field.RELATED_BN.value, Field.RELATED_ENTITY_TYPE.value,
             Field.RELATED_IDENTIFIER.value, Field.RELATED_NAME.value,
-            Field.RELATED_STATE.value, Field.ROLE_DATES.value, Field.ROLE_TYPE.value
+            Field.RELATED_STATE.value, Field.ROLE_DATES.value, Field.ROLE_TYPE.value,
+            Field.RELATED_LEGAL_TYPE.value
         ]
         self.date_fields = [Field.START.value, Field.END.value]
         # base urls
@@ -133,13 +134,13 @@ class Solr:
         response = self.call_solr('POST', self.update_url, xml_data=payload)
         return response
 
-    def delete_docs(self, identifiers: list[str]):
+    def delete_docs(self, unique_keys: list[str]):
         """Delete solr docs from the core."""
         payload = '<delete><query>'
-        if identifiers:
-            payload += f'{Field.IDENTIFIER.value}:{identifiers[0].upper()}'
-        for identifier in identifiers[1:]:
-            payload += f' OR {Field.IDENTIFIER.value}:{identifier.upper()}'
+        if unique_keys:
+            payload += f'{Field.UNIQUE_KEY.value}:{unique_keys[0].upper()}'
+        for key in unique_keys[1:]:
+            payload += f' OR {Field.UNIQUE_KEY.value}:{key.upper()}'
         payload += '</query></delete>'
 
         response = self.call_solr('POST', self.update_url, xml_data=payload)

@@ -23,24 +23,15 @@ from .entity_role import EntityRole
 class Entity:
     """Class representation for a solr entity doc."""
 
+    id: str  # business identifier or person identifier (COLIN<party id> / LEAR<party id>)
     entityAddresses: list[Address]
     entityType: str  # person or business
-    identifier: str  # business identifier or person identifier (COLIN<party id> / LEAR<party id>)
     legalName: str
     # aliases: EntityName = None
     bn: str = None  # bn9 for people, bn15 for businesses
     bnSP: str = None  # interim for SPs, future: will be in aliases
-    identifier_q: str = None
+    identifier: str = None
     legalType: str = None
     operatingName: str = None  # interim for SPs, future: will be in aliases
     roles: list[EntityRole] = None
     state: str = None
-
-    def __post_init__(self):
-        """Set identifier query field for business entities.
-
-        Needed here because identifier is the unique key in all docs (addresses,roles,etc.),
-        so it can't be copied over via the index copyfields without adding in unwanted data.
-        """
-        if self.entityType.lower() == 'business':
-            self.identifier_q = self.identifier

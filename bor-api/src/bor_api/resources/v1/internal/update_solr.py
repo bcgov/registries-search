@@ -49,9 +49,9 @@ def update_solr():
         entities = _parse_entities(request_json)
         for entity in entities:
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
-            SolrDoc(doc=asdict(entity), identifier=entity.identifier, _submitter_id=user.id).save()
+            SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             # trigger solr update
-            update_bor_solr(entity.identifier, SolrDocEventType.UPDATE)
+            update_bor_solr(entity.id, SolrDocEventType.UPDATE)
 
         return jsonify({'message': 'Update successful'}), HTTPStatus.OK
 
@@ -80,7 +80,7 @@ def resync_solr():
         if minutes_offset:
             # get all updates since the from_datetime
             resync_date = from_datetime - timedelta(minutes=minutes_offset)
-            identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
+            identifiers_to_resync = SolrDoc.get_updated_entity_ids_after_date(resync_date)
 
         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
         # update docs
@@ -145,6 +145,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         identifier = f'BC{identifier}'
     business = Entity(entityAddresses=[business_address],
                       entityType='BUSINESS',
+                      id=identifier,
                       identifier=identifier,
                       legalName=business_info['legalName'],
                       bn=business_info.get('taxId'),
@@ -156,12 +157,12 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         name = get_party_name(party['officer'])
 
         # NOTE: business parties are ignored for now -- waiting for LEAR update
-        identifier = f"{party['source']}{party['officer']['id']}"
+        party_id = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
         for role in party.get('roles'):
             entities.append(Entity(entityAddresses=[address],
                                    entityType='PERSON',
-                                   identifier=identifier,
+                                   id=party_id,
                                    legalName=name,
                                    roles=[EntityRole(relatedEntityType='BUSINESS',
                                                      relatedIdentifier=business.identifier,

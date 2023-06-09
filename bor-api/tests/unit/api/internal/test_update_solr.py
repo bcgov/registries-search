@@ -20,14 +20,13 @@ from http import HTTPStatus
 import pytest
 import requests_mock
 
-from bor_api.enums import SolrDocEventStatus, SolrDocEventType
-from bor_api.models import SolrDoc
 from bor_api.services import bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
-from bor_api.services.solr.solr_docs import Entity
 
 from tests.unit.utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
 from tests import integration_solr
+
+from . import check_update_recorded
 
 
 # setup SP version of REQUEST_TEMPLATE
@@ -38,19 +37,6 @@ SP_REQUEST_TEMPLATE['business']['legalName'] = 'ABCD Prop'
 SP_REQUEST_TEMPLATE['businessAddresses']['businessOffice'] = SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
 del SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
 del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
-
-def check_update_recorded(identifier: str, is_party: bool = False):
-    """Assert the given identifier was recorded for an update."""
-    solr_doc = SolrDoc.find_most_recent_by_identifier(identifier)
-    assert solr_doc.identifier == identifier
-    assert Entity(**solr_doc.doc).identifier == identifier
-    identifier_q_set = Entity(**solr_doc.doc).identifier_q == identifier
-    assert not identifier_q_set if is_party else identifier_q_set
-    assert solr_doc._submitter_id is not None
-    doc_events = solr_doc.solr_doc_events.all()
-    assert len(doc_events) == 1
-    assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
-    assert doc_events[0].event_type == SolrDocEventType.UPDATE
 
 
 @pytest.mark.parametrize('test_name,request_json', [
@@ -93,11 +79,11 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                                   'streetAddress': 'Bc-435 North Rd',
                                   'addressCountry': 'CA'}],
             'entityType': 'BUSINESS',
+            'id': request_json['business']['identifier'],
             'identifier': request_json['business']['identifier'],
             'legalName': request_json['business']['legalName'],
             'bn': '123456789',
             'bnSP': None,
-            'identifier_q': request_json['business']['identifier'],
             'legalType': request_json['business']['legalType'],
             'operatingName': None,
             'roles': None,
@@ -114,11 +100,11 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'streetAddress': '1234-4818 Westwinds Dr NE',
                 'addressCountry': 'CA'}],
             'entityType': 'PERSON',
-            'identifier': 'LEAR570343',
+            'id': 'LEAR570343',
             'legalName': 'BCREG2 LIANG FORTY',
             'bn': None,
             'bnSP': None,
-            'identifier_q': None,
+            'identifier': None,
             'legalType': None,
             'operatingName': None,
             'roles': [{
@@ -143,11 +129,11 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'streetAddress': 'W-558 Rue Saint-Vallier O',
                 'addressCountry': 'CA'}],
             'entityType': 'PERSON',
-            'identifier': 'LEAR570721',
+            'id': 'LEAR570721',
             'legalName': 'BLIPPITY BOP',
             'bn': None,
             'bnSP': None,
-            'identifier_q': None,
+            'identifier': None,
             'legalType': None,
             'operatingName': None,
             'roles': [{
@@ -176,18 +162,18 @@ def test_update_solr(session, client, jwt):
     # check
     assert api_response.status_code == HTTPStatus.OK
     business_identifier = REQUEST_TEMPLATE['business']['identifier']
-    party_identifiers = []
+    party_ids = []
     # check business update
     check_update_recorded(business_identifier)
     # check parties update
     for party in REQUEST_TEMPLATE['parties']:
-        identifier = f"{party['source']}{party['officer']['id']}"
-        party_identifiers.append(identifier)
-        check_update_recorded(identifier, True)
+        party_id = f"{party['source']}{party['officer']['id']}"
+        party_ids.append(party_id)
+        check_update_recorded(party_id, True)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
-    for identifier in [business_identifier] + party_identifiers:
-        search_response = bor_solr.query(payload={'query': f'identifier:{identifier}', 'fields': '*'})
+    for entity_id in [business_identifier] + party_ids:
+        search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1

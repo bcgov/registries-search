@@ -72,7 +72,7 @@ export const SearchResponseMock = {
           }
         ],
         "entityType": "BUSINESS",
-        "identifier_q": "BC0871330",
+        "identifier": "BC0871330",
         "legalName": "KIALS BUSINESS NAME CORP.",
         "legalType": "BEN",
         "score": 11.459389,

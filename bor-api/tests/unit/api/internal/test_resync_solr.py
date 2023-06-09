@@ -39,11 +39,11 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
     for orig_entity in entities:
         # set one record to find and one record to miss (older / current version)
         entity = deepcopy(orig_entity)
-        entity.legalName = f'{entity.identifier} test_update_business_in_solr'
-        solr_doc = SolrDoc(doc=asdict(entity), identifier=entity.identifier).save()
+        entity.legalName = f'{entity.id} test_update_business_in_solr'
+        solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id).save()
         entity_old = deepcopy(entity)
-        entity_old.legalName = f'{entity.identifier} test_should_not_have_updated'
-        solr_doc_old = SolrDoc(doc=asdict(entity_old), identifier=entity_old.identifier).save()
+        entity_old.legalName = f'{entity.id} test_should_not_have_updated'
+        solr_doc_old = SolrDoc(doc=asdict(entity_old), entity_id=entity_old.id).save()
         solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
         solr_doc_old.save()
         setup_info.append((entity, solr_doc, solr_doc_old))
@@ -63,7 +63,7 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
     """Assert that resync operation sends correct payload to solr."""
     solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
     if 'identifiers' in payload:
-        payload['identifiers'] = [x.identifier for x in entities]
+        payload['identifiers'] = [x.id for x in entities]
 
     setup_info = prep_resync(entities)
 
@@ -113,7 +113,7 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
 def test_resync_solr(session, client, jwt, test_name, payload: dict, entities: list[Entity]):
     """Assert that the resync update operation is successful."""
     if 'identifiers' in payload:
-        payload['identifiers'] = [x.identifier for x in entities]
+        payload['identifiers'] = [x.id for x in entities]
 
     # remove any existing solr docs
     bor_solr.delete_all_docs()
@@ -135,7 +135,7 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, entities: l
         assert len(solr_doc_old.solr_doc_events.all()) == 0
 
         time.sleep(2)  # wait for solr to register update
-        search_response = bor_solr.query(payload={'query': f'legalName_q:{entity.identifier}', 'fields': '*'})
+        search_response = bor_solr.query(payload={'query': f'legalName_q:{entity.id}', 'fields': '*'})
         assert search_response['response']['numFound'] == 1
         assert search_response['response']['docs'][0]['legalName'] == entity.legalName
 

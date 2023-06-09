@@ -20,9 +20,9 @@ from bor_api.services import bor_solr
 from bor_api.services.solr.solr_docs import Entity
 
 
-def update_bor_solr(identifier: str, event_type: SolrDocEventType) -> dict[str, str]:
-    """Update the doc for the identifier in the solr instance."""
-    doc_update = SolrDoc.find_most_recent_by_identifier(identifier)
+def update_bor_solr(entity_id: str, event_type: SolrDocEventType) -> dict[str, str]:
+    """Update the doc for the entity_id in the solr instance."""
+    doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
     doc_event = SolrDocEvent(event_type=event_type, solr_doc_id=doc_update.id).save()
     try:
         bor_solr.create_or_replace_docs([Entity(**doc_update.doc)], force=True)

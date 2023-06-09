@@ -31,6 +31,9 @@ from bor_api.enums.base import BaseEnum
 class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     """Enum of the fields available in the solr search core."""
 
+    # unique key for all docs
+    UNIQUE_KEY = 'id'
+
     # base entity doc stored fields
     BN = 'bn'
     BN_SP = 'bnSP'

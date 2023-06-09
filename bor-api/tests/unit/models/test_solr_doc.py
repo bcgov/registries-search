@@ -28,7 +28,7 @@ def test_solr_doc(session):
     """Assert that a solr doc can be stored in the service."""
     entity_doc = deepcopy(SOLR_TEST_DOCS[0])
 
-    solr_doc = SolrDoc(doc=asdict(entity_doc), identifier=entity_doc.identifier).save()
+    solr_doc = SolrDoc(doc=asdict(entity_doc), entity_id=entity_doc.id).save()
 
     assert solr_doc.id is not None
     # has default submission_date
@@ -43,30 +43,30 @@ def test_find_most_recent_by_identifier(session):
     entity_doc_3 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_3.legalName += '3'
 
-    SolrDoc(doc=asdict(entity_doc_1), identifier=entity_doc_1.identifier).save()
-    SolrDoc(doc=asdict(entity_doc_2), identifier=entity_doc_2.identifier).save()
-    solr_doc_3 = SolrDoc(doc=asdict(entity_doc_3), identifier=entity_doc_3.identifier).save()
+    SolrDoc(doc=asdict(entity_doc_1), entity_id=entity_doc_1.id).save()
+    SolrDoc(doc=asdict(entity_doc_2), entity_id=entity_doc_2.id).save()
+    solr_doc_3 = SolrDoc(doc=asdict(entity_doc_3), entity_id=entity_doc_3.id).save()
 
     # test method
-    solr_doc = SolrDoc.find_most_recent_by_identifier(entity_doc_1.identifier)
+    solr_doc = SolrDoc.find_most_recent_by_entity_id(entity_doc_1.id)
     assert solr_doc.id is not None
     assert solr_doc.id == solr_doc_3.id
     assert Entity(**solr_doc.doc).legalName == entity_doc_3.legalName
 
 
-def test_get_updated_identifiers_after_date(session):
-    """Assert get_updated_identifiers_after_date works as expected."""
+def test_get_updated_entity_ids_after_date(session):
+    """Assert get_updated_entity_ids_after_date works as expected."""
     entity_doc_1 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_2 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_3 = deepcopy(SOLR_TEST_DOCS[1])
     entity_doc_4 = deepcopy(SOLR_TEST_DOCS[2])
 
     for doc in [entity_doc_1, entity_doc_2, entity_doc_3, entity_doc_4]:
-        SolrDoc(doc=asdict(doc), identifier=doc.identifier).save()
+        SolrDoc(doc=asdict(doc), entity_id=doc.id).save()
 
-    identifiers = SolrDoc.get_updated_identifiers_after_date(datetime.utcnow() - timedelta(minutes=5))
+    entity_ids = SolrDoc.get_updated_entity_ids_after_date(datetime.utcnow() - timedelta(minutes=5))
     # should be 1 of each identifier (no dupes)
-    assert len(identifiers) == 3
-    assert entity_doc_1.identifier in identifiers
-    assert entity_doc_3.identifier in identifiers
-    assert entity_doc_4.identifier in identifiers
+    assert len(entity_ids) == 3
+    assert entity_doc_1.id in entity_ids
+    assert entity_doc_3.id in entity_ids
+    assert entity_doc_4.id in entity_ids
