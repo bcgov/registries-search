@@ -31,7 +31,7 @@ def update_bor_solr(entity_id: str, event_type: SolrDocEventType) -> dict[str, s
 
     except Exception as err:  # noqa: B902
         # log / update event / pass err
-        current_app.logger.debug('Failed to %s solr for %s', event_type, identifier)
+        current_app.logger.debug('Failed to %s solr for %s', event_type, entity_id)
         doc_event.event_status = SolrDocEventStatus.ERROR
         doc_event.save()
         raise err
