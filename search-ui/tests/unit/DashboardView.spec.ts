@@ -23,12 +23,17 @@ describe('DashboardView tests', () => {
   const { search, resetSearch } = useSearch()
   const { auth } = useAuth()
 
+  sessionStorage.setItem('LEGAL_API_URL', 'http://mock-legal.ca')
+  const identifier = 'BC1234567'
+
   beforeEach(async () => {
     const mockGet = jest.spyOn(axios, 'get')
     mockGet.mockImplementation((url) => {
       switch (url) {
         case 'purchases':
           return Promise.resolve({ data: { documentAccessRequests: [] } })
+        case `businesses/${identifier}`:
+          return Promise.resolve({ data: {} })
       }
     })
     auth.currentAccount = testAccount
@@ -100,5 +105,22 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('#documents-tab').classes()).toContain('tab-item-active')
     expect(wrapper.html()).toContain('This table will display up to 1000')
     expect(wrapper.findComponent(DocumentAccessRequestHistory).exists()).toBe(true)
+  })
+  it('pushes to business info when identifier param given', async () => {
+    router = createVueRouter()
+    await router.push({ name: RouteNames.SEARCH, query: { identifier: identifier } })
+    wrapper = mount(DashboardView, {
+      props: { appReady: false },
+      global: {
+        plugins: [router],
+        provide: { store: store },
+      },
+      shallow: true  // stubs out children components
+    })
+    // set after to trigger watcher
+    wrapper.setProps({ appReady: true })
+    // await api calls to resolve
+    await flushPromises()
+    expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
   })
 })

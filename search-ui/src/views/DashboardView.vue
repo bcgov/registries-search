@@ -148,9 +148,10 @@
 <script setup lang="ts">
 // local
 import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { DocumentAccessRequestHistory, SearchBar, SearchResults } from '@/components'
 import { useAuth, useDocumentAccessRequest, useSearch } from '@/composables'
-import { AccountTypes } from '@/enums';
+import { AccountTypes, RouteNames } from '@/enums';
 
 const props = defineProps({ appReady: { type: Boolean } })
 
@@ -170,8 +171,17 @@ const totalDocAccessLength = computed(() => documentAccessRequest.requests?.leng
 const unavailableMsg = 'Business Search is in the process of a scheduled ' +
   ' update. Searching will be unavailable for up to 15 minutes.'
 
+const route = useRoute()
+const router = useRouter()
+
 watch(() => props.appReady, (ready: boolean) => {
   if (ready) {
+    if (route.query?.identifier) {
+      router.push({
+        name: RouteNames.BUSINESS_INFO,
+        params: { identifier: route.query?.identifier }
+      })
+    }
     loadAccessRequestHistory()
   }
 })
