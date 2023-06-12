@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH UI CD - OCP
+name: REGISTRIES SEARCH UI CD
 
 on:
   push:
@@ -24,7 +24,7 @@ on:
 
 jobs:
   search-ui-cd:
-    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd-ocp.yaml@main
+    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
     with:
       environment: ${{ inputs.environment }}
       tagname: ${{ inputs.tagname }}
@@ -33,8 +33,3 @@ jobs:
       APP_NAME: "registries-search-ui"
       OP_CONNECT_URL: ${{ secrets.OP_CONNECT_URL }}
       OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
-      OPENSHIFT_LOGIN_REGISTRY: ${{ secrets.OPENSHIFT4_LOGIN_REGISTRY }}
-      OPENSHIFT_DOCKER_REGISTRY: ${{ secrets.OPENSHIFT4_DOCKER_REGISTRY }}
-      OPENSHIFT_SA_NAME: ${{ secrets.OPENSHIFT4_SA_NAME }}
-      OPENSHIFT_SA_TOKEN: ${{ secrets.OPENSHIFT4_SA_TOKEN }}
-      OPENSHIFT_REPOSITORY: ${{ secrets.OPENSHIFT4_FRONTEND_REPOSITORY }}
