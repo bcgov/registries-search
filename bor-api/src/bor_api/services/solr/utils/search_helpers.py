@@ -24,8 +24,7 @@ def _add_category_filters(solr_payload: dict, categories: dict[Field, list[str]]
     """Attach filter queries for categories to the params."""
     for category in categories:
         if category_filters := categories[category]:
-            # build_method = build_child_facet_query if child else build_facet_query
-            filter_str = build_facet_query(category, [x.upper() for x in category_filters], is_nested)
+            filter_str = build_facet_query(category, category_filters, is_nested)
             solr_payload['filter'].append(filter_str)
 
 
@@ -44,16 +43,21 @@ def entities_search(params: SearchParams):
             Field.BN_Q: 2
         },
         fuzzy_fields={
-            Field.LEGAL_NAME_Q: 2,
-            Field.LEGAL_NAME_AGRO_Q: 2,
-            Field.LEGAL_NAME_SINGLE_Q: 2,
-            Field.BN_Q: 1,
-            Field.ADDRESS_Q: 1
+            Field.LEGAL_NAME_Q: {'short': 1, 'long': 2},
+            Field.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
+            Field.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
+            Field.BN_Q: {'short': 1, 'long': 1},
+            Field.ADDRESS_Q: {'short': 1, 'long': 1},
+        },
+        synonym_fields={
+            Field.LEGAL_NAME_SYN_Q: 'parent',
+            Field.ADDRESS_SYN_Q: 'child'
         })
 
     # boosts for term order result ordering
     initial_queries['query'] += f' OR ({Field.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({Field.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
+    initial_queries['query'] += f' OR ({Field.LEGAL_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
     initial_queries['query'] += f' OR ({Field.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults

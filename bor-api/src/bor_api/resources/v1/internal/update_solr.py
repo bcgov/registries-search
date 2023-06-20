@@ -23,10 +23,11 @@ from flask_cors import cross_origin
 
 from bor_api.enums import SolrDocEventType
 from bor_api.exceptions import SolrException, bad_request_response, exception_response
-from bor_api.models import SolrDoc, User
-from bor_api.services import SYSTEM_ROLE, jwt
+from bor_api.models import SolrDoc, SolrSynonymList, User, db
+from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
 from bor_api.services.solr.bor_solr_updates import update_bor_solr
 from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
+from bor_api.services.solr.utils import get_synonyms
 from bor_api.utils.request_validators import validate_solr_update_request
 
 
@@ -52,6 +53,33 @@ def update_solr():
             SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             # trigger solr update
             update_bor_solr(entity.id, SolrDocEventType.UPDATE)
+
+        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
+
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)
+
+
+@bp.put('/synonyms')
+@cross_origin(origin='*')
+@jwt.requires_roles([SYSTEM_ROLE])
+def update_synonyms():
+    """Add/trigger update to synonyms lists."""
+    try:
+        synonyms = request.json
+        if not synonyms:
+            synonyms = get_synonyms()
+        # update solr synonym file
+        bor_solr.create_or_update_synonyms('english', synonyms)
+        # update db synonym lists
+        for synonym in synonyms:
+            if synonym_list := SolrSynonymList.find_by_synonym(synonym):
+                synonym_list.synonym_list = synonyms[synonym]
+                synonym_list.last_update_date = datetime.utcnow()
+                db.session.add(synonym_list)
+            else:
+                db.session.add(SolrSynonymList(synonym=synonym, synonym_list=synonyms[synonym]))
+        db.session.commit()
 
         return jsonify({'message': 'Update successful'}), HTTPStatus.OK
 

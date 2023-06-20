@@ -34,30 +34,24 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     # unique key for all docs
     UNIQUE_KEY = 'id'
 
-    # base entity doc stored fields
+    # entity doc stored fields (base doc)
     BN = 'bn'
-    BN_SP = 'bnSP'
     ENTITY_ADDRESSES = 'entityAddresses'
     ENTITY_TYPE = 'entityType'
     IDENTIFIER = 'identifier'
     LEGAL_NAME = 'legalName'
     LEGAL_TYPE = 'legalType'
-    OPERATING_NAME = 'operatingName'
     ROLES = 'roles'
     STATE = 'state'
     # entity doc query fields
     BN_Q = 'bn_q'
-    BN_SP_Q = 'bnSP_q'
     IDENTIFIER_Q = 'identifier_q'
     LEGAL_NAME_Q = 'legalName_q'
-    LEGAL_NAME_AGRO_Q = 'legalName_agro_q'
-    LEGAL_NAME_SINGLE_Q = 'legalName_single_term'
-    OPERATING_NAME_Q = 'operatingName'
-    OPERATING_NAME_AGRO_Q = 'operatingName_agro_q'
-    OPERATING_NAME_SINGLE_Q = 'operatingName_single_term'
+    LEGAL_NAME_AGRO_Q = 'legalName_stem_agro_q'
+    LEGAL_NAME_SINGLE_Q = 'legalName_single_term_q'
+    LEGAL_NAME_SYN_Q = 'legalName_synonym_q'
 
     # entity role doc stored fields
-    ACTIVE = 'active'
     RELATED_BN = 'relatedBN'
     RELATED_ENTITY_TYPE = 'relatedEntityType'
     RELATED_IDENTIFIER = 'relatedIdentifier'
@@ -70,11 +64,12 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     RELATED_BN_Q = 'relatedBN_q'
     RELATED_IDENTIFIER_Q = 'relatedIdentifier_q'
     RELATED_NAME_Q = 'relatedName_q'
-    RELATED_NAME_AGRO_Q = 'relatedName_agro_q'
-    RELATED_NAME_SINGLE_Q = 'relatedName_single_term'
+    RELATED_NAME_AGRO_Q = 'relatedName_stem_agro_q'
+    RELATED_NAME_SINGLE_Q = 'relatedName_single_term_q'
+    RELATED_NAME_SYN_Q = 'relatedName_synonym_q'
     RELATED_Q = 'related_q'
 
-    # address doc stored/query fields
+    # address doc stored fields
     ADDRESS_TYPE = 'addressType'
     ADDRESS_CITY = 'addressCity'
     ADDRESS_COUNTRY = 'addressCountry'
@@ -83,11 +78,12 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     STREET_ADDRESS = 'streetAddress'
     # address doc query fields
     ADDRESS_Q = 'address_q'
-    POSTAL_CODE_Q = 'postalCode_q'
+    ADDRESS_SYN_Q = 'address_synonym_q'
 
     # date range fields
     START = 'start'
     END = 'end'
+    ACTIVE = 'active'
 
     # shared built in fields
     SCORE = 'score'

@@ -41,9 +41,9 @@ class Solr:
         self.default_rows = 10
         # field selections
         self.entity_fields = [
-            Field.BN.value, Field.BN_SP.value, Field.ENTITY_ADDRESSES.value,
+            Field.BN.value, Field.ENTITY_ADDRESSES.value,
             Field.ENTITY_TYPE.value, Field.IDENTIFIER.value, Field.LEGAL_NAME.value,
-            Field.LEGAL_TYPE.value, Field.OPERATING_NAME.value, Field.ROLES.value,
+            Field.LEGAL_TYPE.value, Field.ROLES.value,
             Field.STATE.value, Field.SCORE.value, '[child]'
         ]
         self.address_fields = [
@@ -59,7 +59,9 @@ class Solr:
         ]
         self.date_fields = [Field.START.value, Field.END.value]
         # base urls
+        self.reload_url = '{url}/admin/cores?action=RELOAD&core={core}'
         self.search_url = '{url}/{core}/query'
+        self.synonyms_url = '{url}/{core}/schema/analysis/synonyms'
         self.update_url = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
 
         if app:
@@ -98,6 +100,8 @@ class Solr:
                 response = session.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
                 response = session.post(url=url, json=json_data, timeout=60)
+            elif method == 'PUT' and json_data:
+                response = session.put(url=url, json=json_data, timeout=60)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
                 response = session.post(url=url, data=xml_data, headers=headers, timeout=60)
@@ -114,6 +118,7 @@ class Solr:
                 error='Connection error while handling Solr request.',
                 status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:  # noqa B902
+            current_app.logger.debug(err.with_traceback(None))
             msg = 'Error handling Solr request.'
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):
@@ -127,6 +132,12 @@ class Solr:
         update_json = [asdict(doc) for doc in docs]
         response = self.call_solr('POST', self.update_url, json_data=update_json, force=force)
         return response
+
+    def create_or_update_synonyms(self, lang: str, synonyms: dict[str: list[str]]):
+        """Create or update solr docs in the core."""
+        response = self.call_solr('PUT', f'{self.synonyms_url}/{lang}', json_data=synonyms, force=True)
+        reload = self.call_solr('GET', self.reload_url)
+        return response, reload
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""

@@ -8,6 +8,7 @@ flask-jwt-oidc
 gunicorn
 launchdarkly-server-sdk
 psycopg2-binary
+pycountry
 python-dotenv
 requests
 sentry-sdk[flask]

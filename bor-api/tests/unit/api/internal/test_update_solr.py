@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test-Suite to ensure that the solr business update endpoints/functions work as expected."""
+"""Test-Suite to ensure that the solr doc update enpoint works as expected."""
 import json
 import time
 from copy import deepcopy
@@ -71,13 +71,13 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert solr_url in m.request_history[1].url
         assert solr_url in m.request_history[2].url
         assert m.request_history[0].json() == [{
-            'entityAddresses': [{'address_q': 'Bc-435 North Rd Coquitlam BC CA V3K 3V9',
+            'entityAddresses': [{'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
                                   'postalCode': 'V3K 3V9',
                                   'addressCity': 'Coquitlam',
                                   'addressType': 'delivery',
                                   'addressRegion': 'BC',
                                   'streetAddress': 'Bc-435 North Rd',
-                                  'addressCountry': 'CA'}],
+                                  'addressCountry': 'Canada'}],
             'entityType': 'BUSINESS',
             'id': request_json['business']['identifier'],
             'identifier': request_json['business']['identifier'],
@@ -92,13 +92,13 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         
         assert m.request_history[1].json() == [{
             'entityAddresses': [{
-                'address_q': '1234-4818 Westwinds Dr NE Calgary AB CA T3J 3Z5',
+                'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
                 'postalCode': 'T3J 3Z5',
                 'addressCity': 'Calgary',
                 'addressType': '',
                 'addressRegion': 'AB',
                 'streetAddress': '1234-4818 Westwinds Dr NE',
-                'addressCountry': 'CA'}],
+                'addressCountry': 'Canada'}],
             'entityType': 'PERSON',
             'id': 'LEAR570343',
             'legalName': 'BCREG2 LIANG FORTY',
@@ -121,13 +121,13 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         
         assert m.request_history[2].json() == [{
             'entityAddresses': [{
-                'address_q': 'W-558 Rue Saint-Vallier O Québec QC CA G1N 1C1',
+                'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
                 'postalCode': 'G1N 1C1',
                 'addressCity': 'Québec',
                 'addressType': '',
                 'addressRegion': 'QC',
                 'streetAddress': 'W-558 Rue Saint-Vallier O',
-                'addressCountry': 'CA'}],
+                'addressCountry': 'Canada'}],
             'entityType': 'PERSON',
             'id': 'LEAR570721',
             'legalName': 'BLIPPITY BOP',

@@ -18,6 +18,7 @@ from .db import db
 from .user import User
 from .solr_doc_event import SolrDocEvent
 from .solr_doc import SolrDoc
+from .solr_synonym_list import SolrSynonymList
 
 
-__all__ = ('db', 'User', 'SolrDoc', 'SolrDocEvent')
+__all__ = ('db', 'User', 'SolrDoc', 'SolrDocEvent', 'SolrSynonymList')
