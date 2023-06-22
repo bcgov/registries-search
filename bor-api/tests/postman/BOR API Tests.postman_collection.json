@@ -893,7 +893,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"calgary\",\n        \"roles\": {\n            \"relatedBN\": \"1234\",\n            \"relatedIdentifier\": \"0871\",\n            \"relatedName\": \"Kial\",\n            \"roleDates\": {\n                \"start\": \"2023-03-20\",\n                \"end\": \"*\"\n            }\n        }\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"philip canfield\",\n        \"roles\": {\n            \"roleDates\": {\n                \"start\": \"2004-03-27\",\n                \"end\": \"2023-06-06\"\n            }\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1101,7 +1101,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"ab\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedEntityType\": [\"business\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"incorporator\"]\n        }\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"entityAddresses\": \"ab\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedEntityType\": [\"BUSINESS\"],\n            \"relatedState\": [\"ACTIVE\"],\n            \"roleType\": [\"INCORPORATOR\"]\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1413,7 +1413,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"entityType\": [\"person\", \"business\"],\n        \"roles\": {\n            \"roleType\": [\"DIRECTOR\"]\n        }\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\",\n        \"legalName\": \"KIAL\",\n        \"identifier\": \"BC0871330\",\n        \"bn\": \"56789\",\n        \"entityAddresses\": \"ab\"\n    },\n    \"categories\": {\n        \"entityType\": [\"PERSON\", \"BUSINESS\"],\n        \"roles\": {\n            \"roleType\": [\"DIRECTOR\"]\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1559,7 +1559,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"business\": {\r\n        \"identifier\": \"FM1233334\",\r\n        \"legalName\": \"ABCD Prop\",\r\n        \"legalType\": \"SP\",\r\n        \"taxId\": \"123456789\",\r\n        \"state\": \"ACTIVE\"\r\n    },\r\n    \"businessAddresses\": {\r\n        \"recordsOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664211,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664210,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        },\r\n        \"registeredOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664213,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664212,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        }\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664209,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669642,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"business\": {\r\n        \"identifier\": \"FM1233334\",\r\n        \"legalName\": \"ABCD Prop\",\r\n        \"legalType\": \"SP\",\r\n        \"taxId\": \"123456789\",\r\n        \"state\": \"ACTIVE\"\r\n    },\r\n    \"businessAddresses\": {\r\n        \"businessOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664211,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664210,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        },\r\n        \"registeredOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664213,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664212,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        }\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664209,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669642,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1576,6 +1576,148 @@
 								"internal",
 								"solr",
 								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "synonym update specific",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ADDRESS\": {\n        \"TEST\": [\"TEST\", \"TESTER\"]\n    },\n    \"NAME\": {\n        \"JOHN\": [\"JOHN\", \"JOHNATHAN\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update",
+								"synonyms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "synonym update all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Status code is 200/OK\", function () {\r",
+									"    pm.response.to.have.status(200);    \r",
+									"});\r",
+									"\r",
+									"pm.test('should return JSON', function () {\r",
+									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Account-Id",
+								"value": "{{account_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"internal",
+								"solr",
+								"update",
+								"synonyms"
 							]
 						}
 					},
@@ -1700,7 +1842,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"identifiers\": [\"BC0871330\"]\r\n}",
+							"raw": "{\r\n   \"identifiers\": [\"FM1233334\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

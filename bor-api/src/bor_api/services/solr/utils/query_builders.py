@@ -14,12 +14,18 @@
 """Manages common solr query building methods."""
 import re
 
+from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 
 IDENTIFIER_FIELDS: list[str] = [Field.IDENTIFIER_Q.value, Field.RELATED_IDENTIFIER_Q.value, Field.RELATED_Q.value]
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + Field.ENTITY_TYPE.value + ":*'}"
+FIELD_SYNONYM_TYPE_MAP = {
+    Field.ADDRESS_SYN_Q: SolrSynonymType.ADDRESS,
+    Field.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
+    Field.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
+}
 
 
 def _add_identifier(field: str, term: str, is_child=False) -> str:
@@ -40,12 +46,21 @@ def _add_identifier(field: str, term: str, is_child=False) -> str:
     return f'{field}:{term}'
 
 
-def _find_synonym_terms(start_term: str, start_term_index: int, terms: list[str]) -> list[str]:
+def _get_fuzzy_str(term: str, short: int, long: int) -> str:
+    """Return the fuzzy string for the term."""
+    if len(term) < 4:
+        return ''
+    if len(term) < 7:
+        return f'~{short}'
+    return f'~{long}'
+
+
+def _find_synonym_terms(start_term: str, start_term_index: int, terms: list[str], field: Field) -> list[str]:
     """Return the synonym terms that match the starting term and following query terms."""
     # the best match will be the one with the most words (i.e. british columbia > british)
     best_synonym_match_terms = []
     # check if term exists inside a synonym
-    if synonyms := SolrSynonymList.find_all_beginning_with_phrase(start_term):
+    if synonyms := SolrSynonymList.find_all_beginning_with_phrase(start_term, FIELD_SYNONYM_TYPE_MAP[field]):
         for synonym_terms in [syn.synonym.split() for syn in synonyms]:
             if len(synonym_terms) > len(terms[start_term_index:]) or len(synonym_terms) == 0:
                 # not possible to be this synonym
@@ -64,6 +79,13 @@ def _find_synonym_terms(start_term: str, start_term_index: int, terms: list[str]
                 best_synonym_match_terms = synonym_terms
 
     return best_synonym_match_terms
+
+
+def _update_clause(current_clause: str, new_clause: str, join_str: str):
+    """Return the current clause added with the new clause."""
+    if current_clause:
+        current_clause += f' {join_str} '
+    return current_clause + new_clause
 
 
 def build_child_query(child_query: dict[str, str]) -> str | None:
@@ -122,67 +144,59 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
                      synonym_fields: dict[Field, str]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
     terms = query['value'].split()
-    synonym_terms = []
-    synonym_start_index = None
-    query_str = ''
+    synonym_info = {}
+    for syn_field in synonym_fields:
+        synonym_info[syn_field] = {'synonym_terms': [], 'synonym_start_index': None}
+    query_clause = ''
     for term_index, term in enumerate(terms):
         # each term only needs to match one of the given fields, but all terms must match at least 1
-        term_str = ''
+        term_clause = ''
         for field in fields:
-            field_str = _add_identifier(field.value, term)
-            # fuzzy_str used later (need it without boost)
-            fuzzy_str = field_str
+            field_clause = _add_identifier(field.value, term)
+            pre_boost_clause = field_clause
             # add boost
             if field in boost_fields:
-                field_str += f'^{boost_fields[field]}'
-            if term_str:
-                term_str += ' OR '
-            term_str += field_str
+                field_clause += f'^{boost_fields[field]}'
+
+            term_clause = _update_clause(term_clause, field_clause, 'OR')
             # add fuzzy matching
-            if field in fuzzy_fields and len(term) > 3:
+            if field in fuzzy_fields and (fuzzy_str := _get_fuzzy_str(term,
+                                                                      fuzzy_fields[field]['short'],
+                                                                      fuzzy_fields[field]['long'])):
                 # add another with fuzzy (this one will give a lower score on a hit if the original has a boost)
-                if len(term) < 7:
-                    fuzzy_str += f"~{fuzzy_fields[field]['short']}"
-                else:
-                    fuzzy_str += f"~{fuzzy_fields[field]['long']}"
-                term_str += f' OR {fuzzy_str}'
+                term_clause = _update_clause(term_clause, f'{pre_boost_clause}{fuzzy_str}', 'OR')
 
         # add nested field clauses
         for nested_field in nested_fields:
-            nested_field_str = build_child_query({nested_field.value: term})
-            if nested_field in fuzzy_fields and len(term) > 3:
+            nested_field_clause = build_child_query({nested_field.value: term})
+            if nested_field in fuzzy_fields and (fuzzy_str := _get_fuzzy_str(term,
+                                                                             fuzzy_fields[nested_field]['short'],
+                                                                             fuzzy_fields[nested_field]['long'])):
                 # add fuzzy match chars before ending bracket
-                if len(term) < 7:
-                    nested_field_str = f"{nested_field_str[:-1]}~{fuzzy_fields[nested_field]['short']})"
-                else:
-                    nested_field_str = f"{nested_field_str[:-1]}~{fuzzy_fields[nested_field]['long']})"
+                nested_field_clause = f'{nested_field_clause[:-1]}{fuzzy_str})'
 
-            if term_str:
-                term_str += ' OR '
-            term_str += nested_field_str
+            term_clause = _update_clause(term_clause, nested_field_clause, 'OR')
 
         # add synonym field clauses
         for field in synonym_fields:
+            synonym_terms = synonym_info[field]['synonym_terms']
+            synonym_start_index = synonym_info[field]['synonym_start_index']
             field_value = field.value
             if synonym_fields[field] == 'child':
                 field_value = PRE_CHILD_FILTER_CLAUSE + field.value
-            synonym_str = ''
+            synonym_clause = ''
             if synonym_terms and term_index < synonym_start_index + len(synonym_terms):
                 # a synonym matched on a previous term and includes the current term (multi word synonym)
-                synonym_str = f"{field_value}:{' '.join(synonym_terms)}"
-            elif synonym_terms := _find_synonym_terms(term, term_index, terms):
-                synonym_start_index = term_index
-                synonym_str = f"{field_value}:{' '.join(synonym_terms)}"
+                synonym_clause = f"{field_value}:{' '.join(synonym_terms)}"
+            elif new_synonym_terms := _find_synonym_terms(term, term_index, terms, field):
+                synonym_info[field]['synonym_terms'] = new_synonym_terms
+                synonym_info[field]['synonym_start_index'] = term_index
+                synonym_clause = f"{field_value}:{' '.join(new_synonym_terms)}"
 
-            if synonym_str:
-                # add synonym clause to query
-                if term_str:
-                    term_str += ' OR '
-                term_str += f'({synonym_str})'
+            if synonym_clause:
+                term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
 
-        if query_str:
-            query_str += ' AND '
-        query_str += f'({term_str})'
+        query_clause = _update_clause(query_clause, f'({term_clause})', 'AND')
 
     # extra filters
     filters = []
@@ -193,4 +207,4 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
         for term in terms:
             filters.append(_add_identifier(key, term))
 
-    return {'query': query_str, 'filter': filters}
+    return {'query': query_clause, 'filter': filters}

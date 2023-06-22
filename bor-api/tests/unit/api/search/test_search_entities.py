@@ -14,11 +14,12 @@
 """Test-Suite to ensure that the search endpoints/functions work as expected."""
 import json
 import time
-from dataclasses import asdict
 from http import HTTPStatus
 
 import pytest
 
+from bor_api.enums import SolrSynonymType
+from bor_api.models import SolrSynonymList
 from bor_api.services import bor_solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
@@ -171,7 +172,7 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
     ('test_basic_name_match_spellcheck',
      {'value': 'pirson ttree'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_stem_1',
      {'value': 'persons one'},
@@ -349,8 +350,8 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
      {'value': 'person'},
      {
         Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_COUNTRY.value:['Canada'],
-            Field.ADDRESS_REGION.value: ['BC', 'AB']
+            Field.ADDRESS_COUNTRY.value:['Canada', 'United States'],
+            Field.ADDRESS_REGION.value: ['BC', 'AB', 'WA']
         },
         Field.ROLES.value: {
             Field.RELATED_STATE.value: ['ACTIVE'],
@@ -359,10 +360,10 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
         }
      },
      [
-         {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
-         {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
-         {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
-         {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+        {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+        {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+        {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+        {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_child_categories_no_match',
      {'value': 'person'},
@@ -380,18 +381,23 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
      []
     ),
     ('test_synonym_country',
-     {'value': 'persons two CA'},
+     {'value': 'person three US'},
+     {},
+     [{'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}],
+    ),
+    ('test_synonym_region',
+     {'value': 'persons two bc'},
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}],
     ),
-    ('test_synonym_region',
-     {'value': 'persons two british columbia'},
+    ('test_synonym_name',
+     {'value': 'person three chute'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}],
+     [{'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}],
     ),
     ('test_all_combined_person',
      {
-        'value': 'person CA british columbia',
+        'value': 'person CA bc',
         Field.LEGAL_NAME.value: 't',
         Field.ENTITY_ADDRESSES.value: 'charles place victoria british colu',
         Field.ROLES.value: {
@@ -438,6 +444,12 @@ def test_search_entities(session, client, test_name, query, categories, expected
     time.sleep(1)
     bor_solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(2)
+    # add test dependent synonyms to db
+    SolrSynonymList(synonym='bc', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
+    SolrSynonymList(synonym='british columbia', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
+    SolrSynonymList(synonym='united states', synonym_list=['us', 'united states'], synonym_type=SolrSynonymType.ADDRESS).save()
+    SolrSynonymList(synonym='us', synonym_list=['us', 'united states'], synonym_type=SolrSynonymType.ADDRESS).save()
+    SolrSynonymList(synonym='chute', synonym_list=['chute', 'shoot'], synonym_type=SolrSynonymType.NAME).save()
     # format payload
     payload = {'query': query}
     if categories:
@@ -456,7 +468,7 @@ def test_search_entities(session, client, test_name, query, categories, expected
     assert results == expected
 
 
-def test_search_entities_error(app, client, requests_mock):
+def test_search_entities_error(app, session, client, requests_mock):
     """Assert that the entities search call error handling works as expected."""
     # setup solr mock
     mocked_error_msg = 'mocked error'

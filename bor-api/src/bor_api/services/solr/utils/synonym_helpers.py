@@ -12,7 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages common solr synonym payload build methods."""
+import csv
+import os
+
 import pycountry
+
+from bor_api.enums import SolrSynonymType
 
 
 def _get_address_synonyms() -> dict[str, list[str]]:
@@ -36,14 +41,44 @@ def _get_address_synonyms() -> dict[str, list[str]]:
             region_synonym_list = [region_short, region.name.lower()]
             # each one needs its own mapping to the others
             for synonym in region_synonym_list:
-                synonyms[synonym] = synonyms.setdefault(synonym, []) + region_synonym_list
+                synonyms[synonym] = list(set(synonyms.setdefault(synonym, []) + region_synonym_list))
 
     return synonyms
 
 
-def get_synonyms() -> dict[str, list[str]]:
+def _get_name_synonyms() -> dict[str, list[str]]:
+    """Return all name synonyms provided in the nickname.csv."""
+    synonyms_by_id = {}
+    path = os.path.dirname(__file__)
+    abs_file_path = os.path.join(path, 'data/nicknames.csv')
+    with open(file=abs_file_path, encoding='UTF-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for item in reader:
+            name = item['name'].lower().strip()
+            synonym_id = item['name_id']
+            synonyms_by_id[synonym_id] = list(set(synonyms_by_id.setdefault(synonym_id, []) + [name]))
+
+    synonyms = {}
+    for syn_id, syn_list in synonyms_by_id.items():  # pylint: disable=unused-variable
+        # add all name synonym mappings to each other
+        for synonym in syn_list:
+            synonyms[synonym] = list(set(synonyms.setdefault(synonym, []) + syn_list))
+    return synonyms
+
+
+def get_synonyms() -> dict[SolrSynonymType, dict[str, list[str]]]:
     """Return all synonyms used for SOLR queries."""
+    address_synonyms = _get_address_synonyms()
+    name_synonyms = _get_name_synonyms()
+    # add address synonyms to name_synonyms (combine lists where necessary)
+    for addr_syn, addr_syn_list in address_synonyms.items():
+        if addr_syn in name_synonyms:
+            # combine synonym list
+            name_synonyms[addr_syn] = list(set(name_synonyms[addr_syn] + addr_syn_list))
+        else:
+            name_synonyms[addr_syn] = addr_syn_list
+
     return {
-        **_get_address_synonyms(),
-        # FUTURE: add name synonyms here
+        SolrSynonymType.ADDRESS: address_synonyms,
+        SolrSynonymType.NAME: name_synonyms
     }

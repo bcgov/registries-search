@@ -11,10 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Enum for solr doc event types."""
+from enum import auto
 
-"""This exports all of the enums used by the application."""
-from .log_level import LogLevel
-from .solr_doc_event_status import SolrDocEventStatus
-from .solr_doc_event_type import SolrDocEventType
-from .solr_synonym_type import SolrSynonymType
-from .user_roles import UserRoles
+from .base import BaseEnum
+
+
+class SolrSynonymType(BaseEnum):
+    """Enum of the solr synonym types."""
+
+    ADDRESS = auto()
+    NAME = auto()

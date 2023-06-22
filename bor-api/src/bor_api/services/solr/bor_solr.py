@@ -22,6 +22,7 @@ from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import ConnectionError as SolrConnectionError
 from flask import current_app
 
+from bor_api.enums import SolrSynonymType
 from bor_api.exceptions import SolrException
 
 from .bor_solr_fields import SolrField as Field
@@ -133,11 +134,9 @@ class Solr:
         response = self.call_solr('POST', self.update_url, json_data=update_json, force=force)
         return response
 
-    def create_or_update_synonyms(self, lang: str, synonyms: dict[str: list[str]]):
+    def create_or_update_synonyms(self, synonym_type: SolrSynonymType, synonyms: dict[str: list[str]]):
         """Create or update solr docs in the core."""
-        response = self.call_solr('PUT', f'{self.synonyms_url}/{lang}', json_data=synonyms, force=True)
-        reload = self.call_solr('GET', self.reload_url)
-        return response, reload
+        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms, force=True)
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
@@ -179,3 +178,10 @@ class Solr:
 
         response = self.call_solr('POST', self.search_url, json_data=payload)
         return response.json()
+
+    def reload_core(self):
+        """Reload the solr core."""
+        current_app.logger.info('Reloading core...')
+        reload = self.call_solr(method='GET', query=self.reload_url, force=True)
+        current_app.logger.info('Core reloaded.')
+        return reload

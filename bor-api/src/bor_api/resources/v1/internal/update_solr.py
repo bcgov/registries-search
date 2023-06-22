@@ -21,9 +21,9 @@ from time import sleep
 from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
 
-from bor_api.enums import SolrDocEventType
+from bor_api.enums import SolrDocEventType, SolrSynonymType
 from bor_api.exceptions import SolrException, bad_request_response, exception_response
-from bor_api.models import SolrDoc, SolrSynonymList, User, db
+from bor_api.models import SolrDoc, SolrSynonymList, User
 from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
 from bor_api.services.solr.bor_solr_updates import update_bor_solr
 from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
@@ -69,17 +69,21 @@ def update_synonyms():
         synonyms = request.json
         if not synonyms:
             synonyms = get_synonyms()
+
+        errors = [key for key in synonyms if key not in [SolrSynonymType.ADDRESS, SolrSynonymType.NAME]]
+        if errors:
+            return bad_request_response(f"Invalid synonym type(s): {','.join(errors)}")
+
         # update solr synonym file
-        bor_solr.create_or_update_synonyms('english', synonyms)
+        if SolrSynonymType.ADDRESS in synonyms:
+            bor_solr.create_or_update_synonyms(SolrSynonymType.ADDRESS, synonyms[SolrSynonymType.ADDRESS])
+        if SolrSynonymType.NAME in synonyms:
+            bor_solr.create_or_update_synonyms(SolrSynonymType.NAME, synonyms[SolrSynonymType.NAME])
+        # reload the solr core (so it will register any changes)
+        bor_solr.reload_core()
         # update db synonym lists
-        for synonym in synonyms:
-            if synonym_list := SolrSynonymList.find_by_synonym(synonym):
-                synonym_list.synonym_list = synonyms[synonym]
-                synonym_list.last_update_date = datetime.utcnow()
-                db.session.add(synonym_list)
-            else:
-                db.session.add(SolrSynonymList(synonym=synonym, synonym_list=synonyms[synonym]))
-        db.session.commit()
+        for synonym_type in synonyms:
+            SolrSynonymList.create_or_replace_all(synonyms=synonyms[synonym_type], synonym_type=synonym_type)
 
         return jsonify({'message': 'Update successful'}), HTTPStatus.OK
 

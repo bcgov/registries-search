@@ -14,6 +14,7 @@
 """Tests to ensure that the Solr Service query builders work as expected."""
 import pytest
 
+from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.utils.query_builders import (PRE_CHILD_FILTER_CLAUSE, _add_identifier, _find_synonym_terms,
@@ -54,9 +55,11 @@ def test_add_identifier(test_name, field: Field, term: str, expected: str, is_ch
 def test_find_synonym_terms(session, test_name, term: str, term_index: int, terms: list[str], expected: str, test_prep: list[str]):
     """Assert the _find_synonym_terms function works as expected."""
     for syn in test_prep:
-        SolrSynonymList(synonym=syn, synonym_list=['bla', syn]).save()
+        SolrSynonymList(synonym=syn, synonym_list=['bla', syn], synonym_type=SolrSynonymType.ADDRESS).save()
+        SolrSynonymList(synonym=syn, synonym_list=['bla', syn], synonym_type=SolrSynonymType.NAME).save()
 
-    assert _find_synonym_terms(start_term=term, start_term_index=term_index, terms=terms) == expected
+    assert _find_synonym_terms(start_term=term, start_term_index=term_index, terms=terms, field=Field.ADDRESS_SYN_Q) == expected
+    assert _find_synonym_terms(start_term=term, start_term_index=term_index, terms=terms, field=Field.LEGAL_NAME_SYN_Q) == expected
 
 
 @pytest.mark.parametrize('test_name,params,expected', [
@@ -118,35 +121,38 @@ def test_find_synonym_terms(session, test_name, term: str, term_index: int, term
      {'query': {'value':'name', Field.ADDRESS_Q.value: 'bc ca', Field.IDENTIFIER_Q.value: 'bc1234'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name)', 'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")']}),
     ('test_synonym_parent_1',
-     {'query': {'value':'name'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['name']}},
+     {'query': {'value':'name'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['name']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name OR ({Field.LEGAL_NAME_SYN_Q.value}:name))', 'filter': []}),
     ('test_synonym_parent_2',
-     {'query': {'value':'synonym1 synonym2'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['synonym1', 'synonym2']}},
+     {'query': {'value':'synonym1 synonym2'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['synonym1', 'synonym2']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:synonym1 OR ({Field.LEGAL_NAME_SYN_Q.value}:synonym1)) AND ({Field.LEGAL_NAME_Q.value}:synonym2 OR ({Field.LEGAL_NAME_SYN_Q.value}:synonym2))', 'filter': []}),
     ('test_synonym_parent_3',
-     {'query': {'value':'synonym nonsynonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['synonym']}},
+     {'query': {'value':'synonym nonsynonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['synonym']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:synonym OR ({Field.LEGAL_NAME_SYN_Q.value}:synonym)) AND ({Field.LEGAL_NAME_Q.value}:nonsynonym)', 'filter': []}),
     ('test_synonym_parent_4',
-     {'query': {'value':'nonsynonym synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['synonym']}},
+     {'query': {'value':'nonsynonym synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['synonym']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:nonsynonym) AND ({Field.LEGAL_NAME_Q.value}:synonym OR ({Field.LEGAL_NAME_SYN_Q.value}:synonym))', 'filter': []}),
     ('test_synonym_parent_5',
-     {'query': {'value':'multi word synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['multi word synonym']}},
+     {'query': {'value':'multi word synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['multi word synonym']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:multi OR ({Field.LEGAL_NAME_SYN_Q.value}:multi word synonym)) AND ({Field.LEGAL_NAME_Q.value}:word OR ({Field.LEGAL_NAME_SYN_Q.value}:multi word synonym)) AND ({Field.LEGAL_NAME_Q.value}:synonym OR ({Field.LEGAL_NAME_SYN_Q.value}:multi word synonym))', 'filter': []}),
     ('test_synonym_parent_6',
-     {'query': {'value':'partial synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': ['partial synonym not enough']}},
+     {'query': {'value':'partial synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', 'test_prep': {SolrSynonymType.NAME: ['partial synonym not enough']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:partial) AND ({Field.LEGAL_NAME_Q.value}:synonym)', 'filter': []}),
     ('test_synonym_child_1',
-     {'query': {'value':'canada'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': ['canada']}},
+     {'query': {'value':'canada'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['canada']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:canada OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:canada))', 'filter': []}),
     ('test_synonym_child_2',
-     {'query': {'value':'name british columbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': ['british columbia']}},
+     {'query': {'value':'name british columbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['british columbia']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name) AND ({Field.LEGAL_NAME_Q.value}:british OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:british columbia)) AND ({Field.LEGAL_NAME_Q.value}:columbia OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:british columbia))', 'filter': []}),
     ('test_synonym_child_3_uses_longest_syn',
-     {'query': {'value':'name british columbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': ['british columbia', 'british']}},
+     {'query': {'value':'name british columbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['british columbia', 'british']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name) AND ({Field.LEGAL_NAME_Q.value}:british OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:british columbia)) AND ({Field.LEGAL_NAME_Q.value}:columbia OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:british columbia))', 'filter': []}),
     ('test_synonym_child_4',
-     {'query': {'value':'name british notcolumbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': ['british columbia', 'british']}},
+     {'query': {'value':'name british notcolumbia'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['british columbia', 'british']}}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name) AND ({Field.LEGAL_NAME_Q.value}:british OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:british)) AND ({Field.LEGAL_NAME_Q.value}:notcolumbia)', 'filter': []}),
+    ('test_synonym_all',
+     {'query': {'value':'namesyn address synonym'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['address synonym', 'synonym'], SolrSynonymType.NAME: ['namesyn']}}},
+     {'query': f'({Field.LEGAL_NAME_Q.value}:namesyn OR ({Field.LEGAL_NAME_SYN_Q.value}:namesyn)) AND ({Field.LEGAL_NAME_Q.value}:address OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:address synonym)) AND ({Field.LEGAL_NAME_Q.value}:synonym OR ({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_SYN_Q.value}:address synonym))', 'filter': []}),
     ('test_synonym_none',
      {'query': {'value':'name'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child'}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:name)', 'filter': []}),
@@ -156,16 +162,19 @@ def test_find_synonym_terms(session, test_name, term: str, term_index: int, term
       'nested_fields': [Field.ADDRESS_Q, Field.RELATED_NAME],
       'boost': {Field.LEGAL_NAME_Q: 5, Field.LEGAL_NAME_AGRO_Q: 3},
       'fuzzy': {Field.LEGAL_NAME_Q: {'short': 1, 'long': 2}, Field.LEGAL_NAME_AGRO_Q: {'short': 2, 'long': 3}, Field.ADDRESS_Q: {'short': 1, 'long': 1}},
+      'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child', 'test_prep': {SolrSynonymType.ADDRESS: ['name01 namelong'], SolrSynonymType.NAME: ['name01']}}
      },
-     {'query': '(legalName_q:name01^5 OR legalName_q:name01~1 OR legalName_stem_agro_q:name01^3 OR legalName_stem_agro_q:name01~2 OR (identifier_q:"01" AND identifier_q:"NAME") OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name01~1) OR ({!parent which = \'-_nest_path_:* entityType:*\'}relatedName:name01)) AND (legalName_q:namelong^5 OR legalName_q:namelong~2 OR legalName_stem_agro_q:namelong^3 OR legalName_stem_agro_q:namelong~3 OR identifier_q:namelong OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:namelong~1) OR ({!parent which = \'-_nest_path_:* entityType:*\'}relatedName:namelong))', 'filter': ['address_q:bc', 'address_q:ca', '(identifier_q:"1234" AND identifier_q:"BC")'],
+     {'query': '(legalName_q:name01^5 OR legalName_q:name01~1 OR legalName_stem_agro_q:name01^3 OR legalName_stem_agro_q:name01~2 OR (identifier_q:"01" AND identifier_q:"NAME") OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name01~1) OR ({!parent which = \'-_nest_path_:* entityType:*\'}relatedName:name01) OR (legalName_synonym_q:name01) OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_synonym_q:name01 namelong)) AND (legalName_q:namelong^5 OR legalName_q:namelong~2 OR legalName_stem_agro_q:namelong^3 OR legalName_stem_agro_q:namelong~3 OR identifier_q:namelong OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:namelong~1) OR ({!parent which = \'-_nest_path_:* entityType:*\'}relatedName:namelong) OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_synonym_q:name01 namelong))', 'filter': ['address_q:bc', 'address_q:ca', '(identifier_q:"1234" AND identifier_q:"BC")'],
       'filter': [f'{Field.ADDRESS_Q.value}:bc', f'{Field.ADDRESS_Q.value}:ca', f'({Field.IDENTIFIER_Q.value}:"1234" AND {Field.IDENTIFIER_Q.value}:"BC")']
      }),
 ])
 def test_build_base_query(app, session, test_name, params, expected):
     """Assert that the build_base_query function works as expected."""
-    for syn in params.get('syns', {}).get('test_prep', []):
-        SolrSynonymList(synonym=syn, synonym_list=['bla', syn]).save()
-    if params.get('syns', {}).get('test_prep'):
+    test_prep = params.get('syns', {}).get('test_prep', {})
+    for syn_type in test_prep:
+        for syn in test_prep[syn_type]:
+            SolrSynonymList(synonym=syn, synonym_list=['bla', syn], synonym_type=syn_type).save()
+    if test_prep:
         del params['syns']['test_prep']
     base_query = build_base_query(query=params['query'],
                                   fields=params['fields'],
