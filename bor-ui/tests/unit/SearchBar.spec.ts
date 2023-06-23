@@ -53,34 +53,35 @@ describe('SearchBar tests', () => {
     const searchTextField = wrapper.find('#search-bar-field')
     expect(searchTextField.exists()).toBe(true)
     // contains label
-    const label = 'label="Entity Name or Incorporation/Registration Number or CRA Business Number'
+    const label = 'label="Director Name and/or Address'
     expect(searchTextField.html()).toContain(label)
 
     // search bar hint
-    const hint = 'hint="Example: &quot;John Smith, Test Construction Inc.&quot;, &quot;BC0000123&quot;,'
+    const hint = 'Example: &quot;John Smith&quot;, &quot;1234 St BC&quot;, &quot;VXX XXX&quot;,' +
+      ' &quot;John Smith Victoria BC&quot;'
     expect(searchTextField.html()).toContain(hint)
 
     // validation message does NOT show
-    const errorMsg = 'error-messages="Enter a name or number"'
+    const errorMsg = 'error-messages="Enter a name and/or address"'
     expect(searchTextField.html()).not.toContain(errorMsg)
 
-    // checkboxes are there
+    // checkboxes are NOT there -- this will change in the future
     const checkboxesWrapper = wrapper.find('#search-bar-checkboxes')
-    expect(checkboxesWrapper.exists()).toBe(true)
+    expect(checkboxesWrapper.exists()).toBe(false)
 
-    const checkboxes = checkboxesWrapper.findAll('v-checkbox')
-    expect(checkboxes.length).toBe(2)
+    // const checkboxes = checkboxesWrapper.findAll('v-checkbox')
+    // expect(checkboxes.length).toBe(2)
     
     // person
-    expect(checkboxes[0].html()).toContain('label="Person"')
+    // expect(checkboxes[0].html()).toContain('label="Person"')
     // checked
-    expect(checkboxes[0].html()).toContain('modelvalue="true"')
+    // expect(checkboxes[0].html()).toContain('modelvalue="true"')
   
     
     // business
-    expect(checkboxes[1].html()).toContain('label="Business"')
+    // expect(checkboxes[1].html()).toContain('label="Business"')
     // not checked
-    expect(checkboxes[1].html()).toContain('modelvalue="false"')
+    // expect(checkboxes[1].html()).toContain('modelvalue="false"')
   })
   it('Validates input', async () => {
     const searchTextField = wrapper.find('#search-bar-field')
@@ -88,7 +89,7 @@ describe('SearchBar tests', () => {
     await flushPromises()
     
     // validation message shows
-    const errorMsg = 'error-messages="Enter a name or number"'
+    const errorMsg = 'error-messages="Enter a name and/or address"'
     expect(searchTextField.html()).toContain(errorMsg)
 
     // search was not triggered
@@ -109,7 +110,7 @@ describe('SearchBar tests', () => {
     await flushPromises()
     
     // validation message doesn't show
-    const errorMsg = 'error-messages="Enter a name or number"'
+    const errorMsg = 'error-messages="Enter a name and/or address"'
     expect(searchTextField.html()).not.toContain(errorMsg)
 
     // search was triggered

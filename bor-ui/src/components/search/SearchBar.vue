@@ -15,14 +15,15 @@
       @keyup.enter="toggleErrorMsg()"
       :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
     />
-    <v-row id="search-bar-checkboxes" class="mt-3" no-gutters>
+    <!-- NB: Current plan is to use this in the future design -->
+    <!-- <v-row id="search-bar-checkboxes" class="mt-3" no-gutters>
       <v-col cols="auto">
         <v-checkbox color="primary" density="compact" label="Person" v-model="facets.entityType.person" />
       </v-col>
       <v-col class="ml-3" cols="auto">
         <v-checkbox color="primary" density="compact" label="Business" v-model="facets.entityType.business" />
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -36,9 +37,9 @@ import { useSearch } from '@/composables'
 const { search, filterSearch, getSearchResults } = useSearch()
 
 // search field stuff
-const searchErrorMsg = 'Enter a name or number'
-const searchHint = 'Example: "John Smith, Test Construction Inc.", "BC0000123", "987654321"'
-const searchLabel = 'Entity Name or Incorporation/Registration Number or CRA Business Number'
+const searchErrorMsg = 'Enter a name and/or address'
+const searchHint = 'Example: "John Smith", "1234 St BC", "VXX XXX", "John Smith Victoria BC"'
+const searchLabel = 'Director Name and/or Address'
 
 // search value stuff
 const searchVal = ref('')

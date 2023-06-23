@@ -50,7 +50,7 @@ describe('DashboardView tests', () => {
   })
   it('renders Dashboard with expected child components', async () => {
     // check header is there
-    expect(wrapper.find('h1').text()).toContain('Business and Person Search')
+    expect(wrapper.find('h1').text()).toContain('Director Search')
     // check learn more is there
     expect(wrapper.find('.learn-more').text()).toContain('Learn More')
     expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.learnMoreURL)
@@ -58,14 +58,14 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('.account-label').text()).toContain(testAccount.label)
     expect(wrapper.find('.account-name').text()).toContain(testAccount.name)
     // check documents help
-    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business and Person Search')
+    expect(wrapper.find('#doc-help-btn').text()).toContain('Help with Director Search')
     expect(wrapper.find('.doc-help-info').exists()).toBe(false)
     // check tab headers
-    expect(wrapper.html()).toContain('Find a Business')
+    expect(wrapper.html()).toContain('Find a Director')
     // tab with search bar should be visible
     expect(wrapper.vm.tab).toBe('0')
     expect(wrapper.find('#search-tab').classes()).toContain('tab-item-active')
-    expect(wrapper.html()).toContain('Search for businesses')
+    expect(wrapper.html()).toContain('Search for Directors / Owners of businesses or Addresses of people.')
     expect(wrapper.findComponent(SearchBar).exists()).toBe(true)
     // search results should not render before a search is made
     expect(search.results).toBe(null)
@@ -73,14 +73,14 @@ describe('DashboardView tests', () => {
     expect(wrapper.findComponent(SearchResults).exists()).toBe(false)
   })
   it('opens and closes document help', async () => {
-    wrapper.find('.doc-help-btn').trigger('click')
+    wrapper.find('#doc-help-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.find('.doc-help-btn').text()).toContain('Hide Help')
+    expect(wrapper.find('#doc-help-btn').text()).toContain('Hide Help')
     expect(wrapper.find('.doc-help-info').exists()).toBe(true)
     // clicking again sets it back
-    wrapper.find('.doc-help-btn').trigger('click')
+    wrapper.find('#doc-help-btn').trigger('click')
     await flushPromises()
-    expect(wrapper.find('.doc-help-btn').text()).toContain('Help with Business and Person Search')
+    expect(wrapper.find('#doc-help-btn').text()).toContain('Help with Director Search')
     expect(wrapper.find('.doc-help-info').exists()).toBe(false)
   })
   it('shows the results table when results are populated', async () => {

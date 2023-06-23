@@ -28,10 +28,6 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
   console.info('Set REGISTRY URL to: ' + registryUrl)
 
-  const registriesSearchUrl: string = process.env.VUE_APP_REGISTRIES_SEARCH_URL
-  sessionStorage.setItem('REGISTRIES_SEARCH_URL', registriesSearchUrl)
-  console.info('Set REGISTRIES SEARCH URL to: ' + registriesSearchUrl)
-
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string =
     process.env.VUE_APP_STATUS_API_URL + process.env.VUE_APP_STATUS_API_VERSION

@@ -12,6 +12,6 @@ export const DefaultError: DialogOptionsI = {
   ],
   onClose: navigate,
   onCloseArgs: [sessionStorage.getItem('REGISTRY_URL')],
-  text: 'The Business Search application is currently unavailable. Please try again later.',
-  title: 'Business Search Unavailable'
+  text: 'The Director Search application is currently unavailable. Please try again later.',
+  title: 'Director Search Unavailable'
 }

@@ -13,5 +13,5 @@ export const AuthAccessError: DialogOptionsI = {
   onClose: navigate,
   onCloseArgs: [sessionStorage.getItem('REGISTRY_URL')],
   text: '',
-  title: 'Business Search Access Denied'
+  title: 'Director Search Access Denied'
 }

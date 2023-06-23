@@ -124,7 +124,7 @@ onMounted(async () => {
     if (!isJestRunning.value && !getFeatureFlag('enable-director-search')) {
       handleError({
         category: ErrorCategory.ACCOUNT_ACCESS,
-        message: 'This account does not have access to Business and Person Search',
+        message: 'This account does not have access to Director Search',
         statusCode: StatusCodes.UNAUTHORIZED,
         type: null
       })

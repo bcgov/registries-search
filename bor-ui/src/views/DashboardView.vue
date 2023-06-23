@@ -2,7 +2,7 @@
   <v-container v-if="appReady" id="dashboard" class="container" fluid>
     <v-row no-gutters>
       <v-col>
-        <h1>Business and Person Search</h1>
+        <h1>Director Search</h1>
       </v-col>
       <v-col class="pt-3" cols="auto">
         <a class="learn-more" :href="learnMoreURL" target="_blank">
@@ -20,17 +20,23 @@
         {{ auth.currentAccount.name }}
       </v-col>
     </v-row>
-    <v-btn class="doc-help-btn copy-normal primary px-0 text" flat :ripple="false" @click="showDocHelp = !showDocHelp">
+    <v-btn
+      id="doc-help-btn"
+      class="copy-normal mt-3 primary px-0 text"
+      flat
+      :ripple="false"
+      @click="showDocHelp = !showDocHelp"
+    >
       <v-icon>mdi-help-circle-outline</v-icon>
-      <span v-if="!showDocHelp">Help with Business and Person Search</span>
+      <span v-if="!showDocHelp">Help with Director Search</span>
       <span v-else>Hide Help</span>
     </v-btn>
     <v-slide-y-transition>
       <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
         <div class="doc-help-info__content mx-auto">
-          <h3 style="text-align: center;">Help with Business and Person Search</h3>
+          <h3 style="text-align: center;">Help with Director Search</h3>
           <p class="mt-5">
-            This text has not been updated for Business and Person Search
+            This text has not been updated for Director Search
           </p>
           <ul class="ml-4 mt-6">
             <li>Benefit Companies</li>
@@ -75,7 +81,7 @@
         :ripple="false"
       >
         <v-icon>mdi-magnify</v-icon>
-        <b class="ml-1">Find a Business or Person</b>
+        <b class="ml-1">Find a Director</b>
       </v-tab>
     </v-tabs>
 
@@ -96,22 +102,7 @@
             </div>
             <div v-else>
               <p class="mb-7 mt-12 info-text">
-                Search for businesses
-                <v-tooltip location="top" content-class="bottom-arrow" transition="fade-transition">
-                  <template v-slot:activator="{ props }">
-                    <span class="tooltip-search-tab" style="position: relative;">
-                      <span class="tooltip-search-tab__text" v-bind="props">
-                        registered or incorporated in B.C.
-                      </span>
-                    </span>
-                  </template>
-                  <span>
-                    <b>Note:</b> The Beta version of business search will not
-                    retrieve railways, financial institutions, or businesses
-                    incorporated under Private Acts.
-                  </span>
-                </v-tooltip>
-                or Directors / Owners of businesses or Addresses of businesses and people.
+                Search for Directors / Owners of businesses or Addresses of people.
               </p>
               <search-bar class="pb-5" />
               <search-results class="mt-30px" v-if="search.results!=null && !search.unavailable" />
@@ -145,7 +136,7 @@ const requestDocURL = 'https://www2.gov.bc.ca/gov/content/employment-business/bu
 const showDocHelp = ref(false)
 const tab = ref('0')
 
-const unavailableMsg = 'Business and Person Search is in the process of a scheduled ' +
+const unavailableMsg = 'Director Search is in the process of a scheduled ' +
   ' update. Searching will be unavailable for up to 15 minutes.'
 
 
@@ -154,7 +145,8 @@ const unavailableMsg = 'Business and Person Search is in the process of a schedu
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 #search-tab {
-  border-right: 2.5px solid $gray1;
+  // border-right: 2.5px solid $gray1;
+  pointer-events: none;
 }
 
 .account-label {
@@ -182,8 +174,8 @@ const unavailableMsg = 'Business and Person Search is in the process of a schedu
 .tab-item-inactive {
   color: white;
   background-color: $BCgovBlue5;
-  box-shadow: inset 0 0 5px 1px $gray9;
-  margin-top: 5px;
+  // box-shadow: inset 0 0 5px 1px $gray9;
+  // margin-top: 5px;
   transition: none !important;
 }
 .tab-item-inactive:hover {
@@ -200,8 +192,7 @@ const unavailableMsg = 'Business and Person Search is in the process of a schedu
 .tab-item-default {
   border-radius: 5px 5px 0 0 !important;
   height: 67px;
-  width: 50%;
-  min-width: 50%;
+  min-width: 100%;
   font-size: 1.125rem;
 }
 
