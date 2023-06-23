@@ -35,8 +35,24 @@
       <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
         <div class="doc-help-info__content mx-auto">
           <h3 style="text-align: center;">Help with Director Search</h3>
-          <p class="mt-5">
-            This text has not been updated for Director Search
+          <h3 class="mt-6">Search</h3>
+          <p class="mt-6">
+            The Beta version of Director Search returns results for people
+            associated with all businesses in British Columbia.
+          </p>
+          <p class="mt-6">
+            You can find people by searching for any part of the person's name,
+            or you can enter an address to find people by address. Note that
+            matches on the person's name are always ranked ahead of matches on an address.
+          </p>
+          <h3 class="mt-6">Business Information</h3>
+          <p class="mt-6">
+            You can directly view information for the business types listed below in Director Search.
+            Information for other business types can be obtained through
+            <a class="doc-help-info__content__link" :href="bcOnlineURL" target="_blank">
+              <span style="text-decoration: underline;">BC OnLine</span>
+              <v-icon class="doc-help-info__content__link__icon ml-1">mdi-open-in-new</v-icon>
+            </a>.
           </p>
           <ul class="ml-4 mt-6">
             <li>Benefit Companies</li>
@@ -45,7 +61,7 @@
             <li>General Partnerships</li>
           </ul>
           <p class="mt-6">
-            Documents that may be available through Business Search include:
+            Where available, documents for these business types include:
           </p>
           <ul class="ml-4 mt-6">
             <li>Business Summary</li>
@@ -54,21 +70,6 @@
             <li>Certificate of Good Standing</li>
             <li>Letter Under Seal</li>
           </ul>
-          <p class="mt-6">
-            <b>Note:</b> The Beta version of Business Search will not retrieve railways,
-            financial institutions, or businesses incorporated under Private Acts.
-          </p>
-          <p class="mt-6">
-            To access documents for other business types, you will need to search through
-            <a class="doc-help-info__content__link" :href="bcOnlineURL" target="_blank">
-              <span style="text-decoration: underline;">BC OnLine</span>
-              <v-icon class="doc-help-info__content__link__icon ml-1">mdi-open-in-new</v-icon>
-            </a>, or you may
-            <a class="doc-help-info__content__link" :href="requestDocURL" target="_blank">
-              <span style="text-decoration: underline;">submit a document search request</span>
-              <v-icon class="doc-help-info__content__link__icon ml-1">mdi-open-in-new</v-icon>
-            </a>.
-          </p>
         </div>
         <span class="doc-help-info__close-btn my-5" @click="showDocHelp = false">Hide help</span>
       </div>
@@ -131,8 +132,6 @@ const { search } = useSearch()
 
 const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
 const learnMoreURL = 'https://www2.gov.bc.ca/gov/content?id=B75BE1375F084B138B60D62C0094D9E8'
-const requestDocURL = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
-  '/permits-licences/businesses-incorporated-companies/searches-certificates#submit'
 const showDocHelp = ref(false)
 const tab = ref('0')
 
@@ -154,6 +153,35 @@ const unavailableMsg = 'Director Search is in the process of a scheduled ' +
 }
 .account-label + .account-name {
   border-left: 1px solid $gray4;
+}
+
+.doc-help-info {
+  border-bottom: 1px dashed $gray7;
+  border-top: 1px dashed $gray7;
+
+  &__content {
+    max-width: 60%;
+
+    &__link {
+      color: $app-blue;
+      white-space: nowrap;
+      text-decoration: none;
+
+      &__icon {
+        font-size: 1rem;
+        color: $app-blue;
+      }
+    }
+  }
+
+  &__close-btn {
+    color: $app-blue;
+    cursor: pointer;
+    float: right;
+    font-size: .875rem;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
 }
 
 .info-text {
