@@ -77,8 +77,8 @@ def test_update_synonyms_mocked(app, session, client, jwt, test_name, request_js
         if not request_json:
             # check one of the address ones (should have populated db)
             check_synonym_recorded('british columbia', ['bc', 'british columbia'], SolrSynonymType.ADDRESS)
-            # should also be in name list
-            check_synonym_recorded('british columbia', ['bc', 'british columbia'], SolrSynonymType.NAME)
+            # should not be in name list
+            assert not SolrSynonymList.find_by_synonym('british columbia', SolrSynonymType.NAME)
             # check one of the name specific ones
             check_synonym_recorded('chute', ['shoot', 'chute'], SolrSynonymType.NAME)
 

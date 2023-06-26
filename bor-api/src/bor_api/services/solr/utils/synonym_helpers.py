@@ -70,13 +70,14 @@ def get_synonyms() -> dict[SolrSynonymType, dict[str, list[str]]]:
     """Return all synonyms used for SOLR queries."""
     address_synonyms = _get_address_synonyms()
     name_synonyms = _get_name_synonyms()
+    # NB: will want this for business names only
     # add address synonyms to name_synonyms (combine lists where necessary)
-    for addr_syn, addr_syn_list in address_synonyms.items():
-        if addr_syn in name_synonyms:
-            # combine synonym list
-            name_synonyms[addr_syn] = list(set(name_synonyms[addr_syn] + addr_syn_list))
-        else:
-            name_synonyms[addr_syn] = addr_syn_list
+    # for addr_syn, addr_syn_list in address_synonyms.items():
+    #     if addr_syn in name_synonyms:
+    #         # combine synonym list
+    #         name_synonyms[addr_syn] = list(set(name_synonyms[addr_syn] + addr_syn_list))
+    #     else:
+    #         name_synonyms[addr_syn] = addr_syn_list
 
     return {
         SolrSynonymType.ADDRESS: address_synonyms,
