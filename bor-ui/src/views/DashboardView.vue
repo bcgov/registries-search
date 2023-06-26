@@ -75,7 +75,8 @@
       </div>
     </v-slide-y-transition>
 
-    <v-tabs v-model="tab" style="height: 65px; margin-top: 20px;">
+    <!-- NB: will be added back in once this includes more than just director search -->
+    <!-- <v-tabs v-model="tab" style="height: 65px; margin-top: 20px;">
       <v-tab
         id="search-tab"
         :class="['tab-item-default', tab == '0' ? 'tab-item-active' : 'tab-item-inactive']"
@@ -84,9 +85,9 @@
         <v-icon>mdi-magnify</v-icon>
         <b class="ml-1">Find a Director</b>
       </v-tab>
-    </v-tabs>
+    </v-tabs> -->
 
-    <v-window v-model="tab">
+    <v-window class="mt-5" v-model="tab">
       <v-window-item class="ma-0">
         <v-card class="window-item-card" flat>
           <v-fade-transition hide-on-leave>
@@ -144,8 +145,7 @@ const unavailableMsg = 'Director Search is in the process of a scheduled ' +
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 #search-tab {
-  // border-right: 2.5px solid $gray1;
-  pointer-events: none;
+  border-right: 2.5px solid $gray1;
 }
 
 .account-label {
@@ -202,8 +202,8 @@ const unavailableMsg = 'Director Search is in the process of a scheduled ' +
 .tab-item-inactive {
   color: white;
   background-color: $BCgovBlue5;
-  // box-shadow: inset 0 0 5px 1px $gray9;
-  // margin-top: 5px;
+  box-shadow: inset 0 0 5px 1px $gray9;
+  margin-top: 5px;
   transition: none !important;
 }
 .tab-item-inactive:hover {
@@ -219,9 +219,10 @@ const unavailableMsg = 'Director Search is in the process of a scheduled ' +
 
 .tab-item-default {
   border-radius: 5px 5px 0 0 !important;
-  height: 67px;
-  min-width: 100%;
   font-size: 1.125rem;
+  height: 67px;
+  min-width: 50%;
+  width: 50%;
 }
 
 .tooltip-search-tab {

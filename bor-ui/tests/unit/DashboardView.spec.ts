@@ -61,10 +61,13 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('#doc-help-btn').text()).toContain('Help with Director Search')
     expect(wrapper.find('.doc-help-info').exists()).toBe(false)
     // check tab headers
-    expect(wrapper.html()).toContain('Find a Director')
+    expect(wrapper.find('#search-tab').exists()).toBe(false)
+    // expect(wrapper.html()).toContain('Find a Director')
     // tab with search bar should be visible
-    expect(wrapper.vm.tab).toBe('0')
-    expect(wrapper.find('#search-tab').classes()).toContain('tab-item-active')
+    // expect(wrapper.vm.tab).toBe('0')
+    // expect(wrapper.find('#search-tab').classes()).not.toContain('tab-item-active')
+
+    // check active window
     expect(wrapper.html()).toContain('Search for Directors / Owners of businesses or Addresses of people.')
     expect(wrapper.findComponent(SearchBar).exists()).toBe(true)
     // search results should not render before a search is made

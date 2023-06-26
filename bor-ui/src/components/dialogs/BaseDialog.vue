@@ -57,8 +57,11 @@ const props = defineProps<{
 const emit = defineEmits<{(e:'close'): void}>()
 
 const close = () => {
-  if (props.options.onClose && props.options.onCloseArgs) props.options.onClose(...props.options.onCloseArgs)
-  else if (props.options.onClose) props.options.onClose()
+  if (props.options.onClose && props.options.onCloseArgs) {
+    props.options.onClose(...props.options.onCloseArgs)
+  } else if (props.options.onClose) {
+    props.options.onClose()
+  }
 
   emit('close')
 }

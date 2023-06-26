@@ -7,7 +7,8 @@
             id="breadcrumb-back-btn"
             class="back-btn"
             exact
-            icon small
+            icon
+            small
             :disabled="breadcrumbs?.length <= 1"
             @click="back()"
           >
@@ -24,7 +25,7 @@
               :class="isLast(index) ? 'inactive-crumb' : 'active-crumb'"
               @click="navigate(crumb)"
             >
-                {{ crumb.text }}
+              {{ crumb.text }}
             </span>
             <v-icon icon="mdi-chevron-right" v-if="breadcrumbs?.length > 1 && isLast(index) == false" />
           </div>
@@ -36,13 +37,10 @@
 
 <script setup lang="ts">
 // External
-import { PropType } from 'vue'
 import { useRouter } from 'vue-router'
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 
-const props = defineProps({
-  breadcrumbs: { type: Array as PropType<BreadcrumbIF[]> }
-})
+const props = defineProps<{ breadcrumbs: BreadcrumbIF[] }>()
 
 const router = useRouter()
 
@@ -52,7 +50,7 @@ const back = () => {
   navigate(backCrumb)
 }
 
-const isLast = (index: number): boolean =>  {
+const isLast = (index: number): boolean => {
   return index === props.breadcrumbs.length - 1;
 }
 
