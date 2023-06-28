@@ -97,8 +97,7 @@ const isJestRunning = computed((): boolean => {
 })
 
 const bannerText = computed((): string => {
-  return 'test <b>text</b>'
-  // return getFeatureFlag('banner-text')?.trim() || null
+  return getFeatureFlag('banner-text')?.trim() || null
 })
 
 const breadcrumbs = computed((): Array<BreadcrumbIF> => {
