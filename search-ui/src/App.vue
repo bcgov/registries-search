@@ -18,11 +18,13 @@
     <sbc-header v-if="auth.tokenInitialized" :in-auth="false" :show-login-menu="false" />
 
     <!-- Alert banner -->
-    <v-alert
-      tile dense
-      type="warning"
-      v-if="bannerText">
-      <div v-html="bannerText" class="mb-0 text-center colour-dk-text"></div>
+    <v-alert v-if="bannerText" class="alert-banner ma-0 px-0 py-2" color="warning" max-height="45px">
+      <div class="container mx-auto px-4">
+        <v-row no-gutters>
+          <v-col cols="auto"><v-icon size="30">mdi-alert-circle</v-icon></v-col>
+          <v-col style="text-align: center;"><span v-html="bannerText" /></v-col>
+        </v-row>
+      </div>
     </v-alert>
 
     <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
@@ -265,3 +267,11 @@ watch(search, (val) => { if (val._error) handleError(val._error) })
 watch(suggest, (val) => { if (val._error) handleError(val._error) })
 watch(documentAccessRequest, (val)=> { if (val._error) handleError(val._error) })
 </script>
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+.alert-banner {
+  color: $gray9;
+  height: 45px;
+  vertical-align: top;
+}
+</style>
