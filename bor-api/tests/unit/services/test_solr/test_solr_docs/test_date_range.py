@@ -23,6 +23,8 @@ from bor_api.services.solr.solr_docs import DateRange
 @pytest.mark.parametrize('test_name,start,end', [
     ('test_1', '2022-03-21T14:24:02Z', '2023-04-11T06:44:52Z'),
     ('test_2', '2019-12-01T02:44:56Z', None),
+    ('test_3', None, '2023-04-11T06:44:52Z'),
+    ('test_4', None, None),
 ])
 def test_date_range_doc(test_name, start, end):
     """Assert the Date Range solr doc class works as expected."""
@@ -34,13 +36,3 @@ def test_date_range_doc(test_name, start, end):
     assert json
     assert json.get(Field.START.value) == start
     assert json.get(Field.END.value) == end
-
-
-@pytest.mark.parametrize('test_name,start,end', [
-    ('test_1', '2022-03-21T14:24:02Z', '2023-04-11T06:44:52Z'),
-])
-def test_date_range_doc_invalid(test_name, start, end):
-    """Assert the Date Range solr doc class does not initialize when required fields are missing."""
-    # start
-    with pytest.raises(TypeError):
-        DateRange(end=end)

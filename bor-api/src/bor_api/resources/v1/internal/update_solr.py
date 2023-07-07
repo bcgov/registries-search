@@ -141,12 +141,12 @@ def _parse_entities(request_json: dict) -> list[Entity]:
 
     def get_delivery_address(address_info: dict) -> Address:
         """Return the delivery address as an Address doc."""
-        return Address(addressType=address_info.get('addressType', ''),
-                       addressCity=address_info.get('addressCity', ''),
-                       addressCountry=address_info.get('addressCountry', ''),
-                       addressRegion=address_info.get('addressRegion', ''),
-                       postalCode=address_info.get('postalCode', ''),
-                       streetAddress=address_info.get('streetAddress', ''))
+        return Address(addressType=address_info.get('addressType', 'DELIVERY') or 'DELIVERY',
+                       addressCity=address_info.get('addressCity', '') or '',
+                       addressCountry=address_info.get('addressCountry', '') or '',
+                       addressRegion=address_info.get('addressRegion', '') or '',
+                       postalCode=address_info.get('postalCode', '') or '',
+                       streetAddress=address_info.get('streetAddress', '') or '')
 
     def get_party_name(officer: dict[str, str]) -> str:
         """Return the parsed name of the party in the given doc info."""
@@ -163,19 +163,19 @@ def _parse_entities(request_json: dict) -> list[Entity]:
 
     entities = []
 
-    address_info = request_json['businessAddresses'].get('registeredOffice', None)
+    address_info = request_json.get('businessAddresses', {}).get('registeredOffice', None)
     if not address_info:
-        address_info = request_json['businessAddresses']['businessOffice']
+        address_info = request_json.get('businessAddresses', {}).get('businessOffice', None)
     business_info = request_json['business']
     party_info = request_json.get('parties', [])
 
     # add new business doc
-    business_address = get_delivery_address(address_info['deliveryAddress'])
+    business_address = get_delivery_address(address_info['deliveryAddress']) if address_info else None
     identifier = business_info['identifier']
     if needs_bc_prefix(identifier, business_info['legalType']):
         # set prefix to BC
         identifier = f'BC{identifier}'
-    business = Entity(entityAddresses=[business_address],
+    business = Entity(entityAddresses=[business_address] if business_address else [],
                       entityType='BUSINESS',
                       id=identifier,
                       identifier=identifier,
@@ -187,13 +187,14 @@ def _parse_entities(request_json: dict) -> list[Entity]:
     for party in party_info:
         address = get_delivery_address(party['deliveryAddress'])
         name = get_party_name(party['officer'])
+        entity_type = 'PERSON' if party['officer']['partyType'] == 'person' else 'BUSINESS'
 
         # NOTE: business parties are ignored for now -- waiting for LEAR update
         party_id = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
         for role in party.get('roles'):
             entities.append(Entity(entityAddresses=[address],
-                                   entityType='PERSON',
+                                   entityType=entity_type,
                                    id=party_id,
                                    legalName=name,
                                    roles=[EntityRole(relatedEntityType='BUSINESS',

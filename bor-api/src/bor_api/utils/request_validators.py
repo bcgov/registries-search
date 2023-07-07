@@ -41,22 +41,23 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
         err.append({'error': 'A valid business state is required.', 'path': business_status_path})
 
     # validate address info
-    if not request_json.get('businessAddresses'):
-        err.append({'error': 'Business Addresses are required.', 'path': '/businessAddresses'})
-        return err
-    office_type = 'businessOffice' \
-        if request_json['business'].get('legalType', '') in ['SP', 'GP'] \
-        else 'registeredOffice'
-    if not request_json['businessAddresses'].get(office_type, {}).get('deliveryAddress'):
-        err.append({'error': 'Business Delivery Address is required.',
-                    'path': f'/businessAddresses/{office_type}/deliveryAddress'})
-        return err
-    required_address_fields = ['addressType', 'addressCity', 'addressCountry', 'addressRegion',
-                               'postalCode', 'streetAddress']
-    for field in required_address_fields:
-        path = f'/businessAddresses/{office_type}/deliveryAddress/{field}'
-        if not get_str(request_json, path):
-            err.append({'error': f'{field} field is required.', 'path': path})
+    # NOTE: uncomment below once business addresses are used
+    # if not request_json.get('businessAddresses'):
+    #     err.append({'error': 'Business Addresses are required.', 'path': '/businessAddresses'})
+    #     return err
+    # office_type = 'businessOffice' \
+    #     if request_json['business'].get('legalType', '') in ['SP', 'GP'] \
+    #     else 'registeredOffice'
+    # if not request_json['businessAddresses'].get(office_type, {}).get('deliveryAddress'):
+    #     err.append({'error': 'Business Delivery Address is required.',
+    #                 'path': f'/businessAddresses/{office_type}/deliveryAddress'})
+    #     return err
+    # required_address_fields = ['addressType', 'addressCity', 'addressCountry', 'addressRegion',
+    #                            'postalCode', 'streetAddress']
+    # for field in required_address_fields:
+    #     path = f'/businessAddresses/{office_type}/deliveryAddress/{field}'
+    #     if not get_str(request_json, path):
+    #         err.append({'error': f'{field} field is required.', 'path': path})
 
     # validate parties info
     for index, party in enumerate(request_json.get('parties', [])):
@@ -75,10 +76,6 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
             if not role.get('roleType'):
                 err.append(
                     {'error': 'Role Type is required.', 'path': f'/parties/{index}/roles/{role_index}/roleType'})
-            if not role.get('appointmentDate'):
-                err.append(
-                    {'error': 'Appointment Date is required.',
-                     'path': f'/parties/{index}/roles/{role_index}/appointmentDate'})
 
         officer_path = f'/parties/{index}/officer'
         officer = party.get('officer', {})

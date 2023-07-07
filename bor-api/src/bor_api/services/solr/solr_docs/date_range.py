@@ -21,7 +21,7 @@ from datetime import datetime
 class DateRange:
     """Class representation for a solr date range."""
 
-    start: datetime  # query i.e. ['[2022-03-21 TO 2022-10-05]','[2023-01-01 TO *]']
+    start: datetime = None  # query i.e. ['[2022-03-21 TO 2022-10-05]','[2023-01-01 TO *]']
     end: datetime = None
     active: bool = None
 

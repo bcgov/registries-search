@@ -96,11 +96,11 @@ def entities_search(params: SearchParams):
         start_date = params.child_date_ranges[Field.START]
         end_date = params.child_date_ranges[Field.END]
         # set filters for start / end overlapp
-        # start is before end date AND end is after start date OR active (end date will not exist)
-        start_clause = f'{Field.START.value}:[* TO {end_date}]'
-        end_clause = f'({Field.END.value}:[{start_date} TO *] OR {Field.ACTIVE.value}: true)'
+        # start is before end date OR None AND end is after start date OR active (end date is None)
+        start_qry = f'({Field.START.value}:[* TO {end_date}] OR ({Field.ACTIVE.value}:* AND NOT {Field.START.value}:*))'
+        end_qry = f'({Field.END.value}:[{start_date} TO *] OR {Field.ACTIVE.value}: true)'
         # put it together
-        date_filter = f'{PRE_CHILD_FILTER_CLAUSE}{start_clause} AND {end_clause}'
+        date_filter = f'{PRE_CHILD_FILTER_CLAUSE}{start_qry} AND {end_qry}'
         solr_payload['filter'].append(date_filter)
 
     return solr.query(solr_payload, params.start, params.rows)

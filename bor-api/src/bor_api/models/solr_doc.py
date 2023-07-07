@@ -29,7 +29,7 @@ class SolrDoc(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     doc = db.Column(JSONB)
-    entity_id = db.Column(db.String(10), nullable=False, index=True)
+    entity_id = db.Column(db.String(50), nullable=False, index=True)
     submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, index=True)
     _submitter_id = db.Column('submitter_id', db.Integer, db.ForeignKey('users.id'))
 
