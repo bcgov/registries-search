@@ -86,7 +86,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
           if (roleType === RoleType.INCORPORATOR) {
             dates += start
           } else {
-            dates += `${start} To ${end || 'Current'}`  
+            dates += `${start || 'Unknown'} To ${end || 'Current'}`  
           }
         }
         return dates

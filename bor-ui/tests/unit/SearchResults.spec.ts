@@ -114,7 +114,7 @@ describe('SearchResults tests', () => {
     // check data displayed
     const table = wrapper.find('.search-table')
     // title
-    expect(table.find('.base-table__title').text()).toContain('Search Results  (1 Person)')
+    expect(table.find('.base-table__title').text()).toContain('Search Results  (2 People)')
     // table item data
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(search.results.length)
@@ -129,6 +129,10 @@ describe('SearchResults tests', () => {
             expect(cols[i].find('.search-table__icon-name').exists()).toBe(true)
             const expectedIcon = search.results[rowIndex].entityType === 'PERSON' ? 'mdi-account' : 'mdi-domain'
             expect(cols[i].find('.search-table__icon-name').text()).toContain(expectedIcon)
+          } else if (SearchEntityHeaders[i].slotId === 'dates') {
+            if (!search.results[rowIndex].roles[0].roleDates[0].start) {
+              expect(cols[i].text()).toContain('Unknown')
+            }
           }
         } else if (SearchEntityHeaders[i].slotId === 'details') {
           if (search.results[rowIndex].roles) {
@@ -213,7 +217,7 @@ describe('SearchResults tests', () => {
     // set mock to one result
     mockResp.searchResults.results = [{ ...SearchResponseMock.searchResults.results[0] }]
     // assert mock total results is 2 (if this changes then code below will need to be altered)
-    expect(mockResp.searchResults.totalResults).toBe(2)
+    expect(mockResp.searchResults.totalResults).toBe(3)
     // trigger search
     await getSearchResults('test')
     // sanity check
@@ -230,7 +234,10 @@ describe('SearchResults tests', () => {
 
     // load more results
     // set mock for second part of response
-    mockResp.searchResults.results = [{ ...SearchResponseMock.searchResults.results[1] }]
+    mockResp.searchResults.results = [
+      { ...SearchResponseMock.searchResults.results[1] },
+      { ...SearchResponseMock.searchResults.results[2] }
+    ]
     // click load more
     moreResultsDiv.find('v-btn').trigger('click')
     // it will await 50 milliseconds
@@ -240,7 +247,7 @@ describe('SearchResults tests', () => {
     expect(mockPost).toHaveBeenCalledTimes(2)
     expect(search._start).toBe(1)
     // added result to existing
-    expect(search.results.length).toBe(2)
+    expect(search.results.length).toBe(3)
     // has more results should be false
     expect(wrapper.vm.hasMoreResults).toBe(false)
     // load more button should not be there anymore
@@ -249,7 +256,7 @@ describe('SearchResults tests', () => {
     // calling a new search should reset the start value and results
     await getSearchResults('test 2')
     expect(search._start).toBe(0)
-    expect(search.results.length).toBe(1)
+    expect(search.results.length).toBe(2)
   })
   it('shows datepicker and executes date filtering when selected', async () => {
     wrapper.find('.search-table__date-picker-filter').trigger('click')

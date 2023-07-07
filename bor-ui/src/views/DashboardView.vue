@@ -42,8 +42,10 @@
           </p>
           <p class="mt-6">
             You can find people by searching for any part of the person's name,
-            or you can enter an address to find people by address. Note that
-            matches on the person's name are always ranked ahead of matches on an address.
+            or you can enter an address to find people by address. Note that all searches
+            priortize name matches, so searches for an address will list name matches first.
+            For example, searches for Parker Ave. will list matches for peoples' names containing
+            Parker above addresses containing Parker.
           </p>
           <h3 class="mt-6">Business Information</h3>
           <p class="mt-6">
@@ -104,7 +106,7 @@
             </div>
             <div v-else>
               <p class="mb-7 mt-12 info-text">
-                Search for Directors / Owners of businesses or Addresses of people.
+                Search for the names and addresses of people associated with businesses in BC.
               </p>
               <search-bar class="pb-5" />
               <search-results class="mt-30px" v-if="search.results!=null && !search.unavailable" />

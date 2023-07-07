@@ -4,7 +4,7 @@ export const SearchResponseMock = {
       "addressCity":[{"count":1,"parentCount":1,"value":"Oakville"},{"count":1,"parentCount":1,"value":"Coquitlam"}],
       "addressCountry":[{"count":1,"parentCount":2,"value":"CA"}],
       "addressRegion":[{"count":1,"parentCount":1,"value":"ON"},{"count":1,"parentCount":1,"value":"BC"}],
-      "entityType":[{"count":1,"value":"PERSON"},{"count":1,"value":"BUSINESS"}],
+      "entityType":[{"count":2,"value":"PERSON"},{"count":1,"value":"BUSINESS"}],
       "legalType":[{"count":1,"value":"BEN"}],
       "relatedEntityType":[{"count":1,"parentCount":1,"value":"BUSINESS"}],
       "relatedLegalType":[{"count":1,"parentCount":1,"value":"BEN"}],
@@ -59,6 +59,30 @@ export const SearchResponseMock = {
         "score":42.551533
       },
       {
+        "entityAddresses":[{
+          "addressCity":"Oakville",
+          "addressCountry":"CA",
+          "addressRegion":"ON",
+          "addressType":"DELIVERY",
+          "postalCode":"L6M 3G8",
+          "score":0.0,
+          "streetAddress":"1232-1490 Pilgrims Way "
+        }],
+        "entityType":"PERSON",
+        "legalName":"KIAL TEST 2",
+        "roles":[{
+          "active":true,
+          "relatedEntityType":"BUSINESS",
+          "relatedIdentifier":"BC0871105",
+          "relatedName":"0871105 B.C. LTD.",
+          "relatedState":"ACTIVE",
+          "roleDates":[{"score":0.0,"end":"2023-03-28T00:00:00Z"}],
+          "roleType":"OFFICER",
+          "score":0.0
+        }],
+        "score":42.551533
+      },
+      {
         "bn": "123456789BC0001",
         "entityAddresses": [
           {
@@ -79,6 +103,6 @@ export const SearchResponseMock = {
         "state": "ACTIVE"
       }
     ],
-    "totalResults": 2
+    "totalResults": 3
   }
 }

@@ -45,6 +45,11 @@ export async function fetchConfig(): Promise<any> {
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
   console.info('Set Auth Web URL to: ' + authWebUrl)
 
+  // for business search redirect
+  const registriesSearchUrl: string = process.env.VUE_APP_REGISTRIES_SEARCH_URL
+  sessionStorage.setItem('REGISTRIES_SEARCH_URL', registriesSearchUrl)
+  console.info('Set REGISTRIES SEARCH URL to: ' + registriesSearchUrl)
+
   const keycloakAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
   (<any>window).keycloakAuthUrl = keycloakAuthUrl
 
