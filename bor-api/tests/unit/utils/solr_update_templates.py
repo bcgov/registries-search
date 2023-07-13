@@ -15,6 +15,7 @@
 
 SOLR_UPDATE_REQUEST_TEMPLATE = {
     "business": {
+        "email": "test@email.com",
         "identifier": "BC1233334",
         "legalName": "ABCD Corp",
         "legalType": "BEN",

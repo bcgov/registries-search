@@ -180,9 +180,10 @@ def _parse_entities(request_json: dict) -> list[Entity]:
                       id=identifier,
                       identifier=identifier,
                       legalName=business_info['legalName'],
-                      bn=business_info.get('taxId'),
                       legalType=business_info['legalType'],
-                      state=business_info['state'])
+                      state=business_info['state'],
+                      bn=business_info.get('taxId'),
+                      email=business_info.get('email'))
     entities.append(business)
     for party in party_info:
         address = get_delivery_address(party['deliveryAddress'])
@@ -205,6 +206,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
                                                      roleDates=[DateRange(start=role['appointmentDate'],
                                                                           end=role.get('cessationDate', None))],
                                                      roleType=role['roleType'],
-                                                     relatedBN=business.bn)]))
+                                                     relatedBN=business.bn,
+                                                     relatedEmail=business.email)]))
 
     return entities

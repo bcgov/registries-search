@@ -36,6 +36,7 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
 
     # entity doc stored fields (base doc)
     BN = 'bn'
+    EMAIL = 'email'
     ENTITY_ADDRESSES = 'entityAddresses'
     ENTITY_TYPE = 'entityType'
     IDENTIFIER = 'identifier'
@@ -53,6 +54,7 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
 
     # entity role doc stored fields
     RELATED_BN = 'relatedBN'
+    RELATED_EMAIL = 'relatedEmail'
     RELATED_ENTITY_TYPE = 'relatedEntityType'
     RELATED_IDENTIFIER = 'relatedIdentifier'
     RELATED_LEGAL_TYPE = 'relatedLegalType'
@@ -62,6 +64,7 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     ROLE_TYPE = 'roleType'
     # entity role doc query fields
     RELATED_BN_Q = 'relatedBN_q'
+    RELATED_EMAIL_Q = 'relatedEmail_q'
     RELATED_IDENTIFIER_Q = 'relatedIdentifier_q'
     RELATED_NAME_Q = 'relatedName_q'
     RELATED_NAME_AGRO_Q = 'relatedName_stem_agro_q'

@@ -27,9 +27,8 @@ class Entity:
     entityAddresses: list[Address]
     entityType: str  # person or business
     legalName: str
-    # aliases: EntityName = None
     bn: str = None  # bn9 for people, bn15 for businesses
-    bnSP: str = None  # interim for SPs, future: will be in aliases
+    email: str = None
     identifier: str = None
     legalType: str = None
     operatingName: str = None  # interim for SPs, future: will be in aliases

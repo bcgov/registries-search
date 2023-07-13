@@ -18,6 +18,7 @@ from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRo
 def create_entity(name: str,
                   addresses: list[Address] = None,
                   bn: str = None,
+                  email: str = None,
                   entity_type: str = 'PERSON',
                   entity_id: str = 'LEAR1234567',
                   legal_type: str = None,
@@ -26,6 +27,7 @@ def create_entity(name: str,
     """Create a base entity doc."""
     return Entity(
         bn=bn,
+        email=email,
         entityAddresses=addresses,
         entityType=entity_type,
         id=entity_id,
@@ -47,6 +49,7 @@ def factory_entity_default(name: str = 'Entity Default', entity_type: str = 'PER
         streetAddress='Street'
     )
     role = EntityRole(
+        relatedEmail='default@email.com',
         relatedEntityType='BUSINESS',
         relatedIdentifier='BC1234567',
         relatedLegalType='BEN',
@@ -59,6 +62,7 @@ def factory_entity_default(name: str = 'Entity Default', entity_type: str = 'PER
         role.roleType = 'INCORPORATOR'
         return create_entity(
             name=name,
+            email='test@email.com',
             entity_type=entity_type,
             addresses=[address],
             roles=[role],

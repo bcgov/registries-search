@@ -30,6 +30,7 @@ class EntityRole:
     roleDates: list[DateRange]
     roleType: str  # i.e. director, partner, beneficial owner, incorporator, etc.
     relatedBN: str = None
+    relatedEmail: str = None
     related_q: str = None
 
     def __post_init__(self):

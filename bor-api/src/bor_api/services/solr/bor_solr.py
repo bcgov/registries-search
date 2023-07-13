@@ -42,7 +42,7 @@ class Solr:
         self.default_rows = 10
         # field selections
         self.entity_fields = [
-            Field.BN.value, Field.ENTITY_ADDRESSES.value,
+            Field.BN.value, Field.EMAIL.value, Field.ENTITY_ADDRESSES.value,
             Field.ENTITY_TYPE.value, Field.IDENTIFIER.value, Field.LEGAL_NAME.value,
             Field.LEGAL_TYPE.value, Field.ROLES.value,
             Field.STATE.value, Field.SCORE.value, '[child]'
@@ -53,10 +53,10 @@ class Solr:
             Field.POSTAL_CODE.value, Field.STREET_ADDRESS.value
         ]
         self.entity_role_fields = [
-            Field.ACTIVE.value, Field.RELATED_BN.value, Field.RELATED_ENTITY_TYPE.value,
-            Field.RELATED_IDENTIFIER.value, Field.RELATED_NAME.value,
-            Field.RELATED_STATE.value, Field.ROLE_DATES.value, Field.ROLE_TYPE.value,
-            Field.RELATED_LEGAL_TYPE.value
+            Field.ACTIVE.value, Field.RELATED_BN.value, Field.RELATED_EMAIL.value,
+            Field.RELATED_ENTITY_TYPE.value, Field.RELATED_IDENTIFIER.value,
+            Field.RELATED_NAME.value, Field.RELATED_STATE.value, Field.ROLE_DATES.value,
+            Field.ROLE_TYPE.value, Field.RELATED_LEGAL_TYPE.value
         ]
         self.date_fields = [Field.START.value, Field.END.value]
         # base urls
