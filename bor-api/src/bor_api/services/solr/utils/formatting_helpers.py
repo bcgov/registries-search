@@ -33,7 +33,7 @@ def parse_facets(facet_data: dict) -> dict:
 
 
 def prep_query_str(query: str) -> str:
-    """Return query string prepped for solr call."""
+    """Return the query string prepped for solr call."""
     # replace solr specific special chars
     if not query:
         return ''
@@ -41,3 +41,28 @@ def prep_query_str(query: str) -> str:
     handled_spec_chars_rgx = r'([&+]+)'
     query = re.sub(rmv_spec_chars_rgx, ' ', query.lower())
     return re.sub(handled_spec_chars_rgx, r' \\\1 ', query) if not query.isspace() else r'\*'
+
+
+def prep_query_str_adv(query: str) -> str:
+    r"""Return the query string prepped for solr call (more advanced method).
+
+    Rules:
+        - no doubles: &,|
+        - escape beginning: +,-,/,~,!
+        - escape everywhere: ",:,[,]
+        - remove: ^,\,{,},(,)
+        - lowercase: all
+    """
+    if not query:
+        return ''
+
+    rmv_doubles = r'([&|+\-/~!:\"\[\]\\^(){}]){2,}'
+    rmv_all = r'([\\^(){}])'
+    esc_begin = r'(^|\s)([+\-/~!])'
+    esc_all = r'([:\"\[\]])'
+
+    query = re.sub(rmv_doubles, r'\1', query.lower())
+    query = re.sub(rmv_all, '', query)
+    query = re.sub(esc_begin, r'\1\\\2', query)
+    query = re.sub(esc_all, r'\\\1', query)
+    return query

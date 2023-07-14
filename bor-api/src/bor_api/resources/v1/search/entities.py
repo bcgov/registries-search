@@ -20,7 +20,7 @@ from flask_cors import cross_origin
 from bor_api.exceptions import exception_response
 from bor_api.services import bor_solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.utils import SearchParams, entities_search, parse_facets, prep_query_str
+from bor_api.services.solr.utils import SearchParams, entities_search, parse_facets, prep_query_str, prep_query_str_adv
 
 
 bp = Blueprint('ENTITIES', __name__, url_prefix='/entities')  # pylint: disable=invalid-name
@@ -59,6 +59,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
             Field.ADDRESS_Q.value: prep_query_str(query_json.get(Field.ENTITY_ADDRESSES.value, '')),
             # roles
             Field.RELATED_BN_Q.value: prep_query_str(roles_json.get(Field.RELATED_BN.value, '')),
+            Field.RELATED_EMAIL_Q.value: prep_query_str_adv(roles_json.get(Field.RELATED_EMAIL.value, '')),
             Field.RELATED_IDENTIFIER_Q.value: prep_query_str(roles_json.get(Field.RELATED_IDENTIFIER.value, '')),
             Field.RELATED_NAME_SINGLE_Q.value: prep_query_str(roles_json.get(Field.RELATED_NAME.value, '')),
             Field.RELATED_Q.value: prep_query_str(roles_json.get('value', ''))
@@ -120,6 +121,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                         Field.ENTITY_ADDRESSES.value: child_query[Field.ADDRESS_Q.value],
                         Field.ROLES.value: {
                             Field.RELATED_BN.value: child_query[Field.RELATED_BN_Q.value],
+                            Field.RELATED_EMAIL.value: child_query[Field.RELATED_EMAIL_Q.value],
                             Field.RELATED_IDENTIFIER.value: child_query[Field.RELATED_IDENTIFIER_Q.value],
                             Field.RELATED_NAME.value: child_query[Field.RELATED_NAME_SINGLE_Q.value],
                             Field.ROLE_DATES.value: child_date_ranges,

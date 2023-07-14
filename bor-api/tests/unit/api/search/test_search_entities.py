@@ -42,6 +42,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
         Field.ENTITY_ADDRESSES.value: 'vancouver bc',
         Field.ROLES.value: {
             Field.RELATED_BN.value: '0424',
+            Field.RELATED_EMAIL.value: '1234',
             Field.RELATED_IDENTIFIER.value: 'CP4332',
             Field.RELATED_NAME.value: 'related name',
             Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
@@ -73,6 +74,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
         Field.ENTITY_ADDRESSES.value: 'vancouver bc',
         Field.ROLES.value: {
             Field.RELATED_BN.value: '0424',
+            Field.RELATED_EMAIL.value: '1234',
             Field.RELATED_IDENTIFIER.value: 'CP4332',
             Field.RELATED_NAME.value: 'related name',
             Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
@@ -130,6 +132,7 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
         'legalName': query.get(Field.LEGAL_NAME.value, ''),
         'roles': {
             'relatedBN': query.get(Field.ROLES.value, {}).get(Field.RELATED_BN.value, ''),
+            'relatedEmail': query.get(Field.ROLES.value, {}).get(Field.RELATED_EMAIL.value, ''),
             'relatedIdentifier': query.get(Field.ROLES.value, {}).get(Field.RELATED_IDENTIFIER.value, '').lower(),
             'relatedName': query.get(Field.ROLES.value, {}).get(Field.RELATED_NAME.value, ''),
             'roleDates': query.get(Field.ROLES.value, {}).get(Field.ROLE_DATES.value, {}),
@@ -332,6 +335,26 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
      {},
      []
     ),
+    ('test_child_filters_related_email_1',
+     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"2222"}},
+     {},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '2222@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+    ),
+    ('test_child_filters_related_email_2',
+     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"2222@email.com"}},
+     {},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '2222@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+    ),
+    ('test_child_filters_related_email_3',
+     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"2@email.com"}},
+     {},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '2222@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+    ),
+    ('test_child_filters_related_email_4',
+     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"+em-ail: \\ ~ ^ / ! || AND NOT && OR [] {} ()"}},
+     {},
+     []
+    ),
     ('test_child_filters_no_match',
      {
         'value': 'person',
@@ -481,7 +504,6 @@ def test_search_entities_error(app, session, client, requests_mock):
     # test
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     resp_json = resp.json
-    print(resp_json)
     assert resp_json.get('detail') == f'{mocked_error_msg}, {mocked_status_code}'
     assert resp_json.get('message') == 'Solr service error while processing request.'
 
@@ -500,5 +522,4 @@ def test_search_entities_bad_request(client, test_name, query, categories):
     # test
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     resp_json = resp.json
-    print(resp_json)
     assert resp_json.get('message') == "Expected a string for 'value'."

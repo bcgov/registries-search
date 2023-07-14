@@ -195,6 +195,9 @@ def test_build_base_query(app, session, test_name, params, expected):
     ('test_multi_2',
      {Field.ADDRESS_Q.value: 'walaby way', Field.RELATED_NAME_Q.value: 'name1st name2nd'},
      f'({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:walaby AND {PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:way AND {PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_NAME_Q.value}:name1st AND {PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_NAME_Q.value}:name2nd)'),
+    ('test_multi_3',
+     {Field.ADDRESS_Q.value: 'walaby way', Field.RELATED_EMAIL_Q.value: '123@email.com'},
+     f'({PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:walaby AND {PRE_CHILD_FILTER_CLAUSE}{Field.ADDRESS_Q.value}:way AND {PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com)'),
 ])
 def test_build_child_query(test_name, params, expected):
     """Assert that the build_child_query function works as expected."""

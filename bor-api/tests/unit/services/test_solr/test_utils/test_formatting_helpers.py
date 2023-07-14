@@ -15,7 +15,7 @@
 import pytest
 
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.utils import parse_facets, prep_query_str
+from bor_api.services.solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 
 
 @pytest.mark.parametrize('test_name,facet_data,expected', [
@@ -68,3 +68,27 @@ def test_parse_facets(test_name, facet_data, expected):
 def test_prep_query_str(test_name, value, expected):
     """Assert the prep_query_str function works as expected."""
     assert prep_query_str(value) == expected
+
+
+@pytest.mark.parametrize('test_name,value,expected', [
+    ('test_basic_string', 'test', 'test'),
+    ('test_none', None, ''),
+    ('test_uppercase', 'test AND test OR NOT', 'test and test or not'),
+    ('test_spec_double_&', '& test&&test& &&', '& test&test& &'),
+    ('test_spec_double_|', '| |test||test| ||', '| |test|test| |'),
+    ('test_spec_begin_+', '+ +test+test+ +', '\\+ \\+test+test+ \\+'),
+    ('test_spec_begin_-', '- -test-test- -', '\\- \\-test-test- \\-'),
+    ('test_spec_begin_/', '/ /test/test/ /', '\\/ \\/test/test/ \\/'),
+    ('test_spec_begin_~', '~ ~test~test~ ~', '\\~ \\~test~test~ \\~'),
+    ('test_spec_begin_!', '! !test!test! !', '\\! \\!test!test! \\!'),
+    ('test_spec_all_"', '" "test"test" "', '\\" \\"test\\"test\\" \\"'),
+    ('test_spec_all_:', ': :test:test: :', '\\: \\:test\\:test\\: \\:'),
+    ('test_spec_all_[]', '[ ]test[test[ ]', '\\[ \\]test\\[test\\[ \\]'),
+    ('test_spec_rmv_^', '^ ^test^test^ ^', ' testtest '),
+    ('test_spec_rmv_\\', '\\ \\test\\test\\ \\', ' testtest '),
+    ('test_spec_rmv_{}', '{ }test{t}est{ }', ' testtest '),
+    ('test_spec_rmv_()', '( )test(t)est( )', ' testtest ')
+])
+def test_prep_query_str_adv(test_name, value, expected):
+    """Assert the prep_query_str_adv function works as expected."""
+    assert prep_query_str_adv(value) == expected
