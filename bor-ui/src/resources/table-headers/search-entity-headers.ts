@@ -23,7 +23,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
     slotId: 'name',
     value: 'Name',
-    width: '20%'
+    width: '18%'
   },
   {
     col: 'entityAddresses',
@@ -67,7 +67,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       return 'N/A'
     },
     value: 'Roles',
-    width: '10%'
+    width: '8%'
   },
   {
     col: 'roles',
@@ -95,7 +95,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     },
     slotId: 'date',
     value: 'Effective Dates',
-    width: '15%'
+    width: '9%'
   },
   {
     col: 'roles',
@@ -117,7 +117,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch(['categories', 'roles', 'relatedState'], filterVal),
-      label: 'Business State',
+      label: 'State',
       itemValue: 'value',
       itemsFn: facetItems,
       itemsFnVal: 'relatedState',
@@ -132,7 +132,26 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       return 'N/A'
     },
     value: 'Business State',
-    width: '13%'
+    width: '8%'
+  },
+  {
+    col: 'roles',
+    filter: {
+      clearable: true,
+      filterApiFn: (filterVal: string) => filterSearch(['query', 'roles', 'relatedEmail'], filterVal),
+      label: 'Business Email',
+      type: 'text',
+      value: ''
+    },
+    hasFilter: true,
+    hasSort: false,
+    itemFn: (val: SearchResultI) => {
+      if (val.roles) return `${val.roles[0].relatedEmail || ''}`
+      return 'N/A'
+    },
+    slotId: 'email',
+    value: 'Business Email',
+    width: '15%'
   },
   {
     col: '',

@@ -48,6 +48,8 @@ export const SearchResponseMock = {
         "legalName":"KIAL TEST",
         "roles":[{
           "active":true,
+          "relatedBN": "123456789BC0001",
+          "relatedEmail": "test@email.com",
           "relatedEntityType":"BUSINESS",
           "relatedIdentifier":"BC0871105",
           "relatedName":"0871105 B.C. LTD.",

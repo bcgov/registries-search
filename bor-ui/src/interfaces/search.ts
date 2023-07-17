@@ -30,6 +30,7 @@ export interface SearchResultI {
   roles: {
     active: boolean
     relatedBN?: string
+    relatedEmail?: string
     relatedEntityType: 'BUSINESS' | 'PERSON'
     relatedIdentifier: string
     relatedName: string
@@ -58,6 +59,7 @@ export interface SearchPayloadI {
     legalName?: string
     roles: {
       relatedBN?: string
+      relatedEmail?: string
       relatedIdentifier?: string
       relatedName?: string
       roleDates?: { start?: string, end?: string }  // ISO strings. Can be partial (i.e. 2023-10) or full datetime

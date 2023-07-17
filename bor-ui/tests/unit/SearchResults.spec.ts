@@ -121,6 +121,7 @@ describe('SearchResults tests', () => {
     // for each row, check each column is displaying correctly
     for (const rowIndex in rows) {
       const cols = rows[rowIndex].findAll('.base-table__body__item')
+      const roles = search.results[rowIndex].roles
       for (const i in cols) {
         if (SearchEntityHeaders[i].itemFn) {
           expect(cols[i].html()).toContain(SearchEntityHeaders[i].itemFn(search.results[rowIndex]))
@@ -133,13 +134,20 @@ describe('SearchResults tests', () => {
             if (!search.results[rowIndex].roles[0].roleDates[0].start) {
               expect(cols[i].text()).toContain('Unknown')
             }
+          } else if (SearchEntityHeaders[i].slotId === 'email') {
+            if (!roles) expect(cols[i].text()).toBe('N/A')
+            else {
+              const email = roles[0].relatedEmail
+              if (!email) expect(cols[i].text()).toBe('')
+              else expect(cols[i].text()).toBe(email)
+            }
           }
         } else if (SearchEntityHeaders[i].slotId === 'details') {
           if (search.results[rowIndex].roles) {
             const relatedName = search.results[rowIndex].roles[0].relatedName
             const relatedIdentifier = search.results[rowIndex].roles[0].relatedIdentifier
             const relatedBN = search.results[rowIndex].roles[0].relatedBN
-            expect(cols[i].text()).toBe(`${relatedName} ${relatedIdentifier} ${relatedBN || ''}`.trim())
+            expect(cols[i].text()).toBe(`${relatedName} ${relatedIdentifier}  ${relatedBN || ''}`.trim())
             expect(cols[i].find('a').text()).toBe(relatedName)
             expect(cols[i].find('a').attributes().href).toBe(`${mockBusinessSearchUrl}?identifier=${relatedIdentifier}`)
           } else {
