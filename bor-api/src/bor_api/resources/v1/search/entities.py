@@ -17,10 +17,11 @@ from http import HTTPStatus
 from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
 
-from bor_api.exceptions import exception_response
+from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.services import bor_solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.utils import SearchParams, entities_search, parse_facets, prep_query_str, prep_query_str_adv
+from bor_api.services.solr.utils import (SearchParams, entities_search, parse_facets,
+                                         prep_query_str, prep_query_str_adv, xlsx_response)
 
 
 bp = Blueprint('ENTITIES', __name__, url_prefix='/entities')  # pylint: disable=invalid-name
@@ -34,9 +35,18 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
         request_json = request.get_json()
         query_json = request_json.get('query', {})
         value = query_json.get('value', None)
+        errors = []
         # TODO: validate the rest of the payload
         if not value or not isinstance(value, str):
-            return jsonify({'message': "Expected a string for 'value'."}), HTTPStatus.BAD_REQUEST
+            errors.append({'Invalid payload': "Expected a string for 'value'."})
+
+        accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+        if (content_type := str(request.accept_mimetypes)) and content_type not in accepted_types:
+            msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
+            errors.append({'Invalid headers': msg})
+
+        if errors:
+            return bad_request_response('Errors processing request.', errors)
 
         # set base query params
         query = {
@@ -104,6 +114,10 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                               child_date_ranges=child_date_ranges)
 
         results = entities_search(params)
+
+        if content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            return xlsx_response(results.get('response', {}).get('docs'))
+
         response = {
             'facets': parse_facets(results),
             'searchResults': {

@@ -31,6 +31,5 @@ class Entity:
     email: str = None
     identifier: str = None
     legalType: str = None
-    operatingName: str = None  # interim for SPs, future: will be in aliases
     roles: list[EntityRole] = None
     state: str = None

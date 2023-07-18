@@ -17,3 +17,4 @@ from .query_builders import build_base_query, build_child_query, build_facet, bu
 from .search_helpers import entities_search
 from .search_params import SearchParams
 from .synonym_helpers import get_synonyms
+from .xlsx_helpers import xlsx_response

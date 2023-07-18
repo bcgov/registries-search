@@ -2,6 +2,7 @@ Flask
 Flask-Cors
 Flask-Migrate
 Flask-SQLAlchemy
+Werkzeug
 attrs
 dpath
 flask-jwt-oidc
@@ -12,4 +13,4 @@ pycountry
 python-dotenv
 requests
 sentry-sdk[flask]
-Werkzeug
+xlsxwriter

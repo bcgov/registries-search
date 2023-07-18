@@ -18,6 +18,8 @@ from http import HTTPStatus
 
 import pytest
 
+import xlsxwriter
+
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services import bor_solr
@@ -491,6 +493,43 @@ def test_search_entities(session, client, test_name, query, categories, expected
     assert results == expected
 
 
+def test_search_entities_xlsx(app, session, client, requests_mock):
+    """Assert that the entities search call works returns successfully."""
+    # setup solr mock
+    doc = {'entityAddresses': [{'addressCity': 'Victoria',
+                                'addressCountry': 'Canada',
+                                'addressRegion': 'BC',
+                                'addressType': 'DELIVERY',
+                                'postalCode': 'T3R 43R',
+                                'score': 0.0,
+                                'streetAddress': 'charles place 4W2'}],
+           'entityType': 'PERSON',
+           'legalName': 'persons two',
+           'roles': [{'relatedBN': 'BN00012334',
+                      'relatedEmail': '1234@email.com',
+                      'relatedEntityType': 'BUSINESS',
+                      'relatedIdentifier': 'CP1234567',
+                      'relatedLegalType': 'CP',
+                      'relatedName': 'test 1234',
+                      'relatedState': 'ACTIVE',
+                      'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}],
+                      'roleType': 'DIRECTOR',
+                      'score': 0.0}]}
+
+    requests_mock.post(f"{app.config.get('SOLR_SVC_URL')}/bor/query",json={'response': {'docs': [doc], 'numFound': 1, 'start': 0}})
+    # format payload
+    payload = {'query': {'value': 'persons two'}}
+    # call search
+    resp = client.post(f'/api/v1/search/entities',
+                       data=json.dumps(payload),
+                       headers={'Accept-Version': 'v1',
+                                'content-type': 'application/json',
+                                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+    # test
+    assert resp.status_code == HTTPStatus.OK
+    assert resp.data
+
+
 def test_search_entities_error(app, session, client, requests_mock):
     """Assert that the entities search call error handling works as expected."""
     # setup solr mock
@@ -508,18 +547,23 @@ def test_search_entities_error(app, session, client, requests_mock):
     assert resp_json.get('message') == 'Solr service error while processing request.'
 
 
-@pytest.mark.parametrize('test_name,query,categories', [
-    ('test_no_value', {}, {}),
+@pytest.mark.parametrize('test_name,query,categories,headers,errors', [
+    ('test_no_value', {}, {}, {}, [{'Invalid payload': "Expected a string for 'value'."}]),
+    ('test_invalid_accept_headers', {'value': 'a'}, {}, {'Accept': 'application/pdf'}, [{'Invalid headers': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
+    ('test_invalid_query_and_headers', {}, {}, {'Accept': 'application/pdf'}, [{'Invalid payload': "Expected a string for 'value'."}, {'Invalid headers': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
 ])
-def test_search_entities_bad_request(client, test_name, query, categories):
+def test_search_entities_bad_request(client, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""
     # create payload
     payload = {'query': query}
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities', data=json.dumps(payload), headers={'Accept-Version': 'v1', 'content-type': 'application/json'})
+    resp = client.post(f'/api/v1/search/entities',
+                       data=json.dumps(payload),
+                       headers={'Accept-Version': 'v1', 'content-type': 'application/json', **headers})
     # test
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     resp_json = resp.json
-    assert resp_json.get('message') == "Expected a string for 'value'."
+    assert resp_json.get('message') == 'Errors processing request.'
+    assert resp_json.get('details') == errors

@@ -85,7 +85,6 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             'bn': '123456789',
             'email': 'test@email.com',
             'legalType': request_json['business']['legalType'],
-            'operatingName': None,
             'roles': None,
             'state': 'ACTIVE'
         }]
@@ -106,7 +105,6 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             'email': None,
             'identifier': None,
             'legalType': None,
-            'operatingName': None,
             'roles': [{
                 'roleType': 'Director',
                 'relatedBN': '123456789',
@@ -136,7 +134,6 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             'email': None,
             'identifier': None,
             'legalType': None,
-            'operatingName': None,
             'roles': [{
                 'roleType': 'Director',
                 'relatedBN': '123456789',
