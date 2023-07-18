@@ -41,7 +41,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
             errors.append({'Invalid payload': "Expected a string for 'value'."})
 
         accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-        if (content_type := str(request.accept_mimetypes)) and content_type not in accepted_types:
+        if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
             msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
             errors.append({'Invalid headers': msg})
 

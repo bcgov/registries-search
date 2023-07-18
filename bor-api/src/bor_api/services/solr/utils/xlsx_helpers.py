@@ -23,7 +23,7 @@ from flask import make_response
 def xlsx_response(results: dict):
     """Return the xlsx response containing the given results."""
     temp_name = uuid4()
-    workbook = xlsxwriter.Workbook(f'{temp_name}.xlsx')
+    workbook = xlsxwriter.Workbook(f'tmp-excel/{temp_name}.xlsx')
     bold = workbook.add_format({'bold': True})
 
     worksheet = workbook.add_worksheet()
@@ -66,10 +66,10 @@ def xlsx_response(results: dict):
 
     workbook.close()
 
-    with open(f'{temp_name}.xlsx', 'rb') as excel_file:
+    with open(f'tmp-excel/{temp_name}.xlsx', 'rb') as excel_file:
         resp = make_response(excel_file.read(), HTTPStatus.OK)
         excel_file.close()
-    os.remove(f'{temp_name}.xlsx')
+    os.remove(f'tmp-excel/{temp_name}.xlsx')
 
     resp.headers['Content-Disposition'] = 'attachment; filename=director_search.xlsx'
     resp.headers['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
