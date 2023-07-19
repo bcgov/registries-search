@@ -30,7 +30,7 @@ describe('SearchResults tests', () => {
   const { auth } = useAuth()
   auth.currentAccount = testAccount
 
-  const { search, getSearchResults, resetSearch } = useSearch()
+  const { search, filterSearch, getSearchResults, resetSearch } = useSearch()
 
   beforeEach(async () => {
     mockPost = jest.spyOn(axios, 'post')
@@ -291,5 +291,23 @@ describe('SearchResults tests', () => {
         "rows": 1, "start": 0
       },
       {"baseURL": "http://mock-url.ca", "headers": {"Account-Id": 1234, "x-apikey": "key"}})
+  })
+  it('shows clear filters button / clear filters button works', async () => {
+    // trigger search
+    await getSearchResults('test')
+    // sanity check
+    expect(mockPost).toHaveBeenCalled()
+    expect(wrapper.find('.search-table__clear').exists()).toBe(false)
+    // trigger filter search
+    await filterSearch(['query','roles','value'], 'business details')
+    // check clear filters button is showing
+    expect(search.filters?.query?.roles?.value).toBe('business details')
+    expect(search._isFilteringActive).toBe(true)
+    const clearFiltersBtn = wrapper.find('.search-table__clear')
+    expect(clearFiltersBtn.exists()).toBe(true)
+    // check clear filters button works
+    await clearFiltersBtn.trigger('click')
+    expect(search.filters?.query?.roles?.value).toBe(undefined)
+    expect(search._isFilteringActive).toBe(false)
   })
 })

@@ -149,7 +149,8 @@ export const useSearch = () => {
     _readOnly.start = 0
     _readOnly.loading = true
     _readOnly.value = val
-    _readOnly.isFilteringActive = hasActiveFilter()
+    // special case for query/roles/value
+    _readOnly.isFilteringActive = hasActiveFilter() || !!search.filters?.query?.roles?.value
     if (search.results === null && !search.unavailable) search.results = []
     const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
