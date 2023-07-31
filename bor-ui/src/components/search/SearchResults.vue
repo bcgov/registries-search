@@ -62,11 +62,15 @@
         </template>
         <template v-slot:item-slot-details="{ item } : { item: SearchResultI }">
           <div v-if="item.roles">
-            <a
-              :href="`${businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`"
-              target="_blank"
-            >
+            <a :href="get_item_details_link(item)" target="_blank">
               {{ item.roles[0].relatedName }}
+              <v-icon
+                v-if="!is_modernized(item)"
+                class="mb-1"
+                color="primary"
+                icon="mdi-open-in-new"
+                size="small"
+              />
             </a>
             <br />
             {{ item.roles[0].relatedIdentifier }}
@@ -113,7 +117,7 @@ import { useSearch } from '@/composables'
 import { SearchEntityHeaders } from '@/resources/table-headers'
 // internal
 import { SearchTableName } from './common'
-import { EntityType } from '@/enums'
+import { CorpTypeCd, EntityType } from '@/enums'
 // eslint-disable-next-line
 import { SearchResultI } from '@/interfaces'
 import { toDateStr } from '@/utils'
@@ -162,6 +166,22 @@ const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
 
 // business details link
 const businessSearchURL = sessionStorage.getItem('REGISTRIES_SEARCH_URL')
+const bcolURL = sessionStorage.getItem('BCONLINE_URL')
+const is_modernized = (item: SearchResultI) => {
+  const modernizedTypes = [
+    CorpTypeCd.BENEFIT_COMPANY,
+    CorpTypeCd.COOP,
+    CorpTypeCd.SOLE_PROP,
+    CorpTypeCd.PARTNERSHIP
+  ]
+  return modernizedTypes.includes(item.roles[0].relatedLegalType)
+}
+const get_item_details_link = (item: SearchResultI) => {
+  if (is_modernized(item)) {
+    return `${businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`
+  }
+  return bcolURL
+}
 
 // text functions
 const resultsDesc = computed(() => {
@@ -225,7 +245,7 @@ const getNextSearches = _.debounce(async () => getNextResults(), 50)
 .search-table {
 
   a {
-    color: $gray7;
+    color: $app-blue;
     text-decoration: underline;
   }
 

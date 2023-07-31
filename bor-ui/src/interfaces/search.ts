@@ -33,6 +33,7 @@ export interface SearchResultI {
     relatedEmail?: string
     relatedEntityType: 'BUSINESS' | 'PERSON'
     relatedIdentifier: string
+    relatedLegalType: CorpTypeCd
     relatedName: string
     relatedState: BusinessState
     roleDates: { end?: Date, start: Date }[]

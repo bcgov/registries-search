@@ -52,6 +52,7 @@ export const SearchResponseMock = {
           "relatedEmail": "test@email.com",
           "relatedEntityType":"BUSINESS",
           "relatedIdentifier":"BC0871105",
+          "relatedLegalType":"BC",
           "relatedName":"0871105 B.C. LTD.",
           "relatedState":"ACTIVE",
           "roleDates":[{"score":0.0,"start":"2022-06-28T00:00:00Z"}],
@@ -76,6 +77,7 @@ export const SearchResponseMock = {
           "active":true,
           "relatedEntityType":"BUSINESS",
           "relatedIdentifier":"BC0871105",
+          "relatedLegalType":"BC",
           "relatedName":"0871105 B.C. LTD.",
           "relatedState":"ACTIVE",
           "roleDates":[{"score":0.0,"end":"2023-03-28T00:00:00Z"}],
@@ -103,8 +105,35 @@ export const SearchResponseMock = {
         "legalType": "BEN",
         "score": 11.459389,
         "state": "ACTIVE"
-      }
+      },
+      {
+        "entityAddresses":[{
+          "addressCity":"Oakville",
+          "addressCountry":"CA",
+          "addressRegion":"ON",
+          "addressType":"DELIVERY",
+          "postalCode":"L6M 3G8",
+          "score":0.0,
+          "streetAddress":"1232-1490 Pilgrims Way "
+        }],
+        "entityType":"PERSON",
+        "legalName":"KIAL TEST",
+        "roles":[{
+          "active":true,
+          "relatedBN": "123456777BC0001",
+          "relatedEmail": "coop@email.com",
+          "relatedEntityType":"BUSINESS",
+          "relatedIdentifier":"CP1234567",
+          "relatedLegalType":"CP",
+          "relatedName":"KIALS COOP",
+          "relatedState":"ACTIVE",
+          "roleDates":[{"score":0.0,"start":"2022-06-28T00:00:00Z"}],
+          "roleType":"DIRECTOR",
+          "score":0.0
+        }],
+        "score":42.551533
+      },
     ],
-    "totalResults": 3
+    "totalResults": 4
   }
 }

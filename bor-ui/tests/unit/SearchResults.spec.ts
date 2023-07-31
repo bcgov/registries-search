@@ -20,11 +20,13 @@ describe('SearchResults tests', () => {
 
   const mockUrl = 'http://mock-url.ca'
   const mockBusinessSearchUrl = 'http://mock-search.ca'
+  const mockBcolUrl = 'http://mock-bcol.ca'
   const mockResp = _.cloneDeep(SearchResponseMock)
 
   sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
   sessionStorage.setItem('BOR_API_URL', mockUrl)
   sessionStorage.setItem('REGISTRIES_SEARCH_URL', mockBusinessSearchUrl)
+  sessionStorage.setItem('BCONLINE_URL', mockBcolUrl)
   window['borApiKey'] = 'key'
 
   const { auth } = useAuth()
@@ -147,9 +149,19 @@ describe('SearchResults tests', () => {
             const relatedName = search.results[rowIndex].roles[0].relatedName
             const relatedIdentifier = search.results[rowIndex].roles[0].relatedIdentifier
             const relatedBN = search.results[rowIndex].roles[0].relatedBN
-            expect(cols[i].text()).toBe(`${relatedName} ${relatedIdentifier}  ${relatedBN || ''}`.trim())
+            expect(cols[i].text()).toBe(`${relatedName}  ${relatedIdentifier}  ${relatedBN || ''}`.trim())
             expect(cols[i].find('a').text()).toBe(relatedName)
-            expect(cols[i].find('a').attributes().href).toBe(`${mockBusinessSearchUrl}?identifier=${relatedIdentifier}`)
+
+            const relatedLegalType = search.results[rowIndex].roles[0].relatedLegalType
+            const modernized_types = ['CP','BEN','SP','GP']
+            if (modernized_types.includes(relatedLegalType)) {
+              expect(cols[i].find('a').attributes().href)
+              .toBe(`${mockBusinessSearchUrl}?identifier=${relatedIdentifier}`)
+              expect(cols[i].find('a').html()).not.toContain('v-icon')
+            } else {
+              expect(cols[i].find('a').attributes().href).toBe(mockBcolUrl)
+              expect(cols[i].find('a').html()).toContain('v-icon')
+            }
           } else {
             expect(cols[i].text()).toBe('N/A')
           }
@@ -224,8 +236,8 @@ describe('SearchResults tests', () => {
     sessionStorage.setItem('SEARCH_ROWS', '1')
     // set mock to one result
     mockResp.searchResults.results = [{ ...SearchResponseMock.searchResults.results[0] }]
-    // assert mock total results is 2 (if this changes then code below will need to be altered)
-    expect(mockResp.searchResults.totalResults).toBe(3)
+    // assert mock total results is 4 (if this changes then code below will need to be altered)
+    expect(mockResp.searchResults.totalResults).toBe(4)
     // trigger search
     await getSearchResults('test')
     // sanity check
@@ -244,7 +256,8 @@ describe('SearchResults tests', () => {
     // set mock for second part of response
     mockResp.searchResults.results = [
       { ...SearchResponseMock.searchResults.results[1] },
-      { ...SearchResponseMock.searchResults.results[2] }
+      { ...SearchResponseMock.searchResults.results[2] },
+      { ...SearchResponseMock.searchResults.results[3] }
     ]
     // click load more
     moreResultsDiv.find('v-btn').trigger('click')
@@ -255,7 +268,7 @@ describe('SearchResults tests', () => {
     expect(mockPost).toHaveBeenCalledTimes(2)
     expect(search._start).toBe(1)
     // added result to existing
-    expect(search.results.length).toBe(3)
+    expect(search.results.length).toBe(4)
     // has more results should be false
     expect(wrapper.vm.hasMoreResults).toBe(false)
     // load more button should not be there anymore
@@ -264,7 +277,7 @@ describe('SearchResults tests', () => {
     // calling a new search should reset the start value and results
     await getSearchResults('test 2')
     expect(search._start).toBe(0)
-    expect(search.results.length).toBe(2)
+    expect(search.results.length).toBe(3)
   })
   it('shows datepicker and executes date filtering when selected', async () => {
     wrapper.find('.search-table__date-picker-filter').trigger('click')
