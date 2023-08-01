@@ -29,16 +29,17 @@ from tests.unit.utils import SOLR_TEST_DOCS, create_entity, factory_entity_defau
 
 @integration_solr
 def test_create_update_delete_query(app):
-    """Assert that solr docs can be created/updated/searched/deleted."""
+    """Assert that solr docs can be created/updated/searched/deleted and cores can be backed up / restored."""
     # init
     bor_solr.init_app(app)
     bor_solr.delete_all_docs()
+    time.sleep(2)
     # add new entity
     name='test'
     new_entity = factory_entity_default(name=name)
     added = bor_solr.create_or_replace_docs([new_entity])
     assert added.status_code == HTTPStatus.OK
-    time.sleep(2)  # takes up to 1 second for solr to register update
+    time.sleep(20)  # long wait necessary due to backup tests
 
     # search new doc
     params = {'query': f'{Field.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
@@ -48,6 +49,10 @@ def test_create_update_delete_query(app):
     assert docs[0][Field.LEGAL_NAME.value] == name
     assert docs[0][Field.UNIQUE_KEY.value]
 
+    # create backup
+    backup = bor_solr.replication(command='backup')
+    assert backup.status_code == HTTPStatus.OK
+    time.sleep(1)
     # delete doc
     deleted = bor_solr.delete_docs([docs[0][Field.UNIQUE_KEY.value]])
     assert deleted.status_code == HTTPStatus.OK
@@ -58,6 +63,27 @@ def test_create_update_delete_query(app):
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
+    
+    # test restore
+    restore = bor_solr.replication(command='restore')
+    assert restore.status_code == HTTPStatus.OK
+    time.sleep(1)
+    # get restore status
+    restore_status = bor_solr.replication(command='restorestatus')
+    assert restore_status.status_code == HTTPStatus.OK
+    assert (restore_status.json())['restorestatus']['status'] == 'success'
+
+    # test search returns doc again
+    params = {'query': f'{Field.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    resp = bor_solr.query(params, 0, 10)
+    docs = resp['response']['docs']
+    assert len(docs) == 1
+    assert docs[0][Field.LEGAL_NAME.value] == name
+    assert docs[0][Field.UNIQUE_KEY.value]
+    
+    # delete doc again
+    bor_solr.delete_all_docs()
+    time.sleep(1)
 
     # add multiple
     name1='test1'
@@ -124,30 +150,6 @@ def test_create_update_delete_query(app):
     assert len(docs) == 0
 
 
-@pytest.mark.parametrize('test_name,env_start_weekday,env_start_day,env_start_time,env_length,expected', [
-    ('test_nothing_set', '', '', '', '', False),
-    ('test_weekday_time_no_length', datetime.utcnow().weekday(), '', datetime.utcnow(), 0, False),
-    ('test_weekday_time_true', datetime.utcnow().weekday(), '', datetime.utcnow(), 5, True),
-    ('test_day_time_no_length', '', datetime.utcnow().strftime('%d'), datetime.utcnow(), 0, False),
-    ('test_day_time_true', '', datetime.utcnow().strftime('%d'), datetime.utcnow(), 5, True),
-    ('test_weekday_length_not_enough', datetime.utcnow().weekday(), '', datetime.utcnow() - timedelta(minutes=5), 4, False),
-    ('test_day_length_not_enough', '', datetime.utcnow().strftime('%d'), datetime.utcnow() - timedelta(minutes=5), 4, False),
-])
-def test_is_reindexing(app, test_name, env_start_weekday, env_start_day, env_start_time, env_length, expected):
-    """Assert the _is_reindexing function works as expected."""
-    if env_start_time:
-        env_start_time = f'{env_start_time.hour:02}:{env_start_time.minute:02}:{env_start_time.second:02}+0000'
-
-    app.config.update(SOLR_REINDEX_WEEKDAY=env_start_weekday)
-    app.config.update(SOLR_REINDEX_DAY=env_start_day)
-    app.config.update(SOLR_REINDEX_START_TIME=env_start_time)
-    app.config.update(SOLR_REINDEX_LENGTH=env_length)
-
-    bor_solr.init_app(app)
-
-    assert bor_solr.is_reindexing() == expected
-
-
 @pytest.mark.parametrize('test_name,method,params,json_data,xml_data', [
     ('test_GET_basic', 'GET', None, None, None),
     ('test_GET_params', 'GET', {'param1': 'la', 'param2': 'blip'}, None, None),
@@ -157,7 +159,7 @@ def test_is_reindexing(app, test_name, env_start_weekday, env_start_day, env_sta
 def test_call_solr(app, session, test_name, method, params, json_data, xml_data):
     """Assert that the call solr method creates the desired request."""
     query = '{url}/{core}/test'
-    solr_url = app.config.get('SOLR_SVC_URL')
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL')
     expected_url = query.format(url=solr_url, core='bor')
 
     with requests_mock.mock() as m:

@@ -34,7 +34,10 @@ class Config():  # pylint: disable=too-few-public-methods
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
+    SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_LEADER_CORE', 'bor')
+    SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_CORE', 'bor_follower')
+    SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_URL', 'http://localhost:8883/solr')
+    SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_URL', 'http://localhost:8884/solr')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
@@ -94,15 +97,6 @@ class Config():  # pylint: disable=too-few-public-methods
     JWT_OIDC_FIRSTNAME = os.getenv('JWT_OIDC_FIRSTNAME', 'firstname')
     JWT_OIDC_LASTNAME = os.getenv('JWT_OIDC_LASTNAME', 'lastname')
 
-    # reindex times
-    SOLR_REINDEX_DAY = os.getenv('SOLR_REINDEX_DAY', None)
-    if os.getenv('SOLR_REINDEX_WEEKDAY'):
-        SOLR_REINDEX_WEEKDAY = int(os.getenv('SOLR_REINDEX_WEEKDAY'))
-    else:
-        SOLR_REINDEX_WEEKDAY = None
-    SOLR_REINDEX_START_TIME = os.getenv('SOLR_REINDEX_START_TIME', '')
-    SOLR_REINDEX_LENGTH = int(os.getenv('SOLR_REINDEX_LENGTH')) if os.getenv('SOLR_REINDEX_LENGTH', None) else 0
-
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Config object for development environment."""
@@ -119,7 +113,10 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DEVELOPMENT = False
     TESTING = True
     # SOLR
-    SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
+    SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_LEADER_TEST_CORE', 'bor')
+    SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_TEST_CORE', 'bor')
+    SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_TEST_URL', 'http://localhost:8990/solr')
+    SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_TEST_URL', 'http://localhost:8990/solr')
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_TEST_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_TEST_PASSWORD', '')

@@ -54,9 +54,9 @@ def check_synonym_recorded(synonym: str, synonym_list: list[str], synonym_type: 
 ])
 def test_update_synonyms_mocked(app, session, client, jwt, test_name, request_json):
     """Assert the update operation sends correct payload to solr."""
-    solr_syn_url_address = app.config.get('SOLR_SVC_URL') + '/bor/schema/analysis/synonyms/ADDRESS'
-    solr_syn_url_name = app.config.get('SOLR_SVC_URL') + '/bor/schema/analysis/synonyms/NAME'
-    solr_reload_url = app.config.get('SOLR_SVC_URL') + '/admin/cores?action=RELOAD&core=bor'
+    solr_syn_url_address = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/schema/analysis/synonyms/ADDRESS'
+    solr_syn_url_name = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/schema/analysis/synonyms/NAME'
+    solr_reload_url = app.config.get('SOLR_SVC_LEADER_URL') + '/admin/cores?action=RELOAD&core=bor'
 
     with requests_mock.mock() as m:
         m.put(solr_syn_url_address)

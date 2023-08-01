@@ -88,7 +88,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
     docs = [asdict(x) for x in SOLR_TEST_DOCS[:5]]
     num_found = 5
     start = 0
-    requests_mock.post(f"{app.config.get('SOLR_SVC_URL')}/bor/query", json={'response': {'docs': docs, 'numFound': num_found, 'start': start}})
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': docs, 'numFound': num_found, 'start': start}})
     # call select
     params = SearchParams(query=query,
                           rows=10,

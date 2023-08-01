@@ -61,7 +61,7 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
 ])
 def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict, entities: list[Entity]):
     """Assert that resync operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
     if 'identifiers' in payload:
         payload['identifiers'] = [x.id for x in entities]
 
@@ -157,9 +157,9 @@ def test_resync_solr_invalid_data(app, session, client, jwt, test_name, payload)
 def test_update_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
     for role in [STAFF_ROLE, PUBLIC_USER]:
-        api_response = client.put(f'/api/v1/internal/solr/update',
-                                data=json.dumps(REQUEST_TEMPLATE),
-                                headers=create_header(jwt, [role], **{'Accept-Version': 'v1',
-                                                                      'content-type': 'application/json'}))
+        api_response = client.post(f'/api/v1/internal/solr/update/resync',
+                                   data={'identifiers': ['BC1234567']},
+                                   headers=create_header(jwt, [role], **{'Accept-Version': 'v1',
+                                                                         'content-type': 'application/json'}))
         # check
         assert api_response.status_code == HTTPStatus.UNAUTHORIZED

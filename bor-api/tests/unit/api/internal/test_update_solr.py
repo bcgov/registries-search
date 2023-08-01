@@ -45,7 +45,7 @@ del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
 ])
 def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     """Assert that update operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
 
     with requests_mock.mock() as m:
         m.post(solr_url)
@@ -220,7 +220,7 @@ def test_update_business_no_tax_id(session, client, jwt):
 ])
 def test_update_bc_class_adds_prefix(app, session, client, jwt, test_name, legal_type, identifier, expected):
     """Assert prefixes are added to BC, ULC and CC identifiers and only when no prefix is given."""
-    solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
 
     with requests_mock.mock() as m:
         m.post(solr_url)
@@ -273,7 +273,7 @@ def test_update_bc_class_adds_prefix(app, session, client, jwt, test_name, legal
 ])
 def test_update_solr_invalid_data(app, session, client, jwt, test_name, path, replacement):
     """Assert that error is returned if data missing."""
-    solr_url = app.config.get('SOLR_SVC_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
 
     with requests_mock.mock() as m:
         m.post(solr_url)

@@ -102,7 +102,7 @@ from tests.unit.utils import SOLR_TEST_DOCS
 def test_search_entities_solr_mock(app, session, client, requests_mock, test_name, query, categories):
     """Assert that the entities search call works returns successfully."""
     # setup solr mock
-    requests_mock.post(f"{app.config.get('SOLR_SVC_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
     # format payload
     payload = {'query': query}
     if categories:
@@ -516,7 +516,7 @@ def test_search_entities_xlsx(app, session, client, requests_mock):
                       'roleType': 'DIRECTOR',
                       'score': 0.0}]}
 
-    requests_mock.post(f"{app.config.get('SOLR_SVC_URL')}/bor/query",json={'response': {'docs': [doc], 'numFound': 1, 'start': 0}})
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query",json={'response': {'docs': [doc], 'numFound': 1, 'start': 0}})
     # format payload
     payload = {'query': {'value': 'persons two'}}
     # call search
@@ -535,7 +535,7 @@ def test_search_entities_error(app, session, client, requests_mock):
     # setup solr mock
     mocked_error_msg = 'mocked error'
     mocked_status_code = HTTPStatus.BAD_GATEWAY
-    requests_mock.post(f"{app.config.get('SOLR_SVC_URL')}/bor/query", json={'error': {'msg': mocked_error_msg}}, status_code=mocked_status_code)
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'error': {'msg': mocked_error_msg}}, status_code=mocked_status_code)
     # create payload
     payload = {'query': {'value': '123'}}
     # call search

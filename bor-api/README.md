@@ -61,6 +61,11 @@ Run `make lint`
 
 ### Running Unit Tests
 
+- Ensure you have the following setup/configured:
+   - test database
+   - test solr instance or set RUN_SOLR_TESTS=False
+      - default config points to docker-compose.yml
+      - see https://github.com/bcgov-registries/beneficial-ownership/tree/main/bor-solr for more info on *bor-solr-leader* image
 - For all tests run `pytest -v -s`
 - For an individual file run `pytest -v -s ./tests/unit/api/filename.py` or `pytest -v -s ./tests/unit/models/filename.py`
 - For an individual test case run `pytest -v -s ./tests/unit/api/filename.py::test-case-name`

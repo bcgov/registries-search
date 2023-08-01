@@ -1,0 +1,6 @@
+version: '3'
+services:
+  bor-solr-test:
+    image: bor-solr-leader
+    ports:
+     - "8990:8983"

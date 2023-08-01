@@ -21,9 +21,9 @@ import logging.config
 import os
 from http import HTTPStatus
 
-import sentry_sdk  # noqa: I001; grouped for pylint
-from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001; grouped for pylint
-from flask import Flask, redirect, url_for
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from flask import Flask, redirect
 from flask_migrate import Migrate
 
 from bor_api import errorhandlers, models

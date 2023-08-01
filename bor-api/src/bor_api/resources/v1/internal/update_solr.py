@@ -122,8 +122,8 @@ def resync_solr():
             except SolrException:
                 # log error so that ops can resync the business without redoing the whole batch
                 current_app.logger.error('Failed to resync %s', identifier)
-            # pause for 1 second so that solr doesn't get overloaded on large batches
-            sleep(1)
+            # pause for half second so that solr doesn't get overloaded on large batches
+            sleep(0.5)
 
         return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
 

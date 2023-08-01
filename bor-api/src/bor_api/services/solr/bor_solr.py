@@ -13,14 +13,13 @@
 # limitations under the License.
 """Manages solr class for using search solr."""
 from contextlib import suppress
-from datetime import datetime, timedelta
 from dataclasses import asdict
 from http import HTTPStatus
 
 from requests import Response, Session
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import ConnectionError as SolrConnectionError
-from flask import current_app
+from flask import Flask, current_app
 
 from bor_api.enums import SolrSynonymType
 from bor_api.exceptions import SolrException
@@ -32,15 +31,29 @@ from .solr_docs import Entity
 class Solr:
     """Wrapper around the solr instance."""
 
-    def __init__(self, app=None):
-        """Initialize this object."""
+    def __init__(self, app: Flask = None):
+        """Initialize the solr class."""
         self.app = None
 
-        self.solr_url = None
-        self.core = 'bor'
+        # solr cores
+        self.follower_core = None
+        self.leader_core = None
+        # solr urls
+        self.follower_url = None
+        self.leader_url = None
+
         self.default_start = 0
         self.default_rows = 10
-        # field selections
+
+        # base urls
+        self.reload_url = '{url}/admin/cores?action=RELOAD&core={core}'
+        self.replication_url = '{url}/{core}/replication'
+        self.search_url = '{url}/{core}/query'
+        self.synonyms_url = '{url}/{core}/schema/analysis/synonyms'
+        self.update_url = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
+
+        # field selections (specific to BOR)
+        # TODO: move these outside the solr class
         self.entity_fields = [
             Field.BN.value, Field.EMAIL.value, Field.ENTITY_ADDRESSES.value,
             Field.ENTITY_TYPE.value, Field.IDENTIFIER.value, Field.LEGAL_NAME.value,
@@ -59,19 +72,20 @@ class Solr:
             Field.ROLE_TYPE.value, Field.RELATED_LEGAL_TYPE.value
         ]
         self.date_fields = [Field.START.value, Field.END.value]
-        # base urls
-        self.reload_url = '{url}/admin/cores?action=RELOAD&core={core}'
-        self.search_url = '{url}/{core}/query'
-        self.synonyms_url = '{url}/{core}/schema/analysis/synonyms'
-        self.update_url = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
 
         if app:
             self.init_app(app)
 
-    def init_app(self, app):
+    def init_app(self, app: Flask):
         """Initialize the Solr environment."""
         self.app = app
-        self.solr_url = app.config.get('SOLR_SVC_URL')
+
+        # NOTE: for a single core implementation set leader/follower cores the same
+        self.leader_core = app.config.get('SOLR_SVC_LEADER_CORE')
+        self.follower_core = app.config.get('SOLR_SVC_FOLLOWER_CORE')
+        # NOTE: for a single node implementation set the leader/follower urls the same
+        self.leader_url = app.config.get('SOLR_SVC_LEADER_URL')
+        self.follower_url = app.config.get('SOLR_SVC_FOLLOWER_URL')
 
     # pylint: disable=too-many-arguments
     def call_solr(self,
@@ -80,23 +94,23 @@ class Solr:
                   params: dict = None,
                   json_data: dict = None,
                   xml_data: str = None,
-                  force=False) -> Response:
+                  leader=True) -> Response:
         """Call solr instance with given params."""
+        base_url = self.leader_url if leader else self.follower_url
+        core = self.leader_core if leader else self.follower_core
+        url = query.format(url=base_url, core=core)
+
+        retry_times = 3 if method == 'GET' else 5
+        backoff_factor = 1 if method == 'GET' else 2
+        retries = Retry(total=retry_times,
+                        backoff_factor=backoff_factor,
+                        status_forcelist=[500, 502, 503, 504],
+                        allowed_methods=['GET', 'POST'])
+        session = Session()
+        session.mount(url, HTTPAdapter(max_retries=retries))
+
+        response = None
         try:
-            if self.is_reindexing() and not force:
-                err_msg = 'This resource is undergoing scheduled maintenance and will be ' \
-                    f'unavailable for up to {self.app.config.get("SOLR_REINDEX_LENGTH")} minutes.'
-                raise SolrException(err_msg, HTTPStatus.SERVICE_UNAVAILABLE)
-            response = None
-            url = query.format(url=self.solr_url, core=self.core)
-            retry_times = 3 if method == 'GET' else 5
-            backoff_factor = 1 if method == 'GET' else 2
-            retries = Retry(total=retry_times,
-                            backoff_factor=backoff_factor,
-                            status_forcelist=[500, 502, 503, 504],
-                            allowed_methods=['GET', 'POST'])
-            session = Session()
-            session.mount(url, HTTPAdapter(max_retries=retries))
             if method == 'GET':
                 response = session.get(url, params=params, timeout=30)
             elif method == 'POST' and json_data:
@@ -112,7 +126,9 @@ class Solr:
             if response.status_code != HTTPStatus.OK:
                 error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
                 raise Exception(error)  # pylint: disable=broad-exception-raised;
+
             return response
+
         except SolrConnectionError as err:
             current_app.logger.debug(err.with_traceback(None))
             raise SolrException(
@@ -128,15 +144,15 @@ class Solr:
             current_app.logger.debug(msg)
             raise SolrException(error=msg, status_code=status_code) from err
 
-    def create_or_replace_docs(self, docs: list[Entity], force=False):
+    def create_or_replace_docs(self, docs: list[Entity]):
         """Create or replace solr docs in the core."""
         update_json = [asdict(doc) for doc in docs]
-        response = self.call_solr('POST', self.update_url, json_data=update_json, force=force)
+        response = self.call_solr('POST', self.update_url, json_data=update_json)
         return response
 
     def create_or_update_synonyms(self, synonym_type: SolrSynonymType, synonyms: dict[str: list[str]]):
         """Create or update solr docs in the core."""
-        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms, force=True)
+        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms)
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
@@ -156,32 +172,23 @@ class Solr:
         response = self.call_solr('POST', self.update_url, xml_data=payload)
         return response
 
-    def is_reindexing(self) -> bool:
-        """Return True if this instance of solr is in the process of reindexing."""
-        current_weekday = datetime.utcnow().weekday()
-        timeout_start_weekday = self.app.config.get('SOLR_REINDEX_WEEKDAY')
-        current_day = datetime.utcnow().strftime('%d')
-        timeout_start_day = self.app.config.get('SOLR_REINDEX_DAY')
-        if current_weekday == timeout_start_weekday or current_day == timeout_start_day:
-            current_time = datetime.time(datetime.utcnow())
-            timeout_start_time = datetime.strptime(self.app.config.get('SOLR_REINDEX_START_TIME'), '%H:%M:%S%z')
-            timeout_length = self.app.config.get('SOLR_REINDEX_LENGTH')  # in minutes
-            timeout_end_time = timeout_start_time + timedelta(minutes=timeout_length)
-            if timeout_start_time.time() < current_time < timeout_end_time.time():
-                return True
-        return False
-
     def query(self, payload: dict[str, str], start: int = None, rows: int = None) -> dict:
         """Return a list of solr docs from the solr query handler for the given params."""
         payload['offset'] = start if start else self.default_start
         payload['limit'] = rows if rows else self.default_rows
-
-        response = self.call_solr('POST', self.search_url, json_data=payload)
+        response = self.call_solr('POST', self.search_url, json_data=payload, leader=False)
         return response.json()
 
     def reload_core(self):
         """Reload the solr core."""
         current_app.logger.info('Reloading core...')
-        reload = self.call_solr(method='GET', query=self.reload_url, force=True)
+        reload = self.call_solr(method='GET', query=self.reload_url)
         current_app.logger.info('Core reloaded.')
         return reload
+
+    def replication(self, command: str, leader=True):
+        """Send a replication command to solr."""
+        current_app.logger.info(f'Sending {command} command to {"leader" if leader else "follower"}')
+        resp = self.call_solr(method='GET', query=self.replication_url, params={'command': command})
+        current_app.logger.info(f'{command} command executed.')
+        return resp
