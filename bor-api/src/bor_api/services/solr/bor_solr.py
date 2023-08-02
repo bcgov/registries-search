@@ -189,6 +189,9 @@ class Solr:
     def replication(self, command: str, leader=True):
         """Send a replication command to solr."""
         current_app.logger.info(f'Sending {command} command to {"leader" if leader else "follower"}')
-        resp = self.call_solr(method='GET', query=self.replication_url, params={'command': command})
+        resp = self.call_solr(method='GET',
+                              query=self.replication_url,
+                              params={'command': command},
+                              leader=leader)
         current_app.logger.info(f'{command} command executed.')
         return resp
