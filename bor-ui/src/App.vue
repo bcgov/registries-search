@@ -10,7 +10,7 @@
     >
       <template v-if="errorContactInfo" v-slot:extra-content>
         <p class="font-normal mt-7">If this issue persists, please contact us.</p>
-        <contact-info class="font-normal font-16 mt-4" :contacts="HelpdeskInfo" />
+        <contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
       </template>
     </base-dialog>
 
@@ -56,8 +56,8 @@ import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { BaseDialog } from '@/components'
 import { useAuth, useSearch } from '@/composables'
-import { AuthAccessError, DefaultError } from '@/resources/error-dialog-options'
-import { HelpdeskInfo } from '@/resources/contact-info'
+import { AuthAccessError, DefaultError, DownloadFileError } from '@/resources/error-dialog-options'
+import { RegistriesInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
 
@@ -159,12 +159,15 @@ const handleError = (error: ErrorI) => {
       errorDisplay.value = true
       Sentry.captureException(error)
       break
+    case ErrorCategory.SEARCH_EXPORT:
+      errorInfo.value = {...DownloadFileError}
+      errorContactInfo.value = true
+      errorDisplay.value = true
+      Sentry.captureException(error)
+      break
     case ErrorCategory.SEARCH:
       // handled inline
       Sentry.captureException(error)
-      break
-    case ErrorCategory.SEARCH_UNAVAILABLE:
-      // handled inline and no error msg needed
       break
     default:
       errorInfo.value = {...DefaultError}

@@ -1,12 +1,10 @@
 // External
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { StatusCodes } from 'http-status-codes'
 // bcregistry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { SearchBar } from '@/components'
 import { useAuth, useSearch } from '@/composables'
-import { ErrorCategory } from '@/enums'
 import { axios } from '@/utils'
 // test data
 import { SearchResponseMock, testAccount } from './utils'
@@ -118,41 +116,4 @@ describe('SearchBar tests', () => {
     expect(search._value).toBe(searchTerm)
     expect(mockPost).toHaveBeenCalled()
   })
-  it('Retries if search unavailable', async () => {
-    // set mock to error
-    mockPost.mockImplementation((url) => {
-      switch (url) {
-        case 'search/entities':
-          return Promise.reject({ response: { status: StatusCodes.SERVICE_UNAVAILABLE }})
-      }
-    })
-    // set value so that search will execute when triggered
-    wrapper.vm.searchVal = 'test'
-    await nextTick()
-    const searchTextField = wrapper.find('#search-bar-field')
-    searchTextField.trigger('keyup', { key: 't'})
-    // it will await more input for half a second
-    await new Promise(resolve => setTimeout(resolve, 600))
-    await flushPromises()
-    // sanity check -- error triggered
-    expect(mockPost).toHaveBeenCalledTimes(1)
-    expect(search._error).not.toBe(null)
-    expect(search._error.category).toBe(ErrorCategory.SEARCH_UNAVAILABLE)
-    // shows attempts retry automatically after 10 seconds
-    // set mock to success
-    mockPost.mockImplementation((url) => {
-      switch (url) {
-        case 'search/entities':
-          return Promise.resolve({ data: mockResp })
-      }
-    })
-    // assert it hasn't been called again yet
-    expect(mockPost).toHaveBeenCalledTimes(1)
-    // wait over 10 seconds
-    await new Promise(resolve => setTimeout(resolve, 11000))
-    // assert it retried and got success
-    expect(mockPost).toHaveBeenCalledTimes(2)
-    expect(search._error).toBe(null)
-    expect(search.results).toEqual(mockResp.searchResults.results)
-  }, 14000)
 })

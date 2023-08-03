@@ -8,5 +8,6 @@ export enum ErrorCategory {
   FEE_INFO = 'fee-info',
   REPORT_GENERATION = 'report-generation',
   SEARCH = 'search',
+  SEARCH_EXPORT = 'search-export',
   SEARCH_UNAVAILABLE = 'search-unavailable'
 }

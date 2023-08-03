@@ -4,7 +4,7 @@ import { useAuth } from '@/composables'
 import { ErrorCategory, ErrorCode } from '@/enums'
 import { ErrorI } from '@/interfaces'
 
-export const getSearchConfig = () => {
+export const getSearchConfig = (exportSearch: boolean) => {
   const { auth } = useAuth()
   const url = sessionStorage.getItem('BOR_API_URL')
   const apiKey = window['borApiKey']
@@ -12,7 +12,12 @@ export const getSearchConfig = () => {
   if (!apiKey) console.error('Error: BOR_API_KEY expected, but not found.')
   if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
   
-  return { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey } }
+  const config = { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey } }
+  if (exportSearch) {
+    config.headers['Accept'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    config['responseType'] = 'blob'
+  }
+  return config
 }
 
 export const parseGatewayError = (category: ErrorCategory, defaultStatus: StatusCodes, error): ErrorI => {

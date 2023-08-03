@@ -21,8 +21,39 @@
         :setHeaders="SearchEntityHeaders"
         :setItems="search.results"
         title="Search Results"
+        :titleExtras="true"
         :totalItems="search.totalResults"
       >
+        <template v-slot:title-extras>
+          <v-row no-gutters justify="end">
+            <v-col align-self="center" cols="auto">
+              <v-select
+                class="search-table__export-select pt-1 rounded-top"
+                density="default"
+                hide-details
+                :items="[2000,1000,500,250,100,50]"
+                label="Maximum results to export"
+                style="width: 225px;"
+                variant="underlined"
+                :model-value="search.exportRows"
+              />
+            </v-col>
+            <v-col align-self="center" cols="auto">
+              <v-btn
+                class="search-table__export-rows-btn"
+                color="primary"
+                density="compact"
+                :loading="exportLoading"
+                prepend-icon="mdi-table-arrow-down"
+                :ripple="false"
+                variant="text"
+                @click="exportToXlsx()"
+              >
+                Export to .xlsx
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
         <template v-slot:header-filter-slot-date>
           <v-text-field
             class="search-table__date-picker-filter active"
@@ -105,6 +136,12 @@
         Load More Results
       </v-btn>
     </div>
+    <v-snackbar :model-value="showExportSnack">
+      Search results successfully exported in the order displayed in the table.
+      <template #actions>
+        <v-btn icon="mdi-window-close" @click="showExportSnack = false" />
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -125,6 +162,7 @@ import { toDateStr } from '@/utils'
 // composables
 const {
   facetCount,
+  exportSearch,
   filterSearch,
   getNextResults,
   getSearchResults,
@@ -198,9 +236,6 @@ const resultsDesc = computed(() => {
   return desc
 })
 
-// const tooltipMsg = 'You can access this business through BC OnLine or by contacting BC Registries. ' +
-//   'See "Help with Business and Person Search" for details.'
-
 // filter stuff
 const resetFiltersTrigger = ref(false)
 
@@ -223,6 +258,18 @@ const updateTableHeaderFilters = () => {
     if (header) header.filter.value = search.filters[activeFilters[i]]
   }
 }
+
+// Exporting to excel stuff
+const exportLoading = ref(false)
+const showExportSnack = ref(false)
+
+/** Export search results into an .xlsx download file. */
+const exportToXlsx = _.debounce(async () => {
+  exportLoading.value = true
+  await exportSearch()
+  exportLoading.value = false
+  if (!search._error) showExportSnack.value = true
+}, 50, { 'leading': true, 'trailing': false })
 
 // set table filters to session saved ones
 onMounted(() => { updateTableHeaderFilters() })
@@ -281,6 +328,21 @@ const getNextSearches = _.debounce(async () => getNextResults(), 50)
     position: absolute;
     right: 20%;
     width: 25px;
+  }
+
+  &__export-select {
+    background-color: white;
+    :deep(.v-field.v-field--active:not(.v-field--error) .v-label.v-field-label--floating) {
+      color: $gray7;
+      margin-left: 9px;
+    }
+    :deep(.v-field__append-inner) {
+      margin-right: 12px;
+    }
+    :deep(.v-select__selection) {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
   }
 }
 </style>

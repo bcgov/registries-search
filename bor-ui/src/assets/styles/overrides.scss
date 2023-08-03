@@ -23,6 +23,11 @@ td {
   span + .v-icon {
     margin-left: 0.25rem;
   }
+
+  &__prepend {
+    margin-right: 2px;
+    margin-top: 2px;
+  }
 }
 
 .v-btn:before {

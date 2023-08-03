@@ -3,7 +3,7 @@ import _ from 'lodash'
 // local
 import { ErrorI, FacetI, SearchI, SearchResponseI } from '@/interfaces'
 import { searchEntities } from '@/requests'
-import { EntityType, ErrorCategory } from '@/enums'
+import { EntityType } from '@/enums'
 
 const STARTING_FILTERS = {
   query: { roles: { roleDates: {} }},
@@ -28,11 +28,11 @@ const _readOnly = reactive({
 
 // globals TODO: try moving to pinia
 const search = reactive({
+  exportRows: 1000,
   facetsResult: {},
   filters: _.cloneDeep(STARTING_FILTERS),
   results: null,
   totalResults: null,
-  unavailable: false,
   _error: computed(() => _readOnly.error),
   _isFilteringActive: computed(() => _readOnly.isFilteringActive),
   _loading: computed(() => _readOnly.loading),
@@ -46,9 +46,6 @@ const _searchErrorHandler = async (searchResp: SearchResponseI) => {
   search.results = []
   search.totalResults = null
   _readOnly.error = searchResp.error
-  if (searchResp.error.category === ErrorCategory.SEARCH_UNAVAILABLE) {
-    search.unavailable = true
-  } else search.unavailable = false
 }
 
 export const useSearch = () => {
@@ -98,6 +95,14 @@ export const useSearch = () => {
     return []
   }
 
+  /** Export search to file for download. */
+  const exportSearch = async () => {
+    const searchResp = await searchEntities(search._value, search.filters, search.exportRows, 0, true)
+    if (searchResp && searchResp.error) {
+      _searchErrorHandler(searchResp)
+    }
+  }
+
   /** Apply filter and get results set. */
   const filterSearch = async (path: string[], val: any, resetFilters = false) => {
     if (resetFilters) {
@@ -133,7 +138,6 @@ export const useSearch = () => {
         _readOnly.start += 1
         search.results = [...search.results, ...searchResp.searchResults.results]
         _readOnly.error = null
-        search.unavailable = false
       } else _searchErrorHandler(searchResp)
     } else console.error('Error getting getNextSearchResults') // should never get here
     _readOnly.loadingNext = false
@@ -151,7 +155,7 @@ export const useSearch = () => {
     _readOnly.value = val
     // special case for query/roles/value
     _readOnly.isFilteringActive = hasActiveFilter() || !!search.filters?.query?.roles?.value
-    if (search.results === null && !search.unavailable) search.results = []
+    if (search.results === null) search.results = []
     const searchResp = await searchEntities(val, search.filters, rows, 0)
     if (searchResp) {
       if (!searchResp.error) {
@@ -166,7 +170,6 @@ export const useSearch = () => {
         _readOnly.error = null
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults
-        search.unavailable = false
 
       } else _searchErrorHandler(searchResp)
     } else {
@@ -192,7 +195,6 @@ export const useSearch = () => {
     search.filters = _.cloneDeep(STARTING_FILTERS)
     search.results = null
     search.totalResults = null
-    search.unavailable = false
     _readOnly.error = null
     _readOnly.isFilteringActive = false
     _readOnly.loading = false
@@ -204,6 +206,7 @@ export const useSearch = () => {
     hasMoreResults,
     facetCount,
     facetItems,
+    exportSearch,
     filterSearch,
     getNextResults,
     getSearchResults,

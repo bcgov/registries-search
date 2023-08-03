@@ -5,7 +5,7 @@
         <slot name="header" :headers="headers">
           <tr v-if="title || pagination" :style="{ 'background-color': titleBg }">
             <slot name="header-title" :headers="headers">
-              <th v-if="title" class="base-table__title" :colspan="pagination ? headers.length / 2 : headers.length">
+              <th v-if="title" class="base-table__title" :colspan="titleExtras ? headers.length / 2 : headers.length">
                 <slot name="title">
                   <h2 class="ml-3 py-6">
                     {{ title }}
@@ -22,9 +22,9 @@
                   <h4 class="ml-3 mb-6" v-if="subtitle">{{ subtitle }}</h4>
                 </slot>
               </th>
-              <th v-if="pagination" :colspan="title? headers.length / 2 : headers.length">
-                <slot name="pagination">
-                  <BasePagination />
+              <th v-if="titleExtras" :colspan="title? headers.length / 2 : headers.length">
+                <slot name="title-extras">
+                  <BasePagination v-if="pagination" />
                 </slot>
               </th>
             </slot>
@@ -182,6 +182,7 @@ const props = defineProps<{
   setHeaders: BaseTableHeaderI[],
   setItems: any[],
   title?: string
+  titleExtras?: boolean
   totalItems?: number
   subtitle?: string
 }>()

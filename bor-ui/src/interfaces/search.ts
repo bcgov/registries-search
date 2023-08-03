@@ -7,11 +7,11 @@ import { BusinessState, CorpTypeCd, EntityType, RoleType } from '@/enums'
 // UI models
 
 export interface SearchI {
+  exportRows: number
   facetsResult: FacetsResultI
   filters: SearchPayloadI
   results: SearchResultI[]
   totalResults: number
-  unavailable: boolean
   _error: ComputedRef<ErrorI>
   _isFilteringActive: ComputedRef<boolean>
   _loading: ComputedRef<boolean>

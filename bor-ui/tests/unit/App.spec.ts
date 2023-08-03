@@ -7,10 +7,11 @@ import App from '@/App.vue'
 import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
-import { useAuth, _readOnly } from '@/composables'
+import { useAuth, useSearch, _readOnly } from '@/composables'
 import { ErrorCategory, ErrorCode, RouteName } from '@/enums'
 import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
-import { DefaultError } from '@/resources/error-dialog-options'
+import { DefaultError, DownloadFileError } from '@/resources/error-dialog-options'
+import { axios } from '@/utils'
 import { createVueRouter } from '@/router'
 import store from '@/store'
 
@@ -79,5 +80,39 @@ describe('App tests', () => {
     expect(wrapper.vm.errorDisplay).toBe(true)
     expect(wrapper.vm.errorContactInfo).toBe(true)
     expect(wrapper.vm.errorInfo).toEqual(DefaultError)
+  })
+  it('handles search errors correctly', async () => {
+    // setup error mock
+    const mockPost = jest.spyOn(axios, 'post')
+    mockPost.mockImplementation((url) => {
+      switch (url) {
+        case 'search/entities':
+          return Promise.resolve({ data: null })  // this will throw an error
+      }
+    })
+    // confirm in an error free state
+    const { search, getSearchResults, exportSearch } = useSearch()
+    expect(search._error).toBe(null)
+    expect(wrapper.vm.errorDisplay).toBe(false)
+    expect(wrapper.vm.errorContactInfo).toBe(false)
+    expect(wrapper.vm.errorInfo).toBe(null)
+    // call search
+    await getSearchResults('test')
+    expect(mockPost).toHaveBeenCalledTimes(1)
+    expect(search._error).not.toBe(null)
+    expect(search._error.category).toBe(ErrorCategory.SEARCH)
+    // should NOT have triggered a dialog (handled inline)
+    expect(wrapper.vm.errorDisplay).toBe(false)
+    expect(wrapper.vm.errorContactInfo).toBe(false)
+    expect(wrapper.vm.errorInfo).toBe(null)
+    // call excel export
+    await exportSearch()
+    expect(mockPost).toHaveBeenCalledTimes(2)
+    expect(search._error).not.toBe(null)
+    expect(search._error.category).toBe(ErrorCategory.SEARCH_EXPORT)
+    // check error dialog values have updated
+    expect(wrapper.vm.errorDisplay).toBe(true)
+    expect(wrapper.vm.errorContactInfo).toBe(true)
+    expect(wrapper.vm.errorInfo).toEqual(DownloadFileError)
   })
 })

@@ -7,9 +7,9 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { BCRegDateRangePicker, BaseTable, ErrorRetry, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
+import { axios } from '@/utils'
 import { ErrorCategory } from '@/enums'
 import { SearchEntityHeaders } from '@/resources/table-headers'
-import { axios } from '@/utils'
 // test data
 import { SearchResponseMock, testAccount } from './utils'
 
@@ -64,6 +64,14 @@ describe('SearchResults tests', () => {
     // renders title
     expect(wrapper.find('.base-table__title').exists()).toBe(true)
     expect(wrapper.find('.base-table__title').text()).toContain('Search Results  (0 People)')
+
+    // renders export excel stuff
+    expect(wrapper.find('.search-table__export-select').exists()).toBe(true)
+    expect(wrapper.find('.search-table__export-select').html()).toContain('label="Maximum results to export"')
+    expect(wrapper.find('.search-table__export-select').html()).toContain('model-value="1000"')
+    expect(wrapper.find('.search-table__export-rows-btn').exists()).toBe(true)
+    expect(wrapper.find('.search-table__export-rows-btn').html()).toContain('Export to .xlsx')
+    expect(wrapper.find('.search-table__export-rows-btn').html()).toContain('loading="false"')
 
     // renders all the headers
     const headers = wrapper.findAll('.base-table__header__item__title')
@@ -322,5 +330,29 @@ describe('SearchResults tests', () => {
     await clearFiltersBtn.trigger('click')
     expect(search.filters?.query?.roles?.value).toBe(undefined)
     expect(search._isFilteringActive).toBe(false)
+  })
+  it('exports the results when clicked', async () => {
+    // trigger initial results
+    await getSearchResults('test')
+    expect(mockPost).toHaveBeenCalledTimes(1)
+    // FUTURE: click the export button
+    await wrapper.vm.exportToXlsx()
+    await flushPromises()
+    expect(mockPost).toHaveBeenCalledTimes(2)
+    expect(mockPost).toHaveBeenLastCalledWith(
+      "search/entities",
+      {
+        "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
+        "query": {"roles": {"roleDates": {}}, "value": "kial"}, "rows": 1000, "start": 0
+      },
+      {
+        "baseURL": "http://mock-url.ca",
+        "headers": {
+          "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "Account-Id": 1234,
+          "x-apikey": "key"
+        },
+        "responseType": "blob"
+      })
   })
 })

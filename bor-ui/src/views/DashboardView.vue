@@ -92,26 +92,11 @@
     <v-window class="mt-5" v-model="tab">
       <v-window-item class="ma-0">
         <v-card class="window-item-card" flat>
-          <v-fade-transition hide-on-leave>
-            <div v-if="search.unavailable">
-              <v-row class="my-16" justify="center" no-gutters>
-                <v-col cols="auto">
-                  <v-progress-circular color="primary" size="50" indeterminate />
-                </v-col>
-                <v-col class="mt-5" cols="12" style="text-align: center;">
-                  <v-icon class="ml-10 warning-icon" size="25">mdi-alert</v-icon>
-                  <span class="ml-1 info-text">{{ unavailableMsg }}</span>
-                </v-col>
-              </v-row>
-            </div>
-            <div v-else>
-              <p class="mb-7 mt-12 info-text">
-                Search for the names and addresses of people associated with businesses in BC.
-              </p>
-              <search-bar class="pb-5" />
-              <search-results class="mt-30px" v-if="search.results!=null && !search.unavailable" />
-            </div>
-          </v-fade-transition>
+          <p class="mb-7 mt-12 info-text">
+            Search for the names and addresses of people associated with businesses in BC.
+          </p>
+          <search-bar class="pb-5" />
+          <search-results class="mt-30px" v-if="search.results!=null" />
         </v-card>
       </v-window-item>
     </v-window>
@@ -137,11 +122,6 @@ const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
 const learnMoreURL = 'https://www2.gov.bc.ca/gov/content?id=B75BE1375F084B138B60D62C0094D9E8'
 const showDocHelp = ref(false)
 const tab = ref('0')
-
-const unavailableMsg = 'Director Search is in the process of a scheduled ' +
-  ' update. Searching will be unavailable for up to 15 minutes.'
-
-
 </script>
 
 <style lang="scss" scoped>

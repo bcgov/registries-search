@@ -91,19 +91,6 @@ watch(() => facets.entityType, (val) => {
   if (val.person) entityTypes.push('PERSON')
   filterSearch(['categories','entityType'], entityTypes)
 }, { deep: true })
-
-// unavailable scenario (when search is reindexing / reimporting)
-watch(() => search.unavailable, async (val) => {
-  if (val) {
-    // retry every 10s until search is available again
-    let count = 0
-    while (search.unavailable === true && count < 1000) {
-      await new Promise(resolve => setTimeout(resolve, 10000))
-      await getSearchResults(searchVal.value)
-      count++
-    }
-  }
-})
 </script>
 
 <style lang="scss" scoped>
