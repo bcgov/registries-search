@@ -35,7 +35,7 @@
                 label="Maximum results to export"
                 style="width: 225px;"
                 variant="underlined"
-                :model-value="search.exportRows"
+                v-model="search.exportRows"
               />
             </v-col>
             <v-col align-self="center" cols="auto">
