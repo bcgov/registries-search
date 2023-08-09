@@ -18,15 +18,14 @@ from http import HTTPStatus
 
 import pytest
 
-import xlsxwriter
-
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services import bor_solr
+from bor_api.services.authz import BASIC_USER
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 from tests import integration_solr
-from tests.unit.utils import SOLR_TEST_DOCS
+from tests.unit.utils import SOLR_TEST_DOCS, create_header
 
 
 @pytest.mark.parametrize('test_name,query,categories', [
@@ -99,16 +98,22 @@ from tests.unit.utils import SOLR_TEST_DOCS
         }
      })
 ])
-def test_search_entities_solr_mock(app, session, client, requests_mock, test_name, query, categories):
+def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, test_name, query, categories):
     """Assert that the entities search call works returns successfully."""
-    # setup solr mock
+    # setup mocks
+    account_id = 1
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products", json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
     # format payload
     payload = {'query': query}
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities', data=json.dumps(payload), headers={'Accept-Version': 'v1', 'content-type': 'application/json'})
+    resp = client.post(f'/api/v1/search/entities',
+                       data=json.dumps(payload),
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Account-Id': account_id}))
     # test
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.json
@@ -462,7 +467,7 @@ def test_search_entities_solr_mock(app, session, client, requests_mock, test_nam
      [{'bn': 'BN00012334', 'email': '1234@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}]
     )
 ])
-def test_search_entities(session, client, test_name, query, categories, expected):
+def test_search_entities(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
     """Assert that the entities search call works returns successfully."""
     # setup solr data for test
     bor_solr.delete_all_docs()
@@ -475,12 +480,18 @@ def test_search_entities(session, client, test_name, query, categories, expected
     SolrSynonymList(synonym='united states', synonym_list=['us', 'united states'], synonym_type=SolrSynonymType.ADDRESS).save()
     SolrSynonymList(synonym='us', synonym_list=['us', 'united states'], synonym_type=SolrSynonymType.ADDRESS).save()
     SolrSynonymList(synonym='chute', synonym_list=['chute', 'shoot'], synonym_type=SolrSynonymType.NAME).save()
+    # setup products mock in validator
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     # format payload
     payload = {'query': query}
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities', data=json.dumps(payload), headers={'Accept-Version': 'v1', 'content-type': 'application/json'})
+    resp = client.post(f'/api/v1/search/entities',
+                        data=json.dumps(payload),
+                        headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                    'content-type': 'application/json',
+                                                                    'Account-Id': 1}))
     # test
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.json
@@ -493,9 +504,11 @@ def test_search_entities(session, client, test_name, query, categories, expected
     assert results == expected
 
 
-def test_search_entities_xlsx(app, session, client, requests_mock):
+def test_search_entities_xlsx(app, session, client, jwt, requests_mock):
     """Assert that the entities search call works returns successfully."""
-    # setup solr mock
+    # setup mocks
+    account_id = 1
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products", json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     doc = {'entityAddresses': [{'addressCity': 'Victoria',
                                 'addressCountry': 'Canada',
                                 'addressRegion': 'BC',
@@ -522,16 +535,19 @@ def test_search_entities_xlsx(app, session, client, requests_mock):
     # call search
     resp = client.post(f'/api/v1/search/entities',
                        data=json.dumps(payload),
-                       headers={'Accept-Version': 'v1',
-                                'content-type': 'application/json',
-                                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                                                  'Account-Id': account_id}))
     # test
     assert resp.status_code == HTTPStatus.OK
     assert resp.data
 
 
-def test_search_entities_error(app, session, client, requests_mock):
+def test_search_entities_error(app, session, client, jwt, monkeypatch, requests_mock):
     """Assert that the entities search call error handling works as expected."""
+    # setup products mock in validator
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     # setup solr mock
     mocked_error_msg = 'mocked error'
     mocked_status_code = HTTPStatus.BAD_GATEWAY
@@ -539,7 +555,11 @@ def test_search_entities_error(app, session, client, requests_mock):
     # create payload
     payload = {'query': {'value': '123'}}
     # call search
-    resp = client.post(f'/api/v1/search/entities', data=json.dumps(payload), headers={'Accept-Version': 'v1', 'content-type': 'application/json'})
+    resp = client.post(f'/api/v1/search/entities',
+                       data=json.dumps(payload),
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Account-Id': 1}))
     # test
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     resp_json = resp.json
@@ -549,11 +569,13 @@ def test_search_entities_error(app, session, client, requests_mock):
 
 @pytest.mark.parametrize('test_name,query,categories,headers,errors', [
     ('test_no_value', {}, {}, {}, [{'Invalid payload': "Expected a string for 'value'."}]),
-    ('test_invalid_accept_headers', {'value': 'a'}, {}, {'Accept': 'application/pdf'}, [{'Invalid headers': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
-    ('test_invalid_query_and_headers', {}, {}, {'Accept': 'application/pdf'}, [{'Invalid payload': "Expected a string for 'value'."}, {'Invalid headers': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
+    ('test_invalid_accept_headers', {'value': 'a'}, {}, {'Accept': 'application/pdf'}, [{'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
+    ('test_invalid_query_and_headers', {}, {}, {'Accept': 'application/pdf'}, [{'Invalid payload': "Expected a string for 'value'."}, {'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
 ])
-def test_search_entities_bad_request(client, test_name, query, categories, headers, errors):
+def test_search_entities_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""
+    # setup products mock in validator
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     # create payload
     payload = {'query': query}
     if categories:
@@ -561,7 +583,10 @@ def test_search_entities_bad_request(client, test_name, query, categories, heade
     # call search
     resp = client.post(f'/api/v1/search/entities',
                        data=json.dumps(payload),
-                       headers={'Accept-Version': 'v1', 'content-type': 'application/json', **headers})
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Account-Id': 1,
+                                                                  **headers}))
     # test
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     resp_json = resp.json

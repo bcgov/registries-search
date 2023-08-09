@@ -68,7 +68,7 @@ describe('SearchResults tests', () => {
     // renders export excel stuff
     expect(wrapper.find('.search-table__export-select').exists()).toBe(true)
     expect(wrapper.find('.search-table__export-select').html()).toContain('label="Maximum results to export"')
-    expect(wrapper.find('.search-table__export-select').html()).toContain('model-value="1000"')
+    expect(wrapper.find('.search-table__export-select').html()).toContain('modelvalue="1000"')
     expect(wrapper.find('.search-table__export-rows-btn').exists()).toBe(true)
     expect(wrapper.find('.search-table__export-rows-btn').html()).toContain('Export to .xlsx')
     expect(wrapper.find('.search-table__export-rows-btn').html()).toContain('loading="false"')

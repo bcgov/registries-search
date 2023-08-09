@@ -12,7 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """The class manages methods to validate a request."""
+from flask import request
+
+from bor_api.exceptions import AuthorizationException
+from bor_api.models import User
+from bor_api.services import jwt, flags
+from bor_api.services.authz import account_products
+
 from .util import get_str
+
+
+def validate_search_request(user: User) -> tuple[dict, list[dict]]:
+    """Validate the search request headers / payload."""
+    errors = []
+    request_json = request.get_json()
+    query_json = request_json.get('query', {})
+    value = query_json.get('value', None)
+    # TODO: validate the rest of the payload
+    if not value or not isinstance(value, str):
+        errors.append({'Invalid payload': "Expected a string for 'value'."})
+
+    account_id = request.headers.get('Account-Id', None)
+    if not request.headers.get('Account-Id', None):
+        errors.append([{'Missing header': 'Account-Id'}])
+
+    # check access
+    if not flags.value('enable-director-search', {'key': user.idp_userid}):
+        # individual flag not enabled for user. Check account has product subscription
+        products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
+        if not any(p['code'] == 'NDS' and p['subscriptionStatus'] == 'ACTIVE' for p in products):
+            raise AuthorizationException('This account is not authorized to access Director Search.')
+
+    accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+    if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
+        msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
+        errors.append({'Invalid header': msg})
+
+    return request_json, errors
 
 
 def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches,too-many-statements

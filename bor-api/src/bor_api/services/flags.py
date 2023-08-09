@@ -23,11 +23,6 @@ from ldclient.integrations.test_data import TestData
 from flask import current_app
 from flask import Flask
 
-import bor_api
-# from bor_api.models import User
-from bor_api.services import JwtManager
-from bor_api.services.authz import get_role
-
 
 class Flags():
     """Wrapper around the feature flag system.
@@ -90,32 +85,7 @@ class Flags():
     @staticmethod
     def get_anonymous_user():
         """Return an anonymous key."""
-        return {
-            'key': 'anonymous'
-        }
-
-    @staticmethod
-    def flag_user(user: bor_api.models.User,
-                  account_id: int = None,
-                  jwt: JwtManager = None):
-        """Convert User into a Flag user dict."""
-        if not isinstance(user, bor_api.models.User):
-            return None
-
-        _user = {
-            'key': user.sub,
-            'firstName': user.firstname,
-            'lastName': user.lastname,
-            'email': user.email,
-            'custom': {
-                'loginSource': user.login_source,
-            }
-        }
-        with suppress(Exception):
-            if account_id and jwt:
-                _user['custom']['group'] = get_role(jwt, account_id)
-
-        return _user
+        return {'key': 'anonymous'}
 
     @staticmethod
     def value(flag: str, user=None):

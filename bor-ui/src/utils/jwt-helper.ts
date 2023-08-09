@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { LDUser } from 'launchdarkly-js-client-sdk'
 // BC registry
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
@@ -40,5 +41,21 @@ export function getKeycloakName(): string {
   } catch (err) {
     console.warn(err)
     throw new Error('Error getting Keycloak name')
+  }
+}
+
+/** Gets Keycloak name from JWT. */
+export function getKeycloakLDValues(): LDUser {
+  try {
+    const jwt = getJWT()
+
+    let name = jwt.name
+    if (jwt.firstname && jwt.lastname) {
+      name = `${jwt.firstname.trim()} ${jwt.lastname.trim()}`
+    }
+    return { key: jwt.idp_userid, name: name, custom: { 'roles': jwt.roles } }
+  } catch (err) {
+    console.warn(err)
+    throw new Error('Error getting Keycloak LD values')
   }
 }

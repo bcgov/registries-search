@@ -8,12 +8,13 @@ import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { SbcHeader, SbcFooter, SbcSystemBanner } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
 import { useAuth, useSearch, _readOnly } from '@/composables'
-import { ErrorCategory, ErrorCode, RouteName } from '@/enums'
+import { ErrorCategory, ErrorCode, ProductCode, ProductStatus, RouteName } from '@/enums'
 import { SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 import { DefaultError, DownloadFileError } from '@/resources/error-dialog-options'
 import { axios } from '@/utils'
 import { createVueRouter } from '@/router'
 import store from '@/store'
+import { nextTick } from 'vue'
 
 
 // FUTURE: replace this with actual tests on App.vue
@@ -26,7 +27,9 @@ describe('App tests', () => {
     // set keycloak token so it doesn't redirect
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
     // set auth
+    _readOnly.error = null
     _readOnly.tokenInitialized = true
+    auth.activeProducts = [{ code: ProductCode.NDS, subscriptionStatus: ProductStatus.ACTIVE }]
     // set router
     router = createVueRouter()
     await router.push(RouteName.SEARCH)

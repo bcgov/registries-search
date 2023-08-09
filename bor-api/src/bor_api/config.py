@@ -39,6 +39,8 @@ class Config():  # pylint: disable=too-few-public-methods
     SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_URL', 'http://localhost:8883/solr')
     SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_URL', 'http://localhost:8884/solr')
 
+    AUTH_SVC_URL = os.getenv('AUTH_API_URL', '') + os.getenv('AUTH_API_VERSION', '')
+
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
@@ -112,6 +114,8 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     DEVELOPMENT = False
     TESTING = True
+    # API urls
+    AUTH_SVC_URL = os.getenv('AUTH_API_TEST_URL', 'http://auth-api.mock') + os.getenv('AUTH_API_VERSION', '')
     # SOLR
     SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_LEADER_TEST_CORE', 'bor')
     SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_TEST_CORE', 'bor')

@@ -51,7 +51,7 @@ import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-comm
 // Bcrs shared components
 import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
 // Local
-import { ErrorCategory, RouteName } from '@/enums'
+import { ErrorCategory, ErrorCode, ProductCode, RouteName } from '@/enums'
 import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-shared-components'
 import { BaseDialog } from '@/components'
@@ -72,7 +72,7 @@ const errorInfo: Ref<DialogOptionsI> = ref(null)
 
 const route = useRoute()
 const router = useRouter()
-const { auth, loadAuth, startTokenService } = useAuth()
+const { auth, hasProductAccess, loadAuth, startTokenService } = useAuth()
 const { search } = useSearch()
 
 /** True if Jest is running the code. */
@@ -121,12 +121,13 @@ onMounted(async () => {
     }
     if (auth._error) return
     console.info('Verifying user access...')
-    if (!isJestRunning.value && !getFeatureFlag('enable-director-search')) {
+    // verify user has access to business search product
+    if (!hasProductAccess(ProductCode.NDS) && !getFeatureFlag('enable-director-search')) {
       handleError({
         category: ErrorCategory.ACCOUNT_ACCESS,
         message: 'This account does not have access to Director Search',
         statusCode: StatusCodes.UNAUTHORIZED,
-        type: null
+        type: ErrorCode.AUTH_PRODUCTS_ERROR
       })
     }
     appReady.value = true

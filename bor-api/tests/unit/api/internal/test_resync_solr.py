@@ -29,7 +29,7 @@ from bor_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
 from bor_api.services.solr.solr_docs import Entity
 
 from tests import integration_solr
-from tests.unit.utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
+from tests.unit.utils import create_header
 from tests.unit.utils.solr_doc_data import TEST_BUSINESSES, TEST_PERSONS
 
 

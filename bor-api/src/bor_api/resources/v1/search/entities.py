@@ -14,14 +14,16 @@
 """API endpoints for searching entities."""
 from http import HTTPStatus
 
-from flask import jsonify, request, Blueprint
+from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.services import bor_solr
+from bor_api.models import User
+from bor_api.services import bor_solr, jwt
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.utils import (SearchParams, entities_search, parse_facets,
                                          prep_query_str, prep_query_str_adv, xlsx_response)
+from bor_api.utils.request_validators import validate_search_request
 
 
 bp = Blueprint('ENTITIES', __name__, url_prefix='/entities')  # pylint: disable=invalid-name
@@ -29,26 +31,18 @@ bp = Blueprint('ENTITIES', __name__, url_prefix='/entities')  # pylint: disable=
 
 @bp.post('')
 @cross_origin(origin='*')
+@jwt.requires_auth
 def entities():  # pylint: disable=too-many-branches, too-many-return-statements, too-many-locals
     """Return a list of entity results from solr."""
     try:
-        request_json = request.get_json()
-        query_json = request_json.get('query', {})
-        value = query_json.get('value', None)
-        errors = []
-        # TODO: validate the rest of the payload
-        if not value or not isinstance(value, str):
-            errors.append({'Invalid payload': "Expected a string for 'value'."})
-
-        accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-        if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
-            msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
-            errors.append({'Invalid headers': msg})
-
+        user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
+        request_json, errors = validate_search_request(user)
         if errors:
             return bad_request_response('Errors processing request.', errors)
 
         # set base query params
+        query_json = request_json.get('query', {})
+        value = query_json.get('value', None)
         query = {
             'value': prep_query_str(value),
             Field.BN_Q.value: prep_query_str(query_json.get(Field.BN.value, '')),
@@ -115,7 +109,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
 
         results = entities_search(params)
 
-        if content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        if str(request.accept_mimetypes) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             return xlsx_response(results.get('response', {}).get('docs'))
 
         response = {

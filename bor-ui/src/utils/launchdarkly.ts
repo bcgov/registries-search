@@ -54,11 +54,8 @@ export async function initLdClient (): Promise<void> {
  * @param lastName the user's last name
  * @param custom optional object of additional attributes associated with the user
  */
-export async function updateLdUser (
-  key: string, email: string, firstName: string, lastName: string, custom: any = null
-): Promise<void> {
+export async function updateLdUser (user: LDUser): Promise<void> {
   if (ldClient) {
-    const user: LDUser = { key, email, firstName, lastName, custom }
     try {
       await ldClient.identify(user)
     } catch (e) {

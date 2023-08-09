@@ -119,6 +119,13 @@ def account_org(token: str, account_id: str) -> dict:
     return _call_auth_api(f'orgs/{account_id}', token)
 
 
+def account_products(token: str, account_id: str) -> list[dict]:
+    """Auth API call to get the account products of the org identified by the account id."""
+    if not account_id:
+        return None
+    return _call_auth_api(f'orgs/{account_id}/products', token)
+
+
 def is_staff(jwt: JwtManager) -> bool:
     """Return True if the user has the BC Registries staff role."""
     return jwt is not None and jwt.validate_roles([STAFF_ROLE])
