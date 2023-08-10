@@ -11,7 +11,7 @@ export async function getAccountProducts (): Promise<AuthApiProductI[]> {
   const url = sessionStorage.getItem(SessionStorageKeys.AuthApiUrl)
   if (!url) console.error(`Error: session ${SessionStorageKeys.AuthApiUrl} expected, but not found.`)
   if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  const config = { baseURL: url }
+  const config = { baseURL: url, params: {'include_hidden': true} }
 
   return axios.get<AuthApiProductI[]>(`orgs/${auth.currentAccount.id}/products`, config)
     .then(response => {
