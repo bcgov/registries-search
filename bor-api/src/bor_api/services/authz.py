@@ -43,6 +43,7 @@ def _call_auth_api(path: str, token: str) -> dict:
     if not token:
         return response
 
+    current_app.logger.debug(f'Auth getting {path}...')
     service_url = current_app.config.get('AUTH_SVC_URL')
     api_url = service_url + '/' if service_url[-1] != '/' else service_url
     api_url += path

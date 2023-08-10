@@ -53,6 +53,7 @@ export function getKeycloakLDValues(): LDUser {
     if (jwt.firstname && jwt.lastname) {
       name = `${jwt.firstname.trim()} ${jwt.lastname.trim()}`
     }
+    if (!jwt.idp_userid) throw new Error('No idp_userid in jwt.')
     return { key: jwt.idp_userid, name: name, custom: { 'roles': jwt.roles } }
   } catch (err) {
     console.warn(err)

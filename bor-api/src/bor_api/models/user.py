@@ -119,14 +119,17 @@ class User(db.Model):
                 current_app.logger.debug(f'didnt find user, attempting to create new user:{jwt_oidc_token}')
                 user = User.create_from_jwt_token(jwt_oidc_token)
             elif jwt_oidc_token.get('loginSource') == 'BCEID':  # BCEID doesn't use the jwt values for their name
+                current_app.logger.debug('BCEID user, updating first and last names...')
                 auth_user = user_info(jwt.get_token_auth_header())
                 if user.firstname != auth_user['firstname']:
                     user.firstname = auth_user['firstname']
                 if user.lastname != auth_user['lastname']:
                     user.lastname = auth_user['lastname']
                 user.save()
+                current_app.logger.debug('Updated user.')
             else:
                 # update if there are any values that weren't saved previously or have changed since
+                current_app.logger.debug('Checking for changes to username or first and last names...')
                 user_keys = [{'jwt_key': current_app.config.get('JWT_OIDC_USERNAME'), 'table_key': 'username'},
                              {'jwt_key': current_app.config.get('JWT_OIDC_FIRSTNAME'), 'table_key': 'firstname'},
                              {'jwt_key': current_app.config.get('JWT_OIDC_LASTNAME'), 'table_key': 'lastname'}]
@@ -137,6 +140,7 @@ class User(db.Model):
                             f'found new user value, attempting to update user {keys["table_key"]}:{value}')
                         setattr(user, keys['table_key'], value)
                         user.save()
+                        current_app.logger.debug(f'Updated user {value}.')
 
             return user
         except Exception as err:  # noqa: B902

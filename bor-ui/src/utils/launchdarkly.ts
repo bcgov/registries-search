@@ -57,9 +57,11 @@ export async function initLdClient (): Promise<void> {
 export async function updateLdUser (user: LDUser): Promise<void> {
   if (ldClient) {
     try {
+      console.info(`Updating LD user ${user.name}`)
       await ldClient.identify(user)
     } catch (e) {
       // NB: LD logs its own errors
+      console.warn(e)
     }
   }
 }

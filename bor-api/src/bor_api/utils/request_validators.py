@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """The class manages methods to validate a request."""
-from flask import request
+from flask import current_app, request
 
 from bor_api.exceptions import AuthorizationException
 from bor_api.models import User
@@ -37,11 +37,14 @@ def validate_search_request(user: User) -> tuple[dict, list[dict]]:
         errors.append([{'Missing header': 'Account-Id'}])
 
     # check access
+    current_app.logger.debug('Checking user access...')
     if not flags.value('enable-director-search', {'key': user.idp_userid}):
         # individual flag not enabled for user. Check account has product subscription
+        current_app.logger.debug('Individual access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
         if not any(p['code'] == 'NDS' and p['subscriptionStatus'] == 'ACTIVE' for p in products):
             raise AuthorizationException('This account is not authorized to access Director Search.')
+    current_app.logger.debug('Access granted.')
 
     accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
     if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
