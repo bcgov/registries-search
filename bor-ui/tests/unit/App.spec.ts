@@ -14,7 +14,6 @@ import { DefaultError, DownloadFileError } from '@/resources/error-dialog-option
 import { axios } from '@/utils'
 import { createVueRouter } from '@/router'
 import store from '@/store'
-import { nextTick } from 'vue'
 
 
 // FUTURE: replace this with actual tests on App.vue
