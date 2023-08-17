@@ -56,7 +56,7 @@ const _loadProducts = async () => {
     auth.activeProducts = products.filter(product => product.subscriptionStatus === ProductStatus.ACTIVE)
   } catch (error) {
     console.warn(error)
-    auth._error = {
+    _readOnly.error = {
       category: ErrorCategory.ACCOUNT_ACCESS,
       message: 'Error getting/setting active user products.',
       statusCode: null,
