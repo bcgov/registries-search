@@ -124,7 +124,7 @@ def account_products(token: str, account_id: str) -> list[dict]:
     """Auth API call to get the account products of the org identified by the account id."""
     if not account_id:
         return None
-    return _call_auth_api(f'orgs/{account_id}/products', token)
+    return _call_auth_api(f'orgs/{account_id}/products?include_hidden=true', token)
 
 
 def is_staff(jwt: JwtManager) -> bool:

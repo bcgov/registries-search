@@ -102,7 +102,8 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     """Assert that the entities search call works returns successfully."""
     # setup mocks
     account_id = 1
-    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products", json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",
+                      json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
     # format payload
     payload = {'query': query}
@@ -508,7 +509,8 @@ def test_search_entities_xlsx(app, session, client, jwt, requests_mock):
     """Assert that the entities search call works returns successfully."""
     # setup mocks
     account_id = 1
-    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products", json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",
+                      json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
     doc = {'entityAddresses': [{'addressCity': 'Victoria',
                                 'addressCountry': 'Canada',
                                 'addressRegion': 'BC',
