@@ -81,9 +81,14 @@
                     v-model="header.filter.value"
                     @update:modelValue="filter(header)"
                   >
-                    <template v-slot:selection="{ item }">
-                      <span style="font-size: 0.825rem;">
-                        {{ capFirstLetter(item.title) }},
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index == 0" style="font-size: 0.825rem;">
+                        <span v-if="header.filter.value.length == 1">
+                          {{ capFirstLetter(item.title) }}
+                        </span>
+                        <span v-else>
+                          Multiple
+                        </span>
                       </span>
                     </template>
                   </v-select>

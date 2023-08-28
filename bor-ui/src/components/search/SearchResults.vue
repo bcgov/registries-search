@@ -315,6 +315,11 @@ const getNextSearches = _.debounce(async () => getNextResults(), 50)
     padding: 0 12px !important;
     min-width: 108px;
     width: 90%;
+
+    :deep(.v-btn__append) {
+      margin-left: 4px;
+      margin-top: 2px;
+    }
   }
   &__clear :deep(.v-btn__content) {
     white-space: nowrap;

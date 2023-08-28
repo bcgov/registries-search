@@ -4,12 +4,6 @@
       <v-col>
         <h1>Director Search</h1>
       </v-col>
-      <v-col class="pt-3" cols="auto">
-        <a class="learn-more" :href="learnMoreURL" target="_blank">
-          Learn More
-          <v-icon class="learn-more__icon">mdi-open-in-new</v-icon>
-        </a>
-      </v-col>
     </v-row>
     <v-row class="mt-1 pt-2" justify="start" no-gutters>
       <v-col class="account-label pr-5" cols="auto">
@@ -72,8 +66,14 @@
             <li>Certificate of Good Standing</li>
             <li>Letter Under Seal</li>
           </ul>
+          <div class="mt-6">
+            <a class="learn-more" download="Director Search Guide.pdf" :href="directorSearchGuidePath" type="pdf">
+              Learn how to use Director Search - User Guide
+              <v-icon class="learn-more__icon">mdi-file-download-outline</v-icon>
+            </a>
+          </div>
         </div>
-        <span class="doc-help-info__close-btn my-5" @click="showDocHelp = false">Hide help</span>
+        <span class="doc-help-info__close-btn my-6" @click="showDocHelp = false">Hide help</span>
       </div>
     </v-slide-y-transition>
 
@@ -119,7 +119,8 @@ const { auth } = useAuth()
 const { search } = useSearch()
 
 const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
-const learnMoreURL = 'https://www2.gov.bc.ca/gov/content?id=B75BE1375F084B138B60D62C0094D9E8'
+// eslint-disable-next-line
+const directorSearchGuidePath = '/downloads/director_search_guide.pdf'
 const showDocHelp = ref(false)
 const tab = ref('0')
 </script>

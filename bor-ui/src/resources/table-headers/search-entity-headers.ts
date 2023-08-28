@@ -67,7 +67,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       return 'N/A'
     },
     value: 'Roles',
-    width: '8%'
+    width: '9%'
   },
   {
     col: 'roles',
@@ -132,7 +132,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       return 'N/A'
     },
     value: 'Business State',
-    width: '8%'
+    width: '9%'
   },
   {
     col: 'roles',
@@ -151,7 +151,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     },
     slotId: 'email',
     value: 'Business Email',
-    width: '15%'
+    width: '13%'
   },
   {
     col: '',

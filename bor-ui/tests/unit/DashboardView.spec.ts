@@ -51,9 +51,6 @@ describe('DashboardView tests', () => {
   it('renders Dashboard with expected child components', async () => {
     // check header is there
     expect(wrapper.find('h1').text()).toContain('Director Search')
-    // check learn more is there
-    expect(wrapper.find('.learn-more').text()).toContain('Learn More')
-    expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.learnMoreURL)
     // check subheader info is there
     expect(wrapper.find('.account-label').text()).toContain(testAccount.label)
     expect(wrapper.find('.account-name').text()).toContain(testAccount.name)
@@ -81,6 +78,11 @@ describe('DashboardView tests', () => {
     await flushPromises()
     expect(wrapper.find('#doc-help-btn').text()).toContain('Hide Help')
     expect(wrapper.find('.doc-help-info').exists()).toBe(true)
+    expect(wrapper.find('.doc-help-info .doc-help-info__content').exists()).toBe(true)
+    expect(wrapper.find('.doc-help-info .doc-help-info__content').text()).toContain('Help with Director Search')
+    expect(wrapper.find('.doc-help-info .doc-help-info__content .learn-more').text())
+    .toContain('Learn how to use Director Search - User Guide')
+    expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.directorSearchGuidePath)
     // clicking again sets it back
     wrapper.find('#doc-help-btn').trigger('click')
     await flushPromises()
