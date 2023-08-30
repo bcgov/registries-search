@@ -48,13 +48,21 @@ def update_solr():
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
 
         entities = _parse_entities(request_json)
+        resp_msg, resp_status = 'Update successful', HTTPStatus.OK
         for entity in entities:
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
             SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             # trigger solr update
-            update_bor_solr(entity.id, SolrDocEventType.UPDATE)
+            try:
+                update_bor_solr(entity.id, SolrDocEventType.UPDATE)
+            except SolrException as solr_exc:
+                # log error for ops resync
+                current_app.logger.debug(solr_exc)
+                current_app.logger.error('Failed to update Entity: %s. Resync required.', entity.identifier)
+                # API has the update so return accepted response
+                resp_msg, resp_status = 'Update accepted.', HTTPStatus.ACCEPTED
 
-        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
+        return jsonify({'message': resp_msg}), resp_status
 
     except Exception as exception:  # noqa: B902
         return exception_response(exception)
