@@ -94,16 +94,15 @@ class Solr:
                   params: dict = None,
                   json_data: dict = None,
                   xml_data: str = None,
-                  leader=True) -> Response:
+                  leader=True,
+                  timeout=25) -> Response:
         """Call solr instance with given params."""
         base_url = self.leader_url if leader else self.follower_url
         core = self.leader_core if leader else self.follower_core
         url = query.format(url=base_url, core=core)
 
-        retry_times = 3 if method == 'GET' else 5
-        backoff_factor = 1 if method == 'GET' else 2
-        retries = Retry(total=retry_times,
-                        backoff_factor=backoff_factor,
+        retries = Retry(total=1,
+                        backoff_factor=1,
                         status_forcelist=[500, 502, 503, 504],
                         allowed_methods=['GET', 'POST'])
         session = Session()
@@ -112,14 +111,14 @@ class Solr:
         response = None
         try:
             if method == 'GET':
-                response = session.get(url, params=params, timeout=30)
+                response = session.get(url, params=params, timeout=timeout)
             elif method == 'POST' and json_data:
-                response = session.post(url=url, json=json_data, timeout=60)
+                response = session.post(url=url, json=json_data, timeout=timeout)
             elif method == 'PUT' and json_data:
-                response = session.put(url=url, json=json_data, timeout=60)
+                response = session.put(url=url, json=json_data, timeout=timeout)
             elif method == 'POST' and xml_data:
                 headers = {'Content-Type': 'application/xml'}
-                response = session.post(url=url, data=xml_data, headers=headers, timeout=60)
+                response = session.post(url=url, data=xml_data, headers=headers, timeout=timeout)
             else:
                 raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
@@ -144,20 +143,20 @@ class Solr:
             current_app.logger.debug(msg)
             raise SolrException(error=msg, status_code=status_code) from err
 
-    def create_or_replace_docs(self, docs: list[Entity]):
+    def create_or_replace_docs(self, docs: list[Entity], timeout=25):
         """Create or replace solr docs in the core."""
         update_json = [asdict(doc) for doc in docs]
-        response = self.call_solr('POST', self.update_url, json_data=update_json)
+        response = self.call_solr('POST', self.update_url, json_data=update_json, timeout=timeout)
         return response
 
     def create_or_update_synonyms(self, synonym_type: SolrSynonymType, synonyms: dict[str: list[str]]):
         """Create or update solr docs in the core."""
-        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms)
+        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms, timeout=180)
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
         payload = '<delete><query>*:*</query></delete>'
-        response = self.call_solr('POST', self.update_url, xml_data=payload)
+        response = self.call_solr('POST', self.update_url, xml_data=payload, timeout=60)
         return response
 
     def delete_docs(self, unique_keys: list[str]):
@@ -169,7 +168,7 @@ class Solr:
             payload += f' OR {Field.UNIQUE_KEY.value}:{key.upper()}'
         payload += '</query></delete>'
 
-        response = self.call_solr('POST', self.update_url, xml_data=payload)
+        response = self.call_solr('POST', self.update_url, xml_data=payload, timeout=60)
         return response
 
     def query(self, payload: dict[str, str], start: int = None, rows: int = None) -> dict:
