@@ -31,7 +31,7 @@ class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
     id = db.Column(db.Integer, primary_key=True)
     event_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     event_last_update = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-    event_status = db.Column(db.Enum(SolrDocEventStatus), default=SolrDocEventStatus.PENDING)
+    event_status = db.Column(db.Enum(SolrDocEventStatus), default=SolrDocEventStatus.PENDING, index=True)
     event_type = db.Column(db.Enum(SolrDocEventType), nullable=False)
 
     solr_doc_id = db.Column(db.Integer, db.ForeignKey('bor_solr_docs.id'), index=True)
