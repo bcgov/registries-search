@@ -20,6 +20,7 @@ from http import HTTPStatus
 import pytest
 import requests_mock
 
+from bor_api.enums import SolrDocEventStatus
 from bor_api.services import bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
 
@@ -56,7 +57,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                                                                            'content-type': 'application/json'}))
 
         # check success
-        assert api_response.status_code == HTTPStatus.OK
+        assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update
         check_update_recorded(request_json['business']['identifier'])
         # check parties update
@@ -64,88 +65,101 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             identifier = f"{party['source']}{party['officer']['id']}"
             check_update_recorded(identifier, True)
         
-        # check call to solr mock
+        # check did not call to solr mock (only updates the DB)
+        assert m.called == False
+        # call sync to update solr
+        api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
+        # check success
+        assert api_response.status_code == HTTPStatus.OK
+        # check events were completed
+        check_update_recorded(request_json['business']['identifier'],
+                              is_party=False,
+                              status=SolrDocEventStatus.COMPLETE)
+        for party in request_json['parties']:
+            identifier = f"{party['source']}{party['officer']['id']}"
+            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
+        # check call to solr was correct
         assert m.called == True
-        assert m.call_count == 3  # 1 for business plus 1 for each party
+        assert m.call_count == 1  # batch updated all docs
         assert solr_url in m.request_history[0].url
-        assert solr_url in m.request_history[1].url
-        assert solr_url in m.request_history[2].url
-        assert m.request_history[0].json() == [{
-            'entityAddresses': [{'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
-                                  'postalCode': 'V3K 3V9',
-                                  'addressCity': 'Coquitlam',
-                                  'addressType': 'delivery',
-                                  'addressRegion': 'BC',
-                                  'streetAddress': 'Bc-435 North Rd',
-                                  'addressCountry': 'Canada'}],
-            'entityType': 'BUSINESS',
-            'id': request_json['business']['identifier'],
-            'identifier': request_json['business']['identifier'],
-            'legalName': request_json['business']['legalName'],
-            'bn': '123456789',
-            'email': 'test@email.com',
-            'legalType': request_json['business']['legalType'],
-            'roles': None,
-            'state': 'ACTIVE'
-        }]
-        
-        assert m.request_history[1].json() == [{
-            'entityAddresses': [{
-                'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
-                'postalCode': 'T3J 3Z5',
-                'addressCity': 'Calgary',
-                'addressType': 'DELIVERY',
-                'addressRegion': 'AB',
-                'streetAddress': '1234-4818 Westwinds Dr NE',
-                'addressCountry': 'Canada'}],
-            'entityType': 'PERSON',
-            'id': 'LEAR570343',
-            'legalName': 'BCREG2 LIANG FORTY',
-            'bn': None,
-            'email': None,
-            'identifier': None,
-            'legalType': None,
-            'roles': [{
-                'roleType': 'Director',
-                'relatedBN': '123456789',
-                'relatedEmail': 'test@email.com',
-                'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
-                'relatedName': request_json['business']['legalName'],
-                'relatedState': 'ACTIVE',
-                'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
-                'relatedLegalType': request_json['business']['legalType'],
-                'relatedEntityType': 'BUSINESS',
-                'relatedIdentifier': request_json['business']['identifier'],}],
-            'state': None}]
-        
-        assert m.request_history[2].json() == [{
-            'entityAddresses': [{
-                'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
-                'postalCode': 'G1N 1C1',
-                'addressCity': 'Québec',
-                'addressType': 'DELIVERY',
-                'addressRegion': 'QC',
-                'streetAddress': 'W-558 Rue Saint-Vallier O',
-                'addressCountry': 'Canada'}],
-            'entityType': 'PERSON',
-            'id': 'LEAR570721',
-            'legalName': 'BLIPPITY BOP',
-            'bn': None,
-            'email': None,
-            'identifier': None,
-            'legalType': None,
-            'roles': [{
-                'roleType': 'Director',
-                'relatedBN': '123456789',
-                'relatedEmail': 'test@email.com',
-                'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
-                'relatedName': request_json['business']['legalName'],
-                'relatedState': 'ACTIVE',
-                'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
-                'relatedLegalType': request_json['business']['legalType'],
-                'relatedEntityType': 'BUSINESS',
-                'relatedIdentifier': request_json['business']['identifier'],}],
-            'state': None}]
+        assert m.request_history[0].json() == [
+            {
+                'entityAddresses': [{'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
+                                    'postalCode': 'V3K 3V9',
+                                    'addressCity': 'Coquitlam',
+                                    'addressType': 'delivery',
+                                    'addressRegion': 'BC',
+                                    'streetAddress': 'Bc-435 North Rd',
+                                    'addressCountry': 'Canada'}],
+                'entityType': 'BUSINESS',
+                'id': request_json['business']['identifier'],
+                'identifier': request_json['business']['identifier'],
+                'legalName': request_json['business']['legalName'],
+                'bn': '123456789',
+                'email': 'test@email.com',
+                'legalType': request_json['business']['legalType'],
+                'roles': None,
+                'state': 'ACTIVE'
+            },
+            {
+                'entityAddresses': [{
+                    'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
+                    'postalCode': 'T3J 3Z5',
+                    'addressCity': 'Calgary',
+                    'addressType': 'DELIVERY',
+                    'addressRegion': 'AB',
+                    'streetAddress': '1234-4818 Westwinds Dr NE',
+                    'addressCountry': 'Canada'}],
+                'entityType': 'PERSON',
+                'id': 'LEAR570343',
+                'legalName': 'BCREG2 LIANG FORTY',
+                'bn': None,
+                'email': None,
+                'identifier': None,
+                'legalType': None,
+                'roles': [{
+                    'roleType': 'Director',
+                    'relatedBN': '123456789',
+                    'relatedEmail': 'test@email.com',
+                    'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
+                    'relatedName': request_json['business']['legalName'],
+                    'relatedState': 'ACTIVE',
+                    'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                    'relatedLegalType': request_json['business']['legalType'],
+                    'relatedEntityType': 'BUSINESS',
+                    'relatedIdentifier': request_json['business']['identifier'],}],
+                'state': None
+            },
+            {
+                'entityAddresses': [{
+                    'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
+                    'postalCode': 'G1N 1C1',
+                    'addressCity': 'Québec',
+                    'addressType': 'DELIVERY',
+                    'addressRegion': 'QC',
+                    'streetAddress': 'W-558 Rue Saint-Vallier O',
+                    'addressCountry': 'Canada'}],
+                'entityType': 'PERSON',
+                'id': 'LEAR570721',
+                'legalName': 'BLIPPITY BOP',
+                'bn': None,
+                'email': None,
+                'identifier': None,
+                'legalType': None,
+                'roles': [{
+                    'roleType': 'Director',
+                    'relatedBN': '123456789',
+                    'relatedEmail': 'test@email.com',
+                    'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
+                    'relatedName': request_json['business']['legalName'],
+                    'relatedState': 'ACTIVE',
+                    'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                    'relatedLegalType': request_json['business']['legalType'],
+                    'relatedEntityType': 'BUSINESS',
+                    'relatedIdentifier': request_json['business']['identifier'],}],
+                'state': None
+            }
+        ]
 
 
 @integration_solr
@@ -159,7 +173,7 @@ def test_update_solr(session, client, jwt):
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                            'content-type': 'application/json'}))
     # check
-    assert api_response.status_code == HTTPStatus.OK
+    assert api_response.status_code == HTTPStatus.ACCEPTED
     business_identifier = REQUEST_TEMPLATE['business']['identifier']
     party_ids = []
     # check business update
@@ -169,6 +183,22 @@ def test_update_solr(session, client, jwt):
         party_id = f"{party['source']}{party['officer']['id']}"
         party_ids.append(party_id)
         check_update_recorded(party_id, True)
+    # verify update has NOT synced to solr yet
+    for entity_id in [business_identifier] + party_ids:
+        search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
+        assert search_response['response']
+        assert len(search_response['response']['docs']) == 0
+    # call sync to update solr
+    api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
+    # check success
+    assert api_response.status_code == HTTPStatus.OK
+    # check events were completed
+    check_update_recorded(business_identifier,
+                          is_party=False,
+                          status=SolrDocEventStatus.COMPLETE)
+    for party in REQUEST_TEMPLATE['parties']:
+        identifier = f"{party['source']}{party['officer']['id']}"
+        check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     for entity_id in [business_identifier] + party_ids:
@@ -195,9 +225,17 @@ def test_update_business_no_tax_id(session, client, jwt):
                                                                            'content-type': 'application/json'}))
 
     # check
-    assert api_response.status_code == HTTPStatus.OK
+    assert api_response.status_code == HTTPStatus.ACCEPTED
     # check business update
     check_update_recorded(business_identifier)
+    # call sync to update solr
+    api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
+    # check success
+    assert api_response.status_code == HTTPStatus.OK
+    # check events were completed
+    check_update_recorded(business_identifier,
+                          is_party=False,
+                          status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     search_response = bor_solr.query(payload={'query': f'identifier:{business_identifier}', 'fields': '*'})
@@ -235,15 +273,9 @@ def test_update_bc_class_adds_prefix(app, session, client, jwt, test_name, legal
                                 headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                             'content-type': 'application/json'}))
         # check
-        assert api_response.status_code == HTTPStatus.OK
+        assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update in model with altered identfier
         check_update_recorded(expected)
-        # check call to solr mock
-        assert m.called == True
-        assert m.call_count == 1
-        assert solr_url in m.request_history[0].url
-        # check update payload set expected identifier
-        m.request_history[0].json()[0]['identifier'] == expected
 
 
 @pytest.mark.parametrize('test_name,path,replacement', [

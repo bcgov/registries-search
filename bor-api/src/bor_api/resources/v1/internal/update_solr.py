@@ -16,16 +16,15 @@ import re
 from dataclasses import asdict
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from time import sleep
 
 from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
 
-from bor_api.enums import SolrDocEventType, SolrSynonymType
-from bor_api.exceptions import SolrException, bad_request_response, exception_response
-from bor_api.models import SolrDoc, SolrSynonymList, User
+from bor_api.enums import SolrDocEventStatus, SolrDocEventType, SolrSynonymType
+from bor_api.exceptions import bad_request_response, exception_response
+from bor_api.models import SolrDoc, SolrDocEvent, SolrSynonymList, User
 from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
-from bor_api.services.solr.bor_solr_updates import update_bor_solr
+from bor_api.services.solr.bor_solr_updates import resync_bor_solr, update_bor_solr
 from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
 from bor_api.services.solr.utils import get_synonyms
 from bor_api.utils.request_validators import validate_solr_update_request
@@ -37,8 +36,8 @@ bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable
 @bp.put('')
 @cross_origin(origin='*')
 @jwt.requires_roles([SYSTEM_ROLE])
-def update_solr():
-    """Add/Update business in solr."""
+def update_entity():
+    """Add/Update entity in BOR."""
     try:
         request_json: dict = request.json
         errors = validate_solr_update_request(request_json)
@@ -48,21 +47,13 @@ def update_solr():
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
 
         entities = _parse_entities(request_json)
-        resp_msg, resp_status = 'Update successful', HTTPStatus.OK
         for entity in entities:
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
-            SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
-            # trigger solr update
-            try:
-                update_bor_solr(entity.id, SolrDocEventType.UPDATE)
-            except SolrException as solr_exc:
-                # log error for ops resync
-                current_app.logger.debug(solr_exc)
-                current_app.logger.error('Failed to update Entity: %s. Resync required.', entity.identifier)
-                # API has the update so return accepted response
-                resp_msg, resp_status = 'Update accepted.', HTTPStatus.ACCEPTED
+            solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
+            SolrDocEvent(event_type=SolrDocEventType.UPDATE, solr_doc_id=solr_doc.id).save()
+            # SOLR update will be triggered by job (does a frequent bulk update to solr)
 
-        return jsonify({'message': resp_msg}), resp_status
+        return jsonify({'message': 'Update accepted.'}), HTTPStatus.ACCEPTED
 
     except Exception as exception:  # noqa: B902
         return exception_response(exception)
@@ -103,7 +94,7 @@ def update_synonyms():
 @cross_origin(origin='*')
 @jwt.requires_roles([SYSTEM_ROLE])
 def resync_solr():
-    """Resync solr docs from the given date."""
+    """Resync solr docs from the given date or identifiers given."""
     try:
         request_json = request.json
         from_datetime = datetime.utcnow()
@@ -123,17 +114,32 @@ def resync_solr():
             identifiers_to_resync = SolrDoc.get_updated_entity_ids_after_date(resync_date)
 
         current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
-        # update docs
-        for identifier in identifiers_to_resync:
-            try:
-                update_bor_solr(identifier, SolrDocEventType.RESYNC)
-            except SolrException:
-                # log error so that ops can resync the business without redoing the whole batch
-                current_app.logger.error('Failed to resync %s', identifier)
-            # pause for half second so that solr doesn't get overloaded on large batches
-            sleep(0.5)
+        resync_bor_solr(identifiers_to_resync)
 
         return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)
+
+
+@bp.get('/sync')
+@cross_origin(origin='*')
+def sync_solr():
+    """Sync docs in the DB that haven't been applied to SOLR yet."""
+    try:
+        pending_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.PENDING,
+                                                                            SolrDocEventStatus.ERROR],
+                                                                  event_type=SolrDocEventType.UPDATE)
+
+        pending_update_events = pending_update_events[:current_app.config.get('MAX_BATCH_UPDATE_NUM')]
+        identifiers_to_sync = [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events]
+        # only update up to a certain amount at a time
+
+        current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
+        if identifiers_to_sync:
+            update_bor_solr(identifiers_to_sync, pending_update_events)
+
+        return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
 
     except Exception as exception:  # noqa: B902
         return exception_response(exception)

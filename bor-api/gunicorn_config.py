@@ -20,6 +20,7 @@ import os
 workers = int(os.environ.get('GUNICORN_PROCESSES', '1'))  # pylint: disable=invalid-name
 threads = int(os.environ.get('GUNICORN_THREADS', '1'))  # pylint: disable=invalid-name
 timeout = int(os.environ.get('GUNICORN_TIMEOUT', '200'))  # pylint: disable=invalid-name
+print(f'GUNICORN -- workers: {workers}, threads: {threads}, thread timeout: {timeout}')
 
 forwarded_allow_ips = '*'  # pylint: disable=invalid-name
 secure_scheme_headers = {'X-Forwarded-Proto': 'https'}  # pylint: disable=invalid-name

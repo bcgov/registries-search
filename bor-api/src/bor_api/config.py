@@ -47,9 +47,12 @@ class Config():  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
+    MAX_BATCH_UPDATE_NUM = int(os.getenv('MAX_BATCH_UPDATE_NUM', '1000'))
+
     # Flag Names
     OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
 
+    # DB stuff
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ALEMBIC_INI = 'migrations/alembic.ini'
 
@@ -57,8 +60,8 @@ class Config():  # pylint: disable=too-few-public-methods
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
     DB_NAME = os.getenv('DATABASE_NAME', '')
     DB_HOST = os.getenv('DATABASE_HOST', '')
-    DB_PORT = os.getenv('DATABASE_PORT', '5432')  # POSTGRESQL
-    # POSTGRESQL
+    DB_PORT = os.getenv('DATABASE_PORT', '5432')
+
     if DB_UNIX_SOCKET := os.getenv('DATABASE_UNIX_SOCKET', None):
         SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host={DB_UNIX_SOCKET}'
     else:

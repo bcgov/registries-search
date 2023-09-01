@@ -37,10 +37,21 @@ class SolrDoc(db.Model):
 
     solr_doc_events = db.relationship('SolrDocEvent', lazy='dynamic')
 
+    def save(self) -> SolrDoc:
+        """Store the update into the db."""
+        db.session.add(self)
+        db.session.commit()
+        return self
+
     @classmethod
     def find_most_recent_by_entity_id(cls, entity_id: str) -> SolrDoc:
         """Return most recently submitted SolrDoc by entity id."""
         return cls.query.filter_by(entity_id=entity_id).order_by(cls.submission_date.desc()).first()
+
+    @classmethod
+    def get_by_id(cls, doc_id: int) -> SolrDoc:
+        """Return the solr doc by its ID."""
+        return cls.query.filter_by(id=doc_id).one_or_none()
 
     @staticmethod
     def get_updated_entity_ids_after_date(date: datetime) -> list[str]:
@@ -48,9 +59,3 @@ class SolrDoc(db.Model):
         return [x[0] for x in db.session.query(SolrDoc.entity_id)
                 .filter(SolrDoc.submission_date > date)
                 .group_by(SolrDoc.entity_id).all()]
-
-    def save(self) -> SolrDoc:
-        """Store the update into the db."""
-        db.session.add(self)
-        db.session.commit()
-        return self

@@ -80,7 +80,7 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
         
         # check call to solr mock
         assert m.called == True
-        assert m.call_count == len(entities)
+        assert m.call_count == 1  # batch call for all entities
         
         for info in setup_info:
             entity = info[0]
@@ -92,17 +92,16 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
             assert doc_events[0].event_type == SolrDocEventType.RESYNC
             # did not update the older record
             assert len(solr_doc_old.solr_doc_events.all()) == 0
-            
-            entity_sent_as_payload = False
-            for index in range(len(setup_info)):
-                # all called solr with something
-                assert solr_url in m.request_history[index].url
+
+            assert solr_url in m.request_history[0].url
+
+            entity_in_payload = False
+            for payload_entity in m.request_history[0].json():
                 # this info was sent as a payload
-                payload_to_solr = m.request_history[index].json()[0]
-                if payload_to_solr == asdict(entity):
-                    entity_sent_as_payload = True
+                if payload_entity == asdict(entity):
+                    entity_in_payload = True
                     break
-            assert entity_sent_as_payload
+            assert entity_in_payload
 
 
 @integration_solr

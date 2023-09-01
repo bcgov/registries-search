@@ -29,7 +29,7 @@ class SolrSynonymList(db.Model):
     __tablename__ = 'bor_solr_synonym_lists'
 
     id = db.Column(db.Integer, primary_key=True)
-    synonym = db.Column(db.String(250), index=True)
+    synonym = db.Column(db.String(250), index=True, nullable=False)
     synonym_list = db.Column(JSONB)
     synonym_type = db.Column(db.Enum(SolrSynonymType), default=SolrSynonymType.NAME, index=True)
     last_update_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)

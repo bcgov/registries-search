@@ -20,18 +20,38 @@ from bor_api.services import bor_solr
 from bor_api.services.solr.solr_docs import Entity
 
 
-def update_bor_solr(entity_id: str, event_type: SolrDocEventType) -> dict[str, str]:
-    """Update the doc for the entity_id in the solr instance."""
-    doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
-    doc_event = SolrDocEvent(event_type=event_type, solr_doc_id=doc_update.id).save()
+def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
+    """Update the docs for the entity_ids in the solr instance."""
+    entities: list[Entity] = []
+    for entity_id in entity_ids:
+        doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
+        entities.append(Entity(**doc_update.doc))
     try:
-        bor_solr.create_or_replace_docs([Entity(**doc_update.doc)])
-        doc_event.event_status = SolrDocEventStatus.COMPLETE
-        doc_event.save()
+        bor_solr.create_or_replace_docs(entities)
+        SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
     except Exception as err:  # noqa: B902
         # log / update event / pass err
-        current_app.logger.debug('Failed to %s solr for %s', event_type, entity_id)
-        doc_event.event_status = SolrDocEventStatus.ERROR
-        doc_event.save()
+        current_app.logger.debug('Failed to UPDATE solr for %s', entity_ids)
+        SolrDocEvent.update_events_status(SolrDocEventStatus.ERROR, doc_events)
+        raise err
+
+
+def resync_bor_solr(entity_ids: list[str]):
+    """Resync the docs for the entity_ids in the solr instance."""
+    entities: list[Entity] = []
+    doc_events: list[SolrDocEvent] = []
+    for entity_id in entity_ids:
+        doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
+        entities.append(Entity(**doc_update.doc))
+        doc_event = SolrDocEvent(event_type=SolrDocEventType.RESYNC, solr_doc_id=doc_update.id).save()
+        doc_events.append(doc_event)
+    try:
+        bor_solr.create_or_replace_docs(entities)
+        SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
+
+    except Exception as err:  # noqa: B902
+        # log / update event / pass err
+        current_app.logger.debug('Failed to RESYNC solr for %s', entity_ids)
+        SolrDocEvent.update_events_status(SolrDocEventStatus.ERROR, doc_events)
         raise err

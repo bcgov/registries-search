@@ -17,7 +17,7 @@ from bor_api.models import SolrDoc
 from bor_api.services.solr.solr_docs import Entity
 
 
-def check_update_recorded(entity_id: str, is_party: bool = False):
+def check_update_recorded(entity_id: str, is_party=False, status=SolrDocEventStatus.PENDING):
     """Assert the given identifier was recorded for an update."""
     solr_doc = SolrDoc.find_most_recent_by_entity_id(entity_id)
     assert solr_doc.entity_id == entity_id
@@ -27,5 +27,5 @@ def check_update_recorded(entity_id: str, is_party: bool = False):
     assert solr_doc._submitter_id is not None
     doc_events = solr_doc.solr_doc_events.all()
     assert len(doc_events) == 1
-    assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
+    assert doc_events[0].event_status == status
     assert doc_events[0].event_type == SolrDocEventType.UPDATE

@@ -4,7 +4,7 @@
 		"name": "BOR API Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "6835935",
-		"_collection_link": "https://warped-escape-616276.postman.co/workspace/bc-registries~8ef8e652-492a-4d19-b978-d4f0da255b2c/collection/6835935-b71d0123-723f-4133-ad3b-4f3ba7f27c64?action=share&creator=6835935&source=collection_link"
+		"_collection_link": "https://warped-escape-616276.postman.co/workspace/bc-registries~8ef8e652-492a-4d19-b978-d4f0da255b2c/collection/6835935-b71d0123-723f-4133-ad3b-4f3ba7f27c64?action=share&source=collection_link&creator=6835935"
 	},
 	"item": [
 		{
@@ -363,12 +363,27 @@
 						{
 							"name": "basic",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [
 									{
 										"key": "Accept",
 										"type": "text",
 										"value": "application/json"
+									},
+									{
+										"key": "Account-ID",
+										"value": "1999",
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1520,7 +1535,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"e\"\n    },\n    \"rows\": 1000\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"bob\"\n    },\n    \"rows\": 1000\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1623,428 +1638,717 @@
 			"name": "internal",
 			"item": [
 				{
-					"name": "entity update 1",
-					"event": [
+					"name": "update",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "entity update 1",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 202/ACCEPTED\", function () {\r",
+											"    pm.response.to.have.status(202);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"business\": {\r\n        \"identifier\": \"FM1233334\",\r\n        \"legalName\": \"ABCD Prop\",\r\n        \"legalType\": \"SP\",\r\n        \"taxId\": \"123456789\",\r\n        \"state\": \"ACTIVE\"\r\n    },\r\n    \"businessAddresses\": {\r\n        \"businessOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664211,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664210,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        },\r\n        \"registeredOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664213,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664212,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        }\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664209,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669642,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update"
-							]
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"business\": {\r\n        \"identifier\": \"FM1233334\",\r\n        \"legalName\": \"ABCD Prop\",\r\n        \"legalType\": \"SP\",\r\n        \"taxId\": \"123456789\",\r\n        \"state\": \"ACTIVE\"\r\n    },\r\n    \"businessAddresses\": {\r\n        \"businessOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664211,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664210,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        },\r\n        \"registeredOffice\": {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664213,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Coquitlam\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"mailing\",\r\n                \"deliveryInstructions\": \"\",\r\n                \"id\": 2664212,\r\n                \"postalCode\": \"V3K 3V9\",\r\n                \"streetAddress\": \"Bc-435 North Rd\",\r\n                \"streetAddressAdditional\": \"\"\r\n            }\r\n        }\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664209,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"mailingAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669642,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "entity update 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 202/ACCEPTED\", function () {\r",
+											"    pm.response.to.have.status(202);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"business\": {\r\n        \"email\": \"ABCD@email.com\",\r\n        \"identifier\": \"BC9999990\",\r\n        \"legalName\": \"ABCD TEST BUSINESS\",\r\n        \"legalType\": \"BC\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456789\"\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sync update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/sync",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"sync"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "synonym update specific",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ADDRESS\": {\n        \"TEST\": [\"TEST\", \"TESTER\"]\n    },\n    \"NAME\": {\n        \"JOHN\": [\"JOHN\", \"JOHNATHAN\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"synonyms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "synonym update all",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"synonyms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "resync mins offset",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"resync"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "resync identifiers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"identifiers\": [\"FM1233334\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"resync"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "entity update 2",
-					"event": [
+					"name": "backup",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "backup",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"business\": {\r\n        \"email\": \"ABCD@email.com\",\r\n        \"identifier\": \"BC9999990\",\r\n        \"legalName\": \"ABCD TEST BUSINESS\",\r\n        \"legalType\": \"BC\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456789\"\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "synonym update specific",
-					"event": [
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"backup\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"backup"
+									]
+								}
+							},
+							"response": []
+						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "restore",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"ADDRESS\": {\n        \"TEST\": [\"TEST\", \"TESTER\"]\n    },\n    \"NAME\": {\n        \"JOHN\": [\"JOHN\", \"JOHNATHAN\"]\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"synonyms"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "synonym update all",
-					"event": [
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"restore\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"backup"
+									]
+								}
+							},
+							"response": []
+						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "restore status",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"synonyms"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "resync mins offset",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(201);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"restorestatus\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"backup"
+									]
 								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
 							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"resync"
-							]
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "resync identifiers",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(201);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"identifiers\": [\"FM1233334\"]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"resync"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		}
