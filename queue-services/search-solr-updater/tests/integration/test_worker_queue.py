@@ -32,11 +32,12 @@ async def test_events_listener_queue(app, config, stan_server, event_loop, clien
     """Assert that events can be retrieved and decoded from the Queue."""
     identifier = 'FM1234567'
     kc_url = config['KEYCLOAK_AUTH_TOKEN_URL']
-    bus_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}'
-    parties_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}/parties'
+    bus_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}?slim=True'
+    parties_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}/parties?slim=True'
     search_url = f'{config["SEARCH_API_URL"]}/internal/solr/update'
     business_json = {
         'business': {
+            'goodStanding': True,
             'identifier': identifier,
             'legalName': 'test name',
             'legalType': 'GP',
@@ -87,11 +88,12 @@ async def test_does_not_add_director_roles(app, config, stan_server, event_loop,
     """Assert that events can be retrieved and decoded from the Queue."""
     identifier = 'FM1234567'
     kc_url = config['KEYCLOAK_AUTH_TOKEN_URL']
-    bus_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}'
-    parties_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}/parties'
+    bus_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}?slim=True'
+    parties_url = f'{config["LEAR_SVC_URL"]}/businesses/{identifier}/parties?slim=True'
     search_url = f'{config["SEARCH_API_URL"]}/internal/solr/update'
     business_json = {
         'business': {
+            'goodStanding': True,
             'identifier': identifier,
             'legalName': 'test name',
             'legalType': 'GP',
