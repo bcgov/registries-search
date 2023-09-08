@@ -299,6 +299,7 @@
   <field name="_version_" type="plong" indexed="false" stored="false"/>
   <field name="bn" type="string" indexed="false" stored="true"/>
   <field name="bn_q" type="phrase_ngram" indexed="true" stored="false"/>
+  <field name="goodStanding" type="boolean" docValues="true" indexed="true" stored="true"/>
   <field name="identifier" type="string" indexed="true" required="true" stored="true"/>
   <field name="identifier_q" type="phrase_ngram" indexed="true" stored="false"/>
   <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
