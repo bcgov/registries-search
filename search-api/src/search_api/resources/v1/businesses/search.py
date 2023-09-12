@@ -36,7 +36,7 @@ def _clean_request_args(query: str) -> str:
     expected_params = [
         SolrField.NAME.value, SolrField.IDENTIFIER.value, SolrField.BN.value,
         SolrField.PARTY_NAME.value, SolrField.PARENT_NAME.value, SolrField.PARENT_IDENTIFIER.value,
-        SolrField.PARENT_BN.value]
+        SolrField.PARENT_BN.value, SolrField.GOOD_STANDING.value]
     query_cleaner_rgx = r'(::|^)(value|' + '|'.join(expected_params) + ')(::)'
     return re.sub(query_cleaner_rgx, r'\1\2:\:', query)
 
@@ -62,6 +62,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         name = ''
         identifier = ''
         bn = ''  # pylint: disable=invalid-name
+        goodStanding = ''
         for item in query_items:
             with suppress(AttributeError):
                 if param := _parse_url_param('value', item):
@@ -72,6 +73,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     identifier = param
                 elif param := _parse_url_param(SolrField.BN.value, item):
                     bn = param  # pylint: disable=invalid-name
+                elif param := _parse_url_param(SolrField.GOOD_STANDING.value, item):
+                    goodStanding = param
         if not value:
             return jsonify({'message': "Expected url param 'query' to have 'value:<string>'."}), HTTPStatus.BAD_REQUEST
         # clean query values
@@ -79,7 +82,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
             'value': Solr.prep_query_str(value),
             SolrField.NAME_SINGLE.value: Solr.prep_query_str(name),
             SolrField.IDENTIFIER_Q.value: Solr.prep_query_str(identifier),
-            SolrField.BN_Q.value: Solr.prep_query_str(bn)
+            SolrField.BN_Q.value: Solr.prep_query_str(bn),
+            SolrField.GOOD_STANDING.value: Solr.prep_query_str(goodStanding)
         }
         # parse category params
         legal_types = None
@@ -117,7 +121,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                         'value': query['value'],
                         SolrField.NAME.value: query[SolrField.NAME_SINGLE.value] or '',
                         SolrField.IDENTIFIER.value: query[SolrField.IDENTIFIER_Q.value] or '',
-                        SolrField.BN.value: query[SolrField.BN_Q.value] or ''
+                        SolrField.BN.value: query[SolrField.BN_Q.value] or '',
+                        SolrField.GOOD_STANDING.value: query[SolrField.GOOD_STANDING.value] or ''
                     },
                     'categories': {
                         SolrField.TYPE.value: legal_types or '',

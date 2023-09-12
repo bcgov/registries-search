@@ -52,7 +52,7 @@ class Solr:
             SolrField.PARENT_TYPE.value: {'type': 'terms', 'field': SolrField.PARENT_TYPE.value}})
         # fields
         self.base_fields = f'{SolrField.BN.value},{SolrField.IDENTIFIER.value},{SolrField.NAME.value},' + \
-            f'{SolrField.STATE.value},{SolrField.TYPE.value},{SolrField.SCORE.value}'
+            f'{SolrField.STATE.value},{SolrField.TYPE.value},{SolrField.SCORE.value},{SolrField.GOOD_STANDING.value}'
         self.nest_fields_party = f'{SolrField.PARTIES.value},{SolrField.PARTY_NAME.value},' + \
             f'{SolrField.PARTY_ROLE.value},{SolrField.PARTY_TYPE.value},[child childFilter=' + '{filter}]'
         self.party_fields = f'{SolrField.PARENT_BN.value},{SolrField.PARENT_IDENTIFIER.value},' + \
