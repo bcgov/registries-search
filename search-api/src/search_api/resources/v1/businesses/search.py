@@ -62,7 +62,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         name = ''
         identifier = ''
         bn = ''  # pylint: disable=invalid-name
-        goodStanding = ''
+        good_standing = ''
         for item in query_items:
             with suppress(AttributeError):
                 if param := _parse_url_param('value', item):
@@ -74,7 +74,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                 elif param := _parse_url_param(SolrField.BN.value, item):
                     bn = param  # pylint: disable=invalid-name
                 elif param := _parse_url_param(SolrField.GOOD_STANDING.value, item):
-                    goodStanding = param
+                    good_standing = param
         if not value:
             return jsonify({'message': "Expected url param 'query' to have 'value:<string>'."}), HTTPStatus.BAD_REQUEST
         # clean query values
@@ -83,7 +83,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
             SolrField.NAME_SINGLE.value: Solr.prep_query_str(name),
             SolrField.IDENTIFIER_Q.value: Solr.prep_query_str(identifier),
             SolrField.BN_Q.value: Solr.prep_query_str(bn),
-            SolrField.GOOD_STANDING.value: Solr.prep_query_str(goodStanding)
+            SolrField.GOOD_STANDING.value: Solr.prep_query_str(good_standing)
         }
         # parse category params
         legal_types = None

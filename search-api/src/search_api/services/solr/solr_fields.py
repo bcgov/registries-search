@@ -58,7 +58,7 @@ class SolrField(BaseEnum):
     NAME_STEM_AGRO = 'name_stem_agro'
     NAME_SUGGEST = 'name_suggest'
     GOOD_STANDING = 'goodStanding'
-    
+
     # party query fields
     PARTY_NAME_Q = 'partyName_q'
     PARTY_NAME_SINGLE = 'partyName_single_term'
