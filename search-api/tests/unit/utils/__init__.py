@@ -19,7 +19,8 @@ SOLR_UPDATE_REQUEST_TEMPLATE = {
         "legalName": "ABCD Prop",
         "legalType": "SP",
         "taxId": "123456789",
-        "state": "ACTIVE"
+        "state": "ACTIVE",
+        "goodStanding": "false"
    },
    "parties":[{
         "officer": {

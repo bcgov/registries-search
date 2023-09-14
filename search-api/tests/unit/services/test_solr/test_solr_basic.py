@@ -45,15 +45,17 @@ def test_solr_doc(test_name, identifier, state, name, legal_type, bn):
 
 
 @integration_solr
-@pytest.mark.parametrize('test_name,identifier,state,name,legal_type,bn', [
-    ('test-1', 'CP1234577', 'ACTIVE', 'BASIC TEST 1', 'CP', '12345'),
+@pytest.mark.parametrize('test_name,identifier,state,name,legal_type,bn,good_standing, expected_good_standing', [
+    ('test-with-good_standing=true', 'CP1234577', 'ACTIVE', 'BASIC TEST 1', 'CP', '12345','true', True),
+    ('test-with-good_standing=false', 'CP1234577', 'ACTIVE', 'BASIC TEST 2', 'CP', '12345','false', False),
+    ('test-without-good_standing', 'CP1234577', 'ACTIVE', 'BASIC TEST 3', 'CP', '12345', None, None),
 ])
-def test_solr_create_delete(app, test_name, identifier, state, name, legal_type, bn):
-    """Assert that solr docs can be updates/searched/deleted."""
+def test_solr_create_delete(app, test_name, identifier, state, name, legal_type, bn, good_standing, expected_good_standing):
+    """Assert that solr docs can be created/deleted."""
     search_solr.init_app(app)
     search_solr.delete_all_docs()
     # add new doc
-    new_doc = create_solr_doc(identifier, name, state, legal_type, bn)
+    new_doc = create_solr_doc(identifier, name, state, legal_type, bn, None, good_standing)
     added = search_solr.create_or_replace_docs([new_doc])
     assert added.status_code == HTTPStatus.OK
     time.sleep(2)  # takes up to 1 second for solr to register update
@@ -67,6 +69,7 @@ def test_solr_create_delete(app, test_name, identifier, state, name, legal_type,
     assert docs[0][SolrField.NAME.value] == name
     assert docs[0][SolrField.STATE.value] == state
     assert docs[0][SolrField.TYPE.value] == legal_type
+    assert docs[0].get(SolrField.GOOD_STANDING.value) == expected_good_standing
     # delete doc
     deleted = search_solr.delete_docs([identifier])
     assert deleted.status_code == HTTPStatus.OK
