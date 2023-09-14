@@ -79,6 +79,12 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
         if business_status is None or business_status not in ['ACTIVE', 'HISTORICAL']:
             err.append({'error': 'A valid business state is required.', 'path': business_status_path})
 
+        good_standing_path = '/business/goodStanding'
+        good_standing = get_str(request_json, good_standing_path)
+
+        if good_standing is not None and good_standing not in ['true', 'false']:
+            err.append({'error': 'Good standing must be "true" or "false".', 'path': good_standing_path})
+
         for index, party in enumerate(request_json.get('parties', [])):
 
             if not party.get('roles'):
