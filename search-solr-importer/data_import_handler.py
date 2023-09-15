@@ -16,10 +16,12 @@
 This module is the API for the BC Registries Registry Search system.
 """
 import sys
+from datetime import datetime, timezone
 from http import HTTPStatus
 
 import psycopg2
 import requests
+from datedelta import datedelta
 from flask import current_app
 from search_api.exceptions import SolrException
 from search_api.services import search_solr
@@ -36,15 +38,23 @@ def collect_colin_data():
     current_app.logger.debug('Collecting COLIN data...')
     cursor.execute("""
         SELECT c.corp_num as identifier, c.corp_typ_cd as legal_type, c.bn_15 as tax_id,
+            c.last_ar_filed_dt as last_ar_date, c.recognition_dts as founding_date, c.transition_dt,
             cn.corp_nme as legal_name, cp.business_nme as organization_name, cp.first_nme as first_name,
             cp.last_nme as last_name, cp.middle_nme as middle_initial, cp.party_typ_cd, cp.corp_party_id as party_id,
+            cs.state_typ_cd as state_type, ct.corp_class, f.effective_dt as restoration_date,
+            j.can_jur_typ_cd as xpro_jurisdiction,
             CASE cos.op_state_typ_cd
                 when 'ACT' then 'ACTIVE' when 'HIS' then 'HISTORICAL'
                 else 'ACTIVE' END as state
         FROM corporation c
         join corp_state cs on cs.corp_num = c.corp_num
         join corp_op_state cos on cos.state_typ_cd = cs.state_typ_cd
+        join corp_type ct on ct.corp_typ_cd = c.corp_typ_cd
         join corp_name cn on cn.corp_num = c.corp_num
+        left join (select * from event e join filing f on f.event_id = e.event_id
+                   where filing_typ_cd in ('RESTF','RESXF')
+                   order by f.effective_dt desc) f on f.corp_num = c.corp_num
+        left join (select * from jurisdiction where end_event_id is null) j on j.corp_num = c.corp_num
         left join (select business_nme, first_nme, last_nme, middle_nme, corp_num, party_typ_cd, corp_party_id
                 from corp_party
                 where end_event_id is null and party_typ_cd in ('FIO','FBO')
@@ -68,8 +78,9 @@ def collect_lear_data():
     cur = conn.cursor()
     current_app.logger.debug('Collecting LEAR data...')
     cur.execute("""
-        SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id, pr.role, p.first_name,
-            p.middle_initial, p.last_name, p.organization_name, p.party_type, p.id as party_id,
+        SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id,b.last_ar_date,
+            b.founding_date,b.restoration_expiry_date,pr.role,
+            p.first_name,p.middle_initial,p.last_name,p.organization_name,p.party_type,p.id as party_id,
             CASE when b.state = 'LIQUIDATION' then 'ACTIVE' else b.state END state
         FROM businesses b
             LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
@@ -78,6 +89,50 @@ def collect_lear_data():
         WHERE b.legal_type in ('BEN', 'CP', 'SP', 'GP')
         """)
     return cur
+
+
+def is_good_standing(item_dict: dict, source: str) -> bool:  # pylint: disable=too-many-return-statements;
+    """Return the good standing value of the business."""
+    if item_dict['state'] != 'ACTIVE':
+        # Good standing is irrelevant to non-active businesses
+        return None
+    if source == 'LEAR':
+        if item_dict['legal_type'] in ['SP', 'GP']:
+            # Good standing is irrelevant to FIRMS
+            return None
+        if item_dict.get('restoration_expiry_date'):
+            # A business in limited restoration is not in good standing according to LEAR
+            return False
+        # rule directly from LEAR code
+        last_file_date = item_dict['last_ar_date'] or item_dict['founding_date']
+        return last_file_date + datedelta(years=1, months=2, days=1) > datetime.now(tz=timezone.utc)
+    # source == COLIN
+    if item_dict['corp_class'] in ['BC'] or item_dict['legal_type'] in ['LLC', 'LIC', 'A', 'B']:
+        if item_dict.get('state_typ_cd') in ['D1A', 'D1F', 'D1T', 'D2A', 'D2F', 'D2T']:
+            # Dissolution state is not in good standing
+            #   - updates into this state occur irregularly via batch job
+            #   - updates out of this state occur immediately when filing is processed
+            #     (can rely on this for a business being NOT in good standing only)
+            return False
+        if item_dict.get('xpro_jurisdiction') in ['AB', 'MB', 'SK']:
+            # NWPTA don't need to file ARs so we can't verify good standing
+            return None
+        requires_transition = item_dict['founding_date'] and item_dict['founding_date'] < datetime(2004, 3, 29)
+        if requires_transition and item_dict['transition_dt'] is None:
+            # Businesses incorporated prior to March 29th, 2004 must file a transition filing
+            if restoration_date := item_dict['restoration_date']:
+                # restored businesses that require transition have 1 year to do so
+                return restoration_date + datedelta(years=1) > datetime.utcnow()
+            return False
+        if last_file_date := (item_dict['last_ar_date'] or item_dict['founding_date']):
+            # return if the last AR or founding date was within a year and 2 months
+            return last_file_date + datedelta(years=1, months=2, days=1) > datetime.utcnow()
+        # shouldn't get here unless there's a data issue
+        current_app.logger.debug(
+            'Business %s has no last_ar_filed_dt or recognition_dts in their corporation record.',
+            item_dict['identifier'])
+    # requirements unclear/untested for other COLIN cases
+    return None
 
 
 def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: disable=too-many-branches, too-many-locals
@@ -113,6 +168,8 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
 
     for item in data:
         item_dict = dict(zip([x[0].lower() for x in cur.description], item))
+        # NOTE: if a business has > 1 restoration filing it will have a record per restoration
+        #  - code will ignore duplicates below (expects most relevant restoration to come first)
         base_doc_already_added = item_dict['identifier'] in prepped_data
         has_party = item_dict.get('party_id')
         if has_party:
@@ -127,7 +184,8 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
             if item_dict['party_id'] in prepped_data[item_dict['identifier']]['parties']:
                 # party doc already added, add extra role
                 party_roles = prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']]['partyRoles']
-                party_roles.append(item_dict['role'])
+                if item_dict['role'] not in party_roles:
+                    party_roles.append(item_dict['role'])
             else:
                 # add party doc to base doc
                 prepped_data[item_dict['identifier']]['parties'][item_dict['party_id']] = {
@@ -146,9 +204,10 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
             if source == 'COLIN' and item_dict['legal_type'] in ['BC', 'CC', 'ULC']:
                 identifier = f'BC{identifier}'
             prepped_data[item_dict['identifier']] = {
+                'goodStanding': is_good_standing(item_dict, source),
+                'legalType': item_dict['legal_type'],
                 'identifier': identifier,
                 'name': item_dict['legal_name'],
-                'legalType': item_dict['legal_type'],
                 'status': item_dict['state'],
                 'bn': item_dict['tax_id']
             }
@@ -230,10 +289,10 @@ def load_search_core():  # pylint: disable=too-many-statements
             search_solr.delete_all_docs()
         # execute update to solr in batches
         current_app.logger.debug('Importing records from COLIN...')
-        count = update_solr(prepped_colin_data, 'COLIN')
+        # count = update_solr(prepped_colin_data, 'COLIN')
         current_app.logger.debug('COLIN import completed.')
         current_app.logger.debug('Importing records from LEAR...')
-        count += update_solr(prepped_lear_data, 'LEAR')
+        count = update_solr(prepped_lear_data, 'LEAR')
         current_app.logger.debug('LEAR import completed.')
         current_app.logger.debug(f'Total records imported: {count}')
 
