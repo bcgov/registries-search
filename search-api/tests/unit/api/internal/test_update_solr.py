@@ -68,8 +68,12 @@ def test_update_business_in_solr(session, client, jwt, mocker):
 @integration_solr
 @pytest.mark.parametrize('test_name, legal_name, good_standing, tax_id', [
     ('remove-tax-id', 'ABCD Prop', 'true', None),
-    ('update-good-standing', 'ABCD Prop', 'false', '123456789'),
     ('update-legal-name', 'ABCDE Prop', 'true', '123456789'),
+    ('update-good-standing-string-false', 'ABCD Prop', 'false', '123456789'),
+    ('update-good-standing-string-true', 'ABCD Prop', 'true', '123456789'),
+    ('update-good-standing-boolean-false', 'ABCD Prop', False, '123456789'),
+    ('update-good-standing-boolean-true', 'ABCD Prop', True, '123456789'),
+    ('update-good-standing-none', 'ABCD Prop', None, '123456789'),
 ])
 def test_update_business_in_solr_with_varying_data(session, client, jwt, mocker, test_name, legal_name, good_standing, tax_id):
     """Assert that update operation is successful."""
