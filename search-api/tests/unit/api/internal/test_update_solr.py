@@ -66,20 +66,30 @@ def test_update_business_in_solr(session, client, jwt, mocker):
 
 
 @integration_solr
-def test_update_business_no_tax_id(session, client, jwt, mocker):
+@pytest.mark.parametrize('test_name, legal_name, good_standing, tax_id', [
+    ('remove-tax-id', 'ABCD Prop', 'true', None),
+    ('update-legal-name', 'ABCDE Prop', 'true', '123456789'),
+    ('update-good-standing-string-false', 'ABCD Prop', 'false', '123456789'),
+    ('update-good-standing-string-true', 'ABCD Prop', 'true', '123456789'),
+    ('update-good-standing-boolean-false', 'ABCD Prop', False, '123456789'),
+    ('update-good-standing-boolean-true', 'ABCD Prop', True, '123456789'),
+    ('update-good-standing-none', 'ABCD Prop', None, '123456789'),
+])
+def test_update_business_in_solr_with_varying_data(session, client, jwt, mocker, test_name, legal_name, good_standing, tax_id):
     """Assert that update operation is successful."""
-    no_tax_id = deepcopy(REQUEST_TEMPLATE)
-    del no_tax_id['business']['taxId']
-    no_tax_id['business']['identifier'] = 'FM1111111'
+    request_json = deepcopy(REQUEST_TEMPLATE)
+    request_json['business']['legalName'] = legal_name
+    request_json['business']['goodStanding'] = good_standing
+    request_json['business']['taxId'] = tax_id
     api_response = client.put(f'/api/v1/internal/solr/update',
-                              data=json.dumps(no_tax_id),
+                              data=json.dumps(request_json),
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                            'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.OK
     time.sleep(2)  # wait for solr to register update
-    identifier = no_tax_id['business']['identifier']
+    identifier = request_json['business']['identifier']
     search_response = client.get(f'/api/v1/businesses/search/facets?query=value:{identifier}',
                                  headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                               'content-type': 'application/json'})
@@ -139,10 +149,15 @@ def test_update_business_in_solr_missing_data(session, client, jwt, mocker):
 
 
 @integration_solr
-def test_update_business_in_solr_invalid_data(session, client, jwt, mocker):
+@pytest.mark.parametrize('test_name, party_type, good_standing', [
+    ('valid-goodStanding-should-pass', 'organization', 'non-boolean'),
+    ('invalid-goodStanding-should-fail', 'invalid type', 'true'),
+])
+def test_update_business_in_solr_invalid_data(session, client, jwt, mocker, test_name, party_type, good_standing):
     """Assert that error is returned."""
     request_json = deepcopy(REQUEST_TEMPLATE)
-    request_json['parties'][0]['officer']['partyType'] = 'test'
+    request_json['parties'][0]['officer']['partyType'] = party_type
+    request_json['business']['goodStanding'] = good_standing
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',

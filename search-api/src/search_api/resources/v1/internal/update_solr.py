@@ -137,7 +137,8 @@ def _prepare_data(request_json: Dict) -> BusinessDoc:
         identifier=f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
         legalType=legal_type,
         name=business_info['legalName'],
-        status=business_info['state'])
+        status=business_info['state'],
+        goodStanding=business_info.get('goodStanding'))
 
     if party_info:
         party_list = []

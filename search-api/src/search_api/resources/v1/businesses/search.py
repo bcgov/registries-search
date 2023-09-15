@@ -62,6 +62,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         name = ''
         identifier = ''
         bn = ''  # pylint: disable=invalid-name
+
         for item in query_items:
             with suppress(AttributeError):
                 if param := _parse_url_param('value', item):
@@ -72,6 +73,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     identifier = param
                 elif param := _parse_url_param(SolrField.BN.value, item):
                     bn = param  # pylint: disable=invalid-name
+
         if not value:
             return jsonify({'message': "Expected url param 'query' to have 'value:<string>'."}), HTTPStatus.BAD_REQUEST
         # clean query values

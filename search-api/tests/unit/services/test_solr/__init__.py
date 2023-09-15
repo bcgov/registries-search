@@ -16,7 +16,7 @@ from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
 from search_api.services.solr.solr_fields import SolrField
 
 
-def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) -> BusinessDoc:
+def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None, goodStanding=None) -> BusinessDoc:
     solr_parties = None
     if parties:
         solr_parties = []
@@ -36,16 +36,17 @@ def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None) 
         legalType=legal_type,
         name=name,
         status=state,
+        goodStanding=goodStanding,
         bn=bn,
         parties=solr_parties
     )
 
 
 SOLR_TEST_DOCS = [
-    create_solr_doc('CP1234567', 'test 1234', 'ACTIVE', 'CP', 'BN00012334'),
-    create_solr_doc('CP0234567', 'tester 1111', 'HISTORICAL', 'CP', '09876K'),
-    create_solr_doc('CP0034567', 'tests 2222', 'ACTIVE', 'CP'),
-    create_solr_doc('BC0004567', 'test 3333', 'ACTIVE', 'BEN', '00987766800988'),
+    create_solr_doc('CP1234567', 'test 1234', 'ACTIVE', 'CP', 'BN00012334', None, True),
+    create_solr_doc('CP0234567', 'tester 1111', 'HISTORICAL', 'CP', '09876K', None, True),
+    create_solr_doc('CP0034567', 'tests 2222', 'ACTIVE', 'CP', None, None, True),
+    create_solr_doc('BC0004567', 'test 3333', 'ACTIVE', 'BEN', '00987766800988', None, False),
     create_solr_doc('BC0000567', '4444 test', 'HISTORICAL', 'BC', 'BN9000776557'),
     create_solr_doc('BC0000067', 'single', 'ACTIVE', 'BEN', '242217'),
     create_solr_doc('BC0000007', 'lots of words in here', 'ACTIVE', 'BEN', '124221'),

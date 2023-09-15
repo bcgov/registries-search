@@ -38,6 +38,7 @@ class BusinessDoc:
     legalType: str
     name: str
     status: str
+    goodStanding: bool = None
     bn: Optional[str] = None
     identifier_q: str = None
     parties: Optional[List[PartyDoc]] = None
