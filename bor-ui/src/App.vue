@@ -61,7 +61,7 @@ import { RegistriesInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
 
-const aboutText: string = 'Search UI v' + process.env.VUE_APP_VERSION
+const aboutText: string = 'Director Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)
 const appReady = ref(false)
 const haveData = ref(true)
