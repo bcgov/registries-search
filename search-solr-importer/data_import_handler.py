@@ -289,10 +289,10 @@ def load_search_core():  # pylint: disable=too-many-statements
             search_solr.delete_all_docs()
         # execute update to solr in batches
         current_app.logger.debug('Importing records from COLIN...')
-        # count = update_solr(prepped_colin_data, 'COLIN')
+        count = update_solr(prepped_colin_data, 'COLIN')
         current_app.logger.debug('COLIN import completed.')
         current_app.logger.debug('Importing records from LEAR...')
-        count = update_solr(prepped_lear_data, 'LEAR')
+        count += update_solr(prepped_lear_data, 'LEAR')
         current_app.logger.debug('LEAR import completed.')
         current_app.logger.debug(f'Total records imported: {count}')
 
