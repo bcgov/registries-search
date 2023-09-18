@@ -117,7 +117,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     filter: {
       clearable: true,
       filterApiFn: (filterVal: string) => filterSearch(['categories', 'roles', 'relatedState'], filterVal),
-      label: 'State',
+      label: 'Status',
       itemValue: 'value',
       itemsFn: facetItems,
       itemsFnVal: 'relatedState',
@@ -131,7 +131,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
       if (val.roles) return capFirstLetter(`${val.roles[0].relatedState}`)
       return 'N/A'
     },
-    value: 'Business State',
+    value: 'Business Status',
     width: '9%'
   },
   {
@@ -158,7 +158,7 @@ export const SearchEntityHeaders: BaseTableHeaderI[] = [
     hasFilter: false,
     hasSort: false,
     slotId: 'action',
-    value: 'Actions',
+    value: '',
     width: '10%'
   }
 ]

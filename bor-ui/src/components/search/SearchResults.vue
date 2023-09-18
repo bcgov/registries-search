@@ -31,7 +31,7 @@
                 class="search-table__export-select pt-1 rounded-top"
                 density="default"
                 hide-details
-                :items="[2000,1000,500,250,100,50]"
+                :items="[50,100,250,500,1000,2000]"
                 label="Maximum results to export"
                 style="width: 225px;"
                 variant="underlined"
