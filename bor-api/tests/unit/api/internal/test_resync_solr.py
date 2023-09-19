@@ -55,6 +55,7 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
     ('resync_minutes_single', {'minutesOffset': 5}, [TEST_PERSONS[0]]),
     ('resync_minutes_multi', {'minutesOffset': 5}, [TEST_PERSONS[0], TEST_PERSONS[1]]),
     ('resync_minutes_mix', {'minutesOffset': 5}, [TEST_PERSONS[0], TEST_PERSONS[1], TEST_BUSINESSES[2]]),
+    ('resync_minutes_nothing_to_do', {'minutesOffset': 5}, []),
     ('resync_identifiers_single', {'identifiers': []}, [TEST_PERSONS[0]]),
     ('resync_identifiers_multi', {'identifiers': []}, [TEST_PERSONS[0], TEST_PERSONS[1]]),
     ('resync_identifiers_mix', {'identifiers': []}, [TEST_PERSONS[0], TEST_PERSONS[1], TEST_BUSINESSES[0]]),
@@ -78,30 +79,35 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
         # check success
         assert api_response.status_code == HTTPStatus.CREATED
         
-        # check call to solr mock
-        assert m.called == True
-        assert m.call_count == 1  # batch call for all entities
-        
-        for info in setup_info:
-            entity = info[0]
-            solr_doc = info[1]
-            solr_doc_old = info[2]
-            doc_events = solr_doc.solr_doc_events.all()
-            assert len(doc_events) == 1
-            assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
-            assert doc_events[0].event_type == SolrDocEventType.RESYNC
-            # did not update the older record
-            assert len(solr_doc_old.solr_doc_events.all()) == 0
+        if not entities:
+            # should not have resynced anything since nothing to update
+            assert m.called == False
+            assert m.call_count == 0
+        else:
+            # check call to solr mock
+            assert m.called == True
+            assert m.call_count == 1  # batch call for all entities
+            
+            for info in setup_info:
+                entity = info[0]
+                solr_doc = info[1]
+                solr_doc_old = info[2]
+                doc_events = solr_doc.solr_doc_events.all()
+                assert len(doc_events) == 1
+                assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
+                assert doc_events[0].event_type == SolrDocEventType.RESYNC
+                # did not update the older record
+                assert len(solr_doc_old.solr_doc_events.all()) == 0
 
-            assert solr_url in m.request_history[0].url
+                assert solr_url in m.request_history[0].url
 
-            entity_in_payload = False
-            for payload_entity in m.request_history[0].json():
-                # this info was sent as a payload
-                if payload_entity == asdict(entity):
-                    entity_in_payload = True
-                    break
-            assert entity_in_payload
+                entity_in_payload = False
+                for payload_entity in m.request_history[0].json():
+                    # this info was sent as a payload
+                    if payload_entity == asdict(entity):
+                        entity_in_payload = True
+                        break
+                assert entity_in_payload
 
 
 @integration_solr

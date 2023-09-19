@@ -113,8 +113,11 @@ def resync_solr():
             resync_date = from_datetime - timedelta(minutes=minutes_offset)
             identifiers_to_resync = SolrDoc.get_updated_entity_ids_after_date(resync_date)
 
-        current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
-        resync_bor_solr(identifiers_to_resync)
+        if identifiers_to_resync:
+            current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+            resync_bor_solr(identifiers_to_resync)
+        else:
+            current_app.logger.debug('No records to resync.')
 
         return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
 
