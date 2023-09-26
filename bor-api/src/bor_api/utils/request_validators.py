@@ -42,6 +42,9 @@ def validate_search_request(user: User) -> tuple[dict, list[dict]]:
         # individual flag not enabled for user. Check account has product subscription
         current_app.logger.debug('Individual access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
+        if not isinstance(products, list):
+            current_app.logger.debug(products)
+            raise AuthorizationException(f'Error collecting information from Auth service. {products}')
         if not any(p['code'] == 'NDS' and p['subscriptionStatus'] == 'ACTIVE' for p in products):
             raise AuthorizationException('This account is not authorized to access Director Search.')
     current_app.logger.debug('Access granted.')

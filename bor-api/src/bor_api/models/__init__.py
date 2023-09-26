@@ -16,9 +16,10 @@
 # flake8: noqa I001
 from .db import db
 from .user import User
+from .search_history import SearchHistory
 from .solr_doc_event import SolrDocEvent
 from .solr_doc import SolrDoc
 from .solr_synonym_list import SolrSynonymList
 
 
-__all__ = ('db', 'User', 'SolrDoc', 'SolrDocEvent', 'SolrSynonymList')
+__all__ = ('db', 'User', 'SearchHistory', 'SolrDoc', 'SolrDocEvent', 'SolrSynonymList')

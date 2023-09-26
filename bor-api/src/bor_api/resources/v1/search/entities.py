@@ -18,7 +18,7 @@ from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.models import User
+from bor_api.models import User, SearchHistory
 from bor_api.services import bor_solr, jwt
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.utils import (SearchParams, entities_search, parse_facets,
@@ -108,9 +108,15 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                               child_date_ranges=child_date_ranges)
 
         results = entities_search(params)
+        docs = results.get('response', {}).get('docs')
+
+        # save search in the db
+        SearchHistory(params=request_json,
+                      results=docs,
+                      submitter_id=user.id).save()
 
         if str(request.accept_mimetypes) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-            return xlsx_response(results.get('response', {}).get('docs'))
+            return xlsx_response(docs)
 
         response = {
             'facets': parse_facets(results),
@@ -140,7 +146,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                     'start': start or bor_solr.default_start
                 },
                 'totalResults': results.get('response', {}).get('numFound'),
-                'results': results.get('response', {}).get('docs')}}
+                'results': docs}}
+
         return jsonify(response), HTTPStatus.OK
 
     except Exception as exception:  # noqa: B902

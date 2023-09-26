@@ -45,6 +45,8 @@ class User(db.Model):
     iss = db.Column(db.String(1024))
     creation_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
+    searches = db.relationship('SearchHistory', back_populates='user')
+
     @property
     def display_name(self):
         """Display name of user; do not show sensitive data like BCSC username.
