@@ -108,10 +108,10 @@ def is_good_standing(item_dict: dict, source: str) -> bool:  # pylint: disable=t
         return last_file_date + datedelta(years=1, months=2, days=1) > datetime.now(tz=timezone.utc)
     # source == COLIN
     if item_dict['corp_class'] in ['BC'] or item_dict['legal_type'] in ['LLC', 'LIC', 'A', 'B']:
-        if item_dict.get('state_typ_cd') in ['D1A', 'D1F', 'D1T', 'D2A', 'D2F', 'D2T']:
-            # Dissolution state is not in good standing
-            #   - updates into this state occur irregularly via batch job
-            #   - updates out of this state occur immediately when filing is processed
+        if item_dict.get('state_type') in ['D1A', 'D1F', 'D1T', 'D2A', 'D2F', 'D2T', 'LIQ', 'LRL', 'LRS']:
+            # Dissolution state or Liquidation or Limited Restoration or  is NOT in good standing
+            #   - updates into Dissolution states occur irregularly via batch job
+            #   - updates out of these states occur immediately when filing is processed
             #     (can rely on this for a business being NOT in good standing only)
             return False
         if item_dict.get('xpro_jurisdiction') in ['AB', 'MB', 'SK']:

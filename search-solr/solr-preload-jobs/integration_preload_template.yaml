@@ -23,61 +23,61 @@ objects:
                 valueFrom:
                   secretKeyRef:
                     key: ORACLE_USER
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: ORACLE_PASSWORD
                 valueFrom:
                   secretKeyRef:
                     key: ORACLE_PASSWORD
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: ORACLE_DB_NAME
                 valueFrom:
                   secretKeyRef:
                     key: ORACLE_DB_NAME
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: ORACLE_HOST
                 valueFrom:
                   secretKeyRef:
                     key: ORACLE_HOST
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: ORACLE_PORT
                 valueFrom:
                   secretKeyRef:
                     key: ORACLE_PORT
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: DATABASE_HOST
                 valueFrom:
                   secretKeyRef:
                     key: DATABASE_HOST
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: DATABASE_NAME
                 valueFrom:
                   secretKeyRef:
                     key: DATABASE_NAME
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: DATABASE_PASSWORD
                 valueFrom:
                   secretKeyRef:
                     key: DATABASE_PASSWORD
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: DATABASE_PORT
                 valueFrom:
                   secretKeyRef:
                     key: DATABASE_PORT
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: DATABASE_USERNAME
                 valueFrom:
                   secretKeyRef:
                     key: DATABASE_USERNAME
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: POD_NAMESPACE
-                    value: integration
+                value: integration
               - name: SOLR_SVC_URL
                 value: ${PRELOAD_URL}
               - name: SOLR_BATCH_UPDATE_SIZE
                 valueFrom:
                   secretKeyRef:
                     key: SOLR_BATCH_UPDATE_SIZE
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
               - name: REINDEX_CORE
                 value: "True"
               - name: PRELOADER_JOB
@@ -86,7 +86,7 @@ objects:
                 valueFrom:
                   secretKeyRef:
                     key: FLASK_ENV
-                    name: search-solr-importer-prod-secret
+                    name: search-solr-importer-integration-secret
             image: image-registry.openshift-image-registry.svc:5000/cc892f-tools/search-solr-importer:integration
             imagePullPolicy: Always
             name: search-solr-preload-integration
