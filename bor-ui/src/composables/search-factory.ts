@@ -160,13 +160,14 @@ export const useSearch = () => {
     if (searchResp) {
       if (!searchResp.error) {
         // success
+        if (val != search._value) return  // user updated the search value after this search was triggered
+        // this is the search the user is waiting on
         if (updateFacets) search.facetsResult = searchResp.facets
         else {
           // always update entityType facets since overall counts are based off them
           search.facetsResult.fields.entityType = searchResp.facets.fields.entityType
         }
 
-        _readOnly.value = searchResp.searchResults.queryInfo.query.value
         _readOnly.error = null
         search.results = searchResp.searchResults.results
         search.totalResults = searchResp.searchResults.totalResults

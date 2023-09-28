@@ -292,7 +292,8 @@ describe('SearchResults tests', () => {
     await flushPromises()
     expect(wrapper.findComponent(BCRegDateRangePicker).isVisible()).toBe(true)
     // trigger a search (will allow filter change to trigger a new search)
-    await getSearchResults('test')
+    const searchVal = 'test'
+    await getSearchResults(searchVal)
     expect(search.filters.query.roles).toEqual({ roleDates: {} })
     expect(mockPost).toHaveBeenCalledTimes(1)
     // emit date range selection
@@ -308,7 +309,7 @@ describe('SearchResults tests', () => {
       "search/entities",
       {
         "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
-        "query": {"roles": {"roleDates": {"end": "2020-05-11", "start": "2010-03-23"}}, "value": "kial"},
+        "query": {"roles": {"roleDates": {"end": "2020-05-11", "start": "2010-03-23"}}, "value": searchVal},
         "rows": 1, "start": 0
       },
       {"baseURL": "http://mock-url.ca", "headers": {"Account-Id": 1234, "x-apikey": "key"}})
@@ -333,7 +334,8 @@ describe('SearchResults tests', () => {
   })
   it('exports the results when clicked', async () => {
     // trigger initial results
-    await getSearchResults('test')
+    const searchVal = 'test'
+    await getSearchResults(searchVal)
     expect(mockPost).toHaveBeenCalledTimes(1)
     // FUTURE: click the export button
     await wrapper.vm.exportToXlsx()
@@ -343,7 +345,7 @@ describe('SearchResults tests', () => {
       "search/entities",
       {
         "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
-        "query": {"roles": {"roleDates": {}}, "value": "kial"}, "rows": 1000, "start": 0
+        "query": {"roles": {"roleDates": {}}, "value": searchVal}, "rows": 1000, "start": 0
       },
       {
         "baseURL": "http://mock-url.ca",
