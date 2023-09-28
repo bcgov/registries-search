@@ -120,7 +120,7 @@ const { search } = useSearch()
 
 const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
 // eslint-disable-next-line
-const directorSearchGuidePath = '/downloads/director_search_guide.pdf'
+const directorSearchGuidePath = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
 const showDocHelp = ref(false)
 const tab = ref('0')
 </script>
