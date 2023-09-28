@@ -116,13 +116,7 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DB_NAME = os.getenv('DATABASE_TEST_NAME', '')
     DB_HOST = os.getenv('DATABASE_TEST_HOST', '')
     DB_PORT = os.getenv('DATABASE_TEST_PORT', '5432')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{password}@{host}:{port}/{name}'.format(
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=int(DB_PORT),
-        name=DB_NAME,
-    )
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
     # JWT OIDC settings
     # JWT_OIDC_TEST_MODE will set jwt_manager to use
