@@ -67,10 +67,9 @@
             <li>Letter Under Seal</li>
           </ul>
           <div class="mt-6">
-            <!-- NB: CORS blocks this download from localhost -->
-            <a class="guide-download" @click="downloadFileURL(directorSearchGuideURL, 'Director Search Guide.pdf')">
+            <a class="learn-more" :href="directorSearchGuideURL" target="_blank">
               Learn how to use Director Search - User Guide
-              <v-icon class="guide-download__icon">mdi-file-download-outline</v-icon>
+              <v-icon class="learn-more__icon">mdi-open-in-new</v-icon>
             </a>
           </div>
         </div>
@@ -112,7 +111,6 @@ import { ref } from 'vue'
 import { SearchBar, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
 import { AccountType } from '@/enums'
-import { downloadFileURL } from '@/utils'
 
 // eslint-disable-next-line
 const props = defineProps<{ appReady: boolean }>()
@@ -174,14 +172,14 @@ const tab = ref('0')
   color: $gray7
 }
 
-.guide-download {
+.learn-more {
   color: $app-blue;
-  cursor: pointer;
   text-decoration: none;
 
   &__icon,
   &__icon::before {
     font-size: 18px;
+    margin-top: -1px;
   }
 }
 

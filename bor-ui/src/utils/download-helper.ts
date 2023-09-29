@@ -16,18 +16,3 @@ export const downloadFile = (data: any, fileName: string) => {
     a.remove()
   }
 }
-
-export const downloadFileURL = (url: string, filename: string) => {
-  const xhr = new XMLHttpRequest()
-  xhr.responseType = 'blob'
-  xhr.onload = () => {
-    const a = window.document.createElement('a')
-    window.document.body.appendChild(a)
-    a.setAttribute('style', 'display: none')
-    a.href = window.URL.createObjectURL(xhr.response)
-    a.download = filename
-    a.click()
-  }
-  xhr.open('GET', url)
-  xhr.send()
-}

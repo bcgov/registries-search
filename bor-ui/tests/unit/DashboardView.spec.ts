@@ -80,8 +80,9 @@ describe('DashboardView tests', () => {
     expect(wrapper.find('.doc-help-info').exists()).toBe(true)
     expect(wrapper.find('.doc-help-info .doc-help-info__content').exists()).toBe(true)
     expect(wrapper.find('.doc-help-info .doc-help-info__content').text()).toContain('Help with Director Search')
-    expect(wrapper.find('.doc-help-info .doc-help-info__content .guide-download').text())
+    expect(wrapper.find('.doc-help-info .doc-help-info__content .learn-more').text())
     .toContain('Learn how to use Director Search - User Guide')
+    expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.directorSearchGuideURL)
     // clicking again sets it back
     wrapper.find('#doc-help-btn').trigger('click')
     await flushPromises()
