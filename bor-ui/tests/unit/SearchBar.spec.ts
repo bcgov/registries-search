@@ -51,12 +51,12 @@ describe('SearchBar tests', () => {
     const searchTextField = wrapper.find('#search-bar-field')
     expect(searchTextField.exists()).toBe(true)
     // contains label
-    const label = 'label="Director Name and/or Address'
+    const label = 'label="Director Name, Address, and/or Email Address'
     expect(searchTextField.html()).toContain(label)
 
     // search bar hint
-    const hint = 'Example: &quot;John Smith&quot;, &quot;1234 St BC&quot;, &quot;VXX XXX&quot;,' +
-      ' &quot;John Smith Victoria BC&quot;'
+    const hint = 'Example: &quot;John Smith&quot;, &quot;123 Main St&quot;, &quot;V1V 1V1&quot;,' +
+      ' &quot;John Smith Victoria&quot;, &quot;j.smith@123.com&quot;'
     expect(searchTextField.html()).toContain(hint)
 
     // validation message does NOT show

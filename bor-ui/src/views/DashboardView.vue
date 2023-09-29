@@ -35,11 +35,11 @@
             associated with all businesses in British Columbia.
           </p>
           <p class="mt-6">
-            You can find people by searching for any part of the person's name,
-            or you can enter an address to find people by address. Note that all searches
-            priortize name matches, so searches for an address will list name matches first.
-            For example, searches for Parker Ave. will list matches for peoples' names containing
-            Parker above addresses containing Parker.
+            You can find people by searching for any part of the person's name or address, or 
+            their business email address. Note that all searches prioritize name matches, so 
+            searches for an address will list name matches first. For example, 
+            searches for Parker Ave. will list matches for peoples' names containing Parker 
+            above addresses containing Parker.
           </p>
           <h3 class="mt-6">Business Information</h3>
           <p class="mt-6">
@@ -93,7 +93,7 @@
       <v-window-item class="ma-0">
         <v-card class="window-item-card" flat>
           <p class="mb-7 mt-12 info-text">
-            Search for the names and addresses of people associated with businesses in BC.
+            Search for the names, addresses, and business email addresses of people associated with businesses in B.C.
           </p>
           <search-bar class="pb-5" />
           <search-results class="mt-30px" v-if="search.results!=null" />

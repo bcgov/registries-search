@@ -65,7 +65,7 @@ describe('DashboardView tests', () => {
     // expect(wrapper.find('#search-tab').classes()).not.toContain('tab-item-active')
 
     // check active window
-    const text = 'Search for the names and addresses of people associated with businesses in BC.'
+    const text = 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
     expect(wrapper.html()).toContain(text)
     expect(wrapper.findComponent(SearchBar).exists()).toBe(true)
     // search results should not render before a search is made

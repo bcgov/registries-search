@@ -38,8 +38,8 @@ const { search, filterSearch, getSearchResults } = useSearch()
 
 // search field stuff
 const searchErrorMsg = 'Enter a name and/or address'
-const searchHint = 'Example: "John Smith", "1234 St BC", "VXX XXX", "John Smith Victoria BC"'
-const searchLabel = 'Director Name and/or Address'
+const searchHint = 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.com"'
+const searchLabel = 'Director Name, Address, and/or Email Address'
 
 // search value stuff
 const searchVal = ref('')

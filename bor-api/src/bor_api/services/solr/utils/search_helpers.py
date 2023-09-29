@@ -48,6 +48,7 @@ def entities_search(params: SearchParams):
             Field.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
             Field.BN_Q: {'short': 1, 'long': 1},
             Field.ADDRESS_Q: {'short': 1, 'long': 1},
+            Field.RELATED_EMAIL_Q: {'short': 1, 'long': 1}
         },
         synonym_fields={
             Field.LEGAL_NAME_SYN_Q: 'parent',

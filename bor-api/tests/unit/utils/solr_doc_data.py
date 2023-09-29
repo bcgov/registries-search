@@ -18,10 +18,10 @@ from .solr_helpers import create_entity
 
 
 TEST_BUSINESSES = [
-    create_entity(name='test 1234', bn='BN00012334', email='1234@email.com', entity_id='CP1234567', legal_type='CP', entity_type='BUSINESS', state='ACTIVE'),
-    create_entity(name='tester 1111', bn='09876K', email='1111@email.com', entity_id='CP0234567', legal_type='CP', entity_type='BUSINESS', state='HISTORICAL'),
-    create_entity(name='tests 2222', bn='BN00012334', email='2222@email.com', entity_id='CP0034567', legal_type='CP', entity_type='BUSINESS', state='ACTIVE'),
-    create_entity(name='test 3333', bn='00987766800988', email='3333@email.com', entity_id='BC0004567', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
+    create_entity(name='test 1234', bn='BN00012334', email='abcd@email.com', entity_id='CP1234567', legal_type='CP', entity_type='BUSINESS', state='ACTIVE'),
+    create_entity(name='tester 1111', bn='09876K', email='xyz@email.com', entity_id='CP0234567', legal_type='CP', entity_type='BUSINESS', state='HISTORICAL'),
+    create_entity(name='tests 2222', bn='BN00012334', email='5555@email.com', entity_id='CP0034567', legal_type='CP', entity_type='BUSINESS', state='ACTIVE'),
+    create_entity(name='test 3333', bn='00987766800988', email='6666@email.com', entity_id='BC0004567', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
     create_entity(name='4444 test', bn='BN9000776557', entity_id='BC0000567', legal_type='BEN', entity_type='BUSINESS', state='HISTORICAL'),
     create_entity(name='single', bn='242217', entity_id='BC0000067', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
     create_entity(name='lots of words in here', bn='124221', entity_id='BC0000007', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),

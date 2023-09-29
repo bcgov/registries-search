@@ -17,6 +17,7 @@ import re
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.solr.utils.formatting_helpers import prep_query_str
 
 
 IDENTIFIER_FIELDS: list[str] = [Field.IDENTIFIER_Q.value, Field.RELATED_IDENTIFIER_Q.value, Field.RELATED_Q.value]
@@ -26,6 +27,42 @@ FIELD_SYNONYM_TYPE_MAP = {
     Field.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
     Field.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
 }
+
+
+def _get_terms(query: dict[str, str]) -> tuple(list[str]):
+    """Return the terms and email_terms."""
+    terms = query['value'].split()
+    raw_email_terms = query['email_value'].split()
+
+    if len(terms) == len(raw_email_terms):
+        return terms, raw_email_terms
+
+    email_terms = []
+    term_index = 0
+    email_term_index = 0
+    long_email_term_words = []
+    long_email_term_found = False
+
+    while term_index < len(terms):
+        if long_email_term_found:
+            email_terms.append(raw_email_terms[email_term_index])
+            # remove the first appearance of terms[term_index] from the long_email_term_words list
+            if terms[term_index] in long_email_term_words:
+                long_email_term_words.remove(terms[term_index])
+            # if long_email_term_words is empty, set long_email_term_found to False and increment email_term_index
+            if not long_email_term_words:
+                long_email_term_found = False
+                email_term_index += 1
+            term_index += 1
+        elif terms[term_index] == raw_email_terms[email_term_index]:
+            email_terms.append(raw_email_terms[email_term_index])
+            email_term_index += 1
+            term_index += 1
+        else:
+            long_email_term_found = True
+            long_email_term_words = prep_query_str(raw_email_terms[email_term_index]).split()
+
+    return terms, email_terms
 
 
 def _add_identifier(field: str, term: str, is_child=False) -> str:
@@ -143,7 +180,8 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
                      fuzzy_fields: dict[Field, dict[str, int]],
                      synonym_fields: dict[Field, str]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
-    terms = query['value'].split()
+    terms, email_terms = _get_terms(query)
+
     synonym_info = {}
     for syn_field in synonym_fields:
         synonym_info[syn_field] = {'synonym_terms': [], 'synonym_start_index': None}
@@ -196,12 +234,22 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
             if synonym_clause:
                 term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
 
+        nested_email_field_clause = build_child_query({Field.RELATED_EMAIL_Q.value: email_terms[term_index]})
+        # Add fuzzy matching for email if desired
+        if Field.RELATED_EMAIL_Q in fuzzy_fields and (
+            fuzzy_str := _get_fuzzy_str(term,
+                                        fuzzy_fields[Field.RELATED_EMAIL_Q]['short'],
+                                        fuzzy_fields[Field.RELATED_EMAIL_Q]['long'])):
+            # add fuzzy match chars before ending bracket
+            nested_email_field_clause = f'{nested_email_field_clause[:-1]}{fuzzy_str})'
+        term_clause = _update_clause(term_clause, f'({nested_email_field_clause})', 'OR')
+
         query_clause = _update_clause(query_clause, f'({term_clause})', 'AND')
 
     # extra filters
     filters = []
     for key in query:
-        if key == 'value' or not query[key]:
+        if key in ['value', 'email_value'] or not query[key]:
             continue
         terms = query[key].split()
         for term in terms:

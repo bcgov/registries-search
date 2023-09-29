@@ -45,6 +45,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
         value = query_json.get('value', None)
         query = {
             'value': prep_query_str(value),
+            'email_value': prep_query_str_adv(value),
             Field.BN_Q.value: prep_query_str(query_json.get(Field.BN.value, '')),
             Field.IDENTIFIER_Q.value: prep_query_str(query_json.get(Field.IDENTIFIER.value, '')),
             Field.LEGAL_NAME_SINGLE_Q.value: prep_query_str(query_json.get(Field.LEGAL_NAME.value, ''))
