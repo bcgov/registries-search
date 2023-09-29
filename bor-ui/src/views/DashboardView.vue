@@ -67,9 +67,10 @@
             <li>Letter Under Seal</li>
           </ul>
           <div class="mt-6">
-            <a class="learn-more" download="Director Search Guide.pdf" :href="directorSearchGuidePath" type="pdf">
+            <!-- NB: CORS blocks this download from localhost -->
+            <a class="guide-download" @click="downloadFileURL(directorSearchGuideURL, 'Director Search Guide.pdf')">
               Learn how to use Director Search - User Guide
-              <v-icon class="learn-more__icon">mdi-file-download-outline</v-icon>
+              <v-icon class="guide-download__icon">mdi-file-download-outline</v-icon>
             </a>
           </div>
         </div>
@@ -110,7 +111,8 @@ import { ref } from 'vue'
 // local
 import { SearchBar, SearchResults } from '@/components'
 import { useAuth, useSearch } from '@/composables'
-import { AccountType } from '@/enums';
+import { AccountType } from '@/enums'
+import { downloadFileURL } from '@/utils'
 
 // eslint-disable-next-line
 const props = defineProps<{ appReady: boolean }>()
@@ -120,7 +122,7 @@ const { search } = useSearch()
 
 const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
 // eslint-disable-next-line
-const directorSearchGuidePath = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
+const directorSearchGuideURL = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
 const showDocHelp = ref(false)
 const tab = ref('0')
 </script>
@@ -172,8 +174,9 @@ const tab = ref('0')
   color: $gray7
 }
 
-.learn-more {
+.guide-download {
   color: $app-blue;
+  cursor: pointer;
   text-decoration: none;
 
   &__icon,
