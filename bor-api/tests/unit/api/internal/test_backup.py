@@ -20,7 +20,7 @@ import requests_mock
 from bor_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
 
 from tests import integration_solr
-from tests.unit.utils import create_header
+from tests.unit.test_utils import create_header
     
 
 @pytest.mark.parametrize('test_name,command', [

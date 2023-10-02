@@ -21,7 +21,7 @@ from bor_api.models import SolrDoc
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.solr_docs import Entity
 
-from tests.unit.utils import SOLR_TEST_DOCS
+from tests.unit.test_utils import SOLR_TEST_DOCS
 
 
 def test_solr_doc(session):

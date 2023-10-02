@@ -24,7 +24,7 @@ from bor_api.enums import SolrDocEventStatus
 from bor_api.services import bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
 
-from tests.unit.utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
+from tests.unit.test_utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
 from tests import integration_solr
 
 from . import check_update_recorded

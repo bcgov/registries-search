@@ -172,10 +172,17 @@ def test_find_synonym_terms(session, test_name, term: str, term_index: int, term
     ('test_email_clause_2',
      {'query': {'value':'email com name', 'email_value': '@email.com name'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child'}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:email OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:@email.com))) AND ({Field.LEGAL_NAME_Q.value}:com OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:@email.com))) AND ({Field.LEGAL_NAME_Q.value}:name OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:name)))', 'filter': []}),
-
     ('test_email_clause_3',
      {'query': {'value':'email com name email', 'email_value': '@email.com name email'}, 'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child'}},
      {'query': f'({Field.LEGAL_NAME_Q.value}:email OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:@email.com))) AND ({Field.LEGAL_NAME_Q.value}:com OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:@email.com))) AND ({Field.LEGAL_NAME_Q.value}:name OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:name))) AND ({Field.LEGAL_NAME_Q.value}:email OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:email)))', 'filter': []}),
+    ('test_email_clause_fuzzy_1',
+     {'query': {'value':'name 123 email com', 'email_value': 'name 123@email.com'},
+      'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {Field.RELATED_EMAIL_Q: {'short': 1, 'long': 1}}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child'}},
+     {'query': f'({Field.LEGAL_NAME_Q.value}:name OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:name~1))) AND ({Field.LEGAL_NAME_Q.value}:123 OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1))) AND ({Field.LEGAL_NAME_Q.value}:email OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1))) AND ({Field.LEGAL_NAME_Q.value}:com OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1)))', 'filter': []}),
+    ('test_email_clause_fuzzy_2',
+     {'query': {'value':'namelong 123 email com', 'email_value': 'namelong 123@email.com'},
+      'fields': [Field.LEGAL_NAME_Q], 'nested_fields': [], 'boost': {}, 'fuzzy': {Field.LEGAL_NAME_Q: {'short': 1, 'long': 2}, Field.RELATED_EMAIL_Q: {'short': 1, 'long': 1}}, 'syns': {Field.LEGAL_NAME_SYN_Q: 'parent', Field.ADDRESS_SYN_Q: 'child'}},
+     {'query': f'({Field.LEGAL_NAME_Q.value}:namelong OR {Field.LEGAL_NAME_Q.value}:namelong~2 OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:namelong~1))) AND ({Field.LEGAL_NAME_Q.value}:123 OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1))) AND ({Field.LEGAL_NAME_Q.value}:email OR {Field.LEGAL_NAME_Q.value}:email~1 OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1))) AND ({Field.LEGAL_NAME_Q.value}:com OR (({PRE_CHILD_FILTER_CLAUSE}{Field.RELATED_EMAIL_Q.value}:123@email.com~1)))', 'filter': []}),
 ])
 def test_build_base_query(app, session, test_name, params, expected):
     """Assert that the build_base_query function works as expected."""

@@ -24,7 +24,7 @@ from bor_api.services import bor_solr
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 
 from tests import integration_solr
-from tests.unit.utils import SOLR_TEST_DOCS, create_entity, factory_entity_default
+from tests.unit.test_utils import SOLR_TEST_DOCS, create_entity, factory_entity_default
 
 
 @integration_solr

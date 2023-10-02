@@ -19,7 +19,7 @@ import pytest
 from bor_api.services.solr.bor_solr_fields import SolrField as Field
 from bor_api.services.solr.solr_docs import Entity
 
-from tests.unit.utils.solr_helpers import factory_entity_default
+from tests.unit.test_utils.solr_helpers import factory_entity_default
 
 
 @pytest.mark.parametrize('test_name,name,entity_type', [

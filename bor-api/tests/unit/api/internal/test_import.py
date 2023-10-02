@@ -25,7 +25,7 @@ from bor_api.enums import SolrDocEventStatus
 from bor_api.services import bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
 
-from tests.unit.utils import SOLR_TEST_DOCS, create_header
+from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
 from tests import integration_solr
 
 from . import check_update_recorded

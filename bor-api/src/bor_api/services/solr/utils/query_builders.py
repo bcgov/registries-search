@@ -234,10 +234,11 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
             if synonym_clause:
                 term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
 
+        # add special nested clause for related email
         nested_email_field_clause = build_child_query({Field.RELATED_EMAIL_Q.value: email_terms[term_index]})
         # Add fuzzy matching for email if desired
         if Field.RELATED_EMAIL_Q in fuzzy_fields and (
-            fuzzy_str := _get_fuzzy_str(term,
+            fuzzy_str := _get_fuzzy_str(email_terms[term_index],
                                         fuzzy_fields[Field.RELATED_EMAIL_Q]['short'],
                                         fuzzy_fields[Field.RELATED_EMAIL_Q]['long'])):
             # add fuzzy match chars before ending bracket

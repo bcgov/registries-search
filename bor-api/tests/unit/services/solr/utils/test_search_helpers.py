@@ -22,7 +22,7 @@ from bor_api.services.solr.utils import SearchParams, entities_search
 from bor_api.services.solr.utils.query_builders import PRE_CHILD_FILTER_CLAUSE
 from bor_api.services.solr.utils.search_helpers import _add_category_filters
 
-from tests.unit.utils import SOLR_TEST_DOCS
+from tests.unit.test_utils import SOLR_TEST_DOCS
 
 
 BASIC_PAYLOAD = {

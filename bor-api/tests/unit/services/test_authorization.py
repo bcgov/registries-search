@@ -20,7 +20,7 @@ import pytest
 from flask import current_app
 
 from bor_api.services import authz
-from tests.unit.utils import helper_create_jwt
+from tests.unit.test_utils import helper_create_jwt
 
 
 MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
