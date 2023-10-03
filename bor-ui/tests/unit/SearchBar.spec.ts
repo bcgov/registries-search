@@ -56,7 +56,7 @@ describe('SearchBar tests', () => {
 
     // search bar hint
     const hint = 'Example: &quot;John Smith&quot;, &quot;123 Main St&quot;, &quot;V1V 1V1&quot;,' +
-      ' &quot;John Smith Victoria&quot;, &quot;j.smith@123.com&quot;'
+      ' &quot;John Smith Victoria&quot;, &quot;j.smith@123.aba&quot;'
     expect(searchTextField.html()).toContain(hint)
 
     // validation message does NOT show
