@@ -120,7 +120,7 @@ def _prepare_data(request_json: Dict) -> BusinessDoc:
         alternate_names = business['alternateNames']
         if len(alternate_names) > 1:
             current_app.logger.error('Business has more than one operating name: %s', business['identifier'])
-        return alternate_names[0]['operatingName']
+        return alternate_names[0]['operatingName'].strip()
 
     def get_party_name(officer: Dict[str, str]) -> str:
         """Return the parsed name of the party in the given doc info."""
