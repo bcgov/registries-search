@@ -22,7 +22,8 @@ from flask import current_app
 from search_api.services import authz
 from search_api.services.validator import RequestValidator
 
-from tests.unit.utils import SOLR_UPDATE_REQUEST_TEMPLATE
+from tests.unit.utils import (SOLR_UPDATE_REQUEST_TEMPLATE_CORP as CORP_TEMPLATE,
+                              SOLR_UPDATE_REQUEST_TEMPLATE_FIRM as FIRM_TEMPLATE)
 from tests.unit.services.utils import helper_create_jwt
 
 
@@ -112,49 +113,61 @@ def test_document_access_request_invalid(client, session, jwt, requests_mock, te
     assert err[0]['error'] == error_message
 
 
-@pytest.mark.parametrize('test_name, error_message', [
-    ('success', None),
-    ('no_identifier', 'Identifier is required.'),
-    ('no_legal_name', 'Business Name is required.'),
-    ('no_legal_type', 'Business Type is required.'),
-    ('no_status', 'A valid business state is required.'),
-    ('no_party_type', 'Party Type is required.'),
-    ('invalid_party_type', 'Invalid party type.'),
-    ('no_roles', 'Party Roles is required.'),
-    ('invalid_role', 'Only Partner or Proprietor roles are accepted.'),
-    ('no_person_name', 'First name or middle name or last name is required.'),
-    ('no_org_name', 'Organization name is required.'),
+@pytest.mark.parametrize('test_name, corp_err_msg, firm_err_msg', [
+    ('success', None, None),
+    ('no_identifier', 'Identifier is required.', 'Identifier is required.'),
+    ('no_legal_name', 'Business Name is required.', 'Business Name is required.'),
+    ('no_legal_type', 'Business Type is required.', 'Business Type is required.'),
+    ('no_status', 'A valid business state is required.', 'A valid business state is required.'),
+    ('no_party_type', None, 'Party Type is required.'),
+    ('invalid_party_type', None, 'Invalid party type.'),
+    ('no_roles', None, 'Party Roles is required.'),
+    ('invalid_role', None, 'Only Partner or Proprietor roles are accepted.'),
+    ('no_person_name', None, 'First name or middle name or last name is required.'),
+    ('no_org_name', None, 'Organization name is required.'),
 ])
-def test_validate_solr_update_request(client, session, test_name, error_message):
+def test_validate_solr_update_request(client, session, test_name, corp_err_msg, firm_err_msg):
     """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
     # setup
-    request_template_copy = copy.deepcopy(SOLR_UPDATE_REQUEST_TEMPLATE)
+    corp_template_copy = copy.deepcopy(CORP_TEMPLATE)
+    firm_template_copy = copy.deepcopy(FIRM_TEMPLATE)
     if test_name == 'no_identifier':
-        del request_template_copy['business']['identifier']
+        del corp_template_copy['business']['identifier']
+        del firm_template_copy['business']['identifier']
     elif test_name == 'no_legal_name':
-        del request_template_copy['business']['legalName']
+        del corp_template_copy['business']['legalName']
+        del firm_template_copy['business']['legalName']
+        del firm_template_copy['business']['alternateNames'][0]['operatingName']
     elif test_name == 'no_legal_type':
-        del request_template_copy['business']['legalType']
+        del corp_template_copy['business']['legalType']
+        del firm_template_copy['business']['legalType']
     elif test_name == 'no_status':
-        del request_template_copy['business']['state']
+        del corp_template_copy['business']['state']
+        del firm_template_copy['business']['state']
     elif test_name == 'no_party_type':
-        del request_template_copy['parties'][0]['officer']['partyType']
+        del firm_template_copy['parties'][0]['officer']['partyType']
     elif test_name == 'invalid_party_type':
-        request_template_copy['parties'][0]['officer']['partyType'] = 'test'
+        firm_template_copy['parties'][0]['officer']['partyType'] = 'test'
     elif test_name == 'no_roles':
-        del request_template_copy['parties'][0]['roles']
+        del firm_template_copy['parties'][0]['roles']
     elif test_name == 'invalid_role':
-        request_template_copy['parties'][0]['roles'][0]['roleType'] = 'director'
+        firm_template_copy['parties'][0]['roles'][0]['roleType'] = 'director'
     elif test_name == 'no_org_name':
-        del request_template_copy['parties'][0]['officer']['organizationName']
+        del firm_template_copy['parties'][0]['officer']['organizationName']
     elif test_name == 'no_person_name':
-        del request_template_copy['parties'][0]['officer']['organizationName']
-        request_template_copy['parties'][0]['officer']['partyType'] = 'person'
+        del firm_template_copy['parties'][0]['officer']['organizationName']
+        firm_template_copy['parties'][0]['officer']['partyType'] = 'person'
 
-    err =RequestValidator.validate_solr_update_request(request_template_copy)
+    corp_err = RequestValidator.validate_solr_update_request(corp_template_copy)
+    firm_err = RequestValidator.validate_solr_update_request(firm_template_copy)
     # check
 
-    if test_name == 'success':
-        assert not err
+    if corp_err_msg is None:
+        assert not corp_err
     else:
-        assert err[0]['error'] == error_message
+        assert corp_err[0]['error'] == corp_err_msg
+
+    if firm_err_msg is None:
+        assert not firm_err
+    else:
+        assert firm_err[0]['error'] == firm_err_msg
