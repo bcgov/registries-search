@@ -84,7 +84,7 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
 
         good_standing_path = '/business/goodStanding'
         if good_standing := request_json['business'].get('goodStanding'):
-            if not (good_standing.lower() == 'true' or good_standing.lower() == 'false'):
+            if not (str(good_standing).lower() == 'true' or str(good_standing).lower() == 'false'):
                 err.append({'error': 'Good standing must be a valid boolean value.', 'path': good_standing_path})
 
         for index, party in enumerate(request_json.get('parties', [])):

@@ -66,10 +66,11 @@ def test_update_business_in_solr(session, client, jwt, test_name, template):
     assert search_response.status_code == HTTPStatus.OK
     assert len(search_response.json['searchResults']['results']) == 1
     result = search_response.json['searchResults']['results'][0]
+    print(result)
     if template['business']['legalType'] in ['SP', 'GP']:
-        assert result['legalName'] == template['business']['alternateNames'][0]['operatingName']
+        assert result['name'] == template['business']['alternateNames'][0]['operatingName']
     else:
-        assert result['legalName'] == template['business']['legalName']
+        assert result['name'] == template['business']['legalName']
 
 @integration_solr
 @pytest.mark.parametrize('test_name, legal_name, good_standing, tax_id', [
@@ -81,18 +82,20 @@ def test_update_business_in_solr(session, client, jwt, test_name, template):
     ('update-good-standing-boolean-true', 'ABCD Prop', True, '123456789'),
     ('update-good-standing-none', 'ABCD Prop', None, '123456789'),
 ])
-def test_update_business_in_solr_with_varying_data(session, client, jwt, mocker, test_name, legal_name, good_standing, tax_id):
+def test_update_business_in_solr_with_varying_data(session, client, jwt, test_name, legal_name, good_standing, tax_id):
     """Assert that update operation is successful."""
     request_json = deepcopy(CORP_TEMPLATE)
     request_json['business']['legalName'] = legal_name
     request_json['business']['goodStanding'] = good_standing
     request_json['business']['taxId'] = tax_id
+    print(request_json)
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                            'content-type': 'application/json'})
                               )
     # check
+    print(api_response.json)
     assert api_response.status_code == HTTPStatus.OK
     time.sleep(2)  # wait for solr to register update
     identifier = request_json['business']['identifier']
