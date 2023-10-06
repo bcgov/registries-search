@@ -123,6 +123,6 @@ def _collect_lear_data_gcp():
                     AND rle_alt.end_date IS NULL
             LEFT JOIN colin_entities rle_colin ON rle_colin.id = er.related_colin_entity_id
         WHERE le.entity_type in ('BEN', 'CP', 'SP', 'GP')
-            AND er.cessation_date IS NULL;
+            AND er.cessation_date IS NULL
         """)
     return cur
