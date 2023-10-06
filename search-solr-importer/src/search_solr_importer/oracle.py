@@ -62,7 +62,7 @@ class OracleDB:
 
         return cx_Oracle.SessionPool(user=current_app.config.get('ORACLE_USER'),  # pylint:disable=c-extension-no-member
                                      password=current_app.config.get('ORACLE_PASSWORD'),
-                                     dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),  # pylint:disable=consider-using-f-string
+                                     dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),  # noqa: E501; pylint:disable=consider-using-f-string
                                                               current_app.config.get('ORACLE_PORT'),
                                                               current_app.config.get('ORACLE_DB_NAME')),
                                      min=1,
