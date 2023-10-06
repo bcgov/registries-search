@@ -73,15 +73,15 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
         """Return the parsed name of the business in the given doc info."""
         if doc_info['legal_name']:
             return doc_info['legal_name'].strip()
-        return doc_info['legal_name_alt'].strip()
+        return doc_info.get('legal_name_alt', '').strip()
 
     def get_party_name(doc_info: dict) -> str:
         """Return the parsed name of the party in the given doc info."""
         if doc_info['organization_name']:
             return doc_info['organization_name'].strip()
-        if doc_info['organization_name_alt']:
+        if doc_info.get('organization_name_alt'):
             return doc_info['organization_name_alt'].strip()
-        if doc_info['organization_name_colin']:
+        if doc_info.get('organization_name_colin'):
             return doc_info['organization_name_colin'].strip()
         person_name = ''
         if doc_info['first_name']:
