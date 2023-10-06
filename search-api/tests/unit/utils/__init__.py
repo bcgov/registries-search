@@ -13,14 +13,33 @@
 # limitations under the License.
 """Tests for the api utils module."""
 
-SOLR_UPDATE_REQUEST_TEMPLATE = {
+SOLR_UPDATE_REQUEST_TEMPLATE_CORP = {
+    "business": {
+        "identifier": "BC1233987",
+        "legalName": "Benefit test comp",
+        "legalType": "BEN",
+        "taxId": "987654321BC0001",
+        "state": "ACTIVE",
+        "goodStanding": False
+   }
+}
+
+SOLR_UPDATE_REQUEST_TEMPLATE_FIRM = {
    "business": {
+        "alternateNames": [
+            {
+                "entityType": "SP",
+                "identifier": "FM1233334",
+                "nameRegisteredDate": "2022-08-15T08:00:00+00:00",
+                "nameStartDate": "2022-08-16",
+                "operatingName": "ABCD Prop"
+            }
+        ],
         "identifier": "FM1233334",
-        "legalName": "ABCD Prop",
+        "legalName": "Test ABC",
         "legalType": "SP",
         "taxId": "123456789",
-        "state": "ACTIVE",
-        "goodStanding": "false"
+        "state": "ACTIVE"
    },
    "parties":[{
         "officer": {

@@ -3,7 +3,8 @@
 		"_postman_id": "1c470b4a-ec58-4554-bc85-2f4b48bd4b24",
 		"name": "SEARCH API Integration Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6835935"
+		"_exporter_id": "6835935",
+		"_collection_link": "https://warped-escape-616276.postman.co/workspace/bc-registries~8ef8e652-492a-4d19-b978-d4f0da255b2c/collection/6835935-1c470b4a-ec58-4554-bc85-2f4b48bd4b24?action=share&source=collection_link&creator=6835935"
 	},
 	"item": [
 		{
@@ -2245,7 +2246,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD EFGH Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
+							"raw": "{\r\n   \"business\":{\r\n      \"goodStanding\": true,\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD EFGH Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2253,9 +2254,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update",
+							"raw": "{{internal_url}}/{{version}}/internal/solr/update",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -2315,7 +2316,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"Test update partiess\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABCD\",\r\n          \"partyType\":\"organization\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bobby\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
+							"raw": "{\r\n   \"business\":{\r\n       \"alternateNames\": [\r\n            {\r\n                \"entityType\": \"GP\",\r\n                \"identifier\": \"FM1234567\",\r\n                \"nameRegisteredDate\": \"2022-08-15T08:00:00+00:00\",\r\n                \"nameStartDate\": \"2022-08-16\",\r\n                \"operatingName\": \"Test update parties\"\r\n            }\r\n       ],\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"TEST ABCD, Bobby W Walaby\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABCD\",\r\n          \"partyType\":\"organization\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bobby\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

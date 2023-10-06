@@ -68,7 +68,10 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
 
         business_name_path = '/business/legalName'
         if get_str(request_json, business_name_path) is None:
-            err.append({'error': 'Business Name is required.', 'path': business_name_path})
+            if not len(request_json['business'].get('alternateNames', [])) > 0:
+                err.append({'error': 'Business Name is required.', 'path': business_name_path})
+            elif not request_json['business']['alternateNames'][0].get('operatingName'):
+                err.append({'error': 'Business Name is required.', 'path': '/business/alternateNames/0/operatingName'})
 
         business_type_path = '/business/legalType'
         if get_str(request_json, business_type_path) is None:
@@ -80,10 +83,9 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
             err.append({'error': 'A valid business state is required.', 'path': business_status_path})
 
         good_standing_path = '/business/goodStanding'
-        good_standing = get_str(request_json, good_standing_path)
-        if good_standing is not None:
-            if not (good_standing == 'None' or good_standing.lower() == 'true' or good_standing.lower() == 'false'):
-                err.append({'error': 'Good standing must be a valid boolean value', 'path': good_standing_path})
+        if good_standing := request_json['business'].get('goodStanding'):
+            if not (str(good_standing).lower() == 'true' or str(good_standing).lower() == 'false'):
+                err.append({'error': 'Good standing must be a valid boolean value.', 'path': good_standing_path})
 
         for index, party in enumerate(request_json.get('parties', [])):
 
