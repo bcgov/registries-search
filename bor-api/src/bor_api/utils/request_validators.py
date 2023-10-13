@@ -103,9 +103,6 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
 
     # validate parties info
     for index, party in enumerate(request_json.get('parties', [])):
-        if not party.get('deliveryAddress'):
-            err.append({'error': 'Party Delivery Address is required.', 'path': f'/parties/{index}/deliveryAddress'})
-
         if not party.get('source'):
             err.append({'error': 'Party Source is required.', 'path': f'/parties/{index}/source'})
         elif party['source'] not in ['LEAR', 'COLIN']:

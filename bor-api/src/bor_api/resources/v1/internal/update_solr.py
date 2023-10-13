@@ -203,7 +203,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
                       email=business_info.get('email'))
     entities.append(business)
     for party in party_info:
-        address = get_delivery_address(party['deliveryAddress'])
+        address = get_delivery_address(party['deliveryAddress']) if party.get('deliveryAddress') else None
         name = get_party_name(party['officer'])
         entity_type = 'PERSON' if party['officer']['partyType'] == 'person' else 'BUSINESS'
 
@@ -211,7 +211,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         party_id = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
         for role in party.get('roles'):
-            entities.append(Entity(entityAddresses=[address],
+            entities.append(Entity(entityAddresses=[address] if address else None,
                                    entityType=entity_type,
                                    id=party_id,
                                    legalName=name,

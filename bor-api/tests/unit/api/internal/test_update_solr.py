@@ -39,10 +39,13 @@ SP_REQUEST_TEMPLATE['businessAddresses']['businessOffice'] = SP_REQUEST_TEMPLATE
 del SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
 del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
 
+REQUEST_TEMPLATE_PARTY_NO_DELIVERY = deepcopy(SP_REQUEST_TEMPLATE)
+del REQUEST_TEMPLATE_PARTY_NO_DELIVERY['parties'][0]['deliveryAddress']
 
 @pytest.mark.parametrize('test_name,request_json', [
     ('ben', REQUEST_TEMPLATE),
     ('sp', SP_REQUEST_TEMPLATE),
+    ('party_no_delivery', REQUEST_TEMPLATE_PARTY_NO_DELIVERY),
 ])
 def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     """Assert that update operation sends correct payload to solr."""
@@ -82,15 +85,24 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert m.called == True
         assert m.call_count == 1  # batch updated all docs
         assert solr_url in m.request_history[0].url
+        entity_addresses = [{
+            'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
+            'postalCode': 'T3J 3Z5',
+            'addressCity': 'Calgary',
+            'addressType': 'DELIVERY',
+            'addressRegion': 'AB',
+            'streetAddress': '1234-4818 Westwinds Dr NE',
+            'addressCountry': 'Canada'}] if request_json['parties'][0].get('deliveryAddress') else None
         assert m.request_history[0].json() == [
             {
-                'entityAddresses': [{'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
-                                    'postalCode': 'V3K 3V9',
-                                    'addressCity': 'Coquitlam',
-                                    'addressType': 'delivery',
-                                    'addressRegion': 'BC',
-                                    'streetAddress': 'Bc-435 North Rd',
-                                    'addressCountry': 'Canada'}],
+                'entityAddresses': [{
+                    'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
+                    'postalCode': 'V3K 3V9',
+                    'addressCity': 'Coquitlam',
+                    'addressType': 'delivery',
+                    'addressRegion': 'BC',
+                    'streetAddress': 'Bc-435 North Rd',
+                    'addressCountry': 'Canada'}],
                 'entityType': 'BUSINESS',
                 'id': request_json['business']['identifier'],
                 'identifier': request_json['business']['identifier'],
@@ -102,14 +114,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'state': 'ACTIVE'
             },
             {
-                'entityAddresses': [{
-                    'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
-                    'postalCode': 'T3J 3Z5',
-                    'addressCity': 'Calgary',
-                    'addressType': 'DELIVERY',
-                    'addressRegion': 'AB',
-                    'streetAddress': '1234-4818 Westwinds Dr NE',
-                    'addressCountry': 'Canada'}],
+                'entityAddresses': entity_addresses,
                 'entityType': 'PERSON',
                 'id': 'LEAR570343',
                 'legalName': 'BCREG2 LIANG FORTY',
