@@ -36,3 +36,4 @@ class EntityRole:
     def __post_init__(self):
         """Set extra solr role search fields dependent on base fields."""
         self.related_q = f"{self.relatedName} {self.relatedIdentifier} {self.relatedBN or ''}".strip()
+        self.roleType = self.roleType.replace('_', ' ').upper()

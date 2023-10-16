@@ -213,7 +213,7 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         for role in party.get('roles'):
             entities.append(Entity(entityAddresses=[address] if address else None,
                                    entityType=entity_type,
-                                   id=party_id,
+                                   id=party_id + role['roleType'].replace(' ', '_'),
                                    legalName=name,
                                    roles=[EntityRole(relatedEntityType='BUSINESS',
                                                      relatedIdentifier=business.identifier,

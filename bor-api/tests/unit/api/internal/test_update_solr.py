@@ -65,9 +65,10 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         check_update_recorded(request_json['business']['identifier'])
         # check parties update
         for party in request_json['parties']:
-            identifier = f"{party['source']}{party['officer']['id']}"
-            check_update_recorded(identifier, True)
-        
+            for role in party['roles']:
+                identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+                check_update_recorded(identifier, True)
+            
         # check did not call to solr mock (only updates the DB)
         assert m.called == False
         # call sync to update solr
@@ -79,8 +80,9 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                               is_party=False,
                               status=SolrDocEventStatus.COMPLETE)
         for party in request_json['parties']:
-            identifier = f"{party['source']}{party['officer']['id']}"
-            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
+            for role in party['roles']:
+                identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+                check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
         assert m.call_count == 1  # batch updated all docs
@@ -116,14 +118,14 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             {
                 'entityAddresses': entity_addresses,
                 'entityType': 'PERSON',
-                'id': 'LEAR570343',
+                'id': 'LEAR570343Director',
                 'legalName': 'BCREG2 LIANG FORTY',
                 'bn': None,
                 'email': None,
                 'identifier': None,
                 'legalType': None,
                 'roles': [{
-                    'roleType': 'Director',
+                    'roleType': 'DIRECTOR',
                     'relatedBN': '123456789',
                     'relatedEmail': 'test@email.com',
                     'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
@@ -145,14 +147,14 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'streetAddress': 'W-558 Rue Saint-Vallier O',
                     'addressCountry': 'Canada'}],
                 'entityType': 'PERSON',
-                'id': 'LEAR570721',
+                'id': 'LEAR570721Director',
                 'legalName': 'BLIPPITY BOP',
                 'bn': None,
                 'email': None,
                 'identifier': None,
                 'legalType': None,
                 'roles': [{
-                    'roleType': 'Director',
+                    'roleType': 'DIRECTOR',
                     'relatedBN': '123456789',
                     'relatedEmail': 'test@email.com',
                     'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
@@ -172,6 +174,7 @@ def test_update_solr(session, client, jwt):
     """Assert that update operation is successful."""
     # setup -- start with no docs
     bor_solr.delete_all_docs()
+    time.sleep(2)  # wait for solr to register update
     # update
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(REQUEST_TEMPLATE),
@@ -185,9 +188,10 @@ def test_update_solr(session, client, jwt):
     check_update_recorded(business_identifier)
     # check parties update
     for party in REQUEST_TEMPLATE['parties']:
-        party_id = f"{party['source']}{party['officer']['id']}"
-        party_ids.append(party_id)
-        check_update_recorded(party_id, True)
+        for role in party['roles']:
+            party_id = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+            party_ids.append(party_id)
+            check_update_recorded(party_id, True)
     # verify update has NOT synced to solr yet
     for entity_id in [business_identifier] + party_ids:
         search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
@@ -202,8 +206,9 @@ def test_update_solr(session, client, jwt):
                           is_party=False,
                           status=SolrDocEventStatus.COMPLETE)
     for party in REQUEST_TEMPLATE['parties']:
-        identifier = f"{party['source']}{party['officer']['id']}"
-        check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
+        for role in party['roles']:
+            identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     for entity_id in [business_identifier] + party_ids:
