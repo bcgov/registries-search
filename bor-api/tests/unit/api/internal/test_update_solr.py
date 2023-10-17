@@ -62,11 +62,12 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         # check success
         assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update
-        check_update_recorded(request_json['business']['identifier'])
+        business_identifier = request_json['business']['identifier']
+        check_update_recorded(business_identifier)
         # check parties update
         for party in request_json['parties']:
             for role in party['roles']:
-                identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
                 check_update_recorded(identifier, True)
             
         # check did not call to solr mock (only updates the DB)
@@ -76,12 +77,13 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         # check success
         assert api_response.status_code == HTTPStatus.OK
         # check events were completed
-        check_update_recorded(request_json['business']['identifier'],
+        business_identifier = request_json['business']['identifier']
+        check_update_recorded(business_identifier,
                               is_party=False,
                               status=SolrDocEventStatus.COMPLETE)
         for party in request_json['parties']:
             for role in party['roles']:
-                identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
@@ -118,7 +120,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             {
                 'entityAddresses': entity_addresses,
                 'entityType': 'PERSON',
-                'id': 'LEAR570343Director',
+                'id': f'LEAR570343{business_identifier}DIRECTOR',
                 'legalName': 'BCREG2 LIANG FORTY',
                 'bn': None,
                 'email': None,
@@ -147,7 +149,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'streetAddress': 'W-558 Rue Saint-Vallier O',
                     'addressCountry': 'Canada'}],
                 'entityType': 'PERSON',
-                'id': 'LEAR570721Director',
+                'id': f'LEAR570721{business_identifier}DIRECTOR',
                 'legalName': 'BLIPPITY BOP',
                 'bn': None,
                 'email': None,
@@ -189,7 +191,7 @@ def test_update_solr(session, client, jwt):
     # check parties update
     for party in REQUEST_TEMPLATE['parties']:
         for role in party['roles']:
-            party_id = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+            party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
             party_ids.append(party_id)
             check_update_recorded(party_id, True)
     # verify update has NOT synced to solr yet
@@ -207,7 +209,7 @@ def test_update_solr(session, client, jwt):
                           status=SolrDocEventStatus.COMPLETE)
     for party in REQUEST_TEMPLATE['parties']:
         for role in party['roles']:
-            identifier = f"{party['source']}{party['officer']['id']}{role['roleType'].replace(' ', '_')}"
+            identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
