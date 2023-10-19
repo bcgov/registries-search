@@ -115,7 +115,8 @@ def _prepare_data(request_json: Dict) -> BusinessDoc:
 
     def get_business_name(business: Dict[str, str]) -> str:
         """Return the parsed name of the business in the given doc info."""
-        if (legal_name := business.get('legalName')) and business['legalType'] not in ['SP', 'GP']:
+        alternate_name_types = ['SP', 'GP'] if current_app.config.get('ALTERNATE_NAMES_ACTIVE') else []
+        if (legal_name := business.get('legalName')) and business['legalType'] not in alternate_name_types:
             return legal_name.strip()
         alternate_names = business['alternateNames']
         if len(alternate_names) > 1:

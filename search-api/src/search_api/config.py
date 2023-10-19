@@ -147,6 +147,9 @@ class Config():  # pylint: disable=too-few-public-methods
     SOLR_REINDEX_START_TIME = os.getenv('SOLR_REINDEX_START_TIME', '')
     SOLR_REINDEX_LENGTH = int(os.getenv('SOLR_REINDEX_LENGTH')) if os.getenv('SOLR_REINDEX_LENGTH', None) else 0
 
+    # Temporary Legal Name change flags
+    ALTERNATE_NAMES_ACTIVE = 'true' == os.getenv('ALTERNATE_NAMES_ACTIVE', '').lower()
+
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Config object for development environment."""
@@ -162,6 +165,8 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     DEVELOPMENT = False
     TESTING = True
+    # Temporary values
+    ALTERNATE_NAMES_ACTIVE = True
     # SOLR
     SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
     # POSTGRESQL
