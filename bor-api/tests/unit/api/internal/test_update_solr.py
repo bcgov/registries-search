@@ -66,8 +66,8 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         check_update_recorded(business_identifier)
         # check parties update
         for party in request_json['parties']:
-            for role in party['roles']:
-                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
+            for count, role in enumerate(party['roles']):
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
                 check_update_recorded(identifier, True)
             
         # check did not call to solr mock (only updates the DB)
@@ -82,8 +82,8 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                               is_party=False,
                               status=SolrDocEventStatus.COMPLETE)
         for party in request_json['parties']:
-            for role in party['roles']:
-                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
+            for count, role in enumerate(party['roles']):
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
@@ -120,7 +120,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             {
                 'entityAddresses': entity_addresses,
                 'entityType': 'PERSON',
-                'id': f'LEAR570343{business_identifier}DIRECTOR',
+                'id': f'LEAR570343{business_identifier}DIRECTOR0',
                 'legalName': 'BCREG2 LIANG FORTY',
                 'bn': None,
                 'email': None,
@@ -149,7 +149,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'streetAddress': 'W-558 Rue Saint-Vallier O',
                     'addressCountry': 'Canada'}],
                 'entityType': 'PERSON',
-                'id': f'LEAR570721{business_identifier}DIRECTOR',
+                'id': f'LEAR570721{business_identifier}DIRECTOR0',
                 'legalName': 'BLIPPITY BOP',
                 'bn': None,
                 'email': None,

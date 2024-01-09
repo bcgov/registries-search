@@ -208,12 +208,14 @@ def _parse_entities(request_json: dict) -> list[Entity]:
         entity_type = 'PERSON' if party['officer']['partyType'] == 'person' else 'BUSINESS'
 
         # NOTE: business parties are ignored for now -- waiting for LEAR update
-        party_id = f"{party['source']}{party['officer']['id']}"
+        base_party_id = f"{party['source']}{party['officer']['id']}"
         # add a doc for each role
-        for role in party.get('roles'):
+        # NOTE: if the id is not unique then this will still add multiple roles under the same entity
+        for count, role in enumerate(party.get('roles', [])):
+            entity_id = f"{base_party_id}{business.identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
             entities.append(Entity(entityAddresses=[address] if address else None,
                                    entityType=entity_type,
-                                   id=f"{party_id}{business.identifier}{role['roleType'].replace(' ', '_')}".upper(),
+                                   id=entity_id,
                                    legalName=name,
                                    roles=[EntityRole(relatedEntityType='BUSINESS',
                                                      relatedIdentifier=business.identifier,
