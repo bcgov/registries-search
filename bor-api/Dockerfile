@@ -21,6 +21,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+RUN chmod 777 tmp-excel
 
 RUN pip install .
 
