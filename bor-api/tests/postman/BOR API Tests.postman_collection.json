@@ -97,17 +97,12 @@
 								"key": "Accept",
 								"type": "text",
 								"value": "application/json"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/ops/readyz",
+							"raw": "{{internal_url}}/{{version}}/ops/readyz",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -191,9 +186,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/ops/healthz",
+							"raw": "{{internal_url}}/{{version}}/ops/healthz",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -1696,9 +1691,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -1766,9 +1761,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -1834,9 +1829,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update/sync",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/sync",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -1897,7 +1892,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ADDRESS\": {\n        \"TEST\": [\"TEST\", \"TESTER\"]\n    },\n    \"NAME\": {\n        \"JOHN\": [\"JOHN\", \"JOHNATHAN\"]\n    }\n}",
+									"raw": "{\n    \"NAME\": {\n        \"stephan\": [\"stef\",\"stefan\",\"stefanee\",\"stefanelle\",\"stefani\",\"stefanie\",\"stefaniuk\",\"stefany\",\"steff\",\"steffi\",\"steffie\",\"steffy\",\"stefi\",\"stefy\",\"stephan\",\"stephen\",\"steven\", \"steve\", \"stevie\"],\n        \"stephen\": [\"stafanie\",\"stephan\",\"stephanie\",\"stephany\",\"stephen\",\"stephena\",\"stephene\",\"stephens\",\"steven\",\"steve\",\"stevie\"],\n        \"stephens\": [\"stafanie\",\"stephanie\",\"stephany\",\"stephen\",\"stephena\",\"stephene\",\"stephens\",\"stevens\",\"steven\"],\n        \"steve\": [\"stephan\", \"stephen\", \"steve\", \"steven\", \"stevens\", \"stevie\"],\n        \"steven\": [\"fan\",\"fannie\",\"fanny\",\"frachesca\",\"fran\",\"francella\",\"francene\",\"frances\",\"francesca\",\"francette\",\"francey\",\"francheska\",\"francie\",\"francine\",\"francis\",\"franciska\",\"franco\",\"francois\",\"francoise\",\"francy\",\"frank\",\"frankie\",\"franklin\",\"franko\",\"franky\",\"frannie\",\"franny\",\"franz\",\"stefanie\",\"stephan\",\"stephans\",\"stephen\",\"stephens\",\"steve\",\"steven\",\"stevens\",\"stevie\"],\n        \"stevens\": [\"stephan\",\"stephans\",\"stephen\",\"stephens\",\"steve\",\"steven\",\"stevens\",\"stevie\"],\n        \"stevie\": [\"stephan\",\"stephans\",\"stephen\",\"stephens\",\"steve\",\"steven\",\"stevens\",\"stevie\"]\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1905,9 +1900,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/synonyms",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -1976,9 +1971,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update/synonyms",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/synonyms",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2047,9 +2042,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/resync",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2118,9 +2113,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/resync",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2194,9 +2189,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/backup",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2264,9 +2259,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/backup",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2334,9 +2329,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/backup",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/backup",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2349,6 +2344,136 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "import",
+					"item": [
+						{
+							"name": "entity import",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 201/CREATED\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"1\",\r\n            \"entityAddresses\": [\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"MAILING\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                },\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"DELIVERY\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                }\r\n            ],\r\n            \"entityType\": \"PERSON\",\r\n            \"legalName\": \"BCREG2 LIANG FORTY\",\r\n            \"roles\": [\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"end\": \"2023-02-13\",\r\n                            \"start\": \"2023-01-01\"\r\n                        },\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2022-05-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"INCORPORATOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456788BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"CP1234567\",\r\n                    \"relatedName\": \"KIALS COOP\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "temp",
+			"item": [
+				{
+					"name": "basic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Account-ID",
+								"value": "1999",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"*:*\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{version}}/temp/entities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"temp",
+								"entities"
+							]
+						},
+						"description": "Get drafts example."
+					},
+					"response": []
 				}
 			]
 		}

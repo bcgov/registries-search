@@ -11,9 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all of the resource endpoints in Flask-Blueprint style."""
-from .internal import bp as internal_bp
-from .meta import bp as meta_bp
-from .ops import bp as ops_bp
-from .search import bp as search_bp
-from .temp import bp as temp_bp
+"""Exposes all temp bo search endpoints in Flask-Blueprint style."""
+from flask import Blueprint
+
+from .entities import bp as entities_bp
+
+
+bp = Blueprint('TEMP_BO_SEARCH', __name__, url_prefix='/temp')  # pylint: disable=invalid-name
+bp.register_blueprint(entities_bp)
