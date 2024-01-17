@@ -97,6 +97,9 @@ export const useEntity = () => {
   })
 
   const actTitle = computed((): string => {
+    if (isFirm.value) {
+      return 'Partnership Act'
+    }
     return isCoop.value ? 'Cooperative Association Act' : 'Business Corporations Act'
   })
 
