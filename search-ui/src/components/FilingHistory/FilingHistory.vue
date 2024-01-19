@@ -355,6 +355,8 @@ const loadFiling = (filing: ApiFiling): void => {
       documentsLink: filing.documentsLink,
       filingLink: filing.filingLink,
 
+      data: filing.data,
+
       comments: null, // null until loaded
       documents: null // null until loaded
     }

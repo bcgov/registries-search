@@ -28,6 +28,12 @@ const { entity, entityTitle, actTitle, isFirm, getEntityDescription } = useEntit
 
 /** The dissolution date to display. */
 const dissolutionDate = computed((): string => {
+  console.log(props.filing)
+  if (props.filing?.data?.dissolution?.dissolutionDate) {
+    return dateToPacificDate(
+      new Date(props.filing.data.dissolution.dissolutionDate + 'T16:00:00')
+    )
+  }
   return (dateToPacificDate(props.filing?.effectiveDate, true) || 'Unknown')
 })
 
