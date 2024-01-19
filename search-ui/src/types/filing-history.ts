@@ -54,6 +54,7 @@ export type FilingHistoryItem = {
   isCompletedDissolution?: boolean
   isFutureEffectiveDissolution?: boolean
   isFutureEffectiveDissolutionPending?: boolean
+  data?: { dissolution?: { dissolutionDate?: string }}
 
   // staff filings only
   fileNumber?: string
