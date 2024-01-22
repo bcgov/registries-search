@@ -4,6 +4,7 @@
 
     <p>
       The {{ dissolutionText1 }} {{ entity.name || '' }} was successfully
+      <span v-if="isFirm">submitted on </span>
       <strong>{{ dissolutionText2 }}</strong><span v-if="isFirm"> with dissolution date of
       <strong>{{ dissolutionDate }}</strong></span>. {{ dissolutionText3 }}
       has been struck from the register and dissolved, and ceased to be
@@ -31,10 +32,11 @@ const dissolutionDate = computed((): string => {
   console.log(props.filing)
   if (props.filing?.data?.dissolution?.dissolutionDate) {
     return dateToPacificDate(
-      new Date(props.filing.data.dissolution.dissolutionDate + 'T16:00:00')
+      new Date(props.filing.data.dissolution.dissolutionDate + 'T16:00:00'),
+      true
     )
   }
-  return (dateToPacificDate(props.filing?.effectiveDate, true) || 'Unknown')
+  return 'Unknown'
 })
 
 /** The dissolution date-time to display. */
@@ -61,7 +63,7 @@ const dissolutionText1 = computed((): string => {
 
 const dissolutionText2 = computed((): string => {
   if (isFirm.value) {
-    return `submitted on ${dissolutionSubmittedDateTime.value}`
+    return `${dissolutionSubmittedDateTime.value}`
   }
   return `dissolved on ${dissolutionDateTime.value}`
 })
