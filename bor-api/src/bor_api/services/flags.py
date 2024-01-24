@@ -90,13 +90,12 @@ class Flags():
     @staticmethod
     def value(flag: str, user=None):
         """Retrieve the value  of the (flag, user) tuple."""
-        client = Flags.get_client()
-        if user:
-            flag_user = user
-        else:
-            flag_user = Flags.get_anonymous_user()
-
         try:
+            client = Flags.get_client()
+            if user:
+                flag_user = user
+            else:
+                flag_user = Flags.get_anonymous_user()
             return client.variation(flag, flag_user, None)
         except Exception as err:  # noqa: B902
             # pylint: disable=consider-using-f-string

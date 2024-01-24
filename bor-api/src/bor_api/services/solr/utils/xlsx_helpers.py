@@ -29,11 +29,15 @@ def xlsx_response(results: dict):
     worksheet = workbook.add_worksheet()
     worksheet.write('A1', 'Name', bold)
     worksheet.write('B1', 'Address', bold)
-    worksheet.write('C1', 'Roles', bold)
-    worksheet.write('D1', 'Effective Dates', bold)
-    worksheet.write('E1', 'Business Details', bold)
-    worksheet.write('F1', 'Business State', bold)
-    worksheet.write('G1', 'Business Email', bold)
+    worksheet.write('C1', 'Postal code', bold)
+    worksheet.write('D1', 'Roles', bold)
+    worksheet.write('E1', 'Effective Dates Starting', bold)
+    worksheet.write('F1', 'Effective Dates Ending', bold)
+    worksheet.write('G1', 'Business Name', bold)
+    worksheet.write('H1', 'Incorporation Number', bold)
+    worksheet.write('I1', 'Business Number', bold)
+    worksheet.write('J1', 'Business State', bold)
+    worksheet.write('K1', 'Business Email', bold)
 
     # Iterate over the data and write it out row by row.
     for result, index in zip(results, range(1, len(results) + 1)):
@@ -42,27 +46,23 @@ def xlsx_response(results: dict):
             street = addresses[0].get('streetAddress') or ''
             city = addresses[0].get('addressCity') or ''
             region = addresses[0].get('addressRegion') or ''
-            postal = addresses[0].get('postalCode') or ''
             country = addresses[0].get('addressCountry') or ''
-            worksheet.write(index, 1, f'{street}\n{city} {region} {postal}\n{country}')
+            worksheet.write(index, 1, f'{street}\n{city} {region}\n{country}')
+            worksheet.write(index, 2, addresses[0].get('postalCode') or '')
         if roles := result.get('roles'):
-            role_type = roles[0]['roleType']
-            # role dates
-            start = roles[0]['roleDates'][0].get('start') or 'Unknown'
-            end = roles[0]['roleDates'][0].get('end') or 'Current'
-            role_date = f'{start} to {end}'
-            if role_type == 'INCORPORATOR':
-                role_date = start
-            # business details
-            rel_identifier = roles[0].get('relatedIdentifier') or ''
-            rel_name = roles[0].get('relatedName') or ''
-            rel_bn = roles[0].get('relatedBN') or ''
+            worksheet.write(index, 3, roles[0]['roleType'])
+            # role dates (lop off the timestamp)
+            start = roles[0]['roleDates'][0].get('start', 'Unknown')[:10]
+            end = roles[0]['roleDates'][0].get('end', 'Current')[:10]
+            worksheet.write(index, 4, start)
+            worksheet.write(index, 5, end)
 
-            worksheet.write(index, 2, role_type)
-            worksheet.write(index, 3, role_date)
-            worksheet.write(index, 4, f'{rel_identifier}\n{rel_name}\n{rel_bn}')
-            worksheet.write(index, 5, roles[0].get('relatedState') or '')
-            worksheet.write(index, 6, roles[0].get('relatedEmail') or '')
+            # business details
+            worksheet.write(index, 6, roles[0].get('relatedName') or '')
+            worksheet.write(index, 7, roles[0].get('relatedIdentifier') or '')
+            worksheet.write(index, 8, roles[0].get('relatedBN') or '')
+            worksheet.write(index, 9, roles[0].get('relatedState') or '')
+            worksheet.write(index, 10, roles[0].get('relatedEmail') or '')
 
     workbook.close()
 
