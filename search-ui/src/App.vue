@@ -149,14 +149,6 @@ onMounted(async () => {
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
     }
-    if (!isJestRunning.value && !getFeatureFlag('ui-enabled')) {
-      handleError({
-        category: ErrorCategories.ACCOUNT_ACCESS,
-        message: 'This account does not have access to Business Search',
-        statusCode: StatusCodes.UNAUTHORIZED,
-        type: null
-      })
-    }
     appReady.value = true
     console.info('App ready.')
   }
