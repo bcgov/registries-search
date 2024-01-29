@@ -47,7 +47,7 @@ def xlsx_response(results: dict):
             city = addresses[0].get('addressCity') or ''
             region = addresses[0].get('addressRegion') or ''
             country = addresses[0].get('addressCountry') or ''
-            worksheet.write(index, 1, f'{street}\n{city} {region}\n{country}')
+            worksheet.write(index, 1, f'{street} \n{city} {region} \n{country}')
             worksheet.write(index, 2, addresses[0].get('postalCode') or '')
         if roles := result.get('roles'):
             worksheet.write(index, 3, roles[0]['roleType'])

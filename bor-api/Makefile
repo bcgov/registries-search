@@ -2,6 +2,7 @@
 .PHONY: setup
 .PHONY: ci cd
 .PHONY: run
+.PHONY: build
 
 MKFILE_PATH:=$(abspath $(lastword $(MAKEFILE_LIST)))
 CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
