@@ -1,0 +1,126 @@
+# Copyright © 2024 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the 'License');
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an 'AS IS' BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""API endpoint for syncing entity records in solr."""
+from datetime import UTC, datetime, timedelta
+from http import HTTPStatus
+
+from flask import Blueprint, current_app, jsonify
+from flask_cors import cross_origin
+
+from bor_api.enums import SolrDocEventStatus, SolrDocEventType
+from bor_api.exceptions import exception_response
+from bor_api.models import SolrDoc, SolrDocEvent
+from bor_api.services import bor_solr
+from bor_api.services.solr.bor_solr_updates import update_bor_solr
+
+
+bp = Blueprint('SYNC', __name__, url_prefix='/sync')  # pylint: disable=invalid-name
+
+
+@bp.get('')
+@cross_origin(origin='*')
+def sync_solr():
+    """Sync docs in the DB that haven't been applied to SOLR yet."""
+    try:
+        pending_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.PENDING,
+                                                                            SolrDocEventStatus.ERROR],
+                                                                  event_type=SolrDocEventType.UPDATE,
+                                                                  limit=current_app.config.get('MAX_BATCH_UPDATE_NUM'))
+
+        identifiers_to_sync = [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events]
+        current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
+        if identifiers_to_sync:
+            update_bor_solr(identifiers_to_sync, pending_update_events)
+
+        return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
+
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)
+
+
+@bp.get('/heartbeat')
+@cross_origin(origin='*')
+def follower_heartbeat():
+    """Verify the solr follower instance is serving updated/synced records."""
+    try:
+        # verify the follower core details
+        details: dict = (bor_solr.replication('details', False)).json()['details']
+        # NOTE: replace tzinfo needed because strptime %Z is not working as documented
+        #   - issue: accepts the tz in the string but doesn't add it to the dateime obj
+        last_replication = (datetime.strptime(details['follower']['indexReplicatedAt'],
+                                              '%a %b %d %H:%M:%S %Z %Y')).replace(tzinfo=UTC)
+        current_app.logger.debug(f'Last replication was at {last_replication.isoformat()}')
+
+        # NOTE: during a reindex, follower polling / replication will be paused for ~8/9 hours
+        now = datetime.now(UTC)
+        is_reindex_day = current_app.config.get('REINDEX_UTC_WEEKDAY_NUM') == now.weekday()
+        in_reindex_hours = current_app.config.get('REINDEX_UTC_HOUR_END_EST') > now.hour
+        if is_reindex_day and in_reindex_hours:
+            message = 'Skipped sync verification. Estimated that a reindex is running.'
+            current_app.logger.debug(message)
+            return jsonify({'message': message}), HTTPStatus.OK
+
+        # verify polling is active
+        if details['follower']['isPollingDisabled'] == 'true':
+            message = 'Follower polling disabled when it should be enabled.'
+            current_app.logger.error(message)
+            return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+
+        # verify last_replication datetime is within a reasonable timeframe
+        if last_replication + timedelta(hours=current_app.config.get('LAST_REPLICATION_THRESHOLD')) < now:
+            # its been too long since a replication. Log / return error
+            message = 'Follower last replication datetime is longer than expected.'
+            current_app.logger.error(message)
+            return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+
+        # verify an update that happened in the last hour (if there is one)
+        event_to_verify = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.COMPLETE],
+                                                            event_type=SolrDocEventType.UPDATE,
+                                                            start_date=now - timedelta(minutes=60),
+                                                            limit=1)
+
+        if len(event_to_verify) == 1 and event_to_verify[0].event_date + timedelta(minutes=5) < now.astimezone():
+            # there was an update in the last hour and it is at least 5 minutes old
+            doc_obj_to_verify = SolrDoc.get_by_id(event_to_verify[0].solr_doc_id)
+            current_app.logger.debug(f'Verifying sync for: {doc_obj_to_verify.entity_id}...')
+            doc: dict = doc_obj_to_verify.doc
+            response = bor_solr.query({'query': f"id:{doc['id']}", 'fields': '*, [child]'})
+
+            entity: dict = response['response']['docs'][0] if response['response']['docs'] else {}
+            role: dict = (entity.get('roles', [{}]))[0]
+            address: dict = (entity.get('entityAddresses', [{}]))[0]
+
+            expected_role: dict = doc['roles'][0] if doc['roles'] else {}
+            expected_address: dict = doc['entityAddresses'][0] if doc['entityAddresses'] else {}
+
+            # verify important elements match the update
+            name_eq = entity.get('legalName') == doc.get('legalName')
+            related_id_eq = role.get('relatedIdentifier') == expected_role.get('relatedIdentifier')
+            related_name_eq = role.get('relatedName') == expected_role.get('relatedName')
+            related_state_eq = role.get('relatedState') == expected_role.get('relatedState')
+            role_type_eq = role.get('roleType') == expected_role.get('roleType')
+            street_eq = address.get('streetAddress') == expected_address.get('streetAddress')
+
+            if not (name_eq and related_id_eq and related_name_eq and related_state_eq and role_type_eq and street_eq):
+                # data returned from the follower does match the update or is not there
+                message = f'Follower failed to update doc with id: {doc_obj_to_verify.id}.'
+                current_app.logger.error(message)
+                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+
+            current_app.logger.debug(f'Sync for {doc_obj_to_verify.id} verified.')
+
+        return jsonify({'message': 'Follower synchronization is healthy.'}), HTTPStatus.OK
+
+    except Exception as exception:  # noqa: B902
+        return exception_response(exception)

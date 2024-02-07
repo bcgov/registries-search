@@ -63,7 +63,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update
         business_identifier = request_json['business']['identifier']
-        check_update_recorded(business_identifier)
+        # check_update_recorded(business_identifier)
         # check parties update
         for party in request_json['parties']:
             for count, role in enumerate(party['roles']):
@@ -78,9 +78,9 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert api_response.status_code == HTTPStatus.OK
         # check events were completed
         business_identifier = request_json['business']['identifier']
-        check_update_recorded(business_identifier,
-                              is_party=False,
-                              status=SolrDocEventStatus.COMPLETE)
+        # check_update_recorded(business_identifier,
+        #                       is_party=False,
+        #                       status=SolrDocEventStatus.COMPLETE)
         for party in request_json['parties']:
             for count, role in enumerate(party['roles']):
                 identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
@@ -98,25 +98,26 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             'streetAddress': '1234-4818 Westwinds Dr NE',
             'addressCountry': 'Canada'}] if request_json['parties'][0].get('deliveryAddress') else None
         assert m.request_history[0].json() == [
-            {
-                'entityAddresses': [{
-                    'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
-                    'postalCode': 'V3K 3V9',
-                    'addressCity': 'Coquitlam',
-                    'addressType': 'delivery',
-                    'addressRegion': 'BC',
-                    'streetAddress': 'Bc-435 North Rd',
-                    'addressCountry': 'Canada'}],
-                'entityType': 'BUSINESS',
-                'id': request_json['business']['identifier'],
-                'identifier': request_json['business']['identifier'],
-                'legalName': request_json['business']['legalName'],
-                'bn': '123456789',
-                'email': 'test@email.com',
-                'legalType': request_json['business']['legalType'],
-                'roles': None,
-                'state': 'ACTIVE'
-            },
+            # NOTE: uncomment once serving business updates
+            # {
+            #     'entityAddresses': [{
+            #         'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
+            #         'postalCode': 'V3K 3V9',
+            #         'addressCity': 'Coquitlam',
+            #         'addressType': 'delivery',
+            #         'addressRegion': 'BC',
+            #         'streetAddress': 'Bc-435 North Rd',
+            #         'addressCountry': 'Canada'}],
+            #     'entityType': 'BUSINESS',
+            #     'id': request_json['business']['identifier'],
+            #     'identifier': request_json['business']['identifier'],
+            #     'legalName': request_json['business']['legalName'],
+            #     'bn': '123456789',
+            #     'email': 'test@email.com',
+            #     'legalType': request_json['business']['legalType'],
+            #     'roles': None,
+            #     'state': 'ACTIVE'
+            # },
             {
                 'entityAddresses': entity_addresses,
                 'entityType': 'PERSON',
@@ -186,12 +187,13 @@ def test_update_solr(session, client, jwt):
     assert api_response.status_code == HTTPStatus.ACCEPTED
     business_identifier = REQUEST_TEMPLATE['business']['identifier']
     party_ids = []
-    # check business update
-    check_update_recorded(business_identifier)
+    # check business update - NOTE: uncomment once serving business updates
+    # check_update_recorded(business_identifier)
     # check parties update
     for party in REQUEST_TEMPLATE['parties']:
         for role in party['roles']:
-            party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
+            party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
+            print(party_id)
             party_ids.append(party_id)
             check_update_recorded(party_id, True)
     # verify update has NOT synced to solr yet
@@ -203,23 +205,24 @@ def test_update_solr(session, client, jwt):
     api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
     # check success
     assert api_response.status_code == HTTPStatus.OK
-    # check events were completed
-    check_update_recorded(business_identifier,
-                          is_party=False,
-                          status=SolrDocEventStatus.COMPLETE)
+    # check events were completed - NOTE: uncomment once serving business updates
+    # check_update_recorded(business_identifier,
+    #                       is_party=False,
+    #                       status=SolrDocEventStatus.COMPLETE)
     for party in REQUEST_TEMPLATE['parties']:
         for role in party['roles']:
-            identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
+            identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
-    for entity_id in [business_identifier] + party_ids:
+    for entity_id in party_ids:
         search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1
 
 
+@pytest.mark.skip  # NOTE: unskip once serving businesses in search
 @integration_solr
 def test_update_business_no_tax_id(session, client, jwt):
     """Assert that update operation is successful when the business has no tax id."""
@@ -256,6 +259,7 @@ def test_update_business_no_tax_id(session, client, jwt):
     assert len(search_response['response']['docs']) == 1
 
 
+@pytest.mark.skip  # NOTE: skip until serving business updates
 @pytest.mark.parametrize('test_name,legal_type,identifier,expected', [
     ('test_bc_add_prfx', 'BC', '0123456', 'BC0123456'),
     ('test_cc_add_prfx', 'CC', '1234567', 'BC1234567'),

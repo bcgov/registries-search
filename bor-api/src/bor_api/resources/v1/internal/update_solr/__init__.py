@@ -1,36 +1,40 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
-# Licensed under the Apache License, Version 2.0 (the 'License');
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an 'AS IS' BASIS,
+# distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""API endpoint for updating/adding entity records in solr."""
+"""Exposes all of the internal endpoints in Flask-Blueprint style."""
 import re
 from dataclasses import asdict
-from datetime import datetime, timedelta
 from http import HTTPStatus
 
-from flask import Blueprint, current_app, g, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
-from bor_api.enums import SolrDocEventStatus, SolrDocEventType, SolrSynonymType
+from bor_api.enums import SolrDocEventType
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.models import SolrDoc, SolrDocEvent, SolrSynonymList, User
-from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
-from bor_api.services.solr.bor_solr_updates import resync_bor_solr, update_bor_solr
+from bor_api.models import SolrDoc, SolrDocEvent, User
+from bor_api.services import SYSTEM_ROLE, jwt
 from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
-from bor_api.services.solr.utils import get_synonyms
 from bor_api.utils.request_validators import validate_solr_update_request
+
+from .resync import bp as solr_resync_bp
+from .sync import bp as solr_sync_bp
+from .synonyms import bp as solr_synonyms_bp
 
 
 bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable=invalid-name
+bp.register_blueprint(solr_resync_bp)
+bp.register_blueprint(solr_sync_bp)
+bp.register_blueprint(solr_synonyms_bp)
 
 
 @bp.put('')
@@ -48,101 +52,15 @@ def update_entity():
 
         entities = _parse_entities(request_json)
         for entity in entities:
+            if entity.entityType != 'PERSON':
+                # skip business entities for now
+                continue
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
             solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             SolrDocEvent(event_type=SolrDocEventType.UPDATE, solr_doc_id=solr_doc.id).save()
             # SOLR update will be triggered by job (does a frequent bulk update to solr)
 
         return jsonify({'message': 'Update accepted.'}), HTTPStatus.ACCEPTED
-
-    except Exception as exception:  # noqa: B902
-        return exception_response(exception)
-
-
-@bp.put('/synonyms')
-@cross_origin(origin='*')
-@jwt.requires_roles([SYSTEM_ROLE])
-def update_synonyms():
-    """Add/trigger update to synonyms lists."""
-    try:
-        synonyms = request.json
-        if not synonyms:
-            synonyms = get_synonyms()
-
-        errors = [key for key in synonyms if key not in [SolrSynonymType.ADDRESS, SolrSynonymType.NAME]]
-        if errors:
-            return bad_request_response(f"Invalid synonym type(s): {','.join(errors)}")
-
-        # update solr synonym file
-        if SolrSynonymType.ADDRESS in synonyms:
-            bor_solr.create_or_update_synonyms(SolrSynonymType.ADDRESS, synonyms[SolrSynonymType.ADDRESS])
-        if SolrSynonymType.NAME in synonyms:
-            bor_solr.create_or_update_synonyms(SolrSynonymType.NAME, synonyms[SolrSynonymType.NAME])
-        # reload the solr core (so it will register any changes)
-        bor_solr.reload_core()
-        # update db synonym lists
-        for synonym_type in synonyms:
-            SolrSynonymList.create_or_replace_all(synonyms=synonyms[synonym_type], synonym_type=synonym_type)
-
-        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
-
-    except Exception as exception:  # noqa: B902
-        return exception_response(exception)
-
-
-@bp.post('/resync')
-@cross_origin(origin='*')
-@jwt.requires_roles([SYSTEM_ROLE])
-def resync_solr():
-    """Resync solr docs from the given date or identifiers given."""
-    try:
-        request_json = request.json
-        from_datetime = datetime.utcnow()
-        minutes_offset = request_json.get('minutesOffset', None)
-        identifiers_to_resync = request_json.get('identifiers', None)
-        if not minutes_offset and not identifiers_to_resync:
-            return bad_request_response('Missing required field "minutesOffset" or "identifiers".')
-        try:
-            minutes_offset = float(minutes_offset)
-        except:  # pylint: disable=bare-except # noqa F841;
-            if not identifiers_to_resync:
-                return bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
-
-        if minutes_offset:
-            # get all updates since the from_datetime
-            resync_date = from_datetime - timedelta(minutes=minutes_offset)
-            identifiers_to_resync = SolrDoc.get_updated_entity_ids_after_date(resync_date)
-
-        if identifiers_to_resync:
-            current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
-            resync_bor_solr(identifiers_to_resync)
-        else:
-            current_app.logger.debug('No records to resync.')
-
-        return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
-
-    except Exception as exception:  # noqa: B902
-        return exception_response(exception)
-
-
-@bp.get('/sync')
-@cross_origin(origin='*')
-def sync_solr():
-    """Sync docs in the DB that haven't been applied to SOLR yet."""
-    try:
-        pending_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.PENDING,
-                                                                            SolrDocEventStatus.ERROR],
-                                                                  event_type=SolrDocEventType.UPDATE)
-
-        pending_update_events = pending_update_events[:current_app.config.get('MAX_BATCH_UPDATE_NUM')]
-        identifiers_to_sync = [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events]
-        # only update up to a certain amount at a time
-
-        current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
-        if identifiers_to_sync:
-            update_bor_solr(identifiers_to_sync, pending_update_events)
-
-        return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
 
     except Exception as exception:  # noqa: B902
         return exception_response(exception)

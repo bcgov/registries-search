@@ -45,12 +45,21 @@ class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
     @classmethod
     def get_events_by_status(cls,
                              statuses: list[SolrDocEventStatus],
-                             event_type: SolrDocEventType = None) -> list[SolrDocEvent]:
+                             event_type: SolrDocEventType = None,
+                             start_date: datetime = None,
+                             limit: int = None) -> list[SolrDocEvent]:
         """Update the status of the given events."""
         query = cls.query.filter(cls.event_status.in_(statuses))
         if event_type:
             query = query.filter(cls.event_type == event_type)
-        return query.order_by(cls.event_date).all()
+        if start_date:
+            query = query.filter(cls.event_date > start_date)
+
+        query = query.order_by(cls.event_date)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
 
     @classmethod
     def update_events_status(cls, status: SolrDocEventStatus, events: list[SolrDocEvent]):

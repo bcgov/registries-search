@@ -1855,6 +1855,76 @@
 							"response": []
 						},
 						{
+							"name": "sync heartbeat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/sync/heartbeat",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"sync",
+										"heartbeat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "synonym update specific",
 							"event": [
 								{

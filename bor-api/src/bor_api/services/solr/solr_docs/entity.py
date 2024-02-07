@@ -25,7 +25,7 @@ class Entity:
 
     id: str  # business identifier or person identifier (COLIN<party id> / LEAR<party id>)
     entityAddresses: list[Address]
-    entityType: str  # person or business
+    entityType: str  # PERSON or BUSINESS
     legalName: str
     bn: str = None  # bn9 for people, bn15 for businesses
     email: str = None

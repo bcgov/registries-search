@@ -50,7 +50,15 @@ class Config():  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
+    # Used by /sync endpoint
     MAX_BATCH_UPDATE_NUM = int(os.getenv('MAX_BATCH_UPDATE_NUM', '1000'))
+
+    # Used by /sync/heartbeat endpoint.
+    REINDEX_UTC_WEEKDAY_NUM = int(os.getenv('REINDEX_UTC_WEEKDAY_NUM', '0'))  # NOTE: 0 == Monday
+    REINDEX_UTC_HOUR_END_EST = int(os.getenv('REINDEX_UTC_HOUR_END_EST', '12'))  # NOTE: 24 hours
+    LAST_REPLICATION_THRESHOLD = int(
+        os.getenv('LAST_REPLICATION_THRESHOLD', '24')  # NOTE: in hours
+    )
 
     # Flag Names
     OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
