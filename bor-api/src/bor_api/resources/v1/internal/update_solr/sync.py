@@ -54,6 +54,7 @@ def sync_solr():
 def follower_heartbeat():
     """Verify the solr follower instance is serving updated/synced records."""
     try:
+        now = datetime.now(UTC)
         if bor_solr.follower_url != bor_solr.leader_url:
             # verify the follower core details
             details: dict = (bor_solr.replication('details', False)).json()['details']
@@ -64,7 +65,6 @@ def follower_heartbeat():
             current_app.logger.debug(f'Last replication was at {last_replication.isoformat()}')
 
             # NOTE: during a reindex, follower polling / replication will be paused for ~8/9 hours
-            now = datetime.now(UTC)
             is_reindex_day = current_app.config.get('REINDEX_UTC_WEEKDAY_NUM') == now.weekday()
             in_reindex_hours = current_app.config.get('REINDEX_UTC_HOUR_END_EST') > now.hour
             if is_reindex_day and in_reindex_hours:
@@ -115,11 +115,11 @@ def follower_heartbeat():
 
             if not (name_eq and related_id_eq and related_name_eq and related_state_eq and role_type_eq and street_eq):
                 # data returned from the follower does match the update or is not there
-                message = f'Follower failed to update doc with id: {doc_obj_to_verify.id}.'
+                message = f'Follower failed to update entity: {doc_obj_to_verify.entity_id}.'
                 current_app.logger.error(message)
                 return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
 
-            current_app.logger.debug(f'Sync for {doc_obj_to_verify.id} verified.')
+            current_app.logger.debug(f'Sync verified for: {doc_obj_to_verify.entity_id}')
 
         return jsonify({'message': 'Follower synchronization is healthy.'}), HTTPStatus.OK
 
