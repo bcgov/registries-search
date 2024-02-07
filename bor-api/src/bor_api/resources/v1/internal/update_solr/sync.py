@@ -54,35 +54,36 @@ def sync_solr():
 def follower_heartbeat():
     """Verify the solr follower instance is serving updated/synced records."""
     try:
-        # verify the follower core details
-        details: dict = (bor_solr.replication('details', False)).json()['details']
-        # NOTE: replace tzinfo needed because strptime %Z is not working as documented
-        #   - issue: accepts the tz in the string but doesn't add it to the dateime obj
-        last_replication = (datetime.strptime(details['follower']['indexReplicatedAt'],
-                                              '%a %b %d %H:%M:%S %Z %Y')).replace(tzinfo=UTC)
-        current_app.logger.debug(f'Last replication was at {last_replication.isoformat()}')
+        if bor_solr.follower_url != bor_solr.leader_url:
+            # verify the follower core details
+            details: dict = (bor_solr.replication('details', False)).json()['details']
+            # NOTE: replace tzinfo needed because strptime %Z is not working as documented
+            #   - issue: accepts the tz in the string but doesn't add it to the dateime obj
+            last_replication = (datetime.strptime(details['follower']['indexReplicatedAt'],
+                                                  '%a %b %d %H:%M:%S %Z %Y')).replace(tzinfo=UTC)
+            current_app.logger.debug(f'Last replication was at {last_replication.isoformat()}')
 
-        # NOTE: during a reindex, follower polling / replication will be paused for ~8/9 hours
-        now = datetime.now(UTC)
-        is_reindex_day = current_app.config.get('REINDEX_UTC_WEEKDAY_NUM') == now.weekday()
-        in_reindex_hours = current_app.config.get('REINDEX_UTC_HOUR_END_EST') > now.hour
-        if is_reindex_day and in_reindex_hours:
-            message = 'Skipped sync verification. Estimated that a reindex is running.'
-            current_app.logger.debug(message)
-            return jsonify({'message': message}), HTTPStatus.OK
+            # NOTE: during a reindex, follower polling / replication will be paused for ~8/9 hours
+            now = datetime.now(UTC)
+            is_reindex_day = current_app.config.get('REINDEX_UTC_WEEKDAY_NUM') == now.weekday()
+            in_reindex_hours = current_app.config.get('REINDEX_UTC_HOUR_END_EST') > now.hour
+            if is_reindex_day and in_reindex_hours:
+                message = 'Skipped sync verification. Estimated that a reindex is running.'
+                current_app.logger.debug(message)
+                return jsonify({'message': message}), HTTPStatus.OK
 
-        # verify polling is active
-        if details['follower']['isPollingDisabled'] == 'true':
-            message = 'Follower polling disabled when it should be enabled.'
-            current_app.logger.error(message)
-            return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+            # verify polling is active
+            if details['follower']['isPollingDisabled'] == 'true':
+                message = 'Follower polling disabled when it should be enabled.'
+                current_app.logger.error(message)
+                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
 
-        # verify last_replication datetime is within a reasonable timeframe
-        if last_replication + timedelta(hours=current_app.config.get('LAST_REPLICATION_THRESHOLD')) < now:
-            # its been too long since a replication. Log / return error
-            message = 'Follower last replication datetime is longer than expected.'
-            current_app.logger.error(message)
-            return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+            # verify last_replication datetime is within a reasonable timeframe
+            if last_replication + timedelta(hours=current_app.config.get('LAST_REPLICATION_THRESHOLD')) < now:
+                # its been too long since a replication. Log / return error
+                message = 'Follower last replication datetime is longer than expected.'
+                current_app.logger.error(message)
+                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
 
         # verify an update that happened in the last hour (if there is one)
         event_to_verify = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.COMPLETE],
