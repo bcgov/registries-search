@@ -91,35 +91,51 @@ def follower_heartbeat():
                                                             start_date=now - timedelta(minutes=60),
                                                             limit=1)
 
-        if len(event_to_verify) == 1 and event_to_verify[0].event_date + timedelta(minutes=5) < now.astimezone():
+        if len(event_to_verify) != 1 or event_to_verify[0].event_date + timedelta(minutes=5) > now:
+            # either no updates to check or the event may not be reflected in the search yet
+            current_app.logger.debug('No update events to verify in the last hour.')
+        else:
             # there was an update in the last hour and it is at least 5 minutes old
             doc_obj_to_verify = SolrDoc.get_by_id(event_to_verify[0].solr_doc_id)
-            current_app.logger.debug(f'Verifying sync for: {doc_obj_to_verify.entity_id}...')
-            doc: dict = doc_obj_to_verify.doc
-            response = bor_solr.query({'query': f"id:{doc['id']}", 'fields': '*, [child]'})
+            most_recent_doc_for_entity = SolrDoc.find_most_recent_by_entity_id(doc_obj_to_verify.entity_id)
+            if most_recent_doc_for_entity.id != doc_obj_to_verify.id:
+                # there's been an update since so skip verification of this event
+                current_app.logger.debug('Update event has been altered since. Skipping verification.')
+            else:
+                current_app.logger.debug(f'Verifying sync for: {doc_obj_to_verify.entity_id}...')
+                doc: dict = doc_obj_to_verify.doc
+                response = bor_solr.query({'query': f"id:{doc['id']}", 'fields': '*, [child]'})
 
-            entity: dict = response['response']['docs'][0] if response['response']['docs'] else {}
-            role: dict = (entity.get('roles', [{}]))[0]
-            address: dict = (entity.get('entityAddresses', [{}]))[0]
+                entity: dict = response['response']['docs'][0] if response['response']['docs'] else {}
+                role: dict = (entity.get('roles', [{}]))[0]
+                address: dict = (entity.get('entityAddresses', [{}]))[0]
 
-            expected_role: dict = doc['roles'][0] if doc['roles'] else {}
-            expected_address: dict = doc['entityAddresses'][0] if doc['entityAddresses'] else {}
+                expected_role: dict = doc['roles'][0] if doc['roles'] else {}
+                expected_address: dict = doc['entityAddresses'][0] if doc['entityAddresses'] else {}
 
-            # verify important elements match the update
-            name_eq = entity.get('legalName') == doc.get('legalName')
-            related_id_eq = role.get('relatedIdentifier') == expected_role.get('relatedIdentifier')
-            related_name_eq = role.get('relatedName') == expected_role.get('relatedName')
-            related_state_eq = role.get('relatedState') == expected_role.get('relatedState')
-            role_type_eq = role.get('roleType') == expected_role.get('roleType')
-            street_eq = address.get('streetAddress') == expected_address.get('streetAddress')
+                # verify important elements match the update
+                name_eq = entity.get('legalName') == doc.get('legalName')
+                related_id_eq = role.get('relatedIdentifier') == expected_role.get('relatedIdentifier')
+                related_name_eq = role.get('relatedName') == expected_role.get('relatedName')
+                related_state_eq = role.get('relatedState') == expected_role.get('relatedState')
+                role_type_eq = role.get('roleType') == expected_role.get('roleType')
+                street_eq = address.get('streetAddress') == expected_address.get('streetAddress')
+                is_equal = name_eq and related_id_eq and related_name_eq \
+                    and related_state_eq and role_type_eq and street_eq
 
-            if not (name_eq and related_id_eq and related_name_eq and related_state_eq and role_type_eq and street_eq):
-                # data returned from the follower does match the update or is not there
-                message = f'Follower failed to update entity: {doc_obj_to_verify.entity_id}.'
-                current_app.logger.error(message)
-                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+                if not is_equal:
+                    # data returned from the follower does match the update or is not there
+                    current_app.logger.debug(f'name_eq: {name_eq}\nrelated_id_eq: {related_id_eq}\n'
+                                             f'related_name_eq: {related_name_eq}\n'
+                                             f'related_state_eq: {related_state_eq}\n'
+                                             f'role_type_eq: {role_type_eq}\nstreet_eq: {street_eq}')
+                    current_app.logger.debug(f'Entity expected: {doc}')
+                    current_app.logger.debug(f'Entity served: {entity}')
+                    message = f'Follower failed to update entity: {doc_obj_to_verify.entity_id}.'
+                    current_app.logger.error(message)
+                    return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
 
-            current_app.logger.debug(f'Sync verified for: {doc_obj_to_verify.entity_id}')
+                current_app.logger.debug(f'Sync verified for: {doc_obj_to_verify.entity_id}')
 
         return jsonify({'message': 'Follower synchronization is healthy.'}), HTTPStatus.OK
 
