@@ -21,7 +21,7 @@ import pytest
 import requests_mock
 
 from bor_api.enums import SolrDocEventStatus
-from bor_api.services import bor_solr
+from bor_api.services import solr as bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
@@ -91,6 +91,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert solr_url in m.request_history[0].url
         entity_addresses = [{
             'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
+            'location_description': None,
             'postalCode': 'T3J 3Z5',
             'addressCity': 'Calgary',
             'addressType': 'DELIVERY',
@@ -123,10 +124,15 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'entityType': 'PERSON',
                 'id': f'LEAR570343{business_identifier}DIRECTOR0',
                 'legalName': 'BCREG2 LIANG FORTY',
+                'alternateName': None,
+                'birthDate': None,
                 'bn': None,
+                'deathDate': None,
                 'email': None,
                 'identifier': None,
+                'isPermanentResident': None,
                 'legalType': None,
+                'nationalities': None,
                 'roles': [{
                     'roleType': 'DIRECTOR',
                     'relatedBN': '123456789',
@@ -137,12 +143,16 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
                     'relatedLegalType': request_json['business']['legalType'],
                     'relatedEntityType': 'BUSINESS',
+                    'relatedInterests': None,
                     'relatedIdentifier': request_json['business']['identifier'],}],
-                'state': None
+                'state': None,
+                'taxNumber': None,
+                'taxResidencies': None
             },
             {
                 'entityAddresses': [{
                     'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
+                    'location_description': None,
                     'postalCode': 'G1N 1C1',
                     'addressCity': 'Québec',
                     'addressType': 'DELIVERY',
@@ -152,7 +162,12 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'entityType': 'PERSON',
                 'id': f'LEAR570721{business_identifier}DIRECTOR0',
                 'legalName': 'BLIPPITY BOP',
+                'alternateName': None,
                 'bn': None,
+                'birthDate': None,
+                'deathDate': None,
+                'isPermanentResident': None,
+                'nationalities': None,
                 'email': None,
                 'identifier': None,
                 'legalType': None,
@@ -166,8 +181,11 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
                     'relatedLegalType': request_json['business']['legalType'],
                     'relatedEntityType': 'BUSINESS',
+                    'relatedInterests': None,
                     'relatedIdentifier': request_json['business']['identifier'],}],
-                'state': None
+                'state': None,
+                'taxNumber': None,
+                'taxResidencies': None
             }
         ]
 
@@ -193,7 +211,6 @@ def test_update_solr(session, client, jwt):
     for party in REQUEST_TEMPLATE['parties']:
         for role in party['roles']:
             party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
-            print(party_id)
             party_ids.append(party_id)
             check_update_recorded(party_id, True)
     # verify update has NOT synced to solr yet

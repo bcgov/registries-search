@@ -16,8 +16,8 @@ from dataclasses import asdict
 
 import pytest
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services.bor_solr.fields import EntityField
+from bor_api.services.bor_solr.doc_models import Entity
 
 from tests.unit.test_utils.solr_helpers import factory_entity_default
 
@@ -37,15 +37,15 @@ def test_entity_doc(test_name, name, entity_type):
 
     json = asdict(entity)
     assert json
-    assert json.get(Field.LEGAL_NAME.value) == name
-    assert json.get(Field.ENTITY_TYPE.value) == entity_type
-    assert json.get(Field.ENTITY_ADDRESSES.value)
-    assert json.get(Field.ROLES.value)
+    assert json.get(EntityField.LEGAL_NAME.value) == name
+    assert json.get(EntityField.ENTITY_TYPE.value) == entity_type
+    assert json.get(EntityField.ENTITY_ADDRESSES.value)
+    assert json.get(EntityField.ROLES.value)
     
     if entity_type == 'BUSINESS':
-        assert json.get(Field.IDENTIFIER.value)
-        assert json.get(Field.LEGAL_TYPE.value)
-        assert json.get(Field.STATE.value)
+        assert json.get(EntityField.IDENTIFIER.value)
+        assert json.get(EntityField.LEGAL_TYPE.value)
+        assert json.get(EntityField.STATE.value)
 
 
 def test_entity_doc_invalid():

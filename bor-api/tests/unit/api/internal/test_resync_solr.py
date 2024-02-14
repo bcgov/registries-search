@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test-Suite to ensure that the solr business update endpoints/functions work as expected."""
-import json
 import time
 from copy import deepcopy
 from dataclasses import asdict
@@ -24,9 +23,9 @@ import requests_mock
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc
-from bor_api.services import bor_solr
+from bor_api.services import solr as bor_solr
 from bor_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services.bor_solr.doc_models import Entity
 
 from tests import integration_solr
 from tests.unit.test_utils import create_header

@@ -13,7 +13,6 @@
 # limitations under the License.
 """Test-Suite to ensure that the solr synonym update enpoint works as expected."""
 import json
-from copy import deepcopy
 from http import HTTPStatus
 from random import randint
 
@@ -22,7 +21,7 @@ import requests_mock
 
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
-from bor_api.services import bor_solr
+from bor_api.services import solr as bor_solr
 from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import create_header

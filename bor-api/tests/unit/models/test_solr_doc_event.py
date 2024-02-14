@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the SolrDoc Class."""
-import pytest
-
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDocEvent
 

@@ -16,8 +16,8 @@ from dataclasses import asdict
 
 import pytest
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.solr_docs import DateRange, EntityRole
+from bor_api.services.bor_solr.fields import EntityRoleField
+from bor_api.services.bor_solr.doc_models import DateRange, EntityRole
 
 
 @pytest.mark.parametrize('test_name,rel_e_type,rel_identifier,rel_l_type,rel_name,rel_state,dates,role_type,rel_bn', [
@@ -42,15 +42,15 @@ def test_entity_role_doc(test_name, rel_e_type, rel_identifier, rel_l_type,
 
     json = asdict(entity_role)
     assert json
-    assert json.get(Field.RELATED_ENTITY_TYPE.value) == rel_e_type
-    assert json.get(Field.RELATED_IDENTIFIER.value) == rel_identifier
-    assert json.get(Field.RELATED_LEGAL_TYPE.value) == rel_l_type
-    assert json.get(Field.RELATED_NAME.value) == rel_name
-    assert json.get(Field.RELATED_STATE.value) == rel_state
-    assert json.get(Field.ROLE_TYPE.value) == role_type
-    assert json.get(Field.RELATED_BN.value) == rel_bn
+    assert json.get(EntityRoleField.RELATED_ENTITY_TYPE.value) == rel_e_type
+    assert json.get(EntityRoleField.RELATED_IDENTIFIER.value) == rel_identifier
+    assert json.get(EntityRoleField.RELATED_LEGAL_TYPE.value) == rel_l_type
+    assert json.get(EntityRoleField.RELATED_NAME.value) == rel_name
+    assert json.get(EntityRoleField.RELATED_STATE.value) == rel_state
+    assert json.get(EntityRoleField.ROLE_TYPE.value) == role_type
+    assert json.get(EntityRoleField.RELATED_BN.value) == rel_bn
 
-    role_dates = json.get(Field.ROLE_DATES.value)
+    role_dates = json.get(EntityRoleField.ROLE_DATES.value)
     assert len(role_dates) == len(dates)
 
     for role_date in role_dates:

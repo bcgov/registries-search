@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""API request handlers for solr updates / resyncs."""
+"""BOR Solr update functions."""
+# TODO: turn this into a class that isn't BOR specific
 from flask import current_app
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc, SolrDocEvent
-from bor_api.services import bor_solr
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services import solr as bor_solr
+from bor_api.services.bor_solr.doc_models import Entity
 
 
 def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):

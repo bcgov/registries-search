@@ -18,8 +18,8 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services import SYSTEM_ROLE, jwt, solr as bor_solr
+from bor_api.services.bor_solr.doc_models import Entity
 
 
 bp = Blueprint('IMPORT', __name__, url_prefix='/solr/import')  # pylint: disable=invalid-name

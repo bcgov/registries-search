@@ -14,7 +14,7 @@
 """Test-Suite for the interal API endpoints."""
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services.bor_solr.doc_models import Entity
 
 
 def check_update_recorded(entity_id: str, is_party=False, status=SolrDocEventStatus.PENDING):

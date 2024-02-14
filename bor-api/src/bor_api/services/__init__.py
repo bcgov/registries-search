@@ -15,11 +15,11 @@
 from flask_jwt_oidc import JwtManager
 
 from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff, is_system
+from .bor_solr import BorSolr
 from .flags import Flags
-from .solr import Solr
 
 
 # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
-bor_solr = Solr()
+solr = BorSolr()
 flags = Flags()
 jwt = JwtManager()

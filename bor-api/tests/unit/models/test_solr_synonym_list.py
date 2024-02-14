@@ -14,8 +14,6 @@
 """Tests to assure the SolrSynonymList Class."""
 import pytest
 
-from sqlalchemy.exc import IntegrityError
-
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 

@@ -17,7 +17,7 @@ from sqlalchemy import text, exc
 
 from bor_api.exceptions import SolrException, exception_response
 from bor_api.models import db
-from bor_api.services import bor_solr
+from bor_api.services import solr as bor_solr
 
 
 bp = Blueprint('OPS', __name__, url_prefix='/ops')  # pylint: disable=invalid-name

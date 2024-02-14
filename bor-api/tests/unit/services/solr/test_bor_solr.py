@@ -17,14 +17,12 @@ from http import HTTPStatus
 
 import pytest
 import requests_mock
-from datetime import datetime, timedelta
 
-from bor_api.exceptions import SolrException
-from bor_api.services import bor_solr
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services import solr as bor_solr
+from bor_api.services.bor_solr.fields import EntityField
 
 from tests import integration_solr
-from tests.unit.test_utils import SOLR_TEST_DOCS, create_entity, factory_entity_default
+from tests.unit.test_utils import create_entity, factory_entity_default
 
 
 @integration_solr
@@ -42,24 +40,24 @@ def test_create_update_delete_query(app):
     time.sleep(20)  # long wait necessary due to backup tests
 
     # search new doc
-    params = {'query': f'{Field.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
-    assert docs[0][Field.LEGAL_NAME.value] == name
-    assert docs[0][Field.UNIQUE_KEY.value]
+    assert docs[0][EntityField.LEGAL_NAME.value] == name
+    assert docs[0][EntityField.UNIQUE_KEY.value]
 
     # create backup
     backup = bor_solr.replication(command='backup')
     assert backup.status_code == HTTPStatus.OK
     time.sleep(1)
     # delete doc
-    deleted = bor_solr.delete_docs([docs[0][Field.UNIQUE_KEY.value]])
+    deleted = bor_solr.delete_docs([docs[0][EntityField.UNIQUE_KEY.value]])
     assert deleted.status_code == HTTPStatus.OK
-    time.sleep(1)  # takes up to 1 second for solr to register update
+    time.sleep(2)  # takes up to 1 second for solr to register update
 
     # test search returns nothing
-    params = {'query': f'{Field.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
@@ -74,12 +72,12 @@ def test_create_update_delete_query(app):
     assert (restore_status.json())['restorestatus']['status'] == 'success'
 
     # test search returns doc again
-    params = {'query': f'{Field.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
-    assert docs[0][Field.LEGAL_NAME.value] == name
-    assert docs[0][Field.UNIQUE_KEY.value]
+    assert docs[0][EntityField.LEGAL_NAME.value] == name
+    assert docs[0][EntityField.UNIQUE_KEY.value]
     
     # delete doc again
     bor_solr.delete_all_docs()
@@ -95,14 +93,14 @@ def test_create_update_delete_query(app):
     time.sleep(2)  # takes up to 1 second for solr to register update
 
     # search new docs
-    params = {'query': f'{Field.LEGAL_NAME_SINGLE_Q.value}:test', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:test', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 2
-    assert docs[0][Field.LEGAL_NAME.value] in [name1, name2]
-    assert docs[0][Field.UNIQUE_KEY.value]
-    assert docs[1][Field.LEGAL_NAME.value] in [name1, name2]
-    assert docs[1][Field.UNIQUE_KEY.value]
+    assert docs[0][EntityField.LEGAL_NAME.value] in [name1, name2]
+    assert docs[0][EntityField.UNIQUE_KEY.value]
+    assert docs[1][EntityField.LEGAL_NAME.value] in [name1, name2]
+    assert docs[1][EntityField.UNIQUE_KEY.value]
 
     # replace entity_1
     new_name = 'bla'
@@ -114,13 +112,13 @@ def test_create_update_delete_query(app):
     time.sleep(2)
 
     # search entity_1 -- should not be there
-    params = {'query': f'{Field.LEGAL_NAME_SINGLE_Q.value}:{entity_1.legalName}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{entity_1.legalName}', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
 
     # search updated_entity -- should be there
-    params = {'query': f'{Field.LEGAL_NAME_SINGLE_Q.value}:{updated_entity.legalName}', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{updated_entity.legalName}', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
@@ -128,14 +126,14 @@ def test_create_update_delete_query(app):
     # assert delete 1
     deleted = bor_solr.delete_docs([updated_entity.id])
     assert deleted.status_code == HTTPStatus.OK
-    time.sleep(1)  # takes up to 1 second for solr to register update
+    time.sleep(2)  # takes up to 1 second for solr to register update
 
     # test search returns the other one only
-    params = {'query': f'{Field.LEGAL_NAME_Q.value}:*', 'fields': bor_solr.entity_fields + [Field.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:*', 'fields': bor_solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
     resp = bor_solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
-    assert docs[0][Field.UNIQUE_KEY.value] != updated_entity.identifier
+    assert docs[0][EntityField.UNIQUE_KEY.value] != updated_entity.identifier
 
     # add back in for next test
     added = bor_solr.create_or_replace_docs([updated_entity])

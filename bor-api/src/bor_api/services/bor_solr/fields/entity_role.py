@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,40 +24,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Manages solr fields for search solr."""
+"""Manages entity role doc fields for BOR solr."""
 from bor_api.enums.base import BaseEnum
 
 
-class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
-    """Enum of the fields available in the solr search core."""
+class EntityRoleField(BaseEnum):  # pylint: disable=too-few-public-methods
+    """Enum of the entity role fields available in the BOR solr search core."""
 
     # unique key for all docs
     UNIQUE_KEY = 'id'
-
-    # entity doc stored fields (base doc)
-    BN = 'bn'
-    EMAIL = 'email'
-    ENTITY_ADDRESSES = 'entityAddresses'
-    ENTITY_TYPE = 'entityType'
-    IDENTIFIER = 'identifier'
-    LEGAL_NAME = 'legalName'
-    LEGAL_TYPE = 'legalType'
-    ROLES = 'roles'
-    STATE = 'state'
-    # entity doc query fields
-    BN_Q = 'bn_q'
-    IDENTIFIER_Q = 'identifier_q'
-    LEGAL_NAME_Q = 'legalName_q'
-    LEGAL_NAME_AGRO_Q = 'legalName_stem_agro_q'
-    LEGAL_NAME_SINGLE_Q = 'legalName_single_term_q'
-    LEGAL_NAME_SYN_Q = 'legalName_synonym_q'
-
     # entity role doc stored fields
     RELATED_BN = 'relatedBN'
     RELATED_EMAIL = 'relatedEmail'
     RELATED_ENTITY_TYPE = 'relatedEntityType'
     RELATED_IDENTIFIER = 'relatedIdentifier'
     RELATED_LEGAL_TYPE = 'relatedLegalType'
+    RELATED_INTERESTS = 'relatedInterests'
     RELATED_NAME = 'relatedName'
     RELATED_STATE = 'relatedState'
     ROLE_DATES = 'roleDates'
@@ -71,22 +53,5 @@ class SolrField(BaseEnum):  # pylint: disable=too-few-public-methods
     RELATED_NAME_SINGLE_Q = 'relatedName_single_term_q'
     RELATED_NAME_SYN_Q = 'relatedName_synonym_q'
     RELATED_Q = 'related_q'
-
-    # address doc stored fields
-    ADDRESS_TYPE = 'addressType'
-    ADDRESS_CITY = 'addressCity'
-    ADDRESS_COUNTRY = 'addressCountry'
-    ADDRESS_REGION = 'addressRegion'
-    POSTAL_CODE = 'postalCode'
-    STREET_ADDRESS = 'streetAddress'
-    # address doc query fields
-    ADDRESS_Q = 'address_q'
-    ADDRESS_SYN_Q = 'address_synonym_q'
-
-    # date range fields
-    START = 'start'
-    END = 'end'
-    ACTIVE = 'active'
-
-    # shared built in fields
+    # common built in across docs
     SCORE = 'score'

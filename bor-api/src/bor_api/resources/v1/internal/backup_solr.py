@@ -16,7 +16,7 @@ from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
+from bor_api.services import SYSTEM_ROLE, jwt, solr as bor_solr
 
 
 bp = Blueprint('BACKUP', __name__, url_prefix='/solr/backup')  # pylint: disable=invalid-name

@@ -11,6 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module manages helpful util functions for using the solr service."""
-from .formatting_helpers import parse_facets, prep_query_str, prep_query_str_adv
-from .synonym_helpers import get_synonyms
+"""Module for BOR solr."""
+from .bor_solr import BorSolr
+from .utils import SearchParams, entities_search, xlsx_response

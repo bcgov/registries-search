@@ -14,14 +14,14 @@
 """Tests to ensure that the Solr Service format helpers work as expected."""
 import pytest
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.bor_solr.fields import EntityField
 from bor_api.services.solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 
 
 @pytest.mark.parametrize('test_name,facet_data,expected', [
     ('test_1',
-     {'facets': {Field.LEGAL_TYPE.value: {'buckets': [{'val': 'BEN', 'count': 23}, {'val': 'CP', 'count': 10}, {'val': 'SP', 'count': 102}]}, Field.STATE.value: {'buckets': [{'val': 'ACTIVE', 'count': 23}, {'val': 'HISTORICAL', 'count': 10}]}}},
-     {'fields': {Field.LEGAL_TYPE.value: [{'value': 'BEN', 'count': 23}, {'value': 'CP', 'count': 10}, {'value': 'SP', 'count': 102}], Field.STATE.value: [{'value': 'ACTIVE', 'count': 23}, {'value': 'HISTORICAL', 'count': 10}]}}),
+     {'facets': {EntityField.LEGAL_TYPE.value: {'buckets': [{'val': 'BEN', 'count': 23}, {'val': 'CP', 'count': 10}, {'val': 'SP', 'count': 102}]}, EntityField.STATE.value: {'buckets': [{'val': 'ACTIVE', 'count': 23}, {'val': 'HISTORICAL', 'count': 10}]}}},
+     {'fields': {EntityField.LEGAL_TYPE.value: [{'value': 'BEN', 'count': 23}, {'value': 'CP', 'count': 10}, {'value': 'SP', 'count': 102}], EntityField.STATE.value: [{'value': 'ACTIVE', 'count': 23}, {'value': 'HISTORICAL', 'count': 10}]}}),
 ])
 def test_parse_facets(test_name, facet_data, expected):
     """Assert the parse_facets function works as expected."""

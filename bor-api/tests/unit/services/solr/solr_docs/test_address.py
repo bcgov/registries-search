@@ -16,8 +16,8 @@ from dataclasses import asdict
 
 import pytest
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.solr_docs import Address
+from bor_api.services.bor_solr.fields import AddressField
+from bor_api.services.bor_solr.doc_models import Address
 
 
 @pytest.mark.parametrize('test_name,a_type,a_city,a_country,a_region,street,p_code,converted', [
@@ -52,11 +52,11 @@ def test_address_doc(app, test_name, a_type, a_city, a_country, a_region, street
 
     json = asdict(address)
     assert json
-    assert json.get(Field.ADDRESS_CITY.value) == a_city
-    assert json.get(Field.ADDRESS_COUNTRY.value) == converted['country']
-    assert json.get(Field.ADDRESS_REGION.value) == a_region
-    assert json.get(Field.POSTAL_CODE.value) == p_code
-    assert json.get(Field.STREET_ADDRESS.value) == street
+    assert json.get(AddressField.ADDRESS_CITY.value) == a_city
+    assert json.get(AddressField.ADDRESS_COUNTRY.value) == converted['country']
+    assert json.get(AddressField.ADDRESS_REGION.value) == a_region
+    assert json.get(AddressField.POSTAL_CODE.value) == p_code
+    assert json.get(AddressField.STREET_ADDRESS.value) == street
 
 
 @pytest.mark.parametrize('test_name,a_type,a_city,a_country,a_region,street,p_code', [

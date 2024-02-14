@@ -20,7 +20,7 @@ from flask_cors import cross_origin
 from bor_api.enums import SolrSynonymType
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import SolrSynonymList
-from bor_api.services import SYSTEM_ROLE, bor_solr, jwt
+from bor_api.services import SYSTEM_ROLE, solr as bor_solr, jwt
 from bor_api.services.solr.utils import get_synonyms
 
 

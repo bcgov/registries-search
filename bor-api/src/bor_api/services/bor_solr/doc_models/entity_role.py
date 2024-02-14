@@ -16,6 +16,7 @@
 from dataclasses import dataclass
 
 from .date_range import DateRange
+from .interest import Interest
 
 
 @dataclass
@@ -31,6 +32,7 @@ class EntityRole:
     roleType: str  # i.e. director, partner, beneficial owner, incorporator, etc.
     relatedBN: str = None
     relatedEmail: str = None
+    relatedInterests: list[Interest] = None
     related_q: str = None
 
     def __post_init__(self):

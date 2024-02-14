@@ -29,6 +29,7 @@ class Address:
     addressRegion: str
     streetAddress: str
     postalCode: str
+    location_description: str = None
     address_q: str = None
 
     def __post_init__(self):
@@ -67,4 +68,4 @@ class Address:
 
         self.address_q = f"{self.streetAddress or ''} {self.addressCity or ''} " + \
             f"{region_name or self.addressRegion or ''} {self.addressCountry or ''} {self.postalCode or ''}" \
-            .replace('  ', ' ').strip()
+            f" {self.location_description or ''}".replace('  ', ' ').strip()

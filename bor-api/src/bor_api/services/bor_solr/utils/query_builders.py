@@ -15,21 +15,21 @@
 import re
 
 from bor_api.enums import SolrSynonymType
-from bor_api.models import SolrSynonymList
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 from bor_api.services.solr.utils.formatting_helpers import prep_query_str
 
 
-IDENTIFIER_FIELDS: list[str] = [Field.IDENTIFIER_Q.value, Field.RELATED_IDENTIFIER_Q.value, Field.RELATED_Q.value]
-PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + Field.ENTITY_TYPE.value + ":*'}"
+IDENTIFIER_FIELDS: list[str] = [EntityField.IDENTIFIER_Q.value, EntityRoleField.RELATED_IDENTIFIER_Q.value,
+                                EntityRoleField.RELATED_Q.value]
+PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + EntityField.ENTITY_TYPE.value + ":*'}"
 FIELD_SYNONYM_TYPE_MAP = {
-    Field.ADDRESS_SYN_Q: SolrSynonymType.ADDRESS,
-    Field.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
-    Field.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
+    AddressField.ADDRESS_SYN_Q: SolrSynonymType.ADDRESS,
+    EntityField.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
+    EntityRoleField.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
 }
 
 
-def _get_terms(query: dict[str, str]) -> tuple(list[str]):
+def _get_terms(query: dict[str, str]) -> tuple[list[str], list[str]]:
     """Return the terms and email_terms."""
     terms = query['value'].split()
     raw_email_terms = query['email_value'].split()
@@ -68,13 +68,13 @@ def _get_terms(query: dict[str, str]) -> tuple(list[str]):
 def _add_identifier(field: str, term: str, is_child=False) -> str:
     """Return a special identifier query."""
     corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
-    identifier_field = Field.IDENTIFIER_Q.value
+    identifier_field = EntityField.IDENTIFIER_Q.value
     if field in IDENTIFIER_FIELDS and (identifier := re.search(corp_prefix_regex, term)):
         prefix = identifier.group(1)
         new_term = term.replace(prefix, '', 1)
         if is_child:
             field = PRE_CHILD_FILTER_CLAUSE + field
-            identifier_field = PRE_CHILD_FILTER_CLAUSE + Field.RELATED_IDENTIFIER_Q.value
+            identifier_field = PRE_CHILD_FILTER_CLAUSE + EntityRoleField.RELATED_IDENTIFIER_Q.value
 
         return f'({field}:"{new_term}" AND {identifier_field}:"{prefix.upper()}")'
     if is_child:
@@ -92,8 +92,13 @@ def _get_fuzzy_str(term: str, short: int, long: int) -> str:
     return f'~{long}'
 
 
-def _find_synonym_terms(start_term: str, start_term_index: int, terms: list[str], field: Field) -> list[str]:
+def _find_synonym_terms(start_term: str,
+                        start_term_index: int,
+                        terms: list[str],
+                        field: AddressField | EntityField | EntityRoleField) -> list[str]:
     """Return the synonym terms that match the starting term and following query terms."""
+    from bor_api.models import SolrSynonymList  # pylint: disable=import-outside-toplevel;
+
     # the best match will be the one with the most words (i.e. british columbia > british)
     best_synonym_match_terms = []
     # check if term exists inside a synonym
@@ -148,7 +153,7 @@ def build_child_query(child_query: dict[str, str]) -> str | None:
     return f'({child_q})'
 
 
-def build_facet(field: Field, is_nested: bool) -> dict[str, dict]:
+def build_facet(field: AddressField | EntityField | EntityRoleField, is_nested: bool) -> dict[str, dict]:
     """Return the facet dict for the field."""
     facet = {field.value: {'type': 'terms', 'field': field.value}}
     if is_nested:
@@ -158,7 +163,8 @@ def build_facet(field: Field, is_nested: bool) -> dict[str, dict]:
     return facet
 
 
-def build_facet_query(field: Field, values: list[str], is_nested: bool = False) -> str:
+def build_facet_query(field: AddressField | EntityField | EntityRoleField,
+                      values: list[str], is_nested: bool = False) -> str:
     """Return the facet filter clause for the given params."""
     filter_q = f'{field.value}:("{values[0]}"'
     if is_nested:
@@ -174,11 +180,11 @@ def build_facet_query(field: Field, values: list[str], is_nested: bool = False) 
 
 
 def build_base_query(query: dict[str, str],  # pylint: disable=too-many-arguments,too-many-branches
-                     fields: list[Field],
-                     nested_fields: list[Field],
-                     boost_fields: dict[Field, int],
-                     fuzzy_fields: dict[Field, dict[str, int]],
-                     synonym_fields: dict[Field, str]) -> dict[str, list[str]]:
+                     fields: list[AddressField | EntityField | EntityRoleField | DateRangeField],
+                     nested_fields: list[AddressField | EntityField | EntityRoleField | DateRangeField],
+                     boost_fields: dict[AddressField | EntityField | EntityRoleField, int],
+                     fuzzy_fields: dict[AddressField | EntityField | EntityRoleField, dict[str, int]],
+                     synonym_fields: dict[AddressField | EntityField | EntityRoleField, str]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
     terms, email_terms = _get_terms(query)
 
@@ -235,12 +241,12 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
                 term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
 
         # add special nested clause for related email
-        nested_email_field_clause = build_child_query({Field.RELATED_EMAIL_Q.value: email_terms[term_index]})
+        nested_email_field_clause = build_child_query({EntityRoleField.RELATED_EMAIL_Q.value: email_terms[term_index]})
         # Add fuzzy matching for email if desired
-        if Field.RELATED_EMAIL_Q in fuzzy_fields and (
+        if EntityRoleField.RELATED_EMAIL_Q in fuzzy_fields and (
             fuzzy_str := _get_fuzzy_str(email_terms[term_index],
-                                        fuzzy_fields[Field.RELATED_EMAIL_Q]['short'],
-                                        fuzzy_fields[Field.RELATED_EMAIL_Q]['long'])):
+                                        fuzzy_fields[EntityRoleField.RELATED_EMAIL_Q]['short'],
+                                        fuzzy_fields[EntityRoleField.RELATED_EMAIL_Q]['long'])):
             # add fuzzy match chars before ending bracket
             nested_email_field_clause = f'{nested_email_field_clause[:-1]}{fuzzy_str})'
         term_clause = _update_clause(term_clause, f'({nested_email_field_clause})', 'OR')

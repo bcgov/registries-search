@@ -19,10 +19,10 @@ from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import User, SearchHistory
-from bor_api.services import bor_solr, jwt
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.utils import (SearchParams, entities_search, parse_facets,
-                                         prep_query_str, prep_query_str_adv, xlsx_response)
+from bor_api.services import solr as bor_solr, jwt
+from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 from bor_api.utils.request_validators import validate_search_request
 
 
@@ -41,55 +41,59 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
             return bad_request_response('Errors processing request.', errors)
 
         # set base query params
-        query_json = request_json.get('query', {})
+        query_json: dict = request_json.get('query', {})
         value = query_json.get('value', None)
         query = {
             'value': prep_query_str(value),
             'email_value': prep_query_str_adv(value),
-            Field.BN_Q.value: prep_query_str(query_json.get(Field.BN.value, '')),
-            Field.IDENTIFIER_Q.value: prep_query_str(query_json.get(Field.IDENTIFIER.value, '')),
-            Field.LEGAL_NAME_SINGLE_Q.value: prep_query_str(query_json.get(Field.LEGAL_NAME.value, ''))
+            EntityField.BN_Q.value: prep_query_str(query_json.get(EntityField.BN.value, '')),
+            EntityField.IDENTIFIER_Q.value: prep_query_str(query_json.get(EntityField.IDENTIFIER.value, '')),
+            EntityField.LEGAL_NAME_SINGLE_Q.value: prep_query_str(query_json.get(EntityField.LEGAL_NAME.value, ''))
         }
         # set faceted category params
-        categories_json = request_json.get('categories', {})
+        categories_json: dict = request_json.get('categories', {})
         categories = {
-            Field.ENTITY_TYPE: categories_json.get(Field.ENTITY_TYPE.value, None),
-            Field.LEGAL_TYPE: categories_json.get(Field.LEGAL_TYPE.value, None),
-            Field.STATE: categories_json.get(Field.STATE.value, None)
+            EntityField.ENTITY_TYPE: categories_json.get(EntityField.ENTITY_TYPE.value, None),
+            EntityField.LEGAL_TYPE: categories_json.get(EntityField.LEGAL_TYPE.value, None),
+            EntityField.STATE: categories_json.get(EntityField.STATE.value, None)
         }
         # set nested child query params
-        roles_json = query_json.get(Field.ROLES.value, {})
+        roles_json: dict = query_json.get(EntityField.ROLES.value, {})
         child_query = {
             # addresses
-            Field.ADDRESS_Q.value: prep_query_str(query_json.get(Field.ENTITY_ADDRESSES.value, '')),
+            AddressField.ADDRESS_Q.value: prep_query_str(query_json.get(EntityField.ENTITY_ADDRESSES.value, '')),
             # roles
-            Field.RELATED_BN_Q.value: prep_query_str(roles_json.get(Field.RELATED_BN.value, '')),
-            Field.RELATED_EMAIL_Q.value: prep_query_str_adv(roles_json.get(Field.RELATED_EMAIL.value, '')),
-            Field.RELATED_IDENTIFIER_Q.value: prep_query_str(roles_json.get(Field.RELATED_IDENTIFIER.value, '')),
-            Field.RELATED_NAME_SINGLE_Q.value: prep_query_str(roles_json.get(Field.RELATED_NAME.value, '')),
-            Field.RELATED_Q.value: prep_query_str(roles_json.get('value', ''))
+            EntityRoleField.RELATED_BN_Q.value: prep_query_str(roles_json.get(EntityRoleField.RELATED_BN.value, '')),
+            EntityRoleField.RELATED_EMAIL_Q.value:
+                prep_query_str_adv(roles_json.get(EntityRoleField.RELATED_EMAIL.value, '')),
+            EntityRoleField.RELATED_IDENTIFIER_Q.value:
+                prep_query_str(roles_json.get(EntityRoleField.RELATED_IDENTIFIER.value, '')),
+            EntityRoleField.RELATED_NAME_SINGLE_Q.value:
+                prep_query_str(roles_json.get(EntityRoleField.RELATED_NAME.value, '')),
+            EntityRoleField.RELATED_Q.value: prep_query_str(roles_json.get('value', ''))
         }
         # set nested child faceted category params
-        address_categories_json = categories_json.get(Field.ENTITY_ADDRESSES.value, {})
+        address_categories_json: dict = categories_json.get(EntityField.ENTITY_ADDRESSES.value, {})
         address_categories = {
-            Field.ADDRESS_CITY: address_categories_json.get(Field.ADDRESS_CITY.value, None),
-            Field.ADDRESS_COUNTRY: address_categories_json.get(Field.ADDRESS_COUNTRY.value, None),
-            Field.ADDRESS_REGION: address_categories_json.get(Field.ADDRESS_REGION.value, None),
+            AddressField.ADDRESS_CITY: address_categories_json.get(AddressField.ADDRESS_CITY.value, None),
+            AddressField.ADDRESS_COUNTRY: address_categories_json.get(AddressField.ADDRESS_COUNTRY.value, None),
+            AddressField.ADDRESS_REGION: address_categories_json.get(AddressField.ADDRESS_REGION.value, None),
         }
-        role_categories_json = categories_json.get(Field.ROLES.value, {})
+        role_categories_json: dict = categories_json.get(EntityField.ROLES.value, {})
         role_categories = {
-            Field.RELATED_ENTITY_TYPE: role_categories_json.get(Field.RELATED_ENTITY_TYPE.value, None),
-            Field.RELATED_STATE: role_categories_json.get(Field.RELATED_STATE.value, None),
-            Field.ROLE_TYPE: role_categories_json.get(Field.ROLE_TYPE.value, None)
+            EntityRoleField.RELATED_ENTITY_TYPE: role_categories_json.get(EntityRoleField.RELATED_ENTITY_TYPE.value,
+                                                                          None),
+            EntityRoleField.RELATED_STATE: role_categories_json.get(EntityRoleField.RELATED_STATE.value, None),
+            EntityRoleField.ROLE_TYPE: role_categories_json.get(EntityRoleField.ROLE_TYPE.value, None)
         }
         child_categories = {**address_categories, **role_categories}
         # set nested date params
         child_date_ranges = {}
-        role_date_range = roles_json.get(Field.ROLE_DATES.value, {})
+        role_date_range: dict = roles_json.get(EntityRoleField.ROLE_DATES.value, {})
         if role_date_range:
             child_date_ranges = {
-                Field.START: role_date_range.get(Field.START.value, '*'),
-                Field.END: role_date_range.get(Field.END.value, '*')
+                DateRangeField.START: role_date_range.get(DateRangeField.START.value, '*'),
+                DateRangeField.END: role_date_range.get(DateRangeField.END.value, '*')
             }
 
         start = request_json.get('start', bor_solr.default_start)
@@ -108,7 +112,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges)
 
-        results = entities_search(params)
+        results = entities_search(params, bor_solr)
         docs = results.get('response', {}).get('docs')
 
         # save search in the db
@@ -125,22 +129,24 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                 'queryInfo': {
                     'categories': {
                         **categories,
-                        Field.ENTITY_ADDRESSES.value: address_categories,
-                        Field.ROLES.value: role_categories
+                        EntityField.ENTITY_ADDRESSES.value: address_categories,
+                        EntityField.ROLES.value: role_categories
                     },
                     'query': {
                         'value': query['value'],
-                        Field.BN.value: query[Field.BN_Q.value],
-                        Field.IDENTIFIER.value: query[Field.IDENTIFIER_Q.value],
-                        Field.LEGAL_NAME.value: query[Field.LEGAL_NAME_SINGLE_Q.value],
-                        Field.ENTITY_ADDRESSES.value: child_query[Field.ADDRESS_Q.value],
-                        Field.ROLES.value: {
-                            Field.RELATED_BN.value: child_query[Field.RELATED_BN_Q.value],
-                            Field.RELATED_EMAIL.value: child_query[Field.RELATED_EMAIL_Q.value],
-                            Field.RELATED_IDENTIFIER.value: child_query[Field.RELATED_IDENTIFIER_Q.value],
-                            Field.RELATED_NAME.value: child_query[Field.RELATED_NAME_SINGLE_Q.value],
-                            Field.ROLE_DATES.value: child_date_ranges,
-                            'value': child_query[Field.RELATED_Q.value]
+                        EntityField.BN.value: query[EntityField.BN_Q.value],
+                        EntityField.IDENTIFIER.value: query[EntityField.IDENTIFIER_Q.value],
+                        EntityField.LEGAL_NAME.value: query[EntityField.LEGAL_NAME_SINGLE_Q.value],
+                        EntityField.ENTITY_ADDRESSES.value: child_query[AddressField.ADDRESS_Q.value],
+                        EntityField.ROLES.value: {
+                            EntityRoleField.RELATED_BN.value: child_query[EntityRoleField.RELATED_BN_Q.value],
+                            EntityRoleField.RELATED_EMAIL.value: child_query[EntityRoleField.RELATED_EMAIL_Q.value],
+                            EntityRoleField.RELATED_IDENTIFIER.value:
+                                child_query[EntityRoleField.RELATED_IDENTIFIER_Q.value],
+                            EntityRoleField.RELATED_NAME.value:
+                                child_query[EntityRoleField.RELATED_NAME_SINGLE_Q.value],
+                            EntityRoleField.ROLE_DATES.value: child_date_ranges,
+                            'value': child_query[EntityRoleField.RELATED_Q.value]
                         }
                     },
                     'rows': rows or bor_solr.default_rows,

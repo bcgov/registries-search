@@ -16,8 +16,8 @@ from dataclasses import asdict
 
 import pytest
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.solr_docs import DateRange
+from bor_api.services.bor_solr.fields import DateRangeField
+from bor_api.services.bor_solr.doc_models import DateRange
 
 
 @pytest.mark.parametrize('test_name,start,end', [
@@ -34,5 +34,5 @@ def test_date_range_doc(test_name, start, end):
 
     json = asdict(date_range)
     assert json
-    assert json.get(Field.START.value) == start
-    assert json.get(Field.END.value) == end
+    assert json.get(DateRangeField.START.value) == start
+    assert json.get(DateRangeField.END.value) == end

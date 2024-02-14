@@ -23,7 +23,7 @@ from bor_api.enums import SolrDocEventType
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import SolrDoc, SolrDocEvent, User
 from bor_api.services import SYSTEM_ROLE, jwt
-from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
+from bor_api.services.bor_solr.doc_models import Address, DateRange, Entity, EntityRole
 from bor_api.utils.request_validators import validate_solr_update_request
 
 from .resync import bp as solr_resync_bp

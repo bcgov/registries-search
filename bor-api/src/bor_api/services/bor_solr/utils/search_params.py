@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""BOR solr search params."""
+"""Solr search params."""
 from dataclasses import dataclass
 
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 
 
 @dataclass
@@ -24,7 +24,7 @@ class SearchParams:  # pylint: disable=too-few-public-methods
     query: dict[str, str]
     rows: int
     start: int
-    categories: dict[Field, list[str]]
+    categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
     child_query: dict[str, str]
-    child_categories: dict[Field, list[str]]
-    child_date_ranges: dict[Field, str]
+    child_categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
+    child_date_ranges: dict[DateRangeField, str]

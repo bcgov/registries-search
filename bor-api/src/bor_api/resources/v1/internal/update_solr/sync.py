@@ -21,8 +21,8 @@ from flask_cors import cross_origin
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.exceptions import exception_response
 from bor_api.models import SolrDoc, SolrDocEvent
-from bor_api.services import bor_solr
-from bor_api.services.solr.bor_solr_updates import update_bor_solr
+from bor_api.services import solr as bor_solr
+from bor_api.services.solr_update_helper import update_bor_solr
 
 
 bp = Blueprint('SYNC', __name__, url_prefix='/sync')  # pylint: disable=invalid-name

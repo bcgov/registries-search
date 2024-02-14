@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from bor_api.services.solr.solr_docs import Address, DateRange, Entity, EntityRole
+from bor_api.services.bor_solr.doc_models import Address, DateRange, Entity, EntityRole
 
 
 def create_entity(name: str,

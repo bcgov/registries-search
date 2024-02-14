@@ -21,7 +21,7 @@ from flask_cors import cross_origin
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import SolrDoc
 from bor_api.services import SYSTEM_ROLE, jwt
-from bor_api.services.solr.bor_solr_updates import resync_bor_solr
+from bor_api.services.solr_update_helper import resync_bor_solr
 
 
 bp = Blueprint('RESYNC', __name__, url_prefix='/resync')  # pylint: disable=invalid-name

@@ -18,8 +18,7 @@ from dataclasses import asdict
 from datetime import datetime, timedelta
 
 from bor_api.models import SolrDoc
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
-from bor_api.services.solr.solr_docs import Entity
+from bor_api.services.bor_solr.doc_models import Entity
 
 from tests.unit.test_utils import SOLR_TEST_DOCS
 

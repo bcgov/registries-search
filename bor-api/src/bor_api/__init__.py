@@ -27,7 +27,7 @@ from bor_api import errorhandlers, models
 from bor_api.config import config
 from bor_api.models import db
 from bor_api.resources import v1_endpoint
-from bor_api.services import Flags, bor_solr, jwt
+from bor_api.services import Flags, solr as bor_solr, jwt
 from bor_api.utils.logging import set_log_level_by_flag, setup_logging
 from bor_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort

@@ -20,9 +20,9 @@ import pytest
 
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
-from bor_api.services import bor_solr
+from bor_api.services import solr as bor_solr
 from bor_api.services.authz import BASIC_USER
-from bor_api.services.solr.bor_solr_fields import SolrField as Field
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 
 from tests import integration_solr
 from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
@@ -31,22 +31,22 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
 @pytest.mark.parametrize('test_name,query,categories', [
     ('test_basic', {'value': '123'}, {}),
     ('test_filters',
-     {'value': 'test filters', Field.LEGAL_NAME.value: 'name', Field.IDENTIFIER.value: 'BC23', Field.BN.value: '023'},
+     {'value': 'test filters', EntityField.LEGAL_NAME.value: 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
      {}
     ),
     ('test_categories',
      {'value': 'test categories'},
-     {Field.ENTITY_TYPE.value: ['BUSINESS'], Field.STATE.value:['ACTIVE'], Field.LEGAL_TYPE.value: ['BC', 'CP', 'SP']}
+     {EntityField.ENTITY_TYPE.value: ['BUSINESS'], EntityField.STATE.value:['ACTIVE'], EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP']}
     ),
     ('test_child_filters', {
         'value': 'test child filters',
-        Field.ENTITY_ADDRESSES.value: 'vancouver bc',
-        Field.ROLES.value: {
-            Field.RELATED_BN.value: '0424',
-            Field.RELATED_EMAIL.value: '1234',
-            Field.RELATED_IDENTIFIER.value: 'CP4332',
-            Field.RELATED_NAME.value: 'related name',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
+        EntityField.ENTITY_ADDRESSES.value: 'vancouver bc',
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_BN.value: '0424',
+            EntityRoleField.RELATED_EMAIL.value: '1234',
+            EntityRoleField.RELATED_IDENTIFIER.value: 'CP4332',
+            EntityRoleField.RELATED_NAME.value: 'related name',
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2022-05-10', DateRangeField.START.value: '2020-01-28'},
             'value': 'CP4332 0424 related name'
         }
      },{}
@@ -54,47 +54,47 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
     ('test_child_categories',
      {'value': 'test child categories'},
      {
-        Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_CITY.value: ['VANCOUVER', 'VICTORIA'],
-            Field.ADDRESS_COUNTRY.value:['Canada'],
-            Field.ADDRESS_REGION.value: ['British Columbia', 'Alberta']
+        EntityField.ENTITY_ADDRESSES.value: {
+            AddressField.ADDRESS_CITY.value: ['VANCOUVER', 'VICTORIA'],
+            AddressField.ADDRESS_COUNTRY.value:['Canada'],
+            AddressField.ADDRESS_REGION.value: ['British Columbia', 'Alberta']
         },
-        Field.ROLES.value: {
-            Field.RELATED_STATE.value: ['ACTIVE'],
-            Field.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
-            Field.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
+            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
         }
      }
     ),
     ('test_all_combined',
      {
         'value': 'test all combined',
-        Field.LEGAL_NAME.value: 'name',
-        Field.IDENTIFIER.value: 'BC23',
-        Field.BN.value: '023',
-        Field.ENTITY_ADDRESSES.value: 'vancouver bc',
-        Field.ROLES.value: {
-            Field.RELATED_BN.value: '0424',
-            Field.RELATED_EMAIL.value: '1234',
-            Field.RELATED_IDENTIFIER.value: 'CP4332',
-            Field.RELATED_NAME.value: 'related name',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'},
+        EntityField.LEGAL_NAME.value: 'name',
+        EntityField.IDENTIFIER.value: 'BC23',
+        EntityField.BN.value: '023',
+        EntityField.ENTITY_ADDRESSES.value: 'vancouver bc',
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_BN.value: '0424',
+            EntityRoleField.RELATED_EMAIL.value: '1234',
+            EntityRoleField.RELATED_IDENTIFIER.value: 'CP4332',
+            EntityRoleField.RELATED_NAME.value: 'related name',
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2022-05-10', DateRangeField.START.value: '2020-01-28'},
             'value': 'CP4332 0424 related name'
         }
      },
      {
-        Field.ENTITY_TYPE.value: ['BUSINESS'],
-        Field.STATE.value:['ACTIVE'],
-        Field.LEGAL_TYPE.value: ['BC', 'CP', 'SP'],
-        Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_CITY.value: ['VANCOUVER', 'VICTORIA'],
-            Field.ADDRESS_COUNTRY.value:['Canada'],
-            Field.ADDRESS_REGION.value: ['British Columbia', 'Alberta']
+        EntityField.ENTITY_TYPE.value: ['BUSINESS'],
+        EntityField.STATE.value:['ACTIVE'],
+        EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP'],
+        EntityField.ENTITY_ADDRESSES.value: {
+            AddressField.ADDRESS_CITY.value: ['VANCOUVER', 'VICTORIA'],
+            AddressField.ADDRESS_COUNTRY.value:['Canada'],
+            AddressField.ADDRESS_REGION.value: ['British Columbia', 'Alberta']
         },
-        Field.ROLES.value: {
-            Field.RELATED_STATE.value: ['ACTIVE'],
-            Field.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
-            Field.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
+            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
         }
      })
 ])
@@ -121,30 +121,30 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     assert resp_json['facets'] == {'fields': {}}
     assert resp_json['searchResults']['queryInfo']['categories'] == {
         'entityAddresses': {
-            'addressCity': categories.get(Field.ENTITY_ADDRESSES.value, {}).get(Field.ADDRESS_CITY.value, None),
-            'addressCountry': categories.get(Field.ENTITY_ADDRESSES.value, {}).get(Field.ADDRESS_COUNTRY.value, None),
-            'addressRegion': categories.get(Field.ENTITY_ADDRESSES.value, {}).get(Field.ADDRESS_REGION.value, None)},
-        'entityType': categories.get(Field.ENTITY_TYPE.value, None),
-        'legalType': categories.get(Field.LEGAL_TYPE.value, None),
+            'addressCity': categories.get(EntityField.ENTITY_ADDRESSES.value, {}).get(AddressField.ADDRESS_CITY.value, None),
+            'addressCountry': categories.get(EntityField.ENTITY_ADDRESSES.value, {}).get(AddressField.ADDRESS_COUNTRY.value, None),
+            'addressRegion': categories.get(EntityField.ENTITY_ADDRESSES.value, {}).get(AddressField.ADDRESS_REGION.value, None)},
+        'entityType': categories.get(EntityField.ENTITY_TYPE.value, None),
+        'legalType': categories.get(EntityField.LEGAL_TYPE.value, None),
         'roles': {
-            'relatedEntityType': categories.get(Field.ROLES.value, {}).get(Field.RELATED_ENTITY_TYPE.value, None),
-            'relatedState': categories.get(Field.ROLES.value, {}).get(Field.RELATED_STATE.value, None),
-            'roleType': categories.get(Field.ROLES.value, {}).get(Field.ROLE_TYPE.value, None)
+            'relatedEntityType': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_ENTITY_TYPE.value, None),
+            'relatedState': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_STATE.value, None),
+            'roleType': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.ROLE_TYPE.value, None)
         },
-        'state': categories.get(Field.STATE.value, None)
+        'state': categories.get(EntityField.STATE.value, None)
     }
     assert resp_json['searchResults']['queryInfo']['query'] == {
-        'bn': query.get(Field.BN.value, ''),
-        'entityAddresses': query.get(Field.ENTITY_ADDRESSES.value, ''),
-        'identifier': query.get(Field.IDENTIFIER.value, '').lower(),
-        'legalName': query.get(Field.LEGAL_NAME.value, ''),
+        'bn': query.get(EntityField.BN.value, ''),
+        'entityAddresses': query.get(EntityField.ENTITY_ADDRESSES.value, ''),
+        'identifier': query.get(EntityField.IDENTIFIER.value, '').lower(),
+        'legalName': query.get(EntityField.LEGAL_NAME.value, ''),
         'roles': {
-            'relatedBN': query.get(Field.ROLES.value, {}).get(Field.RELATED_BN.value, ''),
-            'relatedEmail': query.get(Field.ROLES.value, {}).get(Field.RELATED_EMAIL.value, ''),
-            'relatedIdentifier': query.get(Field.ROLES.value, {}).get(Field.RELATED_IDENTIFIER.value, '').lower(),
-            'relatedName': query.get(Field.ROLES.value, {}).get(Field.RELATED_NAME.value, ''),
-            'roleDates': query.get(Field.ROLES.value, {}).get(Field.ROLE_DATES.value, {}),
-            'value': query.get(Field.ROLES.value, {}).get('value', '').lower()},
+            'relatedBN': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_BN.value, ''),
+            'relatedEmail': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_EMAIL.value, ''),
+            'relatedIdentifier': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_IDENTIFIER.value, '').lower(),
+            'relatedName': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_NAME.value, ''),
+            'roleDates': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.ROLE_DATES.value, {}),
+            'value': query.get(EntityField.ROLES.value, {}).get('value', '').lower()},
         'value': query['value']
     }
     assert resp_json['searchResults']['queryInfo']['rows'] == 10
@@ -266,34 +266,34 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ),
     ('test_basic_no_match', {'value': 'zzz no match here qljrb'}, {},[]),
     ('test_filters',
-     {'value': 'test', Field.LEGAL_NAME.value: 'test 1234', Field.IDENTIFIER.value: 'CP123', Field.BN.value: 'BN00'},
+     {'value': 'test', EntityField.LEGAL_NAME.value: 'test 1234', EntityField.IDENTIFIER.value: 'CP123', EntityField.BN.value: 'BN00'},
      {},
      [{'bn': 'BN00012334', 'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}]
     ),
     ('test_filters_no_match',
-     {'value': 'test filters', Field.LEGAL_NAME.value: 'name', Field.IDENTIFIER.value: 'BC23', Field.BN.value: '023'},
+     {'value': 'test filters', EntityField.LEGAL_NAME.value: 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
      {},
      []
     ),
     ('test_categories',
      {'value': 'tests 2222'},
-     {Field.ENTITY_TYPE.value: ['BUSINESS'], Field.STATE.value:['ACTIVE'], Field.LEGAL_TYPE.value: ['BC', 'CP', 'SP']},
+     {EntityField.ENTITY_TYPE.value: ['BUSINESS'], EntityField.STATE.value:['ACTIVE'], EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP']},
      [{'bn': 'BN00012334', 'email': '5555@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP0034567', 'legalName': 'tests 2222', 'legalType': 'CP', 'state': 'ACTIVE'}]
     ),
     ('test_categories_no_match',
      {'value': 'test 1234'},
-     {Field.ENTITY_TYPE.value: ['BUSINESS'], Field.STATE.value:['ACTIVE'], Field.LEGAL_TYPE.value: ['BC', 'GP', 'SP']},
+     {EntityField.ENTITY_TYPE.value: ['BUSINESS'], EntityField.STATE.value:['ACTIVE'], EntityField.LEGAL_TYPE.value: ['BC', 'GP', 'SP']},
      []
     ),
     ('test_child_filters',
      {
         'value': 'person one',
-        Field.ENTITY_ADDRESSES.value: 'victoria canada',
-        Field.ROLES.value: {
-            Field.RELATED_BN.value: '123',
-            Field.RELATED_IDENTIFIER.value: 'CP123',
-            Field.RELATED_NAME.value: 'test',
-            Field.ROLE_DATES.value:{Field.END.value: '2023-05-10', Field.START.value: '2020-01-28'},
+        EntityField.ENTITY_ADDRESSES.value: 'victoria canada',
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_BN.value: '123',
+            EntityRoleField.RELATED_IDENTIFIER.value: 'CP123',
+            EntityRoleField.RELATED_NAME.value: 'test',
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2023-05-10', DateRangeField.START.value: '2020-01-28'},
             'value': 'CP123 test'
         }
      },
@@ -303,8 +303,8 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_filters_related_value',
      {
         'value': 'person one',
-        Field.ENTITY_ADDRESSES.value: 'victoria brit col',
-        Field.ROLES.value: {'value': 'CP123 test'}
+        EntityField.ENTITY_ADDRESSES.value: 'victoria brit col',
+        EntityField.ROLES.value: {'value': 'CP123 test'}
      },
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
@@ -312,8 +312,8 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_filters_related_role_dates_1',
      {
         'value': 'person',
-        Field.ROLES.value: {
-            Field.ROLE_DATES.value:{Field.END.value: '2017-05-10', Field.START.value: '2014-01-28'},
+        EntityField.ROLES.value: {
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2017-05-10', DateRangeField.START.value: '2014-01-28'},
         }
      },
      {},
@@ -322,8 +322,8 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_filters_related_role_dates_2',
      {
         'value': 'person',
-        Field.ROLES.value: {
-            Field.ROLE_DATES.value:{Field.END.value: '2015-08-04', Field.START.value: '2014-01-28'},
+        EntityField.ROLES.value: {
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2015-08-04', DateRangeField.START.value: '2014-01-28'},
         }
      },
      {},
@@ -332,8 +332,8 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_filters_related_role_dates_3',
      {
         'value': 'person',
-        Field.ROLES.value: {
-            Field.ROLE_DATES.value:{Field.END.value: '2017-08-04', Field.START.value: '2015-09-05'},
+        EntityField.ROLES.value: {
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2017-08-04', DateRangeField.START.value: '2015-09-05'},
         }
      },
      {},
@@ -342,42 +342,42 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_filters_related_role_dates_4',
      {
         'value': 'person',
-        Field.ROLES.value: {
-            Field.ROLE_DATES.value:{Field.END.value: '2015-08-03', Field.START.value: '2014-09-05'},
+        EntityField.ROLES.value: {
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2015-08-03', DateRangeField.START.value: '2014-09-05'},
         }
      },
      {},
      []
     ),
     ('test_child_filters_related_email_1',
-     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"5555"}},
+     {'value': 'person', EntityField.ROLES.value: {EntityRoleField.RELATED_EMAIL.value:"5555"}},
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '5555@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_child_filters_related_email_2',
-     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"5555@email.com"}},
+     {'value': 'person', EntityField.ROLES.value: {EntityRoleField.RELATED_EMAIL.value:"5555@email.com"}},
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '5555@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_child_filters_related_email_3',
-     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"5@email.com"}},
+     {'value': 'person', EntityField.ROLES.value: {EntityRoleField.RELATED_EMAIL.value:"5@email.com"}},
      {},
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person eight', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': '5555@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0034567', 'relatedLegalType': 'CP', 'relatedName': 'tests 2222', 'relatedState': 'ACTIVE', 'roleDates': [{'active': False, 'end': '2016-08-04T00:03:54Z', 'score': 0.0, 'start': '2015-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_child_filters_related_email_4',
-     {'value': 'person', Field.ROLES.value: {Field.RELATED_EMAIL.value:"+em-ail: \\ ~ ^ / ! || AND NOT && OR [] {} ()"}},
+     {'value': 'person', EntityField.ROLES.value: {EntityRoleField.RELATED_EMAIL.value:"+em-ail: \\ ~ ^ / ! || AND NOT && OR [] {} ()"}},
      {},
      []
     ),
     ('test_child_filters_no_match',
      {
         'value': 'person',
-        Field.ENTITY_ADDRESSES.value: 'vancouver british colum',
-        Field.ROLES.value: {
-            Field.RELATED_BN.value: '0424',
-            Field.RELATED_IDENTIFIER.value: 'CP4332',
-            Field.RELATED_NAME.value: 'related name',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2020-01-28'}
+        EntityField.ENTITY_ADDRESSES.value: 'vancouver british colum',
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_BN.value: '0424',
+            EntityRoleField.RELATED_IDENTIFIER.value: 'CP4332',
+            EntityRoleField.RELATED_NAME.value: 'related name',
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2022-05-10', DateRangeField.START.value: '2020-01-28'}
         }
      },
      {},
@@ -386,14 +386,14 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_categories',
      {'value': 'person'},
      {
-        Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_COUNTRY.value:['Canada', 'United States'],
-            Field.ADDRESS_REGION.value: ['BC', 'AB', 'WA']
+        EntityField.ENTITY_ADDRESSES.value: {
+            AddressField.ADDRESS_COUNTRY.value:['Canada', 'United States'],
+            AddressField.ADDRESS_REGION.value: ['BC', 'AB', 'WA']
         },
-        Field.ROLES.value: {
-            Field.RELATED_STATE.value: ['ACTIVE'],
-            Field.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            Field.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
+            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
         }
      },
      [
@@ -405,14 +405,14 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_child_categories_no_match',
      {'value': 'person'},
      {
-        Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_COUNTRY.value:['Canada'],
-            Field.ADDRESS_REGION.value: ['ON', 'AB']
+        EntityField.ENTITY_ADDRESSES.value: {
+            AddressField.ADDRESS_COUNTRY.value:['Canada'],
+            AddressField.ADDRESS_REGION.value: ['ON', 'AB']
         },
-        Field.ROLES.value: {
-            Field.RELATED_STATE.value: ['ACTIVE'],
-            Field.RELATED_ENTITY_TYPE.value: ['PERSON'],
-            Field.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON'],
+            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
         }
      },
      []
@@ -435,26 +435,26 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_all_combined_person',
      {
         'value': 'person CA bc',
-        Field.LEGAL_NAME.value: 't',
-        Field.ENTITY_ADDRESSES.value: 'charles place victoria british colu',
-        Field.ROLES.value: {
-            Field.RELATED_BN.value: '123',
-            Field.RELATED_IDENTIFIER.value: 'CP123',
-            Field.RELATED_NAME.value: 'test',
-            Field.ROLE_DATES.value:{Field.END.value: '2022-05-10', Field.START.value: '2018-01-28'},
+        EntityField.LEGAL_NAME.value: 't',
+        EntityField.ENTITY_ADDRESSES.value: 'charles place victoria british colu',
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_BN.value: '123',
+            EntityRoleField.RELATED_IDENTIFIER.value: 'CP123',
+            EntityRoleField.RELATED_NAME.value: 'test',
+            EntityRoleField.ROLE_DATES.value:{DateRangeField.END.value: '2022-05-10', DateRangeField.START.value: '2018-01-28'},
             'value': 'CP123 test'
         }
      },
      {
-        Field.ENTITY_TYPE.value: ['PERSON'],
-        Field.ENTITY_ADDRESSES.value: {
-            Field.ADDRESS_COUNTRY.value:['Canada'],
-            Field.ADDRESS_REGION.value: ['BC', 'AB']
+        EntityField.ENTITY_TYPE.value: ['PERSON'],
+        EntityField.ENTITY_ADDRESSES.value: {
+            AddressField.ADDRESS_COUNTRY.value:['Canada'],
+            AddressField.ADDRESS_REGION.value: ['BC', 'AB']
         },
-        Field.ROLES.value: {
-            Field.RELATED_STATE.value: ['ACTIVE'],
-            Field.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            Field.ROLE_TYPE.value: ['DIRECTOR']
+        EntityField.ROLES.value: {
+            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
+            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR']
         }
      },
      [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
@@ -462,14 +462,14 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_all_combined_business',
      {
         'value': 'test',
-        Field.LEGAL_NAME.value: '12',
-        Field.IDENTIFIER.value: 'CP12',
-        Field.BN.value: '123'
+        EntityField.LEGAL_NAME.value: '12',
+        EntityField.IDENTIFIER.value: 'CP12',
+        EntityField.BN.value: '123'
      },
      {
-        Field.ENTITY_TYPE.value: ['BUSINESS'],
-        Field.STATE.value:['ACTIVE'],
-        Field.LEGAL_TYPE.value: ['BC', 'CP', 'SP']
+        EntityField.ENTITY_TYPE.value: ['BUSINESS'],
+        EntityField.STATE.value:['ACTIVE'],
+        EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP']
      },
      [{'bn': 'BN00012334', 'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}]
     ),

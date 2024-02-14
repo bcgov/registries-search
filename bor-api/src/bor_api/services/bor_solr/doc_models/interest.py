@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # pylint: disable=invalid-name
-"""Manages dataclass for the solr entity doc."""
+"""Manages dataclass for the solr interest doc."""
 from dataclasses import dataclass
-
-from .address import Address
-from .entity_role import EntityRole
 
 
 @dataclass
-class Entity:
-    """Class representation for a solr entity doc."""
+class Interest:
+    """Class representation for a solr interest doc."""
 
-    id: str  # business identifier or person identifier (COLIN<party id> / LEAR<party id>)
-    entityAddresses: list[Address]
-    entityType: str  # PERSON or BUSINESS
-    legalName: str
-    bn: str = None  # bn9 for people, bn15 for businesses
-    email: str = None
-    identifier: str = None
-    legalType: str = None
-    roles: list[EntityRole] = None
-    state: str = None
+    type: str = None
+    details: str = None
+    directOrIndirect: str = None
+    externalInfluence: str = None  # enum (either influences another or is influenced by another)
+    sharesExact: float = None
+    sharesMax: float = None
+    sharesMin: float = None
+    startDate: str = None
+    endDate: str = None
