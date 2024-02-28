@@ -17,13 +17,15 @@ import os
 from bor_api.version import __version__
 
 
-def _get_build_openshift_commit_hash():
-    return os.getenv('OPENSHIFT_BUILD_COMMIT', None)
+def _get_commit_hash():
+    """Return the containers ref if present."""
+    if (commit_hash := os.getenv('VCS_REF', None)) and commit_hash != 'missing':
+        return commit_hash
+    return None
 
 
 def get_run_version():
     """Return a formatted version string for this service."""
-    commit_hash = _get_build_openshift_commit_hash()
-    if commit_hash:
+    if commit_hash := _get_commit_hash():
         return f'{__version__}-{commit_hash}'
     return __version__

@@ -16,7 +16,7 @@ import re
 
 from bor_api.enums import SolrSynonymType
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
-from bor_api.services.solr.utils.formatting_helpers import prep_query_str
+from bor_api.services.base_solr.utils.formatting_helpers import prep_query_str
 
 
 IDENTIFIER_FIELDS: list[str] = [EntityField.IDENTIFIER_Q.value, EntityRoleField.RELATED_IDENTIFIER_Q.value,

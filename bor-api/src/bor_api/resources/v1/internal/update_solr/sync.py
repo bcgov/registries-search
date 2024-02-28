@@ -21,7 +21,7 @@ from flask_cors import cross_origin
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.exceptions import exception_response
 from bor_api.models import SolrDoc, SolrDocEvent
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.solr_update_helper import update_bor_solr
 
 
@@ -42,6 +42,17 @@ def sync_solr():
         current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
         if identifiers_to_sync:
             update_bor_solr(identifiers_to_sync, pending_update_events)
+        # TODO: merge this with above once solr_temp is merged into bor solr
+        pending_update_events_ext = SolrDocEvent.get_events_by_status(
+            statuses=[SolrDocEventStatus.PENDING, SolrDocEventStatus.ERROR],
+            event_type=SolrDocEventType.UPDATE_EXT,
+            limit=current_app.config.get('MAX_BATCH_UPDATE_NUM')
+        )
+        identifiers_to_sync_ext = \
+            [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events_ext]
+        current_app.logger.debug(f'Extended syncing: {identifiers_to_sync_ext}')
+        if identifiers_to_sync_ext:
+            update_bor_solr(identifiers_to_sync_ext, pending_update_events_ext, True)
 
         return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
 
@@ -55,9 +66,9 @@ def follower_heartbeat():
     """Verify the solr follower instance is serving updated/synced records."""
     try:
         now = datetime.now(UTC)
-        if bor_solr.follower_url != bor_solr.leader_url:
+        if solr.follower_url != solr.leader_url:
             # verify the follower core details
-            details: dict = (bor_solr.replication('details', False)).json()['details']
+            details: dict = (solr.replication('details', False)).json()['details']
             # NOTE: replace tzinfo needed because strptime %Z is not working as documented
             #   - issue: accepts the tz in the string but doesn't add it to the dateime obj
             last_replication = (datetime.strptime(details['follower']['indexReplicatedAt'],
@@ -104,7 +115,7 @@ def follower_heartbeat():
             else:
                 current_app.logger.debug(f'Verifying sync for: {doc_obj_to_verify.entity_id}...')
                 doc: dict = doc_obj_to_verify.doc
-                response = bor_solr.query({'query': f"id:{doc['id']}", 'fields': '*, [child]'})
+                response = solr.query({'query': f"id:{doc['id']}", 'fields': '*, [child]'})
 
                 entity: dict = response['response']['docs'][0] if response['response']['docs'] else {}
                 role: dict = (entity.get('roles', [{}]))[0]

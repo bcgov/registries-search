@@ -19,7 +19,7 @@ from http import HTTPStatus
 import pytest
 import requests_mock
 
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
@@ -55,7 +55,7 @@ def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
 def test_update_solr(session, client, jwt):
     """Assert that the import operation is successful."""
     # setup -- start with no docs
-    bor_solr.delete_all_docs()
+    solr.delete_all_docs()
     # import
     docs_json = [asdict(x) for x in SOLR_TEST_DOCS]
     api_response = client.put(f'/api/v1/internal/solr/import',
@@ -68,7 +68,7 @@ def test_update_solr(session, client, jwt):
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     for entity in SOLR_TEST_DOCS:
-        search_response = bor_solr.query(payload={'query': f'id:{entity.id}', 'fields': '*'})
+        search_response = solr.query(payload={'query': f'id:{entity.id}', 'fields': '*'})
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1

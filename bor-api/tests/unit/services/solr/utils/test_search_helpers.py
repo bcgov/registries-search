@@ -17,7 +17,7 @@ from dataclasses import asdict
 import pytest
 from unittest import mock
 
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 from bor_api.services.bor_solr.utils import SearchParams, entities_search
 from bor_api.services.bor_solr.utils.query_builders import PRE_CHILD_FILTER_CLAUSE
@@ -108,7 +108,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
                           child_query=child_query,
                           child_categories=child_categories,
                           child_date_ranges=child_date_ranges)
-    results = entities_search(params, bor_solr)
+    results = entities_search(params, solr)
     # test it returned the mock successfully
     assert results['response']['docs'] == docs
     assert results['response']['numFound'] == num_found
@@ -125,7 +125,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
      {DateRangeField.START: '2022-03-21', DateRangeField.END: '*'},
      COMPLEX_PAYLOAD),
 ])
-@mock.patch('bor_api.services.solr.Solr.query')
+@mock.patch('bor_api.services.solr.query')
 def test_entities_search_deep(mocked, session, test_name, query, categories,
                          child_query, child_categories, child_date_ranges, expected):
     """Assert that the entity_search function parses params correctly."""
@@ -140,7 +140,7 @@ def test_entities_search_deep(mocked, session, test_name, query, categories,
                           child_query=child_query,
                           child_categories=child_categories,
                           child_date_ranges=child_date_ranges)
-    results = entities_search(params, bor_solr)
+    results = entities_search(params, solr)
     # test it returned the mock successfully
     assert results == []
     # test it created the correct payload

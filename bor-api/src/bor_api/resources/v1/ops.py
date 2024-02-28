@@ -17,7 +17,7 @@ from sqlalchemy import text, exc
 
 from bor_api.exceptions import SolrException, exception_response
 from bor_api.models import db
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 
 
 bp = Blueprint('OPS', __name__, url_prefix='/ops')  # pylint: disable=invalid-name
@@ -30,7 +30,7 @@ def healthy():
     """Return a JSON object stating the health of the Service and dependencies."""
     try:
         db.session.execute(SQL)
-        bor_solr.call_solr('GET', bor_solr.search_url)
+        solr.call_solr('GET', solr.search_url)
     except exc.SQLAlchemyError as db_exception:
         current_app.logger.error('DB connection pool unhealthy:' + repr(db_exception))
         return {'message': 'api is down'}, 500

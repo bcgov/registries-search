@@ -21,10 +21,12 @@ import pytest
 import requests_mock
 
 from bor_api.enums import SolrDocEventStatus
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr, solr_temp
 from bor_api.services.authz import SYSTEM_ROLE
 
-from tests.unit.test_utils import SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE, create_header
+from tests.unit.test_utils import (SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE,
+                                   SOLR_UPDATE_REQUEST_OWNER_TEMPLATE as REQUEST_OWNER_TEMPLATE,
+                                   create_header)
 from tests import integration_solr
 
 from . import check_update_recorded
@@ -46,13 +48,16 @@ del REQUEST_TEMPLATE_PARTY_NO_DELIVERY['parties'][0]['deliveryAddress']
     ('ben', REQUEST_TEMPLATE),
     ('sp', SP_REQUEST_TEMPLATE),
     ('party_no_delivery', REQUEST_TEMPLATE_PARTY_NO_DELIVERY),
+    ('si', REQUEST_OWNER_TEMPLATE)
 ])
 def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     """Assert that update operation sends correct payload to solr."""
     solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    temp_solr_url = app.config.get('TEMP_SOLR_SVC_URL') + '/bo/update?commitWithin=1000&overwrite=true&wt=json'
 
     with requests_mock.mock() as m:
         m.post(solr_url)
+        m.post(temp_solr_url)
         
         api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
@@ -65,10 +70,14 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         business_identifier = request_json['business']['identifier']
         # check_update_recorded(business_identifier)
         # check parties update
-        for party in request_json['parties']:
+        for party in request_json.get('parties', []):
             for count, role in enumerate(party['roles']):
                 identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
                 check_update_recorded(identifier, True)
+        # check SI update
+        for owner in request_json.get('owners', []):
+            identifier = owner['interestedParty']['describedByPersonStatement']
+            check_update_recorded(identifier, True, is_owner=True)
             
         # check did not call to solr mock (only updates the DB)
         assert m.called == False
@@ -81,141 +90,243 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         # check_update_recorded(business_identifier,
         #                       is_party=False,
         #                       status=SolrDocEventStatus.COMPLETE)
-        for party in request_json['parties']:
+        for party in request_json.get('parties', []):
             for count, role in enumerate(party['roles']):
                 identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
+        for owner in request_json.get('owners', []):
+            identifier = owner['interestedParty']['describedByPersonStatement']
+            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE, is_owner=True)
         # check call to solr was correct
         assert m.called == True
-        assert m.call_count == 1  # batch updated all docs
-        assert solr_url in m.request_history[0].url
-        entity_addresses = [{
-            'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
-            'location_description': None,
-            'postalCode': 'T3J 3Z5',
-            'addressCity': 'Calgary',
-            'addressType': 'DELIVERY',
-            'addressRegion': 'AB',
-            'streetAddress': '1234-4818 Westwinds Dr NE',
-            'addressCountry': 'Canada'}] if request_json['parties'][0].get('deliveryAddress') else None
-        assert m.request_history[0].json() == [
-            # NOTE: uncomment once serving business updates
-            # {
-            #     'entityAddresses': [{
-            #         'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
-            #         'postalCode': 'V3K 3V9',
-            #         'addressCity': 'Coquitlam',
-            #         'addressType': 'delivery',
-            #         'addressRegion': 'BC',
-            #         'streetAddress': 'Bc-435 North Rd',
-            #         'addressCountry': 'Canada'}],
-            #     'entityType': 'BUSINESS',
-            #     'id': request_json['business']['identifier'],
-            #     'identifier': request_json['business']['identifier'],
-            #     'legalName': request_json['business']['legalName'],
-            #     'bn': '123456789',
-            #     'email': 'test@email.com',
-            #     'legalType': request_json['business']['legalType'],
-            #     'roles': None,
-            #     'state': 'ACTIVE'
-            # },
-            {
-                'entityAddresses': entity_addresses,
-                'entityType': 'PERSON',
-                'id': f'LEAR570343{business_identifier}DIRECTOR0',
-                'legalName': 'BCREG2 LIANG FORTY',
-                'alternateName': None,
-                'birthDate': None,
-                'bn': None,
-                'deathDate': None,
-                'email': None,
-                'identifier': None,
-                'isPermanentResident': None,
-                'legalType': None,
-                'nationalities': None,
-                'roles': [{
-                    'roleType': 'DIRECTOR',
-                    'relatedBN': '123456789',
-                    'relatedEmail': 'test@email.com',
-                    'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
-                    'relatedName': request_json['business']['legalName'],
-                    'relatedState': 'ACTIVE',
-                    'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
-                    'relatedLegalType': request_json['business']['legalType'],
-                    'relatedEntityType': 'BUSINESS',
-                    'relatedInterests': None,
-                    'relatedIdentifier': request_json['business']['identifier'],}],
-                'state': None,
-                'taxNumber': None,
-                'taxResidencies': None
-            },
-            {
-                'entityAddresses': [{
-                    'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
-                    'location_description': None,
-                    'postalCode': 'G1N 1C1',
-                    'addressCity': 'Québec',
-                    'addressType': 'DELIVERY',
-                    'addressRegion': 'QC',
-                    'streetAddress': 'W-558 Rue Saint-Vallier O',
-                    'addressCountry': 'Canada'}],
-                'entityType': 'PERSON',
-                'id': f'LEAR570721{business_identifier}DIRECTOR0',
-                'legalName': 'BLIPPITY BOP',
-                'alternateName': None,
-                'bn': None,
-                'birthDate': None,
-                'deathDate': None,
-                'isPermanentResident': None,
-                'nationalities': None,
-                'email': None,
-                'identifier': None,
-                'legalType': None,
-                'roles': [{
-                    'roleType': 'DIRECTOR',
-                    'relatedBN': '123456789',
-                    'relatedEmail': 'test@email.com',
-                    'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
-                    'relatedName': request_json['business']['legalName'],
-                    'relatedState': 'ACTIVE',
-                    'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
-                    'relatedLegalType': request_json['business']['legalType'],
-                    'relatedEntityType': 'BUSINESS',
-                    'relatedInterests': None,
-                    'relatedIdentifier': request_json['business']['identifier'],}],
-                'state': None,
-                'taxNumber': None,
-                'taxResidencies': None
-            }
-        ]
+        if request_json.get('parties'):
+            assert m.call_count == 2
+            assert solr_url in m.request_history[0].url
+            assert temp_solr_url in m.request_history[1].url
+        else:
+            assert m.call_count == 1
+            assert temp_solr_url in m.request_history[0].url
+
+        entity_addresses = None
+        if request_json.get('parties', [{}])[0].get('deliveryAddress'):
+            entity_addresses = [{
+                'address_q': '1234-4818 Westwinds Dr NE Calgary Alberta Canada T3J 3Z5',
+                'locationDescription': None,
+                'postalCode': 'T3J 3Z5',
+                'addressCity': 'Calgary',
+                'addressType': 'DELIVERY',
+                'addressRegion': 'AB',
+                'streetAddress': '1234-4818 Westwinds Dr NE',
+                'streetAdditional': None,
+                'addressCountry': 'Canada'}]
+        elif request_json.get('owners'):
+            entity_addresses = [{
+                'address_q': '123-720 Commonwealth Rd test street additional Kelowna British Columbia Canada V4V 1R8 test description',
+                'locationDescription': 'test description',
+                'postalCode': 'V4V 1R8',
+                'addressCity': 'Kelowna',
+                'addressType': 'RESIDENCE',
+                'addressRegion': 'BC',
+                'streetAddress': '123-720 Commonwealth Rd',
+                'streetAdditional': 'test street additional',
+                'addressCountry': 'Canada'}]
+
+        if request_json.get('parties'):
+            assert m.request_history[0].json() == [
+                # NOTE: uncomment once serving business updates
+                # {
+                #     'entityAddresses': [{
+                #         'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
+                #         'postalCode': 'V3K 3V9',
+                #         'addressCity': 'Coquitlam',
+                #         'addressType': 'delivery',
+                #         'addressRegion': 'BC',
+                #         'streetAddress': 'Bc-435 North Rd',
+                #         'addressCountry': 'Canada'}],
+                #     'entityType': 'BUSINESS',
+                #     'id': request_json['business']['identifier'],
+                #     'identifier': request_json['business']['identifier'],
+                #     'legalName': request_json['business']['legalName'],
+                #     'bn': '123456789',
+                #     'email': 'test@email.com',
+                #     'legalType': request_json['business']['legalType'],
+                #     'roles': None,
+                #     'state': 'ACTIVE'
+                # },
+                {
+                    'entityAddresses': entity_addresses,
+                    'entityType': 'PERSON',
+                    'externalInfluence': None,
+                    'id': f'LEAR570343{business_identifier}DIRECTOR0',
+                    'legalName': 'BCREG2 LIANG FORTY',
+                    'alternateName': None,
+                    'birthDate': None,
+                    'bn': None,
+                    'deathDate': None,
+                    'email': None,
+                    'identifier': None,
+                    'isPermanentResident': None,
+                    'legalType': None,
+                    'nationalities': None,
+                    'roles': [{
+                        'roleType': 'DIRECTOR',
+                        'relatedBN': '123456789',
+                        'relatedEmail': 'test@email.com',
+                        'roleDates': [{'active': True, 'end': None, 'start': '2023-03-06'}],
+                        'relatedName': request_json['business']['legalName'],
+                        'relatedState': 'ACTIVE',
+                        'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                        'relatedLegalType': request_json['business']['legalType'],
+                        'relatedEntityType': 'BUSINESS',
+                        'relatedInterests': None,
+                        'relatedIdentifier': request_json['business']['identifier'],}],
+                    'state': None,
+                    'taxNumber': None,
+                    'taxResidencies': None
+                },
+                {
+                    'entityAddresses': [{
+                        'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
+                        'locationDescription': None,
+                        'postalCode': 'G1N 1C1',
+                        'addressCity': 'Québec',
+                        'addressType': 'DELIVERY',
+                        'addressRegion': 'QC',
+                        'streetAddress': 'W-558 Rue Saint-Vallier O',
+                        'streetAdditional': None,
+                        'addressCountry': 'Canada'}],
+                    'entityType': 'PERSON',
+                    'externalInfluence': None,
+                    'id': f'LEAR570721{business_identifier}DIRECTOR0',
+                    'legalName': 'BLIPPITY BOP',
+                    'alternateName': None,
+                    'bn': None,
+                    'birthDate': None,
+                    'deathDate': None,
+                    'isPermanentResident': None,
+                    'nationalities': None,
+                    'email': None,
+                    'identifier': None,
+                    'legalType': None,
+                    'roles': [{
+                        'roleType': 'DIRECTOR',
+                        'relatedBN': '123456789',
+                        'relatedEmail': 'test@email.com',
+                        'roleDates': [{'active': True, 'end': None, 'start': '2023-03-20'}],
+                        'relatedName': request_json['business']['legalName'],
+                        'relatedState': 'ACTIVE',
+                        'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456789",
+                        'relatedLegalType': request_json['business']['legalType'],
+                        'relatedEntityType': 'BUSINESS',
+                        'relatedInterests': None,
+                        'relatedIdentifier': request_json['business']['identifier'],}],
+                    'state': None,
+                    'taxNumber': None,
+                    'taxResidencies': None
+                }
+            ]
+        else:
+            assert m.request_history[0].json() == [
+                {
+                    'entityAddresses': {'set': entity_addresses},
+                    'entityType': 'PERSON',
+                    'externalInfluence': 'CanBeInfluenced',
+                    'id': '7f0511ba-9621-4134-8363-462c61b9162a',
+                    'legalName': 'Kial Jinnah',
+                    'alternateName': 'wallaby willow',
+                    'birthDate': '1997-02-05',
+                    'bn': None,
+                    'deathDate': None,
+                    'email': 'test@test.com',
+                    'identifier': None,
+                    'isPermanentResident': False,
+                    'legalType': None,
+                    'nationalities': {'set': ['CA']},
+                    'roles': {'set': [{
+                        'roleType': 'SIGNIFICANT INDIVIDUAL',
+                        'relatedBN': '123456788BC001',
+                        'relatedEmail': 'test@email.com',
+                        'roleDates': [{'active': True, 'end': None, 'start': '2024-02-07'}],
+                        'relatedName': request_json['business']['legalName'],
+                        'relatedState': 'ACTIVE',
+                        'related_q': f"{request_json['business']['legalName']} {request_json['business']['identifier']} 123456788BC001",
+                        'relatedLegalType': request_json['business']['legalType'],
+                        'relatedEntityType': 'BUSINESS',
+                        'relatedInterests': [
+                            {'details': 'controlType.sharesOrVotes.registeredOwner',
+                            'directOrIndirect': 'direct',
+                            'interestType': 'votingRights',
+                            'sharesExact': None,
+                            'sharesMax': 45,
+                            'sharesMin': None},
+                            {'details': 'controlType.sharesOrVotes.registeredOwner',
+                            'directOrIndirect': 'direct',
+                            'interestType': 'shareholding',
+                            'sharesExact': None,
+                            'sharesMax': 33,
+                            'sharesMin': None},
+                            {'details': 'controlType.sharesOrVotes.indirectControl',
+                            'directOrIndirect': 'indirect',
+                            'interestType': 'votingRights',
+                            'sharesExact': None,
+                            'sharesMax': 45,
+                            'sharesMin': None},
+                            {'details': 'controlType.sharesOrVotes.indirectControl',
+                            'directOrIndirect': 'indirect',
+                            'interestType': 'shareholding',
+                            'sharesExact': None,
+                            'sharesMax': 33,
+                            'sharesMin': None},
+                            {'details': 'bla bla',
+                            'directOrIndirect': None,
+                            'interestType': 'otherInfluenceOrControl',
+                            'sharesExact': None,
+                            'sharesMax': None,
+                            'sharesMin': None}],
+                        'relatedIdentifier': request_json['business']['identifier'],}]},
+                    'state': None,
+                    'taxNumber': '402 931 299',
+                    'taxResidencies': {'set': ['CA']}
+                }
+            ]
 
 
 @integration_solr
-def test_update_solr(session, client, jwt):
+@pytest.mark.parametrize('test_name,request_json', [
+    ('ben', REQUEST_TEMPLATE),
+    ('si', REQUEST_OWNER_TEMPLATE)
+])
+def test_update_solr(session, client, jwt, test_name, request_json):
     """Assert that update operation is successful."""
     # setup -- start with no docs
-    bor_solr.delete_all_docs()
+    solr.delete_all_docs()
     time.sleep(2)  # wait for solr to register update
     # update
     api_response = client.put(f'/api/v1/internal/solr/update',
-                              data=json.dumps(REQUEST_TEMPLATE),
+                              data=json.dumps(request_json),
                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
                                                                            'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.ACCEPTED
-    business_identifier = REQUEST_TEMPLATE['business']['identifier']
+    business_identifier = request_json['business']['identifier']
     party_ids = []
+    si_ids = []
     # check business update - NOTE: uncomment once serving business updates
     # check_update_recorded(business_identifier)
     # check parties update
-    for party in REQUEST_TEMPLATE['parties']:
+    for party in request_json.get('parties', []):
         for role in party['roles']:
             party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
             party_ids.append(party_id)
             check_update_recorded(party_id, True)
+    # check si update
+    for owner in request_json.get('owners', []):
+        si_id = owner['interestedParty']['describedByPersonStatement']
+        si_ids.append(si_id)
+        check_update_recorded(si_id, True, is_owner=True)
     # verify update has NOT synced to solr yet
     for entity_id in [business_identifier] + party_ids:
-        search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
+        search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert len(search_response['response']['docs']) == 0
     # call sync to update solr
@@ -226,14 +337,22 @@ def test_update_solr(session, client, jwt):
     # check_update_recorded(business_identifier,
     #                       is_party=False,
     #                       status=SolrDocEventStatus.COMPLETE)
-    for party in REQUEST_TEMPLATE['parties']:
+    for party in request_json.get('parties', []):
         for role in party['roles']:
             identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
+    for owner in request_json.get('owners', []):
+        si_id = owner['interestedParty']['describedByPersonStatement']
+        check_update_recorded(si_id, True, status=SolrDocEventStatus.COMPLETE, is_owner=True)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     for entity_id in party_ids:
-        search_response = bor_solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
+        search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
+        assert search_response['response']
+        assert search_response['response']['docs']
+        assert len(search_response['response']['docs']) == 1
+    for entity_id in party_ids + si_ids:
+        search_response = solr_temp.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1
@@ -244,7 +363,7 @@ def test_update_solr(session, client, jwt):
 def test_update_business_no_tax_id(session, client, jwt):
     """Assert that update operation is successful when the business has no tax id."""
     # setup -- start with no docs
-    bor_solr.delete_all_docs()
+    solr.delete_all_docs()
     # setup - remove tax id from template
     no_tax_id = deepcopy(REQUEST_TEMPLATE)
     del no_tax_id['business']['taxId']
@@ -270,7 +389,7 @@ def test_update_business_no_tax_id(session, client, jwt):
                           status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
-    search_response = bor_solr.query(payload={'query': f'identifier:{business_identifier}', 'fields': '*'})
+    search_response = solr.query(payload={'query': f'identifier:{business_identifier}', 'fields': '*'})
     assert search_response['response']
     assert search_response['response']['docs']
     assert len(search_response['response']['docs']) == 1

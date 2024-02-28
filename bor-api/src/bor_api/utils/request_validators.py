@@ -105,7 +105,7 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     for index, party in enumerate(request_json.get('parties', [])):
         if not party.get('source'):
             err.append({'error': 'Party Source is required.', 'path': f'/parties/{index}/source'})
-        elif party['source'] not in ['LEAR', 'COLIN']:
+        elif party['source'] not in ['LEAR', 'COLIN', 'BTR']:
             err.append({'error': 'A valid Party Source is required.', 'path': f'/parties/{index}/source'})
 
         if not party.get('roles'):

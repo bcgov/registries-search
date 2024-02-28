@@ -23,7 +23,7 @@ import requests_mock
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
 from bor_api.services.bor_solr.doc_models import Entity
 
@@ -120,7 +120,7 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, entities: l
         payload['identifiers'] = [x.id for x in entities]
 
     # remove any existing solr docs
-    bor_solr.delete_all_docs()
+    solr.delete_all_docs()
 
     setup_info = prep_resync(entities)
     api_response = client.post(f'/api/v1/internal/solr/update/resync',
@@ -139,7 +139,7 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, entities: l
         assert len(solr_doc_old.solr_doc_events.all()) == 0
 
         time.sleep(2)  # wait for solr to register update
-        search_response = bor_solr.query(payload={'query': f'legalName_q:{entity.id}', 'fields': '*'})
+        search_response = solr.query(payload={'query': f'legalName_q:{entity.id}', 'fields': '*'})
         assert search_response['response']['numFound'] == 1
         assert search_response['response']['docs'][0]['legalName'] == entity.legalName
 

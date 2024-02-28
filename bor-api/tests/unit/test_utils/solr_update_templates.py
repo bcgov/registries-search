@@ -149,3 +149,150 @@ SOLR_UPDATE_REQUEST_TEMPLATE = {
         }
     ]
 }
+
+SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
+    "business": {
+        "email": "test@email.com",
+        "identifier": "BC1233335",
+        "legalName": "EFGH Corp",
+        "legalType": "BEN",
+        "taxId": "123456788BC001",
+        "state": "ACTIVE"
+    },
+    "owners": [
+        {
+            "interestedParty": {
+                "describedByPersonStatement": "7f0511ba-9621-4134-8363-462c61b9162a",
+                "addresses": [
+                    {
+                        "city": "Kelowna",
+                        "country": "CA",
+                        "countryName": "Canada",
+                        "street": "123-720 Commonwealth Rd",
+                        "streetAdditional": "test street additional",
+                        "locationDescription": "test description",
+                        "postalCode": "V4V 1R8",
+                        "region": "BC"
+                    }
+                ],
+                "birthDate": "1997-02-05",
+                "email": "test@test.com",
+                "externalInfluence": "CanBeInfluenced",
+                "hasTaxNumber": True,
+                "identifiers": [
+                    {
+                        "id": "402 931 299",
+                        "scheme": "CAN-TAXID",
+                        "schemeName": "ITN"
+                    }
+                ],
+                "isComponent": False,
+                "isPermanentResidentCa": False,
+                "missingInfoReason": "",
+                "names": [
+                    {
+                        "fullName": "Kial Jinnah",
+                        "type": "individual"
+                    },
+                    {
+                        "fullName": "wallaby willow",
+                        "type": "alternative"
+                    }
+                ],
+                "nationalities": [
+                    {
+                        "code": "CA",
+                        "name": "Canada"
+                    }
+                ],
+                "personType": "knownPerson",
+                "placeOfResidence": {
+                    "city": "Kelowna",
+                    "country": {
+                        "alpha_2": "CA",
+                        "name": "Canada"
+                    },
+                    "line1": "123-720 Commonwealth Rd",
+                    "line2": "",
+                    "locationDescription": "",
+                    "postalCode": "V4V 1R8",
+                    "region": "BC"
+                },
+                "publicationDetails": {
+                    "bodsVersion": "0.3",
+                    "publicationDate": "2024-02-23",
+                    "publisher": {
+                        "name": "BCROS - BC Registries and Online Services",
+                        "url": "https://www.bcregistry.gov.bc.ca/"
+                    }
+                },
+                "source": {
+                    "assertedBy": [
+                        {
+                            "name": "Hrvoje Fekete"
+                        }
+                    ],
+                    "description": "Using Gov BC - BTR - Web UI",
+                    "type": [
+                        "selfDeclaration"
+                    ]
+                },
+                "statementDate": "2024-02-07",
+                "statementID": "7f0511ba-9621-4134-8363-462c61b9162a",
+                "statementType": "personStatement",
+                "taxResidencies": [
+                    {
+                        "code": "CA",
+                        "name": "Canada"
+                    }
+                ]
+            },
+            "interests": [
+                {
+                    "details": "controlType.sharesOrVotes.registeredOwner",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 45
+                    },
+                    "startDate": "2024-02-07",
+                    "type": "votingRights"
+                },
+                {
+                    "details": "controlType.sharesOrVotes.registeredOwner",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 33
+                    },
+                    "startDate": "2024-02-07",
+                    "type": "shareholding"
+                },
+                {
+                    "details": "controlType.sharesOrVotes.indirectControl",
+                    "directOrIndirect": "indirect",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 45
+                    },
+                    "startDate": "2024-02-07",
+                    "type": "votingRights"
+                },
+                {
+                    "details": "controlType.sharesOrVotes.indirectControl",
+                    "directOrIndirect": "indirect",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 33
+                    },
+                    "startDate": "2024-02-07",
+                    "type": "shareholding"
+                },
+                {
+                    "details": "bla bla",
+                    "type": "otherInfluenceOrControl"
+                }
+            ]
+        }
+    ]
+}

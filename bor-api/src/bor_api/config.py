@@ -135,6 +135,7 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_TEST_CORE', 'bor')
     SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_TEST_URL', 'http://localhost:8990/solr')
     SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_TEST_URL', 'http://localhost:8990/solr')
+    TEMP_SOLR_SVC_TEST_URL = os.getenv('TEMP_SOLR_SVC_TEST_URL', 'http://localhost:8991/solr')
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_TEST_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_TEST_PASSWORD', '')

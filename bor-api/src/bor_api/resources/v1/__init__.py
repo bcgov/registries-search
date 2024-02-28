@@ -16,4 +16,3 @@ from .internal import bp as internal_bp
 from .meta import bp as meta_bp
 from .ops import bp as ops_bp
 from .search import bp as search_bp
-from .temp import bp as temp_bp

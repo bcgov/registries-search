@@ -14,7 +14,7 @@
 """Manages bor solr class."""
 from dataclasses import asdict
 
-from bor_api.services.solr import Solr
+from bor_api.services.base_solr import Solr
 from bor_api.services.bor_solr.doc_models import Entity
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 
@@ -41,8 +41,24 @@ class BorSolr(Solr):
     ]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
 
-    def create_or_replace_docs(self, docs: list[Entity], timeout=25):
+    def create_or_replace_docs(self, docs: list[Entity], timeout=25, additive=True):
         """Create or replace solr docs in the core."""
-        update_json = [asdict(doc) for doc in docs]
-        response = self.call_solr('POST', self.update_url, json_data=update_json, timeout=timeout)
+        update_list = [asdict(doc) for doc in docs]
+        if not additive:
+            # add in the set keyword to all roles / addresses / nationalities / tax residencies
+            for entity_dict in update_list:
+                # addresses
+                addresses = entity_dict.get('entityAddresses', [])
+                entity_dict['entityAddresses'] = {'set': addresses}
+                # roles
+                roles = entity_dict.get('roles', [])
+                entity_dict['roles'] = {'set': roles}
+                # nationalities
+                nationalities = entity_dict.get('nationalities', [])
+                entity_dict['nationalities'] = {'set': nationalities}
+                # tax residencies
+                tax_residencies = entity_dict.get('taxResidencies', [])
+                entity_dict['taxResidencies'] = {'set': tax_residencies}
+
+        response = self.call_solr('POST', self.update_url, json_data=update_list, timeout=timeout)
         return response

@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""API endpoints for searching entities."""
+"""API endpoints for searching entities - extended."""
 from http import HTTPStatus
 
 from flask import Blueprint, g, jsonify, request
@@ -19,21 +19,21 @@ from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import User, SearchHistory
-from bor_api.services import solr as bor_solr, jwt
+from bor_api.services import jwt, solr_temp
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
-from bor_api.services.solr.utils import parse_facets, prep_query_str, prep_query_str_adv
+from bor_api.services.base_solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 from bor_api.utils.request_validators import validate_search_request
 
 
-bp = Blueprint('ENTITIES', __name__, url_prefix='/entities')  # pylint: disable=invalid-name
+bp = Blueprint('EXTENDED', __name__, url_prefix='/extended')  # pylint: disable=invalid-name
 
 
 @bp.post('')
 @cross_origin(origin='*')
 @jwt.requires_auth
-def entities():  # pylint: disable=too-many-branches, too-many-return-statements, too-many-locals
-    """Return a list of entity results from solr."""
+def extended_search():  # pylint: disable=too-many-branches, too-many-return-statements, too-many-locals
+    """Return a list of entity results from solr including extended entity information."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
         request_json, errors = validate_search_request(user)
@@ -96,8 +96,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                 DateRangeField.END: role_date_range.get(DateRangeField.END.value, '*')
             }
 
-        start = request_json.get('start', bor_solr.default_start)
-        rows = request_json.get('rows', bor_solr.default_rows)
+        start = request_json.get('start', solr_temp.default_start)
+        rows = request_json.get('rows', solr_temp.default_rows)
         try:
             start = int(start)
             rows = int(rows)
@@ -112,7 +112,7 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges)
 
-        results = entities_search(params, bor_solr)
+        results = entities_search(params, solr_temp)
         docs = results.get('response', {}).get('docs')
 
         # save search in the db
@@ -149,8 +149,8 @@ def entities():  # pylint: disable=too-many-branches, too-many-return-statements
                             'value': child_query[EntityRoleField.RELATED_Q.value]
                         }
                     },
-                    'rows': rows or bor_solr.default_rows,
-                    'start': start or bor_solr.default_start
+                    'rows': rows or solr_temp.default_rows,
+                    'start': start or solr_temp.default_start
                 },
                 'totalResults': results.get('response', {}).get('numFound'),
                 'results': docs}}

@@ -20,7 +20,7 @@ import pytest
 
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.authz import BASIC_USER
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 
@@ -110,7 +110,7 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities',
+    resp = client.post(f'/api/v1/search',
                        data=json.dumps(payload),
                        headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
                                                                   'content-type': 'application/json',
@@ -554,9 +554,9 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
 def test_search_entities(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
     """Assert that the entities search call works returns successfully."""
     # setup solr data for test
-    bor_solr.delete_all_docs()
+    solr.delete_all_docs()
     time.sleep(1)
-    bor_solr.create_or_replace_docs(SOLR_TEST_DOCS)
+    solr.create_or_replace_docs(SOLR_TEST_DOCS)
     time.sleep(2)
     # add test dependent synonyms to db
     SolrSynonymList(synonym='bc', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
@@ -571,7 +571,7 @@ def test_search_entities(app, session, client, jwt, monkeypatch, test_name, quer
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities',
+    resp = client.post(f'/api/v1/search',
                         data=json.dumps(payload),
                         headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
                                                                     'content-type': 'application/json',
@@ -618,7 +618,7 @@ def test_search_entities_xlsx(app, session, client, jwt, requests_mock):
     # format payload
     payload = {'query': {'value': 'persons two'}}
     # call search
-    resp = client.post(f'/api/v1/search/entities',
+    resp = client.post(f'/api/v1/search',
                        data=json.dumps(payload),
                        headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
                                                                   'content-type': 'application/json',
@@ -640,7 +640,7 @@ def test_search_entities_error(app, session, client, jwt, monkeypatch, requests_
     # create payload
     payload = {'query': {'value': '123'}}
     # call search
-    resp = client.post(f'/api/v1/search/entities',
+    resp = client.post(f'/api/v1/search',
                        data=json.dumps(payload),
                        headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
                                                                   'content-type': 'application/json',
@@ -666,7 +666,7 @@ def test_search_entities_bad_request(app, session, client, jwt, monkeypatch, tes
     if categories:
         payload['categories'] = categories
     # call search
-    resp = client.post(f'/api/v1/search/entities',
+    resp = client.post(f'/api/v1/search',
                        data=json.dumps(payload),
                        headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
                                                                   'content-type': 'application/json',

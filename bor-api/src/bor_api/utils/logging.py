@@ -18,7 +18,6 @@ import logging
 import logging.config
 import sys
 from os import path
-from typing import Union
 
 from flask import current_app
 
@@ -61,7 +60,7 @@ def set_log_level_by_flag():
         return
 
 
-def set_logging_level(level: Union(Level, str)):
+def set_logging_level(level: Level | str):
     """Set the logging level of the top logger."""
     _logger = logging.getLogger()
 

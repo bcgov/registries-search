@@ -41,6 +41,7 @@ class AddressField(BaseEnum):  # pylint: disable=too-few-public-methods
     LOCATION_DESC = 'locationDescription'
     POSTAL_CODE = 'postalCode'
     STREET_ADDRESS = 'streetAddress'
+    STREET_ADDITIONAL = 'streetAdditional'
     # address doc query fields
     ADDRESS_Q = 'address_q'
     ADDRESS_SYN_Q = 'address_synonym_q'

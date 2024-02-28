@@ -37,6 +37,7 @@ class Entity:
     alternateName: str = None
     birthDate: str = None  # YYYY-MM-DD
     deathDate: str = None  # YYYY-MM-DD
+    externalInfluence: str = None  # enum (either influences another or is influenced by another)
     isPermanentResident: bool = None
     nationalities: list[str] = None
     taxNumber: str = None

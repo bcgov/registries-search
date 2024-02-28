@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,11 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all temp bo search endpoints in Flask-Blueprint style."""
-from flask import Blueprint
-
-from .entities import bp as entities_bp
-
-
-bp = Blueprint('TEMP_BO_SEARCH', __name__, url_prefix='/temp')  # pylint: disable=invalid-name
-bp.register_blueprint(entities_bp)
+"""Manages data conversion methods for data received following BTR and LEAR schemas."""
+from .address import get_lear_address
+from .business import get_lear_business
+from .party import get_btr_owner, get_lear_party

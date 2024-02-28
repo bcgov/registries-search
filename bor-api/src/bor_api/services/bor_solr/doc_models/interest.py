@@ -20,12 +20,9 @@ from dataclasses import dataclass
 class Interest:
     """Class representation for a solr interest doc."""
 
-    type: str = None
     details: str = None
     directOrIndirect: str = None
-    externalInfluence: str = None  # enum (either influences another or is influenced by another)
+    interestType: str = None
     sharesExact: float = None
     sharesMax: float = None
     sharesMin: float = None
-    startDate: str = None
-    endDate: str = None

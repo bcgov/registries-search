@@ -15,7 +15,7 @@
 import pytest
 
 from bor_api.services.bor_solr.fields import EntityField
-from bor_api.services.solr.utils import parse_facets, prep_query_str, prep_query_str_adv
+from bor_api.services.base_solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 
 
 @pytest.mark.parametrize('test_name,facet_data,expected', [

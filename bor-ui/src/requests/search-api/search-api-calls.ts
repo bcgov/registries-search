@@ -25,7 +25,7 @@ export async function searchEntities(
   payload.query.value = searchValue
   // add search-api config stuff
   const config = getSearchConfig(exportSearch)
-  return axios.post<SearchResponseI>('search/entities', payload, config)
+  return axios.post<SearchResponseI>('search', payload, config)
     .then(response => {
       const data: SearchResponseI = response?.data
       if (!data) throw new Error('Invalid API response')

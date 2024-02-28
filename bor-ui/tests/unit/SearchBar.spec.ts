@@ -32,7 +32,7 @@ describe('SearchBar tests', () => {
     mockPost = jest.spyOn(axios, 'post')
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.resolve({ data: mockResp })
       }
     })

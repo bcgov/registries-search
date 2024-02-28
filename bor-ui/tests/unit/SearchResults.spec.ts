@@ -38,7 +38,7 @@ describe('SearchResults tests', () => {
     mockPost = jest.spyOn(axios, 'post')
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.resolve({ data: mockResp })
       }
     })
@@ -187,7 +187,7 @@ describe('SearchResults tests', () => {
     // set mock to error
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.reject({ response: { status: StatusCodes.INTERNAL_SERVER_ERROR } })
       }
     })
@@ -205,7 +205,7 @@ describe('SearchResults tests', () => {
     // set mock to error
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.reject({ response: { status: StatusCodes.INTERNAL_SERVER_ERROR } })
       }
     })
@@ -222,7 +222,7 @@ describe('SearchResults tests', () => {
     // set mock back to success
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.resolve({ data: mockResp })
       }
     })
@@ -306,7 +306,7 @@ describe('SearchResults tests', () => {
     expect(search.filters.query.roles).toEqual({ roleDates: { "end": "2020-05-11", "start": "2010-03-23" }})
     expect(mockPost).toHaveBeenCalledTimes(2)
     expect(mockPost).toHaveBeenLastCalledWith(
-      "search/entities",
+      "search",
       {
         "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
         "query": {"roles": {"roleDates": {"end": "2020-05-11", "start": "2010-03-23"}}, "value": searchVal},
@@ -342,7 +342,7 @@ describe('SearchResults tests', () => {
     await flushPromises()
     expect(mockPost).toHaveBeenCalledTimes(2)
     expect(mockPost).toHaveBeenLastCalledWith(
-      "search/entities",
+      "search",
       {
         "categories": {"entityAddresses": {}, "entityType": ["PERSON"], "roles": {}},
         "query": {"roles": {"roleDates": {}}, "value": searchVal}, "rows": 1000, "start": 0

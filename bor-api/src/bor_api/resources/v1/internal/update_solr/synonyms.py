@@ -20,8 +20,8 @@ from flask_cors import cross_origin
 from bor_api.enums import SolrSynonymType
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import SolrSynonymList
-from bor_api.services import SYSTEM_ROLE, solr as bor_solr, jwt
-from bor_api.services.solr.utils import get_synonyms
+from bor_api.services import SYSTEM_ROLE, jwt, solr
+from bor_api.services.base_solr.utils import get_synonyms
 
 
 bp = Blueprint('SYNONYMS', __name__, url_prefix='/synonyms')  # pylint: disable=invalid-name
@@ -43,11 +43,11 @@ def update_synonyms():
 
         # update solr synonym file
         if SolrSynonymType.ADDRESS in synonyms:
-            bor_solr.create_or_update_synonyms(SolrSynonymType.ADDRESS, synonyms[SolrSynonymType.ADDRESS])
+            solr.create_or_update_synonyms(SolrSynonymType.ADDRESS, synonyms[SolrSynonymType.ADDRESS])
         if SolrSynonymType.NAME in synonyms:
-            bor_solr.create_or_update_synonyms(SolrSynonymType.NAME, synonyms[SolrSynonymType.NAME])
+            solr.create_or_update_synonyms(SolrSynonymType.NAME, synonyms[SolrSynonymType.NAME])
         # reload the solr core (so it will register any changes)
-        bor_solr.reload_core()
+        solr.reload_core()
         # update db synonym lists
         for synonym_type in synonyms:
             SolrSynonymList.create_or_replace_all(synonyms=synonyms[synonym_type], synonym_type=synonym_type)

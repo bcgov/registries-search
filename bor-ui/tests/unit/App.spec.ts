@@ -88,7 +88,7 @@ describe('App tests', () => {
     const mockPost = jest.spyOn(axios, 'post')
     mockPost.mockImplementation((url) => {
       switch (url) {
-        case 'search/entities':
+        case 'search':
           return Promise.resolve({ data: null })  // this will throw an error
       }
     })

@@ -18,7 +18,7 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.services import SYSTEM_ROLE, jwt, solr as bor_solr
+from bor_api.services import SYSTEM_ROLE, jwt, solr
 from bor_api.services.bor_solr.doc_models import Entity
 
 
@@ -41,7 +41,7 @@ def import_entities():
         current_app.logger.debug('Translating import payload to entity docs...')
         entities = [Entity(**e) for e in entities_json]
         current_app.logger.debug('Sending entity docs to SOLR...')
-        bor_solr.create_or_replace_docs(entities, timeout)
+        solr.create_or_replace_docs(entities, timeout)
         current_app.logger.debug('Import completed.')
 
         return jsonify({'message': 'Import finished.'}), HTTPStatus.CREATED

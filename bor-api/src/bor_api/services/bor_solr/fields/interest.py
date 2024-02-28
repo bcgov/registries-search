@@ -34,14 +34,12 @@ class InterestField(BaseEnum):  # pylint: disable=too-few-public-methods
     # unique key for all docs
     UNIQUE_KEY = 'id'
     # interest doc stored fields
-    TYPE = 'type'
+    TYPE = 'interestType'
     DETAILS = 'details'
     DIRECT_INDIRECT = 'directOrIndirect'
     EXTERNAL_INFLUENCE = 'externalInfluence'
-    SHARE_EXACT = 'shareExact'
-    SHARE_MAX = 'shareMax'
-    SHARE_MIN = 'shareMin'
-    START_DATE = 'startDate'
-    END_DATE = 'endDate'
+    SHARE_EXACT = 'sharesExact'
+    SHARE_MAX = 'sharesMax'
+    SHARE_MIN = 'sharesMin'
     # common built in across docs
     SCORE = 'score'

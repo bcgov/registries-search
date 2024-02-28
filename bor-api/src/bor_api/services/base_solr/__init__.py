@@ -91,7 +91,6 @@ class Solr:
         base_url = self.leader_url if leader else self.follower_url
         core = self.leader_core if leader else self.follower_core
         url = query.format(url=base_url, core=core)
-
         retries = Retry(total=1,
                         backoff_factor=1,
                         status_forcelist=[500, 502, 503, 504],

@@ -41,6 +41,7 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     EMAIL = 'email'
     ENTITY_ADDRESSES = 'entityAddresses'
     ENTITY_TYPE = 'entityType'
+    EXTERNAL_INFLUENCE = 'externalInfluence'
     IDENTIFIER = 'identifier'
     IS_PR = 'isPermanentResident'
     LEGAL_NAME = 'legalName'

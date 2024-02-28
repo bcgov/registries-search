@@ -29,7 +29,7 @@ class EntityRole:
     relatedName: str
     relatedState: str
     roleDates: list[DateRange]
-    roleType: str  # i.e. director, partner, beneficial owner, incorporator, etc.
+    roleType: str  # i.e. director, partner, significant individual, incorporator, etc.
     relatedBN: str = None
     relatedEmail: str = None
     relatedInterests: list[Interest] = None

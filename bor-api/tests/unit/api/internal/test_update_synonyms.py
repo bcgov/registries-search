@@ -21,7 +21,7 @@ import requests_mock
 
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
-from bor_api.services import solr as bor_solr
+from bor_api.services import solr
 from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import create_header
@@ -108,8 +108,8 @@ def test_update_synonyms(session, client, jwt):
     
     def get_synonym_map(synonym_type: SolrSynonymType):
         """Verify synonym file and return synonym map."""
-        syn_url = f'{bor_solr.synonyms_url}/{synonym_type.value}'
-        starting_syns = bor_solr.call_solr('GET', syn_url)
+        syn_url = f'{solr.synonyms_url}/{synonym_type.value}'
+        starting_syns = solr.call_solr('GET', syn_url)
         assert starting_syns.status_code == HTTPStatus.OK
         starting_syn_mappings = (starting_syns.json()).get('synonymMappings')
         assert starting_syn_mappings
