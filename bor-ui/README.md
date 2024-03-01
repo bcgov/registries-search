@@ -5,7 +5,6 @@
 - vue/cli 5.0.4
 - vue 3
 - vuetify 3
-- vuex
 - typescript
 - jest
 - eslint
