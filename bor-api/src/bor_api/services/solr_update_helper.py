@@ -16,7 +16,7 @@
 from flask import current_app
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
-from bor_api.models import SolrDoc, SolrDocEvent
+from bor_api.models import SolrDoc, SolrDocEvent, db
 from bor_api.services import solr, solr_temp
 from bor_api.services.bor_solr.doc_models import Entity
 
@@ -48,12 +48,18 @@ def resync_bor_solr(entity_ids: list[str]):
     doc_events: list[SolrDocEvent] = []
     for entity_id in entity_ids:
         doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
+        # make sure it has a regular update event - TODO: rework this once solr_temp is merged into solr
+        update_events = db.session.query(SolrDocEvent).filter(SolrDocEvent.solr_doc_id == doc_update.id).all()
+        if len([x for x in update_events if x.event_type == SolrDocEventType.UPDATE]) == 0:
+            # no regular update so skip
+            continue
         entities.append(Entity(**doc_update.doc))
         doc_event = SolrDocEvent(event_type=SolrDocEventType.RESYNC, solr_doc_id=doc_update.id).save()
         doc_events.append(doc_event)
     try:
-        solr.create_or_replace_docs(entities)
-        SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
+        if len(entities) > 0:
+            solr.create_or_replace_docs(entities)
+            SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
     except Exception as err:  # noqa: B902
         # log / update event / pass err

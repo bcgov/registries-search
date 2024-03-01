@@ -26,10 +26,10 @@ def get_lear_address(address_info: dict, address_type: str) -> Address:
 
 
 def get_btr_address(address_info: dict, address_type: str) -> Address:
-    """Return the address from LEAR format as an Address doc."""
+    """Return the address from BTR format as an Address doc."""
     return Address(addressType=address_info.get('type') or address_type,
                    addressCity=address_info.get('city', '') or '',
-                   addressCountry=address_info.get('country', '') or '',
+                   addressCountry='',  # TODO: update this once btr address is fixed
                    addressRegion=address_info.get('region', '') or '',
                    postalCode=address_info.get('postalCode', '') or '',
                    streetAddress=address_info.get('street', '') or '',

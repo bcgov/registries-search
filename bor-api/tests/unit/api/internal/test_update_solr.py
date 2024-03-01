@@ -121,7 +121,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'addressCountry': 'Canada'}]
         elif request_json.get('owners'):
             entity_addresses = [{
-                'address_q': '123-720 Commonwealth Rd test street additional Kelowna British Columbia Canada V4V 1R8 test description',
+                'address_q': '123-720 Commonwealth Rd test street additional Kelowna BC V4V 1R8 test description',
                 'locationDescription': 'test description',
                 'postalCode': 'V4V 1R8',
                 'addressCity': 'Kelowna',
@@ -129,7 +129,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'addressRegion': 'BC',
                 'streetAddress': '123-720 Commonwealth Rd',
                 'streetAdditional': 'test street additional',
-                'addressCountry': 'Canada'}]
+                'addressCountry': ''}]
 
         if request_json.get('parties'):
             assert m.request_history[0].json() == [

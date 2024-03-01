@@ -22,7 +22,7 @@ import pytest
 import requests_mock
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
-from bor_api.models import SolrDoc
+from bor_api.models import SolrDoc, SolrDocEvent
 from bor_api.services import solr
 from bor_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
 from bor_api.services.bor_solr.doc_models import Entity
@@ -40,11 +40,13 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
         entity = deepcopy(orig_entity)
         entity.legalName = f'{entity.id} test_update_business_in_solr'
         solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id).save()
+        SolrDocEvent(solr_doc_id=solr_doc.id, event_status=SolrDocEventStatus.COMPLETE, event_type=SolrDocEventType.UPDATE).save()
         entity_old = deepcopy(entity)
         entity_old.legalName = f'{entity.id} test_should_not_have_updated'
         solr_doc_old = SolrDoc(doc=asdict(entity_old), entity_id=entity_old.id).save()
         solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
         solr_doc_old.save()
+        SolrDocEvent(solr_doc_id=solr_doc_old.id, event_status=SolrDocEventStatus.COMPLETE, event_type=SolrDocEventType.UPDATE).save()
         setup_info.append((entity, solr_doc, solr_doc_old))
         
     return setup_info
@@ -92,11 +94,12 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
                 solr_doc = info[1]
                 solr_doc_old = info[2]
                 doc_events = solr_doc.solr_doc_events.all()
-                assert len(doc_events) == 1
-                assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
-                assert doc_events[0].event_type == SolrDocEventType.RESYNC
+                assert len(doc_events) == 2
+                for event in doc_events:
+                    assert event.event_status == SolrDocEventStatus.COMPLETE
+                    assert event.event_type in [SolrDocEventType.RESYNC, SolrDocEventType.UPDATE]
                 # did not update the older record
-                assert len(solr_doc_old.solr_doc_events.all()) == 0
+                assert len(solr_doc_old.solr_doc_events.all()) == 1
 
                 assert solr_url in m.request_history[0].url
 
@@ -132,11 +135,12 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, entities: l
 
     for entity, solr_doc, solr_doc_old in setup_info:
         doc_events = solr_doc.solr_doc_events.all()
-        assert len(doc_events) == 1
-        assert doc_events[0].event_status == SolrDocEventStatus.COMPLETE
-        assert doc_events[0].event_type == SolrDocEventType.RESYNC
+        assert len(doc_events) == 2
+        for event in doc_events:
+            assert event.event_status == SolrDocEventStatus.COMPLETE
+            assert event.event_type in [SolrDocEventType.RESYNC, SolrDocEventType.UPDATE]
         # did not update the older record
-        assert len(solr_doc_old.solr_doc_events.all()) == 0
+        assert len(solr_doc_old.solr_doc_events.all()) == 1
 
         time.sleep(2)  # wait for solr to register update
         search_response = solr.query(payload={'query': f'legalName_q:{entity.id}', 'fields': '*'})

@@ -75,6 +75,13 @@ def update_entity():
             SolrDocEvent(event_type=SolrDocEventType.UPDATE_EXT, solr_doc_id=solr_doc.id).save()
             # SOLR update will be triggered by job (does a frequent bulk update to solr)
 
+        # create cease update record
+        for party in request_json.get('ceasedOwners', []):
+            solr_doc = SolrDoc(doc={**party, 'relatedIdentifier': request_json['business']['identifier']},
+                               entity_id=party['id'],
+                               _submitter_id=user.id).save()
+            SolrDocEvent(event_type=SolrDocEventType.UPDATE_CEASE, solr_doc_id=solr_doc.id).save()
+
         return jsonify({'message': 'Update accepted.'}), HTTPStatus.ACCEPTED
 
     except Exception as exception:  # noqa: B902
