@@ -23,6 +23,7 @@ from .interest import Interest
 class EntityRole:
     """Class representation for a solr entity role doc."""
 
+    id: str
     relatedEntityType: str
     relatedIdentifier: str
     relatedLegalType: str

@@ -20,15 +20,16 @@ from bor_api.services.bor_solr.fields import EntityRoleField
 from bor_api.services.bor_solr.doc_models import DateRange, EntityRole
 
 
-@pytest.mark.parametrize('test_name,rel_e_type,rel_identifier,rel_l_type,rel_name,rel_state,dates,role_type,rel_bn', [
-    ('test_1', 'BUSINESS', 'BC1234567', 'BEN', 'Test Business', 'ACTIVE',
+@pytest.mark.parametrize('test_name,id,rel_e_type,rel_identifier,rel_l_type,rel_name,rel_state,dates,role_type,rel_bn', [
+    ('test_1', '1', 'BUSINESS', 'BC1234567', 'BEN', 'Test Business', 'ACTIVE',
      [DateRange('2012-11-13T20:20:20Z', '2015-11-13T20:20:20Z'),DateRange('2022-11-13T20:20:20Z', None)],
      'DIRECTOR','123456789BC0001'),
 ])
-def test_entity_role_doc(test_name, rel_e_type, rel_identifier, rel_l_type,
+def test_entity_role_doc(test_name, id, rel_e_type, rel_identifier, rel_l_type,
                      rel_name, rel_state, dates, role_type, rel_bn):
     """Assert the Entity Role solr doc class works as expected."""
     entity_role = EntityRole(
+        id=id,
         relatedEntityType=rel_e_type,
         relatedIdentifier=rel_identifier,
         relatedLegalType=rel_l_type,
@@ -42,6 +43,7 @@ def test_entity_role_doc(test_name, rel_e_type, rel_identifier, rel_l_type,
 
     json = asdict(entity_role)
     assert json
+    assert json.get(EntityRoleField.UNIQUE_KEY.value) == id
     assert json.get(EntityRoleField.RELATED_ENTITY_TYPE.value) == rel_e_type
     assert json.get(EntityRoleField.RELATED_IDENTIFIER.value) == rel_identifier
     assert json.get(EntityRoleField.RELATED_LEGAL_TYPE.value) == rel_l_type
@@ -59,17 +61,29 @@ def test_entity_role_doc(test_name, rel_e_type, rel_identifier, rel_l_type,
 
 
 
-@pytest.mark.parametrize('test_name,rel_e_type,rel_identifier,rel_l_type,rel_name,rel_state,dates,role_type', [
-    ('test_1', 'BUSINESS', 'BC1234567', 'BEN', 'Test Business', 'ACTIVE',
+@pytest.mark.parametrize('test_name,id,rel_e_type,rel_identifier,rel_l_type,rel_name,rel_state,dates,role_type', [
+    ('test_1', '1', 'BUSINESS', 'BC1234567', 'BEN', 'Test Business', 'ACTIVE',
      [DateRange('2012-11-13T20:20:20Z', '2015-11-13T20:20:20Z'), DateRange('2022-11-13T20:20:20Z', None)],
      'DIRECTOR'),
 ])
-def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_type,
+def test_entity_role_doc_invalid(test_name, id, rel_e_type, rel_identifier, rel_l_type,
                      rel_name, rel_state, dates, role_type):
     """Assert the Entity Role solr doc does not initialize when required fields are missing."""
+    # id missing
+    with pytest.raises(TypeError):
+        EntityRole(
+            relatedEntityType=rel_e_type,
+            relatedIdentifier=rel_identifier,
+            relatedLegalType=rel_l_type,
+            relatedName=rel_name,
+            relatedState=rel_state,
+            roleDates=dates,
+            roleType=role_type
+        )
     # relatedEntityType missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedIdentifier=rel_identifier,
             relatedLegalType=rel_l_type,
             relatedName=rel_name,
@@ -80,6 +94,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # relatedIdentifier missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedLegalType=rel_l_type,
             relatedName=rel_name,
@@ -90,6 +105,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # relatedLegalType missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedIdentifier=rel_identifier,
             relatedName=rel_name,
@@ -100,6 +116,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # relatedName missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedIdentifier=rel_identifier,
             relatedLegalType=rel_l_type,
@@ -110,6 +127,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # relatedState missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedIdentifier=rel_identifier,
             relatedLegalType=rel_l_type,
@@ -120,6 +138,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # roleDates missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedIdentifier=rel_identifier,
             relatedLegalType=rel_l_type,
@@ -130,6 +149,7 @@ def test_entity_role_doc_invalid(test_name, rel_e_type, rel_identifier, rel_l_ty
     # roleType missing
     with pytest.raises(TypeError):
         EntityRole(
+            id=id,
             relatedEntityType=rel_e_type,
             relatedIdentifier=rel_identifier,
             relatedLegalType=rel_l_type,

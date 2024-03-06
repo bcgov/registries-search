@@ -1706,7 +1706,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"smith john\"\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"tester\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1726,7 +1726,81 @@
 								},
 								"description": "Get drafts example."
 							},
-							"response": []
+							"response": [
+								{
+									"name": "basic",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Account-ID",
+												"value": "1999",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"tester\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/{{version}}/search/extended",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"extended"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 05 Mar 2024 18:47:36 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1407"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.1.0a3.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedEmail\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"tester\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"email\": \"email@test.com\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"RESIDENCE\",\n                        \"postalCode\": \"T3K 5N4\",\n                        \"score\": 0,\n                        \"streetAddress\": \"123-655 Kenderdine Rd\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"tester testing\",\n                \"roles\": [\n                    {\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871427\",\n                        \"relatedLegalType\": \"BEN\",\n                        \"relatedName\": \"0871427 B.C. LTD.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-01\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 8.640431\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
 						}
 					]
 				}
@@ -2592,7 +2666,7 @@
 					"name": "import",
 					"item": [
 						{
-							"name": "entity import",
+							"name": "base",
 							"event": [
 								{
 									"listen": "test",
@@ -2639,7 +2713,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"1\",\r\n            \"entityAddresses\": [\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"MAILING\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                },\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"DELIVERY\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                }\r\n            ],\r\n            \"entityType\": \"PERSON\",\r\n            \"legalName\": \"BCREG2 LIANG FORTY\",\r\n            \"roles\": [\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"end\": \"2023-02-13\",\r\n                            \"start\": \"2023-01-01\"\r\n                        },\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2022-05-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"INCORPORATOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456788BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"CP1234567\",\r\n                    \"relatedName\": \"KIALS COOP\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n   \"entities\":[\r\n      {\r\n         \"id\":\"LEAR573972BC0871427DIRECTOR0\",\r\n         \"entityAddresses\":[\r\n            {\r\n               \"addressType\":\"DELIVERY\",\r\n               \"addressCity\":\"Sussex\",\r\n               \"addressCountry\":\"Canada\",\r\n               \"addressRegion\":\"NB\",\r\n               \"postalCode\":\"E4E 0G4\",\r\n               \"streetAddress\":\"1-5 Rosedale Dr\",\r\n               \"address_q\":\"1-5 Rosedale Dr Sussex New Brunswick Canada E4E 0G4\"\r\n            }\r\n         ],\r\n         \"entityType\":\"PERSON\",\r\n         \"legalName\":\"BCREG2 AYISHA FIFTY\",\r\n         \"roles\":[\r\n            {\r\n               \"relatedEntityType\":\"BUSINESS\",\r\n               \"relatedIdentifier\":\"BC0871427\",\r\n               \"relatedLegalType\":\"BEN\",\r\n               \"relatedName\":\"0871427 B.C. LTD.\",\r\n               \"relatedState\":\"ACTIVE\",\r\n               \"roleDates\":[\r\n                  {\r\n                     \"start\":\"2023-06-27T00:00:00\",\r\n                     \"end\":\"2024-02-05T00:00:00\",\r\n                     \"active\":false\r\n                  }\r\n               ],\r\n               \"roleType\":\"DIRECTOR\",\r\n               \"related_q\":\"0871427 B.C. LTD. BC0871427\"\r\n            }\r\n         ]\r\n      },\r\n      {\r\n         \"id\":\"LEAR578627BC0871427DIRECTOR0\",\r\n         \"entityAddresses\":[\r\n            {\r\n               \"addressType\":\"DELIVERY\",\r\n               \"addressCity\":\"Saskatoon\",\r\n               \"addressCountry\":\"Canada\",\r\n               \"addressRegion\":\"SK\",\r\n               \"postalCode\":\"S7N 4W9\",\r\n               \"streetAddress\":\"123-655 Kenderdine Rd\",\r\n               \"address_q\":\"123-655 Kenderdine Rd Saskatoon Saskatchewan Canada S7N 4W9\"\r\n            }\r\n         ],\r\n         \"entityType\":\"PERSON\",\r\n         \"legalName\":\"S S\",\r\n         \"roles\":[\r\n            {\r\n               \"relatedEntityType\":\"BUSINESS\",\r\n               \"relatedIdentifier\":\"BC0871427\",\r\n               \"relatedLegalType\":\"BEN\",\r\n               \"relatedName\":\"0871427 B.C. LTD.\",\r\n               \"relatedState\":\"ACTIVE\",\r\n               \"roleDates\":[\r\n                  {\r\n                     \"start\":\"2023-12-13T00:00:00\",\r\n                     \"active\":true\r\n                  }\r\n               ],\r\n               \"roleType\":\"DIRECTOR\",\r\n               \"related_q\":\"0871427 B.C. LTD. BC0871427\"\r\n            }\r\n         ]\r\n      }\r\n   ],\r\n   \"timeout\":\"45\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2656,6 +2730,148 @@
 										"internal",
 										"solr",
 										"import"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "extended",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 201/CREATED\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"1\",\r\n            \"entityAddresses\": [\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"MAILING\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                },\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"DELIVERY\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                }\r\n            ],\r\n            \"entityType\": \"PERSON\",\r\n            \"legalName\": \"BCREG2 LIANG FORTY\",\r\n            \"roles\": [\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"end\": \"2023-02-13\",\r\n                            \"start\": \"2023-01-01\"\r\n                        },\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2022-05-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"INCORPORATOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456788BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"CP1234567\",\r\n                    \"relatedName\": \"KIALS COOP\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import/extended",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"import",
+										"extended"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "extended - partial",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 201/CREATED\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"_root_\": \"227c6cdc-0fcc-4794-b5fa-af65cf58e5ec\",\r\n            \"id\": \"227c6cdc-0fcc-4794-b5fa-af65cf58e5ec/roles#0\",\r\n            \"relatedBN\": {\"set\": \"123456789BC0001\"},\r\n            \"relatedName\": {\"set\": \"EFGH BUSINESS NAME CORP.\"},\r\n            \"relatedState\": {\"set\": \"ACTIVE\"},\r\n            \"relatedEmail\": {\"set\": \"efgh@email.com\"},\r\n            \"relatedLegalType\": {\"set\": \"BC\"}\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import/extended",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"import",
+										"extended"
 									]
 								}
 							},

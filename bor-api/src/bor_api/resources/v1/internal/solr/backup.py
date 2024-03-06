@@ -19,7 +19,7 @@ from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.services import SYSTEM_ROLE, jwt, solr
 
 
-bp = Blueprint('BACKUP', __name__, url_prefix='/solr/backup')  # pylint: disable=invalid-name
+bp = Blueprint('BACKUP', __name__, url_prefix='/backup')  # pylint: disable=invalid-name
 
 
 @bp.post('')

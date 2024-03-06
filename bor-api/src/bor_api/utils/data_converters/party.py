@@ -51,7 +51,8 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
                                entityType=entity_type,
                                id=entity_id,
                                legalName=name,
-                               roles=[EntityRole(relatedEntityType='BUSINESS',
+                               roles=[EntityRole(id=entity_id + '/roles0',
+                                                 relatedEntityType='BUSINESS',
                                                  relatedIdentifier=business.identifier,
                                                  relatedLegalType=business.legalType,
                                                  relatedName=business.legalName,
@@ -92,7 +93,9 @@ def get_btr_owner(owner_info: dict, business: Entity):
     if (addresses := party.get('addresses')) and len(addresses) > 0:
         address = get_btr_address(addresses[0], 'RESIDENCE')
 
-    return Entity(id=party['describedByPersonStatement'],
+    entity_id = party['describedByPersonStatement']
+    role_id = entity_id + business.identifier + 'SIGNIFICANT_INDIVIDUAL'
+    return Entity(id=entity_id,
                   entityAddresses=[address] if address else None,
                   entityType='PERSON',
                   externalInfluence=party.get('externalInfluence'),
@@ -104,7 +107,8 @@ def get_btr_owner(owner_info: dict, business: Entity):
                   taxNumber=tax_number,
                   taxResidencies=[country.get('code') for country in party.get('taxResidencies', [])],
                   email=party.get('email'),
-                  roles=[EntityRole(relatedEntityType='BUSINESS',
+                  roles=[EntityRole(id=role_id,
+                                    relatedEntityType='BUSINESS',
                                     relatedIdentifier=business.identifier,
                                     relatedLegalType=business.legalType,
                                     relatedName=business.legalName,

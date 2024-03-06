@@ -23,19 +23,19 @@ from bor_api.enums import SolrDocEventType
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import SolrDoc, SolrDocEvent, User
 from bor_api.services import SYSTEM_ROLE, jwt
-from bor_api.services.bor_solr.doc_models import Address, DateRange, Entity, EntityRole
+from bor_api.services.bor_solr.doc_models import Entity
 from bor_api.utils.data_converters import get_btr_owner, get_lear_business, get_lear_party
 from bor_api.utils.request_validators import validate_solr_update_request
 
-from .resync import bp as solr_resync_bp
-from .sync import bp as solr_sync_bp
-from .synonyms import bp as solr_synonyms_bp
+from .resync import bp as resync_bp
+from .sync import bp as sync_bp
+from .synonyms import bp as synonyms_bp
 
 
-bp = Blueprint('UPDATE', __name__, url_prefix='/solr/update')  # pylint: disable=invalid-name
-bp.register_blueprint(solr_resync_bp)
-bp.register_blueprint(solr_sync_bp)
-bp.register_blueprint(solr_synonyms_bp)
+bp = Blueprint('UPDATE', __name__, url_prefix='/update')  # pylint: disable=invalid-name
+bp.register_blueprint(resync_bp)
+bp.register_blueprint(sync_bp)
+bp.register_blueprint(synonyms_bp)
 
 
 @bp.put('')

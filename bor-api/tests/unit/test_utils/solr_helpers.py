@@ -49,6 +49,7 @@ def factory_entity_default(name: str = 'Entity Default', entity_type: str = 'PER
         streetAddress='Street'
     )
     role = EntityRole(
+        id='LEAR1234567/roles0',
         relatedEmail='default@email.com',
         relatedEntityType='BUSINESS',
         relatedIdentifier='BC1234567',

@@ -41,24 +41,25 @@ class BorSolr(Solr):
     ]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
 
-    def create_or_replace_docs(self, docs: list[Entity], timeout=25, additive=True):
+    def create_or_replace_docs(self, docs: list[Entity] = None, raw_docs: list[dict] = None, timeout=25, additive=True):
         """Create or replace solr docs in the core."""
-        update_list = [asdict(doc) for doc in docs]
+        update_list = raw_docs if raw_docs else [asdict(doc) for doc in docs]
+
         if not additive:
             # add in the set keyword to all roles / addresses / nationalities / tax residencies
             for entity_dict in update_list:
                 # addresses
-                addresses = entity_dict.get('entityAddresses', [])
-                entity_dict['entityAddresses'] = {'set': addresses}
+                if addresses := entity_dict.get('entityAddresses', None):
+                    entity_dict['entityAddresses'] = {'set': addresses}
                 # roles
-                roles = entity_dict.get('roles', [])
-                entity_dict['roles'] = {'set': roles}
+                if roles := entity_dict.get('roles', None):
+                    entity_dict['roles'] = {'set': roles}
                 # nationalities
-                nationalities = entity_dict.get('nationalities', [])
-                entity_dict['nationalities'] = {'set': nationalities}
+                if nationalities := entity_dict.get('nationalities', None):
+                    entity_dict['nationalities'] = {'set': nationalities}
                 # tax residencies
-                tax_residencies = entity_dict.get('taxResidencies', [])
-                entity_dict['taxResidencies'] = {'set': tax_residencies}
+                if tax_residencies := entity_dict.get('taxResidencies', None):
+                    entity_dict['taxResidencies'] = {'set': tax_residencies}
 
         response = self.call_solr('POST', self.update_url, json_data=update_list, timeout=timeout)
         return response

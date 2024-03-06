@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,4 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test-Suite for the internal API endpoints."""
+"""Exposes all of the internal solr endpoints in Flask-Blueprint style."""
+from flask import Blueprint
+
+from .backup import bp as backup_bp
+from .imports import bp as import_bp
+from .update import bp as update_bp
+
+
+bp = Blueprint('SOLR', __name__, url_prefix='/solr')  # pylint: disable=invalid-name
+bp.register_blueprint(backup_bp)
+bp.register_blueprint(import_bp)
+bp.register_blueprint(update_bp)

@@ -169,6 +169,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'legalType': None,
                     'nationalities': None,
                     'roles': [{
+                        'id': f'LEAR570343{business_identifier}DIRECTOR0/roles0',
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
                         'relatedEmail': 'test@email.com',
@@ -209,6 +210,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'identifier': None,
                     'legalType': None,
                     'roles': [{
+                        'id': f'LEAR570721{business_identifier}DIRECTOR0/roles0',
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
                         'relatedEmail': 'test@email.com',
@@ -243,6 +245,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'legalType': None,
                     'nationalities': {'set': ['CA']},
                     'roles': {'set': [{
+                        'id': '7f0511ba-9621-4134-8363-462c61b9162aBC1233335SIGNIFICANT_INDIVIDUAL',
                         'roleType': 'SIGNIFICANT INDIVIDUAL',
                         'relatedBN': '123456788BC001',
                         'relatedEmail': 'test@email.com',
