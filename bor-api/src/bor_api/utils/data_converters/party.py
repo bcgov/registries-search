@@ -71,11 +71,11 @@ def get_btr_owner(owner_info: dict, business: Entity):
     interests = []
     for interest_info in owner_info.get('interests', []):
         interests.append(Interest(details=interest_info.get('details'),
-                                  directOrIndirect=interest_info.get('directOrIndirect'),
-                                  interestType=interest_info.get('type'),
-                                  sharesExact=interest_info.get('share', {}).get('exact'),
-                                  sharesMax=interest_info.get('share', {}).get('maximum'),
-                                  sharesMin=interest_info.get('share', {}).get('minimum')))
+                                  directOrIndirect=interest_info.get('directOrIndirect') or None,
+                                  interestType=interest_info.get('type') or None,
+                                  sharesExact=interest_info.get('share', {}).get('exact') or None,
+                                  sharesMax=interest_info.get('share', {}).get('maximum') or None,
+                                  sharesMin=interest_info.get('share', {}).get('minimum') or None))
 
     party: dict = owner_info['interestedParty']
     names_dict = {}
