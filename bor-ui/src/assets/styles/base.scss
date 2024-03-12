@@ -132,7 +132,6 @@ p {
 
   select {
     flex: 1 1 auto;
-    -webkit-appearance: menulist;
   }
 }
 
@@ -350,7 +349,6 @@ span.invalid-message {
 .btn-basic:hover,
 .btn-basic-outlined,
 .btn-basic-outlined:hover {
-  font-size: 0.875rem !important;
   font-weight: normal !important;
   box-shadow: none;
 }

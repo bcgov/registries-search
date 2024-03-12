@@ -1,5 +1,3 @@
-import { ContactInfoI } from '@/interfaces'
-
 export const RegistriesInfo: ContactInfoI[] = [
   {
     icon: 'mdi-phone',

@@ -1,184 +1,103 @@
 <template>
-  <v-app id="app" class="app-container">
-
+  <NuxtLayout>
     <base-dialog
       id="error-dialog"
-      attach="#app"
+      attach="#appHeader"
       :display="errorDisplay"
       :options="errorInfo"
       @close="errorDisplay = false; errorInfo = null"
     >
-      <template v-if="errorContactInfo" v-slot:extra-content>
-        <p class="font-normal mt-7">If this issue persists, please contact us.</p>
-        <contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
+      <template v-if="errorContactInfo" #extra-content>
+        <p class="font-normal mt-7">
+          If this issue persists, please contact us.
+        </p>
+        <!-- <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" /> -->
       </template>
     </base-dialog>
-
-    <loading-screen v-if="appLoading" :is-loading="appLoading" />
-    <sbc-header v-if="auth._tokenInitialized" :in-auth="false" :show-login-menu="false" />
-    <sbc-system-banner
-      v-if="systemMessage != null"
-      class="justify-center"
-      :setShow="systemMessage != null"
-      :setMessage="systemMessage"
-      setType="warning"
-    />
-    <bcrs-breadcrumb :breadcrumbs="breadcrumbs" v-if="breadcrumbs.length > 0" />
-    <div class="app-body pt-4 pb-16">
-      <main>
-        <router-view
-          :appReady="appReady"
-          :isJestRunning="isJestRunning"
-          @error="handleError($event)"
-          @haveData="haveData = $event"
-        />
-      </main>
-    </div>
-
-    <sbc-footer :aboutText="aboutText" />
-  </v-app>
+    <!-- TODO: use nuxt loading screen -->
+    <bcros-loading-screen v-if="appLoading" :is-loading="appLoading" />
+    <NuxtPage v-else />
+  </NuxtLayout>
+  <!-- <sbc-header v-if="auth._tokenInitialized" :in-auth="false" :show-login-menu="false" /> -->
 </template>
 
 <script setup lang="ts">
-// External
-import { computed, onMounted, ref, watch, Ref } from 'vue'
-import * as Sentry from '@sentry/vue'
-import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
-// BC Registry
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { LoadingScreen, SbcFooter, SbcHeader, SbcSystemBanner } from '@/sbc-common-components'
-// Bcrs shared components
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
-// Local
-import { ErrorCategory, ErrorCode, ProductCode, RouteName } from '@/enums'
-import { DialogOptionsI, ErrorI } from '@/interfaces'
-import { BcrsBreadcrumb } from '@/bcrs-shared-components'
-import { BaseDialog } from '@/components'
-import { useAuth, useSearch } from '@/composables'
-import { AuthAccessError, DefaultError, DownloadFileError } from '@/resources/error-dialog-options'
-import { RegistriesInfo } from '@/resources/contact-info'
-import { getFeatureFlag } from '@/utils'
-import ContactInfo from './components/common/ContactInfo.vue'
 
-const aboutText: string = 'Director Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)
-const appReady = ref(false)
-const haveData = ref(true)
-// errors
+// // errors
 const errorDisplay = ref(false)
 const errorContactInfo = ref(false)
-const errorInfo: Ref<DialogOptionsI> = ref(null)
+const errorInfo: Ref<DialogOptionsI | null> = ref(null)
 
-const route = useRoute()
-const router = useRouter()
-const { auth, hasProductAccess, loadAuth, startTokenService } = useAuth()
+const account = useBcrosAccount()
+const { accountErrors } = storeToRefs(account)
 const { search } = useSearch()
-
-/** True if Jest is running the code. */
-const isJestRunning = computed((): boolean => {
-  return (process.env.JEST_WORKER_ID !== undefined)
-})
-
-const systemMessage = computed((): string => {
-  // if SYSTEM_MESSAGE does not exist this will return 'undefined'. Needs to be null or str
-  const systemMessage = getFeatureFlag('banner-text')
-  if (systemMessage?.trim()) return systemMessage?.trim()
-  return null
-})
-
-const breadcrumbs = computed((): Array<BreadcrumbIF> => {
-  return route?.meta?.breadcrumb as BreadcrumbIF[] || []
-})
 
 onMounted(async () => {
   appLoading.value = true
-  await router.isReady() // otherwise below will process before route name is determined
-  const searchRoutes = [RouteName.SEARCH]
-  if (searchRoutes.includes(route.name as RouteName)) {
-    // do any preload items here
-    if (!appReady.value && !isJestRunning.value) {
-      // intitialize token
-      await startTokenService()
-      // if no token then push to the login page
-      if (!sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)) {
-        await router.push({ name: RouteName.LOGIN, query: { redirect: '/' } })
-        appLoading.value = false
-        return
-      }
-      if (auth._error) return
-      console.info('Loading account...')
-      // check every second for up to 10 seconds
-      for (let i=0; i<10; i++) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        if (sessionStorage.getItem(SessionStorageKeys.SessionSynced) === 'true') {
-          break
-        }
-      }
-      console.info('Loading account authorizations...')
-      // initialize auth stuff
-      await loadAuth()
-    }
-    if (auth._error) return
-    console.info('Verifying user access...')
-    // verify user has access to business search product
-    if (!hasProductAccess(ProductCode.NDS) && !getFeatureFlag('enable-director-search')) {
-      handleError({
-        category: ErrorCategory.ACCOUNT_ACCESS,
-        message: 'This account does not have access to Director Search',
-        statusCode: StatusCodes.UNAUTHORIZED,
-        type: ErrorCode.AUTH_PRODUCTS_ERROR
-      })
-    }
-    appReady.value = true
-    console.info('App ready.')
+  // load account products
+  console.info('Loading active products...')
+  await account.setActiveProducts()
+  if (accountErrors.value?.length > 0) { return }
+  console.info('Verifying user access to search...')
+  const hasIndividualAccess = useBcrosLaunchdarkly().getFeatureFlag('enable-director-search')
+  if (!account.hasProductAccess(ProductCodeE.NDS) && !hasIndividualAccess) {
+    handleError({
+      category: ErrorCategoryE.ACCOUNT_ACCESS,
+      message: 'This account does not have access to Director Search',
+      statusCode: StatusCodes.UNAUTHORIZED,
+      type: ErrorCodeE.AUTH_PRODUCTS_ERROR
+    })
+    return
   }
+  console.info('App ready.')
   appLoading.value = false
 })
 
 const handleError = (error: ErrorI) => {
   console.info(error)
   switch (error.category) {
-    case ErrorCategory.ACCOUNT_ACCESS:
-      errorInfo.value = {...AuthAccessError}
+    case ErrorCategoryE.ACCOUNT_ACCESS:
+      errorInfo.value = getAuthAccessError()
       if (error.statusCode === StatusCodes.UNAUTHORIZED) {
         errorInfo.value.text = 'This account does not have access to this application.'
         errorInfo.value.textExtra = [
-          'Please contact the Beneficial Ownership team to request access.']
+          'Please contact the BC Registries Ops team to request access.']
         // don't send error to sentry for ^
       } else {
         errorInfo.value.text = 'We are unable to determine your account access at this ' +
           'time. Please try again later.'
-        Sentry.captureException(error)
+        // Sentry.captureException(error)
       }
       errorContactInfo.value = true
       errorDisplay.value = true
       break
-    case ErrorCategory.ACCOUNT_SETTINGS:
-      errorInfo.value = {...DefaultError}
+    case ErrorCategoryE.ACCOUNT_SETTINGS:
+      errorInfo.value = getDefaultError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
+      // Sentry.captureException(error)
       break
-    case ErrorCategory.SEARCH_EXPORT:
-      errorInfo.value = {...DownloadFileError}
+    case ErrorCategoryE.SEARCH_EXPORT:
+      errorInfo.value = getDownloadFileError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
+      // Sentry.captureException(error)
       break
-    case ErrorCategory.SEARCH:
+    case ErrorCategoryE.SEARCH:
       // handled inline
-      Sentry.captureException(error)
+      // Sentry.captureException(error)
       break
     default:
-      errorInfo.value = {...DefaultError}
+      errorInfo.value = getDefaultError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
+      // Sentry.captureException(error)
   }
 }
 
 // watchers for errors
-watch(auth, (val) => { if (val._error) handleError(val._error) })
-watch(search, (val) => { if (val._error) handleError(val._error) })
+watch(accountErrors.value, (val) => { if (val && val.length > 0) { handleError(val[0]) } })
+watch(search, (val) => { if (val._error) { handleError(val._error) } })
 </script>

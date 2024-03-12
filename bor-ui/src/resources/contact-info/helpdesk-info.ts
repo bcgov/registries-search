@@ -1,5 +1,3 @@
-import { ContactInfoI } from '@/interfaces'
-
 export const HelpdeskInfo: ContactInfoI[] = [
   {
     icon: 'mdi-phone',

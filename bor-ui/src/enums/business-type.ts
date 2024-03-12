@@ -1,7 +1,0 @@
-export enum BusinessType {
-    COOPERATIVE_ASSOCIATION = 'CP',
-    BENEFIT_COMPANY = 'BEN',
-    SOLE_PROPRIETOR = 'SP', 
-    GENERAL_PARTNERSHIP = 'GP',
-    BC_LIMITED_COMPANY = 'BC'
-}

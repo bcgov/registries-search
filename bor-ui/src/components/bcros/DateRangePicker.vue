@@ -1,0 +1,103 @@
+<!-- Copied from PPR. Move into sbc-common or bcrs-shared after vue 3 upgrade -->
+<template>
+  <v-card ref="datePicker" class="date-selection registration-date" elevation="6">
+    <v-row no-gutters>
+      <v-col>
+        <b class="date-selection__heading" :class="{ 'picker-err': startDate === null && datePickerErr }">
+          Select Start Date:
+        </b>
+        <BaseDatePicker
+          class="date-selection__picker mt-2"
+          :error="startDate === null && datePickerErr"
+          :reset-trigger="resetTrigger"
+          :set-max-date="endDate"
+          @selected-date="startDate = $event"
+        />
+      </v-col>
+      <v-col class="pl-4">
+        <b class="date-selection__heading" :class="{ 'picker-err': endDate === null && datePickerErr }">
+          Select End Date:
+        </b>
+        <BaseDatePicker
+          class="date-selection__picker mt-2"
+          :error="endDate === null && datePickerErr"
+          :reset-trigger="resetTrigger"
+          :set-min-date="startDate"
+          @selected-date="endDate = $event"
+        />
+      </v-col>
+    </v-row>
+    <v-row class="pt-2 pr-2" no-gutters justify="end">
+      <v-col cols="auto">
+        <v-btn
+          class="date-selection-btn bold"
+          color="primary"
+          small
+          variant="text"
+          @click="submitDateRange()"
+        >
+          <b>OK</b>
+        </v-btn>
+        <v-btn
+          class="date-selection-btn ml-4"
+          color="primary"
+          small
+          variant="text"
+          @click="resetDateRange()"
+        >
+          Cancel
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-card>
+</template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  defaultEndDate?: Date
+  defaultStartDate?: Date
+  reset?: boolean
+}>()
+const emit = defineEmits<{(e: 'submit', value: { endDate: Date, startDate: Date }): void}>()
+
+const datePickerErr = ref(false)
+const endDate: Ref<Date> = ref(props.defaultEndDate || null)
+const startDate: Ref<Date> = ref(props.defaultStartDate || null)
+const resetTrigger = ref(false)
+
+const resetDateRange = (): void => {
+  resetTrigger.value = !resetTrigger.value
+  datePickerErr.value = false
+  emit('submit', { endDate: null, startDate: null })
+}
+watch(() => props.reset, () => { resetDateRange() })
+
+const submitDateRange = (): void => {
+  if (!startDate.value || !endDate.value) {
+    datePickerErr.value = true
+    return
+  }
+  datePickerErr.value = false
+  emit('submit', { endDate: endDate.value, startDate: startDate.value })
+}
+</script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+.date-selection {
+  border-radius: 5px;
+  z-index: 1001;
+  left: 50%;
+  margin-top: 230px;
+  overflow: auto;
+  padding: 20px 10px 8px 30px;
+  position: absolute;
+  transform: translate(-50%, 0);
+  background-color: white;
+  width: 700px;
+
+  &__heading.picker-err {
+    color: $error;
+  }
+}
+</style>

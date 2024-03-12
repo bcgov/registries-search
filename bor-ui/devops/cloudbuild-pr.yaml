@@ -1,36 +1,29 @@
 steps:
-  # install / setup ci
-  - name: node:18.14.2
-    entrypoint: npm
-    dir: "bor-ui"
-    args: ['install']
-
   # setup .env
-  - name: 'bash'
-    dir: "bor-ui"
-    script: |
-      #!/usr/bin/env bash
-      cp .env.sample .env
-
-  #
-  # Generate the statis site
-  #
-  - name: node:18.14.2
-    entrypoint: npm
+  - name: 'gcr.io/cloud-builders/gcloud'
+    dir: bor-ui
+    entrypoint: bash
+    args: ['-c', 'cp .env.example .env']  
+  # install deps and build
+  - name: 'node:20.6.1'
     dir: "bor-ui"
     env:
       - 'VUE_APP_ADDRESS_COMPLETE_KEY=$_VUE_APP_ADDRESS_COMPLETE_KEY'
-      - 'VUE_APP_BOR_LD_CLIENT_ID=$_VUE_APP_BOR_LD_CLIENT_ID'
+      - 'VUE_APP_BOR_LD_CLIENT_ID=$_VUE_APP_LD_CLIENT_ID'
       - 'VUE_APP_BOR_API_KEY=$_VUE_APP_BOR_API_KEY'
-    args: ['run', 'build']
-
+      - 'VUE_APP_POD_NAMESPACE=$_VUE_APP_POD_NAMESPACE'
+    script: |
+      #!/usr/bin/env bash
+      npm install --global pnpm
+      pnpm install
+      pnpm build
   #
   # Deploy to firebase channel, using the PR #
   # store log to /workspace to get the channel URL
   #
   - name: gcr.io/yfthig-dev/firebase
     entrypoint: bash
-    dir: "bor-ui"
+    dir: bor-ui
     args: ['-c', 'firebase hosting:channel:deploy --project=yfthig-dev PR-$_PR_NUMBER > /workspace/firebase-deploy.txt']
 
   #
@@ -39,7 +32,7 @@ steps:
   - id: "Update the PR"
     name: gcr.io/cloud-builders/curl
     entrypoint: bash
-    dir: "bor-ui"
+    dir: bor-ui
     args:
       - -c
       - |

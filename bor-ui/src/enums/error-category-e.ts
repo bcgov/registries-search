@@ -1,0 +1,16 @@
+export enum ErrorCategoryE {
+  ACCOUNT_ACCESS = 'account-access',
+  ACCOUNT_LIST = 'account-list',
+  ACCOUNT_SETTINGS = 'account-settings',
+  DOCUMENT_ACCESS_REQUEST_CREATE = 'document-access-request-create',
+  DOCUMENT_ACCESS_REQUEST_HISTORY = 'document-access-request-history',
+  ENTITY_BASIC = 'entity-basic',
+  ENTITY_FILINGS = 'entity-filings',
+  FEE_INFO = 'fee-info',
+  REPORT_GENERATION = 'report-generation',
+  SEARCH = 'search',
+  SEARCH_EXPORT = 'search-export',
+  SEARCH_UNAVAILABLE = 'search-unavailable',
+  SIGNIFICANT_INDIVIDUAL = 'significiant-individual',
+  USER_INFO = 'user-info',
+}

@@ -1,8 +1,9 @@
-
 <template>
   <v-row no-gutters>
     <v-col cols="auto">
-      <v-icon class="search-table__icon-name">{{ icon }}</v-icon>
+      <v-icon class="search-table__icon-name">
+        {{ icon }}
+      </v-icon>
     </v-col>
     <v-col class="ml-2">
       <span v-html="name" />
@@ -11,8 +12,7 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<{ icon: string, name: string }>()
+defineProps<{ icon: string, name: string }>()
 
 </script>
 
@@ -47,4 +47,3 @@ const props = defineProps<{ icon: string, name: string }>()
   margin-top: -10px !important;
 }
 </style>
-  

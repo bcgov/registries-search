@@ -1,26 +1,22 @@
 import { StatusCodes } from 'http-status-codes'
-// local
-import { useAuth } from '@/composables'
-import { ErrorCategory, ErrorCode } from '@/enums'
-import { ErrorI } from '@/interfaces'
 
 export const getSearchConfig = (exportSearch: boolean) => {
-  const { auth } = useAuth()
-  const url = sessionStorage.getItem('BOR_API_URL')
-  const apiKey = window['borApiKey']
-  if (!url) console.error('Error: BOR_API_URL expected, but not found.')
-  if (!apiKey) console.error('Error: BOR_API_KEY expected, but not found.')
-  if (!auth.currentAccount) console.error(`Error: current account expected, but not found.`)
-  
-  const config = { baseURL: url, headers: { 'Account-Id': auth.currentAccount?.id, 'x-apikey': apiKey } }
+  const { borApiURL, borApiKey } = useRuntimeConfig().public
+  if (!borApiURL) { console.error('Error: BOR_API_URL expected, but not found.') }
+  if (!borApiKey) { console.error('Error: BOR_API_KEY expected, but not found.') }
+
+  const account = useBcrosAccount()
+  if (!account.currentAccount) { console.error('Error: current account expected, but not found.') }
+
+  const config = { baseURL: borApiURL, headers: { 'Account-Id': account.currentAccount?.id, 'x-apikey': borApiKey } }
   if (exportSearch) {
-    config.headers['Accept'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    config['responseType'] = 'blob'
+    config.headers.Accept = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    config.responseType = 'blob'
   }
   return config
 }
 
-export const parseGatewayError = (category: ErrorCategory, defaultStatus: StatusCodes, error): ErrorI => {
+export const parseGatewayError = (category: ErrorCategoryE, defaultStatus: StatusCodes, error): ErrorI => {
   const parseRootCause = (rootCause: string) => {
     try {
       let parsedRootCause = rootCause.replace('detail:', '"detail":"')
@@ -37,12 +33,12 @@ export const parseGatewayError = (category: ErrorCategory, defaultStatus: Status
   }
   // parse root cause
   let rootCause = null
-  if (error?.response?.data?.rootCause) rootCause = parseRootCause(error.response.data.rootCause)
+  if (error?.response?.data?.rootCause) { rootCause = parseRootCause(error.response.data.rootCause) }
   return {
-    category: category,
+    category,
     detail: rootCause?.detail || error?.response?.data?.detail,
     message: rootCause?.message || error?.response?.data?.message,
     statusCode: rootCause?.statusCode || error?.response?.status || defaultStatus,
-    type: rootCause?.type?.trim() as ErrorCode
+    type: rootCause?.type?.trim() as ErrorCodeE
   }
 }

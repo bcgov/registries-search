@@ -1,44 +1,45 @@
+# Nuxt 3 Minimal Starter
+
 # bor-ui
 
 ## Project configuration
-- node 18
-- vue/cli 5.0.4
-- vue 3
-- vuetify 3
-- typescript
-- jest
-- eslint
+- node 20
+- nuxt 3
+- Vite
+- Vue 3
+- Vuetify 3
+- Tailwind
+- Typescript
+- Vitest
+- Eslint
 
 
 ## Project setup
 ```
-npm install
+pnpm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+pnpm dev
 ```
 
-### Compiles and minifies for production
+### Compiles for production
 ```
-npm run build
+pnpm generate
+```
+
+### Locally preview production build
+```
+pnpm preview
 ```
 
 ### Run your unit tests
 ```
-npm run test:unit
+pnpm test:unit
 ```
 
 ### Lints and fixes files
 ```
-npm run lint
+pnpm lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-const { defineConfig } = require("@vue/cli-service");
-module.exports = defineConfig({
-  transpileDependencies: true,
-});

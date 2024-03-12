@@ -1,10 +1,10 @@
-import { CorpClass, CorpTypeCd } from '@/enums'
+import { CorpClassE, CorpTypeCdE } from '@/enums'
 
 export type CorpInfo = {
-    corpTypeCd: CorpTypeCd
-    colinInd: boolean
-    corpClass: CorpClass
-    shortDesc: string
-    fullDesc: string
-    numberedDesc?: string
+  corpTypeCd: CorpTypeCdE
+  colinInd: boolean
+  corpClass: CorpClassE
+  shortDesc: string
+  fullDesc: string
+  numberedDesc?: string
 }

@@ -38,11 +38,13 @@
 .app-body {
   flex: 1 1 auto;
   position: relative;
+  width: 100vw;
 }
 
 // Page Layout
 .container {
   max-width: 1360px; // should match auth-web, etc
+  padding: 0;
 }
 
 // Form Layout

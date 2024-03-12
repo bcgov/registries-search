@@ -9,22 +9,23 @@
     Open
   </v-btn>
   <v-tooltip v-else location="top" transition="fade-transition">
-    <template v-slot:activator="{ isActive, props }">
+    <template #activator="{ isActive, props }">
       <div class="action-div">
         <v-fade-transition>
           <div v-if="isActive" class="table-tooltip-arrow" />
         </v-fade-transition>
-        <v-icon color="primary" size="24" v-bind="props">mdi-information-outline</v-icon>
+        <v-icon color="primary" size="24" v-bind="props">
+          mdi-information-outline
+        </v-icon>
       </div>
     </template>
     <span>{{ tooltipMsg }}</span>
   </v-tooltip>
 </template>
-  
+
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<{ showBtn: boolean, tooltipMsg: string }>()
-const emit = defineEmits<{ (e: 'action', value: boolean): void }>()
+defineProps<{ showBtn: boolean, tooltipMsg: string }>()
+const emit = defineEmits<{(e: 'action', value: boolean): void }>()
 
 </script>
 
@@ -57,4 +58,3 @@ const emit = defineEmits<{ (e: 'action', value: boolean): void }>()
   width: 20px;
 }
 </style>
-  

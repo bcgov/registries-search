@@ -14,30 +14,28 @@ td {
 
 // Buttons
 .v-btn {
-  font-size: 1rem;
-  font-weight: normal;
-  letter-spacing: normal;
-  padding: inherit 28px !important;
-  text-transform: none;
+  font-size: 1rem !important;
+  font-weight: normal !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
   .v-icon + span,
   span + .v-icon {
-    margin-left: 0.25rem;
+    margin-left: 0.25rem !important;
   }
 
   &__prepend {
-    margin-right: 2px;
-    margin-top: 2px;
+    margin-right: 2px !important;
+    margin-top: 2px !important;
   }
 }
 
 .v-btn:before {
-  color: inherit;
+  color: inherit !important;
 }
 
 .v-btn.primary {
   background-color: $app-blue !important;
   color: white !important;
-  font-weight: 700;
 }
 
 .v-btn.primary.copy-normal {
@@ -109,7 +107,7 @@ td {
 
 // Text Inputs / selects
 .v-field--variant-filled .v-field__overlay {
-  background-color: $gray1;
+  background-color: $gray1 !important;
   opacity: 1 !important;
 }
 
