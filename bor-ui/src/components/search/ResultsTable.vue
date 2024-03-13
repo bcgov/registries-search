@@ -201,8 +201,7 @@ const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
 }
 
 // business details link
-const businessSearchURL = sessionStorage.getItem('REGISTRIES_SEARCH_URL')
-const bcolURL = sessionStorage.getItem('BCONLINE_URL')
+const config = useRuntimeConfig().public
 const isModernized = (item: SearchResultI) => {
   const modernizedTypes = [
     CorpTypeCdE.BENEFIT_COMPANY,
@@ -214,9 +213,9 @@ const isModernized = (item: SearchResultI) => {
 }
 const getItemDetailsLink = (item: SearchResultI) => {
   if (isModernized(item)) {
-    return `${businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`
+    return `${config.businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`
   }
-  return bcolURL
+  return config.bcolURL
 }
 
 // text functions

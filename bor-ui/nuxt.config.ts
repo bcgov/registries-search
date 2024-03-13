@@ -35,6 +35,8 @@ export default defineNuxtConfig({
       borApiURL: `${process.env.VUE_APP_BOR_API_URL || ''}${process.env.VUE_APP_BOR_API_VERSION || ''}`,
       borApiKey: `${process.env.VUE_APP_BOR_API_KEY || ''}`,
       registryHomeURL: process.env.VUE_APP_REGISTRY_HOME_URL || '',
+      bcolURL: process.env.VUE_APP_BCONLINE_URL || '',
+      businessSearchURL: process.env.VUE_APP_REGISTRIES_SEARCH_URL || '',
       appEnv: `${process.env.VUE_APP_POD_NAMESPACE || 'unknown'}`,
       searchRows: `${process.env.VUE_APP_SEARCH_ROWS || ''}`,
       version: process.env.npm_package_version || ''
