@@ -14,21 +14,21 @@
         class="rounded-top"
         height="100%"
         :item-key="'legalName'"
-        :loading="search._loading"
+        :loading="loading"
         overflow="hidden"
         :reset-filters-trigger="resetFiltersTrigger"
         :results-description="resultsDesc"
         :set-headers="searchEntityHeaders"
-        :set-items="search.results"
+        :set-items="results"
         title="Search Results"
         :title-extras="true"
-        :total-items="search.totalResults"
+        :total-items="totalResults"
       >
         <template #title-extras>
           <v-row no-gutters justify="end">
             <v-col align-self="center" cols="auto">
               <v-select
-                v-model="search.exportRows"
+                v-model="exportRows"
                 class="search-table__export-select pt-1 rounded-top"
                 density="default"
                 hide-details
@@ -79,7 +79,7 @@
         </template>
         <template #header-filter-slot-action>
           <v-btn
-            v-if="search._isFilteringActive"
+            v-if="isFilteringActive"
             class="search-table__clear"
             :append-icon="'mdi-window-close'"
             color="primary"
@@ -120,11 +120,11 @@
             :tooltipMsg="tooltipMsg"
           />
         </template> -->
-        <template v-if="search._error" #body-empty>
+        <template v-if="searchError" #body-empty>
           <bcros-error-retry
             class="my-5"
-            :action="getSearchResults"
-            :action-args="[search._value]"
+            :action="search.getSearchResults"
+            :action-args="[searchValue]"
             message="We are unable to display your search results. Please try again later."
           />
         </template>
@@ -134,7 +134,7 @@
       <v-btn
         v-if="hasMoreResults"
         class="mt-30px"
-        :loading="search._loadingNext"
+        :loading="loadingNext"
         color="primary"
         variant="outlined"
         @click="getNextSearches()"
@@ -156,15 +156,18 @@ import _ from 'lodash'
 import { SearchTableName } from './common'
 
 // composables
+const search = useBcrosSearch()
 const {
-  facetCount,
-  exportSearch,
-  filterSearch,
-  getNextResults,
-  getSearchResults,
+  exportRows,
   hasMoreResults,
-  search
-} = useSearch()
+  isFilteringActive,
+  loading,
+  loadingNext,
+  results,
+  totalResults,
+  searchError,
+  searchValue
+} = storeToRefs(search)
 
 const searchEntityHeaders = getSearchEntityHeaders()
 
@@ -194,9 +197,12 @@ const updateDateRange = (val: { endDate: Date, startDate: Date }) => {
   dateRangeStart.value = val.startDate
   dateRangeEnd.value = val.endDate
   if (val.endDate && val.startDate) {
-    filterSearch(['query', 'roles', 'roleDates'], { start: toDateStr(val.startDate), end: toDateStr(val.endDate) })
+    search.filterSearch(
+      ['query', 'roles', 'roleDates'],
+      { start: toDateStr(val.startDate), end: toDateStr(val.endDate) }
+    )
   } else {
-    filterSearch(['query', 'roles', 'roleDates'], {})
+    search.filterSearch(['query', 'roles', 'roleDates'], {})
   }
 }
 
@@ -222,11 +228,11 @@ const getItemDetailsLink = (item: SearchResultI) => {
 const resultsDesc = computed(() => {
   let desc = ''
   if (search.filters.categories.entityType?.includes(EntityTypeE.PERSON)) {
-    const count = facetCount('entityType', EntityTypeE.PERSON)
+    const count = search.facetCount('entityType', EntityTypeE.PERSON)
     desc += `${count} ${count === 1 ? 'Person' : 'People'}`
   }
   if (search.filters.categories.entityType?.includes(EntityTypeE.BUSINESS)) {
-    const count = facetCount('entityType', EntityTypeE.BUSINESS)
+    const count = search.facetCount('entityType', EntityTypeE.BUSINESS)
     if (desc) { desc += ', ' }
     desc += `${count} ${count === 1 ? 'Business' : 'Businesses'}`
   }
@@ -240,7 +246,7 @@ const clearFilters = () => {
   resetFiltersTrigger.value = !resetFiltersTrigger.value
   dateRangeResetTrigger.value = !dateRangeResetTrigger.value
   // search on reset filters
-  filterSearch(null, null, true)
+  search.filterSearch(null, null, true)
 }
 
 /** Update the base table header filters to display what the current filters are.
@@ -263,15 +269,15 @@ const showExportSnack = ref(false)
 /** Export search results into an .xlsx download file. */
 const exportToXlsx = _.debounce(async () => {
   exportLoading.value = true
-  await exportSearch()
+  await search.exportSearch()
   exportLoading.value = false
-  if (!search._error) { showExportSnack.value = true }
+  if (!searchError.value) { showExportSnack.value = true }
 }, 50, { leading: true, trailing: false })
 
 // set table filters to session saved ones
 onMounted(() => { updateTableHeaderFilters() })
 
-const getNextSearches = _.debounce(async () => (await getNextResults()), 50)
+const getNextSearches = _.debounce(async () => (await search.getNextResults()), 50)
 </script>
 
 <style lang="scss" scoped>

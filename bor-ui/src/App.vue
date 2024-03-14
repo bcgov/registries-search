@@ -11,18 +11,18 @@
         <p class="font-normal mt-7">
           If this issue persists, please contact us.
         </p>
-        <!-- <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" /> -->
+        <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
       </template>
     </base-dialog>
     <!-- TODO: use nuxt loading screen -->
     <bcros-loading-screen v-if="appLoading" :is-loading="appLoading" />
     <NuxtPage v-else />
   </NuxtLayout>
-  <!-- <sbc-header v-if="auth._tokenInitialized" :in-auth="false" :show-login-menu="false" /> -->
 </template>
 
 <script setup lang="ts">
 import { StatusCodes } from 'http-status-codes'
+import { RegistriesInfo } from '@/resources/contact-info'
 
 const appLoading = ref(false)
 // // errors
@@ -32,7 +32,7 @@ const errorInfo: Ref<DialogOptionsI | null> = ref(null)
 
 const account = useBcrosAccount()
 const { accountErrors } = storeToRefs(account)
-const { search } = useSearch()
+const { isExtended, searchError } = storeToRefs(useBcrosSearch())
 
 onMounted(async () => {
   appLoading.value = true
@@ -41,15 +41,27 @@ onMounted(async () => {
   await account.setActiveProducts()
   if (accountErrors.value?.length > 0) { return }
   console.info('Verifying user access to search...')
-  const hasIndividualAccess = useBcrosLaunchdarkly().getFeatureFlag('enable-director-search')
-  if (!account.hasProductAccess(ProductCodeE.NDS) && !hasIndividualAccess) {
+  const ldarkly = useBcrosLaunchdarkly()
+  const hasIndividualAccess = await (
+    await ldarkly.getStoredFlag('enable-director-search') ||
+    await ldarkly.getStoredFlag('enable-comp-auth-search')
+  )
+  const hasProductAccess = (
+    account.hasProductAccess(ProductCodeE.NDS) ||
+    account.hasProductAccess(ProductCodeE.CA_SEARCH)
+  )
+  if (!hasProductAccess && !hasIndividualAccess) {
     handleError({
       category: ErrorCategoryE.ACCOUNT_ACCESS,
-      message: 'This account does not have access to Director Search',
+      message: 'This account does not have access to Person Search',
       statusCode: StatusCodes.UNAUTHORIZED,
       type: ErrorCodeE.AUTH_PRODUCTS_ERROR
     })
     return
+  }
+  // set extended if user has access to comp auth search
+  if (account.hasProductAccess(ProductCodeE.CA_SEARCH) || await ldarkly.getStoredFlag('enable-comp-auth-search')) {
+    isExtended.value = true
   }
   console.info('App ready.')
   appLoading.value = false
@@ -99,5 +111,5 @@ const handleError = (error: ErrorI) => {
 
 // watchers for errors
 watch(accountErrors.value, (val) => { if (val && val.length > 0) { handleError(val[0]) } })
-watch(search, (val) => { if (val._error) { handleError(val._error) } })
+watch(searchError.value, (val) => { if (val) { handleError(val) } })
 </script>

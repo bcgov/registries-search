@@ -27,7 +27,7 @@
               :class="isLast(index) ? 'inactive-crumb' : 'active-crumb'"
               @click="navigate(crumb)"
             >
-              {{ crumb.text }}
+              {{ crumb.text.value }}
             </span>
             <v-icon v-if="breadcrumbs?.length > 1 && isLast(index) == false" icon="mdi-chevron-right" />
           </div>

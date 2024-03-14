@@ -2,7 +2,7 @@
   <div class="container mt-8 mb-16">
     <v-row no-gutters>
       <v-col>
-        <h1>Director Search</h1>
+        <h1>{{ searchTitleText }}</h1>
       </v-col>
     </v-row>
     <v-row class="mt-1 pt-2" justify="start" no-gutters>
@@ -22,19 +22,19 @@
       @click="showDocHelp = !showDocHelp"
     >
       <v-icon>mdi-help-circle-outline</v-icon>
-      <span v-if="!showDocHelp">Help with Director Search</span>
+      <span v-if="!showDocHelp">Help with {{ searchTitleText }}</span>
       <span v-else>Hide Help</span>
     </v-btn>
     <v-slide-y-transition>
       <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pb-16 pt-6">
         <div class="doc-help-info__content mx-auto">
           <h3 style="text-align: center;">
-            Help with Director Search
+            Help with {{ searchTitleText }}
           </h3>
           <h3 class="mt-6">
             Search
           </h3>
-          <p class="mt-6">
+          <p v-if="!isExtended" class="mt-6">
             The Beta version of Director Search returns results for people
             associated with all businesses in British Columbia.
           </p>
@@ -49,7 +49,7 @@
             Business Information
           </h3>
           <p class="mt-6">
-            You can directly view information for the business types listed below in Director Search.
+            You can directly view information for the business types listed below in {{ searchTitleText }}.
             Information for other business types can be obtained through
             <a class="doc-help-info__content__link" :href="bcOnlineURL" target="_blank">
               <span style="text-decoration: underline;">BC OnLine</span>
@@ -73,8 +73,8 @@
             <li>Letter Under Seal</li>
           </ul>
           <div class="mt-6">
-            <a class="learn-more" :href="directorSearchGuideURL" target="_blank">
-              Learn how to use Director Search - User Guide
+            <a class="learn-more" :href="searchGuideURL" target="_blank">
+              Learn how to use {{ searchTitleText }} - User Guide
               <v-icon class="learn-more__icon">mdi-open-in-new</v-icon>
             </a>
           </div>
@@ -86,11 +86,11 @@
     <v-window v-model="tab" class="mt-5">
       <v-window-item class="ma-0">
         <v-card class="window-item-card" flat>
-          <p class="mb-7 mt-12 info-text">
-            Search for the names, addresses, and business email addresses of people associated with businesses in B.C.
+          <p class="mb-7 mt-12 info-text" data-cy="search-input-info-text">
+            {{ searchInfoText }}
           </p>
           <search-input class="pb-5" />
-          <search-results-table v-if="search.results!=null" class="mt-30px" />
+          <search-results-table v-if="results!=null" class="mt-30px" />
         </v-card>
       </v-window-item>
     </v-window>
@@ -100,11 +100,23 @@
 <script setup lang="ts">
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
-const { search } = useSearch()
+const { isExtended, results } = storeToRefs(useBcrosSearch())
 
-const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
-// eslint-disable-next-line
-const directorSearchGuideURL = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
+const searchTitleText = computed(() => isExtended.value ? 'Business and Person Search' : 'Director Search')
+const searchInfoText = computed(() => {
+  if (isExtended.value) {
+    // eslint-disable-next-line
+    return 'Search for the names, addresses, SIN/TTN/ITN, and business email addresses of people associated with businesses in B.C.'
+  }
+  return 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
+})
+
+const bcOnlineURL = useRuntimeConfig().public.bcolURL
+const searchGuideURL = computed(() => {
+  if (isExtended.value) { return '' }
+  // eslint-disable-next-line
+  return 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
+})
 const showDocHelp = ref(false)
 const tab = ref('0')
 </script>

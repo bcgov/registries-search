@@ -15,15 +15,25 @@
       @keyup="submitSearch()"
       @keyup.enter="toggleErrorMsg()"
     />
-    <!-- NB: Current plan is to use this in the future design -->
-    <!-- <v-row id="search-bar-checkboxes" class="mt-3" no-gutters>
+    <v-row v-if="isExtended" class="mt-5 search-radios" no-gutters>
       <v-col cols="auto">
-        <v-checkbox color="primary" density="compact" label="Person" v-model="facets.entityType.person" />
+        <v-radio
+          v-model="facets.entityType.business"
+          color="primary"
+          density="compact"
+          disabled
+          label="Search Businesses"
+        />
       </v-col>
       <v-col class="ml-3" cols="auto">
-        <v-checkbox color="primary" density="compact" label="Business" v-model="facets.entityType.business" />
+        <v-radio
+          v-model="facets.entityType.person"
+          color="primary"
+          density="compact"
+          label="Search People"
+        />
       </v-col>
-    </v-row> -->
+    </v-row>
   </div>
 </template>
 
@@ -31,20 +41,36 @@
 import _ from 'lodash'
 
 // Composables
-const { search, filterSearch, getSearchResults } = useSearch()
+const search = useBcrosSearch()
+const { isExtended } = storeToRefs(search)
 
 // search field stuff
-const searchErrorMsg = 'Enter a name and/or address'
-const searchHint = 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
-const searchLabel = 'Director Name, Address, and/or Email Address'
+const searchErrorMsg = computed(() => {
+  if (isExtended.value) {
+    return 'Enter a name, address, SIN/TTN/ITN, and/or email address'
+  }
+  return 'Enter a name, address, and/or email address'
+})
+const searchHint = computed(() => {
+  if (isExtended.value) {
+    return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba", 000 000 000'
+  }
+  return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
+})
+const searchLabel = computed(() => {
+  if (isExtended.value) {
+    return 'Person Name, Address, SIN/TTN/ITN, and/or Email Address'
+  }
+  return 'Director Name, Address, and/or Email Address'
+})
 
 // search value stuff
 const searchVal = ref('')
 
-onMounted(() => { searchVal.value = search._value })
+onMounted(() => { searchVal.value = search.searchValue })
 
 const submitSearch = _.debounce(async () => {
-  await getSearchResults(searchVal.value)
+  await search.getSearchResults(searchVal.value)
 }, 500)
 
 // search error stuff
@@ -83,10 +109,13 @@ const facets = reactive({
 watch(() => facets.entityType, (val) => {
   if (searchVal.value) { showErrors.value = false }
 
-  const entityTypes = []
-  if (val.business) { entityTypes.push('BUSINESS') }
-  if (val.person) { entityTypes.push('PERSON') }
-  filterSearch(['categories', 'entityType'], entityTypes)
+  // not currently supporting searching both at once
+  if (val.business) {
+    search.filterSearch(['categories', 'entityType'], ['BUSINESS'])
+    return
+  }
+  // if (val.person)
+  search.filterSearch(['categories', 'entityType'], ['PERSON'])
 }, { deep: true })
 </script>
 
@@ -96,20 +125,11 @@ watch(() => facets.entityType, (val) => {
   height: 34px;
   width: 385px;
 
-  &__btn {
-
-    :deep(.v-label) {
-      color: $gray7 !important;
-      font-size: 1rem;
-      font-weight: normal;
-      opacity: 1;
-    }
-  }
-
-  &__btn:last-child {
-    display: flex;
-    margin-top: -40px;
-    margin-left: 190px;
+  :deep(.v-label) {
+    color: $gray7 !important;
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 1;
   }
 }
 </style>

@@ -1,13 +1,14 @@
 export function getBcrosHomeBreadCrumb (): BreadcrumbI {
   return {
-    text: 'BC Registries Dashboard',
+    text: ref('BC Registries Dashboard'),
     href: useRuntimeConfig().public.registryHomeURL + 'dashboard'
   }
 }
 
 export function getPersonSearchBreadcrumb (): BreadcrumbI {
+  const { isExtended } = storeToRefs(useBcrosSearch())
   return {
-    text: 'Director Search',
+    text: computed(() => isExtended.value ? 'Business and Person Search' : 'Director Search'),
     to: { name: RouteNameE.SEARCH },
     href: '/'
   }

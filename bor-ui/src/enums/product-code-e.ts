@@ -1,4 +1,5 @@
 export enum ProductCodeE {
+  CA_SEARCH = 'CA_SEARCH',
   BCA = 'BCA',
   BUSINESS = 'BUSINESS',
   BUSINESS_SEARCH = 'BUSINESS_SEARCH',

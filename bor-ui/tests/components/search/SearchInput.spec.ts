@@ -8,16 +8,18 @@ import { vuetify } from '../../setup'
 describe('SearchBar tests', () => {
   let wrapper: VueWrapper<any>
 
-  const { search, resetSearch } = useSearch()
+  const search = useBcrosSearch()
+  const { isExtended, totalResults } = storeToRefs(search)
 
   beforeEach(() => {
     wrapper = mount(SearchInput, { global: { plugins: [vuetify] } })
   })
   afterEach(() => {
-    resetSearch()
+    search.resetSearch()
+    isExtended.value = false
     wrapper.unmount()
   })
-  it('Renders and displays expected content', () => {
+  it('Renders and displays expected content', async () => {
     expect(wrapper.findComponent(SearchInput).exists()).toBe(true)
 
     // search text field is there
@@ -36,34 +38,53 @@ describe('SearchBar tests', () => {
     const errorMsg = 'Enter a name and/or address'
     expect(wrapper.html()).not.toContain(errorMsg)
 
-    // checkboxes are NOT there -- this will change in the future
-    const checkboxesWrapper = wrapper.find('#search-bar-checkboxes')
-    expect(checkboxesWrapper.exists()).toBe(false)
+    // radios should only show for extended search
+    expect(isExtended.value).toBe(false)
+    expect(wrapper.find('.search-radios').exists()).toBe(false)
+    // update to extended and verify radios
+    isExtended.value = true
+    await flushPromises()
+    const radiosWrapper = wrapper.find('.search-radios')
+    expect(radiosWrapper.exists()).toBe(true)
 
-    // const checkboxes = checkboxesWrapper.findAll('v-checkbox')
-    // expect(checkboxes.length).toBe(2)
+    const radios = radiosWrapper.findAll('.v-radio')
+    expect(radios.length).toBe(2)
 
     // person
-    // expect(checkboxes[0].html()).toContain('label="Person"')
-    // checked
-    // expect(checkboxes[0].html()).toContain('modelvalue="true"')
+    expect(radios[1].find('label').text()).toBe('Search People')
+    // selected
+    expect(radios[1].find('input').attributes().type).toBe('radio')
+    // have to do it by class since vuetify doesn't update the inner input value
+    expect(radios[1].find('i').attributes().class).toContain('mdi-radiobox-marked mdi')
+    // not disabled
+    expect(radios[1].find('input').attributes().disabled).toBeUndefined()
 
     // business
-    // expect(checkboxes[1].html()).toContain('label="Business"')
-    // not checked
-    // expect(checkboxes[1].html()).toContain('modelvalue="false"')
+    expect(radios[0].find('label').text()).toBe('Search Businesses')
+    // not selected
+    expect(radios[0].find('input').attributes().type).toBe('radio')
+    // have to do it by class since vuetify doesn't update the inner input value
+    expect(radios[0].find('i').attributes().class).toContain('mdi-radiobox-blank')
+    // disabled (temporary)
+    expect(radios[0].find('input').attributes().disabled).toBeDefined()
   })
   it('Validates input', async () => {
-    const searchTextField = wrapper.find('#search-bar-field')
-    searchTextField.trigger('keyup.enter')
-    await flushPromises()
+    const uiOptions = [
+      { isExtended: false, msg: 'Enter a name, address, and/or email address' },
+      { isExtended: true, msg: 'Enter a name, address, SIN/TTN/ITN, and/or email address' }
+    ]
+    for (const options in uiOptions) {
+      isExtended.value = uiOptions[options].isExtended
+      const searchTextField = wrapper.find('#search-bar-field')
+      searchTextField.trigger('keyup.enter')
+      await flushPromises()
 
-    // validation message shows
-    const message = wrapper.find('.v-messages__message')
-    const errorMsg = 'Enter a name and/or address'
-    expect(message.text()).toBe(errorMsg)
+      // validation message shows
+      const message = wrapper.find('.v-messages__message')
+      expect(message.text()).toBe(uiOptions[options].msg)
 
-    // search was not triggered
-    expect(search.totalResults).toBe(null)
+      // search was not triggered
+      expect(totalResults.value).toBe(null)
+    }
   })
 })

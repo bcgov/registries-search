@@ -1,5 +1,5 @@
 export interface BreadcrumbI {
-  text: string
+  text: Ref<string>
   to?: any
   href?: string
 }

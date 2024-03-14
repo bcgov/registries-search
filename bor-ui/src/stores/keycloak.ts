@@ -1,7 +1,4 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions } from 'keycloak-js'
-import { defineStore } from 'pinia'
-import { SessionStorageKeyE } from '~/enums/session-storage-e'
-import { KCUserI } from '~/interfaces/kc-user-i'
 
 /** Default interval (seconds) for checking if the user token needs to be refreshed. */
 const DEFAULT_REFRESH_CHECK_INTERVAL = 60

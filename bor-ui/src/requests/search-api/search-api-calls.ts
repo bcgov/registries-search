@@ -11,7 +11,8 @@ export async function searchEntities (
   filters: SearchPayloadI,
   rows: number,
   start: number,
-  exportSearch = false
+  exportSearch = false,
+  extended = false
 ): Promise<SearchResponseI | undefined> {
   if (!searchValue) { return }
   // set payload
@@ -23,7 +24,7 @@ export async function searchEntities (
   payload.query.value = searchValue
   // add search-api config stuff
   const config = getSearchConfig(exportSearch)
-  return axios.post<SearchResponseI>('search', payload, config)
+  return axios.post<SearchResponseI>(`search${extended ? '/extended' : ''}`, payload, config)
     .then((response) => {
       const data: SearchResponseI = response?.data
       if (!data) { throw new Error('Invalid API response') }

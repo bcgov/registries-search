@@ -1,6 +1,6 @@
 /** Return the table headers for the entity table. */
 export const getSearchEntityHeaders = (): BaseTableHeaderI[] => {
-  const { facetItems, filterSearch, highlightMatch } = useSearch()
+  const { facetItems, filterSearch, highlightMatch } = useBcrosSearch()
   const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 
   return [

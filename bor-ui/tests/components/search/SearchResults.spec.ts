@@ -11,17 +11,19 @@ import { vuetify } from '../../setup'
 describe('SearchResults tests', () => {
   let wrapper: VueWrapper<any>
 
+  const search = useBcrosSearch()
+  const { results, totalResults, searchError } = storeToRefs(search)
+
   const searchHeaders = getSearchEntityHeaders()
-  const { search, resetSearch } = useSearch()
 
   beforeEach(async () => {
-    search.totalResults = 0
-    search.results = []
+    totalResults.value = 0
+    results.value = []
     wrapper = mount(SearchResults, { global: { plugins: [vuetify] } })
     await flushPromises()
   })
   afterEach(() => {
-    resetSearch()
+    search.resetSearch()
   })
 
   it('Renders and displays expected content', () => {
@@ -66,12 +68,12 @@ describe('SearchResults tests', () => {
     }
 
     // renders no results found text
-    expect(search.results).toEqual([])
+    expect(results.value).toEqual([])
     expect(table.find('.base-table__body__empty').exists()).toBe(true)
     expect(table.find('.base-table__body__empty').text()).toBe('No results found')
 
     // does not show error retry
-    expect(search._error).toBe(null)
+    expect(searchError.value).toBe(null)
     expect(table.findComponent(BcrosErrorRetry).exists()).toBe(false)
     // does not show load more results btn
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
