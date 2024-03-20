@@ -16,17 +16,23 @@ from dataclasses import asdict
 
 from bor_api.services.base_solr import Solr
 from bor_api.services.bor_solr.doc_models import Entity
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 
 class BorSolr(Solr):
     """Wrapper around the solr instance for BOR."""
 
+    # TODO: split the field lists by access groups once we know who is allowed to see what
     entity_fields: list[str] = [
         EntityField.BN.value, EntityField.EMAIL.value, EntityField.ENTITY_ADDRESSES.value,
         EntityField.ENTITY_TYPE.value, EntityField.IDENTIFIER.value, EntityField.LEGAL_NAME.value,
         EntityField.LEGAL_TYPE.value, EntityField.ROLES.value,
         EntityField.STATE.value, EntityField.SCORE.value, '[child]'
+    ]
+    entity_extended_fields: list[str] = [
+        EntityField.ALT_NAME.value, EntityField.BIRTH_DATE.value, EntityField.EMAIL.value,
+        EntityField.IS_PR.value, EntityField.NATIONALITIES.value, EntityField.EXTERNAL_INFLUENCE.value,
+        EntityField.TAX_NUMBER.value, EntityField.TAX_RESIDENCIES.value
     ]
     address_fields: list[str] = [
         AddressField.ADDRESS_CITY.value, AddressField.ADDRESS_COUNTRY.value,
@@ -40,6 +46,10 @@ class BorSolr(Solr):
         EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value
     ]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
+    interest_fields: list[str] = [
+        InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value, InterestField.SHARE_EXACT.value,
+        InterestField.SHARE_MAX.value, InterestField.SHARE_MIN.value, InterestField.TYPE.value
+    ]
 
     def create_or_replace_docs(self, docs: list[Entity] = None, raw_docs: list[dict] = None, timeout=25, additive=True):
         """Create or replace solr docs in the core."""

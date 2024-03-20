@@ -39,7 +39,7 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
     """Return a list of entity results from solr."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
-        request_json, errors = validate_search_request(user)
+        request_json, errors = validate_search_request(user, 'enable-director-search')
         if errors:
             return bad_request_response('Errors processing request.', errors)
 
@@ -107,13 +107,15 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
         except ValueError:  # catch invalid start/row entry
             return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
+        search_fields = solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields
         params = SearchParams(query=query,
                               rows=rows,
                               start=start,
                               categories=categories,
                               child_query=child_query,
                               child_categories=child_categories,
-                              child_date_ranges=child_date_ranges)
+                              child_date_ranges=child_date_ranges,
+                              fields=search_fields)
 
         results = entities_search(params, solr)
         docs = results.get('response', {}).get('docs')

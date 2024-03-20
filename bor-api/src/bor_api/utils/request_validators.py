@@ -22,8 +22,9 @@ from bor_api.services.authz import account_products
 from .util import get_str
 
 
-def validate_search_request(user: User) -> tuple[dict, list[dict]]:
+def validate_search_request(user: User, access_flag_name: str) -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
+    print('here')
     errors = []
     request_json = request.get_json()
     query_json = request_json.get('query', {})
@@ -38,7 +39,7 @@ def validate_search_request(user: User) -> tuple[dict, list[dict]]:
 
     # check access
     current_app.logger.debug('Checking user access...')
-    if not flags.value('enable-director-search', {'key': user.idp_userid}):
+    if not jwt.contains_role(['system']) and not flags.value(access_flag_name, {'key': user.idp_userid}):
         # individual flag not enabled for user. Check account has product subscription
         current_app.logger.debug('Individual access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)

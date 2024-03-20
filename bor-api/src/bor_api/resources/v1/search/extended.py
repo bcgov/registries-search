@@ -36,7 +36,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
     """Return a list of entity results from solr including extended entity information."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
-        request_json, errors = validate_search_request(user)
+        request_json, errors = validate_search_request(user, 'enable-comp-auth-search')
         if errors:
             return bad_request_response('Errors processing request.', errors)
 
@@ -104,13 +104,18 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
         except ValueError:  # catch invalid start/row entry
             return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
+        # NOTE: this is where we decide what data on each record to return to the user
+        base_access_fields = \
+            solr_temp.entity_fields + solr_temp.address_fields + solr_temp.entity_role_fields + solr_temp.date_fields
+        extended_access_fields = solr_temp.entity_extended_fields + solr_temp.interest_fields
         params = SearchParams(query=query,
                               rows=rows,
                               start=start,
                               categories=categories,
                               child_query=child_query,
                               child_categories=child_categories,
-                              child_date_ranges=child_date_ranges)
+                              child_date_ranges=child_date_ranges,
+                              fields=base_access_fields + extended_access_fields)
 
         results = entities_search(params, solr_temp)
         docs = results.get('response', {}).get('docs')

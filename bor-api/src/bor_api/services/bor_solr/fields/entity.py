@@ -52,6 +52,10 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     TAX_NUMBER = 'taxNumber'
     TAX_RESIDENCIES = 'taxResidencies'
     # entity doc query fields
+    ALT_NAME_Q = 'alternateName_q'
+    ALT_NAME_AGRO_Q = 'alternateName_stem_agro_q'
+    ALT_NAME_SINGLE_Q = 'alternateName_single_term_q'
+    ALT_NAME_SYN_Q = 'alternateName_synonym_q'
     BN_Q = 'bn_q'
     IDENTIFIER_Q = 'identifier_q'
     LEGAL_NAME_Q = 'legalName_q'

@@ -28,3 +28,4 @@ class SearchParams:  # pylint: disable=too-few-public-methods
     child_query: dict[str, str]
     child_categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
     child_date_ranges: dict[DateRangeField, str]
+    fields: list[str]

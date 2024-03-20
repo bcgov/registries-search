@@ -24,6 +24,7 @@ IDENTIFIER_FIELDS: list[str] = [EntityField.IDENTIFIER_Q.value, EntityRoleField.
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + EntityField.ENTITY_TYPE.value + ":*'}"
 FIELD_SYNONYM_TYPE_MAP = {
     AddressField.ADDRESS_SYN_Q: SolrSynonymType.ADDRESS,
+    EntityField.ALT_NAME_SYN_Q: SolrSynonymType.NAME,
     EntityField.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
     EntityRoleField.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
 }
