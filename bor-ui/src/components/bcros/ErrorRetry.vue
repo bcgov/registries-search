@@ -4,7 +4,13 @@
     <p class="error-retry__base-msg">
       If this issue persists please contact us.
     </p>
-    <v-btn class="error-retry__btn btn-basic-outlined mx-auto mt-5" :loading="loading" @click="handleRetry()">
+    <v-btn
+      class="error-retry__btn btn-basic-outlined mx-auto mt-5"
+      color="primary"
+      :loading="loading"
+      variant="outlined"
+      @click="handleRetry()"
+    >
       <v-icon color="primary" size="18">
         mdi-reload
       </v-icon>

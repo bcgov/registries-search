@@ -1,6 +1,11 @@
 <!-- Copied from PPR. Move into sbc-common or bcrs-shared after vue 3 upgrade -->
 <template>
-  <v-card ref="datePicker" class="date-selection registration-date" elevation="6">
+  <v-card
+    ref="datePicker"
+    class="date-selection registration-date"
+    elevation="6"
+    :style="{'margin-top': offsetTop ? offsetTop : '264px', 'margin-left': offsetLeft ? offsetLeft : '0px'}"
+  >
     <v-row no-gutters>
       <v-col>
         <b class="date-selection__heading" :class="{ 'picker-err': startDate === null && datePickerErr }">
@@ -56,6 +61,8 @@
 const props = defineProps<{
   defaultEndDate?: Date
   defaultStartDate?: Date
+  offsetLeft?: string
+  offsetTop?: string
   reset?: boolean
 }>()
 const emit = defineEmits<{(e: 'submit', value: { endDate: Date, startDate: Date }): void}>()
@@ -88,7 +95,6 @@ const submitDateRange = (): void => {
   border-radius: 5px;
   z-index: 1001;
   left: 50%;
-  margin-top: 230px;
   overflow: auto;
   padding: 20px 10px 8px 30px;
   position: absolute;

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import SearchInput from '../../src/components/search/Input.vue'
-import SearchResults from '../../src/components/search/ResultsTable.vue'
+import SearchTableResults from '../../src/components/search/table/Results.vue'
 import Search from '../../src/pages/search.vue'
 
 import { testAccount, testUser } from '../test-utils'
@@ -42,7 +42,7 @@ describe('search page tests', () => {
     // search results should not render before a search is made
     expect(results.value).toBe(null)
     expect(totalResults.value).toBe(null)
-    expect(wrapper.findComponent(SearchResults).exists()).toBe(false)
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(false)
   })
   it('opens and closes document help', async () => {
     expect(isExtended.value).toBe(false)
@@ -65,7 +65,7 @@ describe('search page tests', () => {
     results.value = []
     totalResults.value = 0
     await flushPromises()
-    expect(wrapper.findComponent(SearchResults).exists()).toBe(true)
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
   })
   it('shows competent authority version of search when toggled', async () => {
     expect(isExtended.value).toBe(false)

@@ -1,0 +1,160 @@
+/** Return the table headers for the entity table. */
+export const getPersonHeaders = (): BaseTableHeaderI[] => {
+  const { facetItems, filterSearch, highlightMatch } = useBcrosSearch()
+  const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
+
+  return [
+    {
+      col: 'legalName',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'legalName'], filterVal),
+        label: 'Name',
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
+      slotId: 'name',
+      value: 'Name',
+      width: '18%'
+    },
+    {
+      col: 'entityAddresses',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'entityAddresses'], filterVal),
+        label: 'Address',
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => {
+        if (!val.entityAddresses) { return 'N/A' }
+        return `${val.entityAddresses[0].streetAddress}<br>${val.entityAddresses[0].addressCity} ` +
+          `${val.entityAddresses[0].addressRegion} ${val.entityAddresses[0].postalCode}` +
+          `<br>${val.entityAddresses[0].addressCountry}`
+      },
+      value: 'Address',
+      width: '17%'
+    },
+    {
+      col: 'roles',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string[]) => {
+          return filterSearch(['categories', 'roles', 'roleType'], filterVal)
+        },
+        label: 'Roles',
+        itemValue: 'value',
+        itemsFn: facetItems,
+        itemsFnVal: 'roleType',
+        multiple: true,
+        type: 'select',
+        value: null
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => {
+        if (val.roles) { return capFirstLetter(`${val.roles[0].roleType}`) }
+        return 'N/A'
+      },
+      value: 'Roles',
+      width: '9%'
+    },
+    {
+      col: 'roles',
+      hasFilter: false,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => {
+        if (val.roles && val.roles.length > 0) {
+          // only 1 role per item for now
+          const roleType = val.roles[0].roleType
+          let dates = ''
+          for (const i in val.roles[0].roleDates) {
+            if (i !== '0') { dates += '<br>' }
+            const start = toDateStr(val.roles[0].roleDates[i].start)
+            const end = toDateStr(val.roles[0].roleDates[i].end as Date)
+
+            if (roleType === RoleTypeE.INCORPORATOR) {
+              dates += start
+            } else {
+              dates += `${start || 'Unknown'} To ${end || 'Current'}`
+            }
+          }
+          return dates
+        }
+        return 'N/A'
+      },
+      slotId: 'date',
+      value: 'Effective Dates',
+      width: '9%'
+    },
+    {
+      col: 'roles',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'roles', 'value'], filterVal),
+        label: 'Business Details',
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      slotId: 'details',
+      value: 'Business Details',
+      width: '15%'
+    },
+    {
+      col: 'roles',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['categories', 'roles', 'relatedState'], filterVal),
+        label: 'Status',
+        itemValue: 'value',
+        itemsFn: facetItems,
+        itemsFnVal: 'relatedState',
+        multiple: true,
+        type: 'select',
+        value: null
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => {
+        if (val.roles) { return capFirstLetter(`${val.roles[0].relatedState}`) }
+        return 'N/A'
+      },
+      value: 'Business Status',
+      width: '9%'
+    },
+    {
+      col: 'roles',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'roles', 'relatedEmail'], filterVal),
+        label: 'Business Email',
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemFn: (val: SearchResultI) => {
+        if (val.roles) { return `${val.roles[0].relatedEmail || ''}` }
+        return 'N/A'
+      },
+      slotId: 'email',
+      value: 'Business Email',
+      width: '13%'
+    },
+    {
+      col: '',
+      hasFilter: false,
+      hasSort: false,
+      slotId: 'action',
+      value: '',
+      width: '10%'
+    }
+  ]
+}

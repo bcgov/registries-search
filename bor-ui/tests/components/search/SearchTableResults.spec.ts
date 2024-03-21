@@ -4,7 +4,9 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import BaseTable from '../../../src/components/base/table/Index.vue'
 import BcrosDateRangePicker from '../../../src/components/bcros/DateRangePicker.vue'
 import BcrosErrorRetry from '../../../src/components/bcros/ErrorRetry.vue'
-import SearchResults from '../../../src/components/search/ResultsTable.vue'
+import SearchTablePersonResults from '../../../src/components/search/table/PersonResults.vue'
+import SearchTablePersonResultsExtended from '../../../src/components/search/table/PersonResultsExtended.vue'
+import SearchTableResults from '../../../src/components/search/table/Results.vue'
 
 import { vuetify } from '../../setup'
 
@@ -19,7 +21,7 @@ describe('SearchResults tests', () => {
   beforeEach(async () => {
     totalResults.value = 0
     results.value = []
-    wrapper = mount(SearchResults, { global: { plugins: [vuetify] } })
+    wrapper = mount(SearchTableResults, { global: { plugins: [vuetify] } })
     await flushPromises()
   })
   afterEach(() => {
@@ -27,12 +29,16 @@ describe('SearchResults tests', () => {
   })
 
   it('Renders and displays expected content', () => {
-    expect(wrapper.findComponent(SearchResults).exists()).toBe(true)
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
 
     // search table is there
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)
     expect(table.findComponent(BaseTable).exists()).toBe(true)
+
+    // should be basic table NOT extended
+    expect(wrapper.findComponent(SearchTablePersonResults).exists()).toBe(true)
+    expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(false)
 
     // renders title
     expect(wrapper.find('.base-table__title').exists()).toBe(true)
@@ -78,6 +84,6 @@ describe('SearchResults tests', () => {
     // does not show load more results btn
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
     // does not show datepicker
-    expect(wrapper.findComponent(BcrosDateRangePicker).attributes('style')).toBe('display: none;')
+    expect(wrapper.findComponent(BcrosDateRangePicker).attributes('style')).toContain('display: none;')
   })
 })

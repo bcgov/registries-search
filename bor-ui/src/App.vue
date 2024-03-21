@@ -111,5 +111,5 @@ const handleError = (error: ErrorI) => {
 
 // watchers for errors
 watch(accountErrors.value, (val) => { if (val && val.length > 0) { handleError(val[0]) } })
-watch(searchError.value, (val) => { if (val) { handleError(val) } })
+watch(() => searchError.value, (val) => { if (val) { handleError(val) } })
 </script>

@@ -90,7 +90,9 @@
             {{ searchInfoText }}
           </p>
           <search-input class="pb-5" />
-          <search-results-table v-if="results!=null" class="mt-30px" />
+          <!-- NOTE: below is what the date picker teleport attaches to -->
+          <div id="date-range-filter-dest" />
+          <search-table-results v-if="results!=null" class="mt-30px" />
         </v-card>
       </v-window-item>
     </v-window>

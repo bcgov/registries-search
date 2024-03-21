@@ -44,7 +44,7 @@
                     class="base-table__header__item__title mb-5"
                     :class="!header.col ? 'mx-auto': ''"
                     :ripple="false"
-                    :style="!header.col ? 'pointer-events: none;': ''"
+                    :style="!header.hasSort || !header.col ? 'pointer-events: none;': ''"
                     @click="toggleSort(header)"
                   >
                     <span v-html="header.value" />
@@ -299,6 +299,11 @@ th {
   text-align: inherit;
   white-space: normal;
 }
+@media (max-width: 1160px) {
+  :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
+    height: 60px;
+  }
+}
 .base-table {
   border-spacing: 0px;
   width: calc(100%);
@@ -378,8 +383,8 @@ th {
         background-color: transparent;
         box-shadow: none;
         color: $gray9;
-        font-size: 0.875rem;
-        font-weight: 700;
+        font-size: 0.875rem !important;
+        font-weight: 700 !important;
         justify-content: start;
         padding: 0;
         text-align: start;
