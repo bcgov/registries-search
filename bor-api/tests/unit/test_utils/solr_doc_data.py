@@ -176,6 +176,7 @@ TEST_PERSONS = [
     create_entity(name='person nine',
                   alternate_name='significant individual alt',
                   email='nine@si.com',
+                  tax_number='705 362 853',
                   entity_id='SI9',
                   roles=[EntityRole(id=f'SI9{TEST_BUSINESSES[6].identifier}SIGNIFICANT_INDIVIDUAL',
                                     relatedBN=TEST_BUSINESSES[6].bn,

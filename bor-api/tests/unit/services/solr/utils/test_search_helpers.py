@@ -29,7 +29,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS
 BASIC_PAYLOAD = {
     'query': '(legalName_q:name^2 OR legalName_q:name~1 OR legalName_stem_agro_q:name^2 OR legalName_stem_agro_q:name~1 OR legalName_single_term_q:name^2 OR legalName_single_term_q:name~1 OR ' +
              'alternateName_q:name^2 OR alternateName_q:name~1 OR alternateName_stem_agro_q:name^2 OR alternateName_stem_agro_q:name~1 OR alternateName_single_term_q:name^2 OR alternateName_single_term_q:name~1 OR ' +
-             'identifier_q:name OR bn_q:name^2 OR bn_q:name~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name~1) OR ' + 
+             'identifier_q:name OR bn_q:name^2 OR bn_q:name~1 OR taxNumber_q:name^2 OR taxNumber_q:name~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name~1) OR ' + 
              '(({!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:name~1))) OR ' +
              '(legalName_q:"name"~5^5) OR (legalName_stem_agro_q:"name"~10^3) OR (legalName_synonym_q:"name"~10^3) OR (legalName_stem_agro_q:"name"^2) OR ' +
              '(alternateName_q:"name"~5^5) OR (alternateName_stem_agro_q:"name"~10^3) OR (alternateName_synonym_q:"name"~10^3) OR (alternateName_stem_agro_q:"name"^2)',
@@ -58,15 +58,15 @@ BASIC_PAYLOAD = {
 COMPLEX_PAYLOAD = {
     'query': '(legalName_q:name1^2 OR legalName_q:name1~1 OR legalName_stem_agro_q:name1^2 OR legalName_stem_agro_q:name1~1 OR legalName_single_term_q:name1^2 OR legalName_single_term_q:name1~1 OR ' +
              'alternateName_q:name1^2 OR alternateName_q:name1~1 OR alternateName_stem_agro_q:name1^2 OR alternateName_stem_agro_q:name1~1 OR alternateName_single_term_q:name1^2 OR alternateName_single_term_q:name1~1 OR '
-             '(identifier_q:"1" AND identifier_q:"NAME") OR bn_q:name1^2 OR bn_q:name1~1 OR ' +
+             '(identifier_q:"1" AND identifier_q:"NAME") OR bn_q:name1^2 OR bn_q:name1~1 OR taxNumber_q:name1^2 OR taxNumber_q:name1~1 OR ' +
              '({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name1~1) OR (({!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:name1~1))) AND ' + 
              '(legalName_q:name2^2 OR legalName_q:name2~1 OR legalName_stem_agro_q:name2^2 OR legalName_stem_agro_q:name2~1 OR legalName_single_term_q:name2^2 OR legalName_single_term_q:name2~1 OR ' +
              'alternateName_q:name2^2 OR alternateName_q:name2~1 OR alternateName_stem_agro_q:name2^2 OR alternateName_stem_agro_q:name2~1 OR alternateName_single_term_q:name2^2 OR alternateName_single_term_q:name2~1 OR ' +
-             '(identifier_q:"2" AND identifier_q:"NAME") OR bn_q:name2^2 OR bn_q:name2~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name2~1) OR ' +
+             '(identifier_q:"2" AND identifier_q:"NAME") OR bn_q:name2^2 OR bn_q:name2~1 OR taxNumber_q:name2^2 OR taxNumber_q:name2~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name2~1) OR ' +
              '(({!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:name2~1))) AND (legalName_q:name3^2 OR legalName_q:name3~1 OR legalName_stem_agro_q:name3^2 OR ' +
              'legalName_stem_agro_q:name3~1 OR legalName_single_term_q:name3^2 OR legalName_single_term_q:name3~1 OR ' +
              'alternateName_q:name3^2 OR alternateName_q:name3~1 OR alternateName_stem_agro_q:name3^2 OR alternateName_stem_agro_q:name3~1 OR alternateName_single_term_q:name3^2 OR alternateName_single_term_q:name3~1 OR ' +
-             '(identifier_q:"3" AND identifier_q:"NAME") OR bn_q:name3^2 OR bn_q:name3~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name3~1) OR (({!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:name3~1))) OR ' + 
+             '(identifier_q:"3" AND identifier_q:"NAME") OR bn_q:name3^2 OR bn_q:name3~1 OR taxNumber_q:name3^2 OR taxNumber_q:name3~1 OR ({!parent which = \'-_nest_path_:* entityType:*\'}address_q:name3~1) OR (({!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:name3~1))) OR ' + 
              '(legalName_q:"name1 name2 name3"~5^5) OR (legalName_stem_agro_q:"name1 name2 name3"~10^3) OR (legalName_synonym_q:"name1 name2 name3"~10^3) OR (legalName_stem_agro_q:"name1"^2) OR ' + 
              '(alternateName_q:"name1 name2 name3"~5^5) OR (alternateName_stem_agro_q:"name1 name2 name3"~10^3) OR (alternateName_synonym_q:"name1 name2 name3"~10^3) OR (alternateName_stem_agro_q:"name1"^2)',
     "filter":['(identifier_q:"12345" AND identifier_q:"BC")', 'legalName_single_term_q:Test', 'state:("ACTIVE" OR "HISTORICAL")', 'entityType:("PERSON" OR "BUSINESS")', '({!parent which = \'-_nest_path_:* entityType:*\'}address_q:vancouver AND {!parent which = \'-_nest_path_:* entityType:*\'}address_q:bc AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedBN_q:123 AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:123@email.com AND ({!parent which = \'-_nest_path_:* entityType:*\'}related_q:"0012345" AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedIdentifier_q:"S") AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:name)', '{!parent which = \'-_nest_path_:* entityType:*\'}addressCity:"North Vancouver" OR addressCity: "Victoria"', '{!parent which = \'-_nest_path_:* entityType:*\'}relatedState:"ACTIVE"', "{!parent which = '-_nest_path_:* entityType:*'}(start:[* TO *] OR (active:* AND NOT start:*)) AND (end:[2022-03-21 TO *] OR (active:* AND NOT end:*))"],
@@ -131,7 +131,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
      {AddressField.ADDRESS_Q.value: 'vancouver bc', EntityRoleField.RELATED_BN_Q.value: '123', EntityRoleField.RELATED_EMAIL_Q:'123@email.com', EntityRoleField.RELATED_Q.value: 'S0012345 name'},
      {AddressField.ADDRESS_CITY: ['North Vancouver', 'Victoria'], EntityRoleField.RELATED_STATE: ['ACTIVE']},
      {DateRangeField.START: '2022-03-21', DateRangeField.END: '*'},
-     COMPLEX_PAYLOAD),
+     COMPLEX_PAYLOAD)
 ])
 @mock.patch('bor_api.services.solr.query')
 def test_entities_search_deep(mocked, session, test_name, query, categories,

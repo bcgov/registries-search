@@ -37,7 +37,7 @@ def entities_search(params: SearchParams, solr: BorSolr):
         query=params.query,
         fields=[EntityField.LEGAL_NAME_Q, EntityField.LEGAL_NAME_AGRO_Q, EntityField.LEGAL_NAME_SINGLE_Q,
                 EntityField.ALT_NAME_Q, EntityField.ALT_NAME_AGRO_Q, EntityField.ALT_NAME_SINGLE_Q,
-                EntityField.IDENTIFIER_Q, EntityField.BN_Q],
+                EntityField.IDENTIFIER_Q, EntityField.BN_Q, EntityField.TAX_NUMBER_Q],
         nested_fields=[AddressField.ADDRESS_Q],
         boost_fields={
             EntityField.LEGAL_NAME_Q: 2,
@@ -46,7 +46,8 @@ def entities_search(params: SearchParams, solr: BorSolr):
             EntityField.ALT_NAME_Q: 2,
             EntityField.ALT_NAME_AGRO_Q: 2,
             EntityField.ALT_NAME_SINGLE_Q: 2,
-            EntityField.BN_Q: 2
+            EntityField.BN_Q: 2,
+            EntityField.TAX_NUMBER_Q: 2
         },
         fuzzy_fields={
             EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
@@ -56,6 +57,7 @@ def entities_search(params: SearchParams, solr: BorSolr):
             EntityField.ALT_NAME_AGRO_Q: {'short': 1, 'long': 2},
             EntityField.ALT_NAME_SINGLE_Q: {'short': 1, 'long': 2},
             EntityField.BN_Q: {'short': 1, 'long': 1},
+            EntityField.TAX_NUMBER_Q: {'short': 1, 'long': 1},
             AddressField.ADDRESS_Q: {'short': 1, 'long': 1},
             EntityRoleField.RELATED_EMAIL_Q: {'short': 1, 'long': 1}
         },
