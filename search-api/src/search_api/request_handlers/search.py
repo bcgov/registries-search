@@ -51,18 +51,6 @@ def business_search(params: SearchParams):
         ],
         [SolrField.NAME_Q.value]
     )
-    # TODO: add nested parties query
-    # NB: keeping for future: build a query based on child values and return parent doc
-    # child_query = Solr.build_child_query(query,
-    #                                     SolrField.PARTIES,
-    #                                     [SolrField.PARTY_NAME_Q,SolrField.PARTY_NAME_STEM_AGRO],
-    #                                     SolrField.PARTY_NAME_SINGLE)
-    # terms = query.split()
-    # child_filter = f'"{SolrField.PARTY_NAME_SINGLE}:{terms[0]}'
-    # for term in terms[1:]:
-    #     child_filter += f' AND {SolrField.PARTY_NAME_SINGLE}:{term}'
-    # child_filter += '"'
-    # child_query += solr.nest_fields_party.format(filter=child_filter)
 
     # facets
     solr_query_params['facet'] = 'on'
