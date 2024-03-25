@@ -1,34 +1,36 @@
 <template>
   <div class="container" :style="[{ height: height || '540px' }, { overflow: overflow || 'scroll' }]">
-    <table class="base-table">
+    <div v-if="title" class="table-title" :style="{ 'background-color': titleBg }">
+      <slot name="table-title" :headers="headers">
+        <v-row no-gutters>
+          <v-col v-if="title" cols="auto">
+            <slot name="title">
+              <h2 class="ml-3 py-6">
+                {{ title }}
+                <span v-if="loading" class="ml-1">
+                  <v-progress-circular color="primary" indeterminate size="22" />
+                </span>
+                <span v-else-if="resultsDescription" style="font-weight: normal">
+                  ({{ resultsDescription }})
+                </span>
+                <span v-else-if="totalItems" style="font-weight: normal">({{ totalItems }})</span>
+              </h2>
+            </slot>
+            <slot name="subtitle">
+              <h4 v-if="subtitle" class="ml-3 mb-6">
+                {{ subtitle }}
+              </h4>
+            </slot>
+          </v-col>
+          <v-col v-if="titleExtras">
+            <slot name="title-extras" />
+          </v-col>
+        </v-row>
+      </slot>
+    </div>
+    <table class="base-table" :style="{ width: tableWidth ? tableWidth : '100%'}">
       <thead class="base-table__header">
         <slot name="header" :headers="headers">
-          <tr v-if="title || pagination" :style="{ 'background-color': titleBg }">
-            <slot name="header-title" :headers="headers">
-              <th v-if="title" class="base-table__title" :colspan="titleExtras ? headers.length / 2 : headers.length">
-                <slot name="title">
-                  <h2 class="ml-3 py-6">
-                    {{ title }}
-                    <span v-if="loading" class="ml-1">
-                      <v-progress-circular color="primary" indeterminate size="22" />
-                    </span>
-                    <span v-else-if="resultsDescription" style="font-weight: normal">
-                      ({{ resultsDescription }})
-                    </span>
-                    <span v-else-if="totalItems" style="font-weight: normal">({{ totalItems }})</span>
-                  </h2>
-                </slot>
-                <slot name="subtitle">
-                  <h4 v-if="subtitle" class="ml-3 mb-6">
-                    {{ subtitle }}
-                  </h4>
-                </slot>
-              </th>
-              <th v-if="titleExtras" :colspan="title? headers.length / 2 : headers.length">
-                <slot name="title-extras" />
-              </th>
-            </slot>
-          </tr>
           <slot name="header-item-titles" :headers="headers">
             <tr :style="{ 'background-color': headerBg }">
               <th
@@ -141,7 +143,7 @@
               <td
                 v-for="header in headers"
                 :key="'item-' + header.col"
-                :class="[header.itemClass, 'base-table__body__item']"
+                :class="[header.itemClass, 'base-table__body__row__item']"
               >
                 <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
                   <span v-if="header.itemFn" v-html="header.itemFn(item)" />
@@ -186,6 +188,7 @@ const props = defineProps<{
   resultsDescription?: string,
   setHeaders: BaseTableHeaderI[],
   setItems: any[],
+  tableWidth?: string,
   title?: string
   titleExtras?: boolean
   totalItems?: number
@@ -295,7 +298,6 @@ watch(() => props.setItems, (val) => {
 td,
 th {
   min-width: 40px;
-  max-width: 40px;
   text-align: inherit;
   white-space: normal;
 }
@@ -304,22 +306,14 @@ th {
     height: 60px;
   }
 }
+.table-title {
+  text-align: start;
+  position: sticky;
+  left: 0;
+}
 .base-table {
   border-spacing: 0px;
-  width: calc(100%);
   table-layout: auto;
-
-  &__title {
-    text-align: start;
-  }
-
-  &__pagination {
-
-    &__btn {
-      background-color: transparent;
-      box-shadow: none;
-    }
-  }
 
   &__header {
     position: sticky;
@@ -327,6 +321,7 @@ th {
     z-index: 1000;
 
     &__item {
+      background-color: white;
       border-bottom: 1px solid $gray4;
       padding: 20px 0 0 12px;
       position: relative;
@@ -408,6 +403,38 @@ th {
     &__row {
       background-color: white;
       transition: linear 0.5s;
+
+      &:focus-visible {
+        background-color: #EBEEF0;
+        outline: none;
+      }
+
+      &:hover {
+
+        .base-table__body__row__item {
+          background-color: $blueSelected !important;
+          transition: linear 0.5s;
+        }
+      }
+
+      &:not(:hover) {
+
+        .base-table__body__row__item {
+          background-color: white;
+          transition: linear 0.5s;
+        }
+      }
+
+      &__item {
+        border-bottom: 1px solid $gray3;
+        color: $gray7 !important;
+        font-size: 0.875rem !important;
+        height: 40px;
+        margin: 8px 0 0 0;
+        padding: 26px 0 16px 12px;
+        position: relative;
+        vertical-align: top;
+      }
     }
 
     &__row:focus-visible {
@@ -418,17 +445,6 @@ th {
     &__row:hover {
       background-color: $blueSelected !important;
       transition: linear 0.5s;
-    }
-
-    &__item {
-      border-bottom: 1px solid $gray3;
-      color: $gray7 !important;
-      font-size: 0.875rem !important;
-      height: 40px;
-      margin: 8px 0 0 0;
-      padding: 26px 0 16px 12px;
-      position: relative;
-      vertical-align: top;
     }
   }
 }

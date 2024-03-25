@@ -1,11 +1,10 @@
 <template>
   <base-table
-    id="entity-results"
-    class="rounded-top"
+    class="person-results rounded-top"
     height="100%"
     :item-key="'legalName'"
     :loading="loading"
-    overflow="hidden"
+    overflow="scroll"
     :reset-filters-trigger="resetFiltersTrigger"
     :results-description="resultsDesc"
     :set-headers="headers"
@@ -20,7 +19,7 @@
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
-    <template #header-filter-slot-action>
+    <template #header-filter-slot-actions>
       <CommonHeadersActionFilter
         v-if="isFilteringActive"
         @clear="clearFilters()"

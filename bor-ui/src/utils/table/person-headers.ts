@@ -152,7 +152,7 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       col: '',
       hasFilter: false,
       hasSort: false,
-      slotId: 'action',
+      slotId: 'actions',
       value: '',
       width: '10%'
     }

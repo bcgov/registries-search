@@ -69,7 +69,7 @@ describe('BaseTable tests', () => {
     const itemRows = wrapper.findAll('.base-table__body__row')
     expect(itemRows.length).toBe(items.length)
     for (let i = 0; i < itemRows.length; i++) {
-      const itemCells = itemRows[i].findAll('.base-table__body__item')
+      const itemCells = itemRows[i].findAll('.base-table__body__row__item')
       expect(itemCells.length).toBe(headers.length)
       for (let k = 0; k < itemCells.length; k++) {
         // test each item cell value maps to specified header col

@@ -1,10 +1,15 @@
 export interface SearchResultI {
-  bn?: string
+  alternateName?: string,
+  birthDate?: string,
+  bn?: string,
+  email?: string,
   entityAddresses: AddressI[]
   entityType: 'BUSINESS' | 'PERSON'
+  isPR?: boolean
   legalName: string
   legalType?: CorpTypeCdE
-  identifier?: string
+  identifier?: string,
+  nationalities?: string[]
   roles: {
     active: boolean
     relatedBN?: string
@@ -12,12 +17,21 @@ export interface SearchResultI {
     relatedEntityType: 'BUSINESS' | 'PERSON'
     relatedIdentifier: string
     relatedLegalType: CorpTypeCdE
+    relatedInterests?: {
+      details: string
+      type: string
+      shareExact?: number
+      shareMax?: number
+      shareMin?: number
+    }[]
     relatedName: string
     relatedState: BusinessStateE
     roleDates: { end?: Date, start: Date }[]
     roleType: RoleTypeE
   }[],
-  state?: BusinessStateE
+  state?: BusinessStateE,
+  taxNumber?: string,
+  taxResidencies?: string[]
 }
 
 export interface SearchPayloadI {

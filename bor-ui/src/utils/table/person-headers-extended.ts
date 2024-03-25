@@ -18,7 +18,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
       slotId: 'name',
       value: 'Name',
-      width: '18%'
+      width: '17%'
     },
     {
       col: 'entityAddresses',
@@ -38,7 +38,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
           `<br>${val.entityAddresses[0].addressCountry}`
       },
       value: 'Information',
-      width: '17%'
+      width: '18%'
     },
     {
       col: 'nationalities',
@@ -47,7 +47,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       // eslint-disable-next-line
       itemFn: (val: SearchResultI) => 'TBD',
       value: 'Citizenship',
-      width: '9%'
+      width: '7%'
     },
     {
       col: 'roles',
@@ -71,7 +71,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         return 'N/A'
       },
       value: 'Roles',
-      width: '9%'
+      width: '11%'
     },
     {
       col: 'roles',
@@ -86,7 +86,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasSort: false,
       slotId: 'details',
       value: 'Business Details',
-      width: '15%'
+      width: '17%'
     },
     {
       col: 'roles',
@@ -95,9 +95,10 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       // eslint-disable-next-line
       itemFn: (val: SearchResultI) => 'TBD',
       value: 'Details',
-      width: '13%'
+      width: '17%'
     },
     {
+      class: 'effective-date-header',
       col: 'roles',
       hasFilter: false,
       hasSort: false,
@@ -123,15 +124,16 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       },
       slotId: 'date',
       value: 'Effective Dates',
-      width: '9%'
+      width: '14%'
     },
     {
+      class: 'actions-col',
       col: '',
       hasFilter: false,
       hasSort: false,
-      slotId: 'action',
-      value: '',
-      width: '10%'
+      itemClass: 'actions-col',
+      slotId: 'actions',
+      value: 'Actions'
     }
   ]
 }

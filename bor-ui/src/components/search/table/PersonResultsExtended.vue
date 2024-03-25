@@ -1,15 +1,15 @@
 <template>
   <base-table
-    id="entity-results"
-    class="rounded-top"
+    class="person-results-extended rounded-top"
     height="100%"
     :item-key="'legalName'"
     :loading="loading"
-    overflow="hidden"
+    overflow="scroll"
     :reset-filters-trigger="resetFiltersTrigger"
     :results-description="resultsDesc"
     :set-headers="headers"
     :set-items="results"
+    :table-width="'1600px'"
     title="Search Results"
     :title-extras="true"
     :total-items="totalResults"
@@ -20,7 +20,7 @@
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
-    <template #header-filter-slot-action>
+    <template #header-filter-slot-actions>
       <CommonHeadersActionFilter
         v-if="isFilteringActive"
         @clear="clearFilters()"
@@ -35,6 +35,9 @@
     <template #item-slot-details="{ item } : { item: SearchResultI }">
       <CommonItemsBusinessDetails :item="item" />
     </template>
+    <template #item-slot-actions="{ item } : { item: SearchResultI }">
+      <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
+    </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
         class="my-5"
@@ -48,8 +51,8 @@
 
 <script setup lang="ts">
 import {
-  CommonHeadersActionFilter, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
-  CommonItemsName, CommonTitleExport
+  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails,
+  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

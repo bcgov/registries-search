@@ -130,5 +130,20 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
       margin-bottom: 4px;
     }
   }
+
+  .effective-date-header {
+    padding-right: 8px;
+  }
+
+  .actions-col {
+    border-left: 1px solid #dee2e6;
+    box-shadow: -2px 0 4px -1px #adb5bd;
+    position: sticky;
+    right: 0;
+    width: 156px;
+    max-width: 156px;
+    min-width: 156px;
+    z-index: 4;
+  }
 }
 </style>

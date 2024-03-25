@@ -4,6 +4,7 @@
     class="btn-basic mx-auto action-btn"
     color="primary"
     large
+    :ripple="false"
     @click="emit('action', true)"
   >
     Open
@@ -24,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ showBtn: boolean, tooltipMsg: string }>()
+defineProps<{ showBtn: boolean, tooltipMsg?: string }>()
 const emit = defineEmits<{(e: 'action', value: boolean): void }>()
 
 </script>
