@@ -3,4 +3,5 @@ export { default as CommonHeadersDateRangeFilter } from './headers/DateRangeFilt
 export { default as CommonItemsAction } from './items/Action.vue'
 export { default as CommonItemsBusinessDetails } from './items/BusinessDetails.vue'
 export { default as CommonItemsName } from './items/Name.vue'
+export { default as CommonItemsInformation } from './items/Information.vue'
 export { default as CommonTitleExport } from './title/Export.vue'

@@ -26,11 +26,11 @@
         @clear="clearFilters()"
       />
     </template>
-    <template #item-slot-name="{ header, item}">
-      <CommonItemsName
-        :icon="item.entityType.toUpperCase() === EntityTypeE.PERSON ? 'mdi-account' : 'mdi-domain'"
-        :name="header.itemFn(item)"
-      />
+    <template #item-slot-name="{ item } : { item: SearchResultI }">
+      <CommonItemsName :item="item" />
+    </template>
+    <template #item-slot-information="{ item } : { item: SearchResultI }">
+      <CommonItemsInformation :item="item" />
     </template>
     <template #item-slot-details="{ item } : { item: SearchResultI }">
       <CommonItemsBusinessDetails :item="item" />
@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import {
   CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails,
-  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport
+  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport, CommonItemsInformation
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

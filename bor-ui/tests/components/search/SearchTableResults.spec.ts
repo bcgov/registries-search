@@ -95,11 +95,20 @@ describe('SearchResults tests', () => {
       for (const itemIndx in items) {
         const itemFn = headerConfig[itemIndx].itemFn
         const record = testSearchResults[rowIndx]
+        const taxNumber = record.taxNumber
+        const email = record.email
+        const taxResidency = record.taxResidencies
+          ? (record.taxResidencies[0] === 'CA' ? 'Canada' : 'Other')
+          : undefined
         const address = record.entityAddresses ? record.entityAddresses[0] : undefined
         const role = record.roles[0]
         switch (headerConfig[itemIndx].value) {
           case 'Name':
-            expect(items[itemIndx].text()).toBe(record.legalName)
+            expect(items[itemIndx].text()).toContain(record.legalName)
+            if (extended) {
+              expect(items[itemIndx].text()).toContain(record.alternateName || '')
+              expect(items[itemIndx].text()).toContain(record.birthDate || '')
+            }
             break
           case 'Address':
             expect(items[itemIndx].text()).toContain(address?.addressCity || '')
@@ -109,11 +118,14 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(address?.streetAddress || '')
             break
           case 'Information':
+            expect(items[itemIndx].text()).toContain(taxNumber || '')
+            expect(items[itemIndx].text()).toContain(email || '')
             expect(items[itemIndx].text()).toContain(address?.addressCity || '')
             expect(items[itemIndx].text()).toContain(address?.addressCountry || '')
             expect(items[itemIndx].text()).toContain(address?.addressRegion || '')
             expect(items[itemIndx].text()).toContain(address?.postalCode || '')
             expect(items[itemIndx].text()).toContain(address?.streetAddress || '')
+            expect(items[itemIndx].text()).toContain(taxResidency || '')
             break
           case 'Citizenship':
             expect(items[itemIndx].text()).toContain('TBD')

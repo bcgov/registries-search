@@ -25,10 +25,10 @@
         @clear="clearFilters()"
       />
     </template>
-    <template #item-slot-name="{ header, item}">
+    <template #item-slot-name="{ item }">
       <CommonItemsName
         :icon="item.entityType.toUpperCase() === EntityTypeE.PERSON ? 'mdi-account' : 'mdi-domain'"
-        :name="header.itemFn(item)"
+        :item="item"
       />
     </template>
     <template #item-slot-details="{ item } : { item: SearchResultI }">
