@@ -12,7 +12,7 @@
   </Teleport>
   <v-text-field
     v-model="dateFilterText"
-    class="search-table__date-picker-filter active"
+    class="search-table__date-picker-filter active mb-5"
     append-inner-icon="mdi-calendar"
     density="compact"
     hide-details

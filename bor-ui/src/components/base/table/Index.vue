@@ -63,57 +63,59 @@
               <th
                 v-for="header, i in headers"
                 :key="header.col + i"
-                :class="[header.class, 'base-table__header__item pb-5']"
+                :class="[header.class, 'base-table__header__item']"
                 :width="header.width"
               >
                 <slot :name="'header-filter-slot-' + header.slotId" :header="header">
-                  <v-select
-                    v-if="header.hasFilter && header.filter.type === 'select'"
-                    v-model="header.filter.value"
-                    :class="[filterClass, 'base-table__header__item__filter']"
-                    clear-icon="mdi-close"
-                    density="compact"
-                    hide-details
-                    hide-no-data
-                    :items="header.filter.items || header.filter.itemsFn(header.filter.itemsFnVal)"
-                    :item-title="header.filter.itemValue || ''"
-                    :item-value="header.filter.itemValue || ''"
-                    :label="!header.filter.value ? header.filter.label || '' : ''"
-                    :multiple="(header.filter.multiple as any)"
-                    :open-on-clear="true"
-                    @update:model-value="filter(header)"
-                  >
-                    <template #selection="{ item, index }">
-                      <span v-if="index == 0" style="font-size: 0.825rem;">
-                        <span v-if="header.filter.value.length == 1">
-                          {{ capFirstLetter(item.title) }}
+                  <div class="pb-5">
+                    <v-select
+                      v-if="header.hasFilter && header.filter.type === 'select'"
+                      v-model="header.filter.value"
+                      :class="[filterClass, 'base-table__header__item__filter']"
+                      clear-icon="mdi-close"
+                      density="compact"
+                      hide-details
+                      hide-no-data
+                      :items="header.filter.items || header.filter.itemsFn(header.filter.itemsFnVal)"
+                      :item-title="header.filter.itemValue || ''"
+                      :item-value="header.filter.itemValue || ''"
+                      :label="!header.filter.value ? header.filter.label || '' : ''"
+                      :multiple="(header.filter.multiple as any)"
+                      :open-on-clear="true"
+                      @update:model-value="filter(header)"
+                    >
+                      <template #selection="{ item, index }">
+                        <span v-if="index == 0" style="font-size: 0.825rem;">
+                          <span v-if="header.filter.value.length == 1">
+                            {{ capFirstLetter(item.title) }}
+                          </span>
+                          <span v-else>
+                            Multiple
+                          </span>
                         </span>
-                        <span v-else>
-                          Multiple
-                        </span>
-                      </span>
-                    </template>
-                  </v-select>
-                  <v-text-field
-                    v-else-if="header.hasFilter && header.filter.type === 'text'"
-                    v-model="header.filter.value"
-                    :class="[filterClass, 'base-table__header__item__filter', header.filter.value ? 'active' : '']"
-                    density="compact"
-                    hide-details
-                    :placeholder="!header.filter.value ? header.filter.label || '' : ''"
-                    @update:model-value="filter(header)"
-                  />
-                  <v-btn
-                    v-if="header.hasFilter && header.filter.value && header.filter.clearable"
-                    class="base-table__header__item__clear-btn"
-                    :class="header.filter.type === 'text' ? 'header-text-field' : 'header-select'"
-                    icon
-                    @click="header.filter.value=header.filter.type === 'text' ? '' : null; filter(header)"
-                  >
-                    <v-icon color="primary" size="20">
-                      mdi-close
-                    </v-icon>
-                  </v-btn>
+                      </template>
+                    </v-select>
+                    <v-text-field
+                      v-else-if="header.hasFilter && header.filter.type === 'text'"
+                      v-model="header.filter.value"
+                      :class="[filterClass, 'base-table__header__item__filter', header.filter.value ? 'active' : '']"
+                      density="compact"
+                      hide-details
+                      :placeholder="!header.filter.value ? header.filter.label || '' : ''"
+                      @update:model-value="filter(header)"
+                    />
+                    <v-btn
+                      v-if="header.hasFilter && header.filter.value && header.filter.clearable"
+                      class="base-table__header__item__clear-btn"
+                      :class="header.filter.type === 'text' ? 'header-text-field' : 'header-select'"
+                      icon
+                      @click="header.filter.value=header.filter.type === 'text' ? '' : null; filter(header)"
+                    >
+                      <v-icon color="primary" size="20">
+                        mdi-close
+                      </v-icon>
+                    </v-btn>
+                  </div>
                 </slot>
               </th>
             </tr>
@@ -300,11 +302,6 @@ th {
   min-width: 40px;
   text-align: inherit;
   white-space: normal;
-}
-@media (max-width: 1160px) {
-  :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
-    height: 60px;
-  }
 }
 .table-title {
   text-align: start;

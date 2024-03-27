@@ -1,4 +1,13 @@
 @import 'theme.scss';
+@tailwind base;
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    @apply border-gray-700;
+  }
+}
 
 @font-face {
   font-family: 'BCSans';

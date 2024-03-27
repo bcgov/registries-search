@@ -136,8 +136,7 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
   }
 
   .actions-col {
-    border-left: 1px solid #dee2e6;
-    box-shadow: -2px 0 4px -1px #adb5bd;
+    padding: 0 0 0 4px;
     position: sticky;
     right: 0;
     width: 156px;

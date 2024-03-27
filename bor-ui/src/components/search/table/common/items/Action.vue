@@ -1,7 +1,7 @@
 <template>
   <v-btn
     v-if="showBtn"
-    class="btn-basic mx-auto action-btn"
+    class="btn-basic action-btn"
     color="primary"
     large
     :ripple="false"
@@ -34,9 +34,9 @@ const emit = defineEmits<{(e: 'action', value: boolean): void }>()
 @import '@/assets/styles/theme.scss';
 .action-btn {
   height: 36px;
-  margin-top: -9px;
+  margin-top: 16px;
   min-width: 108px;
-  width: 90%;
+  width: 100%;
 }
 
 .action-div {

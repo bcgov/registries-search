@@ -83,3 +83,11 @@ const clearFilters = () => {
   search.filterSearch(null, null, true)
 }
 </script>
+<style>
+/* for stacked headers on smaller displays, increase the header height */
+@media (max-width: 1160px) {
+  :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
+    height: 60px;
+  }
+}
+</style>

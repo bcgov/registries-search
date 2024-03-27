@@ -17,14 +17,21 @@
     <template #title-extras>
       <CommonTitleExport />
     </template>
+    <template #header-item-slot-actions>
+      <div class="h-[76.5px] w-full pt-8 shadow-action-col-header">
+        <b>Actions</b>
+      </div>
+    </template>
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
     <template #header-filter-slot-actions>
-      <CommonHeadersActionFilter
-        v-if="isFilteringActive"
-        @clear="clearFilters()"
-      />
+      <div class="h-[81px] w-full pl-3 pt-5 shadow-action-col-header">
+        <CommonHeadersActionFilter
+          v-if="isFilteringActive"
+          @clear="clearFilters()"
+        />
+      </div>
     </template>
     <template #item-slot-name="{ item } : { item: SearchResultI }">
       <CommonItemsName :item="item" />
@@ -36,7 +43,9 @@
       <CommonItemsBusinessDetails :item="item" />
     </template>
     <template #item-slot-actions="{ item } : { item: SearchResultI }">
-      <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
+      <div class="h-full w-full px-3 pt-3 shadow-action-col-item">
+        <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
+      </div>
     </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry

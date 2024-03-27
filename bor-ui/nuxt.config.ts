@@ -1,7 +1,11 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-// import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-
 export default defineNuxtConfig({
+  app: {
+    buildAssetsDir: '/src/',
+    head: {
+      htmlAttrs: { dir: 'rtl', lang: 'fa' },
+      link: [{ rel: 'icon', type: 'image/ico', href: '/src/assets/images/favicon.ico' }]
+    }
+  },
   devtools: { enabled: true },
   srcDir: 'src/',
   css: [
@@ -11,6 +15,10 @@ export default defineNuxtConfig({
     '@/assets/styles/layout.scss',
     '@/assets/styles/overrides.scss'
   ],
+  // FUTURE: uncomment when adding in nuxtUI
+  // ui: {
+  //   safelistColors: ['gray', 'red', 'blue']
+  // },
   build: {
     transpile: ['vuetify']
   },
@@ -18,7 +26,7 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['enums', 'interfaces', 'stores']
   },
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
   runtimeConfig: {
     public: {
       // Keys within public, will be also exposed to the client-side
