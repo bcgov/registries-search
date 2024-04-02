@@ -42,6 +42,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       // eslint-disable-next-line
       itemFn: (val: SearchResultI) => 'TBD',
       value: 'Citizenship',
+      slotId: 'citizenship',
       width: '7%'
     },
     {

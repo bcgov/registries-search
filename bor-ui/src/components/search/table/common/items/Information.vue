@@ -7,13 +7,16 @@
       {{ item.email }}
     </div>
     <div v-if="item.entityAddresses">
-      {{ item.entityAddresses[0].streetAddress }}
-      <br>
-      <span>
-        {{ item.entityAddresses[0].addressCity }}
-        {{ item.entityAddresses[0].addressRegion }} {{ item.entityAddresses[0].postalCode }}
-        <br>
-        {{ item.entityAddresses[0].addressCountry }}
+      <span v-if="street">
+        {{ street }}
+      </span>
+      <br v-if="street && (cityAndRegion || country)">
+      <span v-if="cityAndRegion">
+        {{ cityAndRegion }}
+      </span>
+      <br v-if="cityAndRegion && country">
+      <span v-if="country">
+        {{ country }}
       </span>
     </div>
   </div>
@@ -27,12 +30,14 @@
 
 <script setup lang="ts">
 const prop = defineProps<{ item: SearchResultI }>()
-const taxResidency = ref()
-onMounted(() => {
-  if (prop.item.taxResidencies) {
-    taxResidency.value = prop.item.taxResidencies[0] === 'CA' ? 'Canada' : 'Other'
-  }
-})
+const taxResidency = prop.item.taxResidencies ? (prop.item.taxResidencies[0] === 'CA' ? 'Canada' : 'Other') : ''
+const street = prop.item.entityAddresses ? prop.item.entityAddresses[0].streetAddress : ''
+const cityAndRegion = prop.item.entityAddresses
+  ? `${prop.item.entityAddresses[0].addressCity} ${prop.item.entityAddresses[0].addressRegion} ` +
+    `${prop.item.entityAddresses[0].postalCode}`
+  : ''
+const country = prop.item.entityAddresses ? prop.item.entityAddresses[0].addressCountry : ''
+
 </script>
 
 <style lang="scss" scoped>

@@ -39,8 +39,16 @@
     <template #item-slot-information="{ item } : { item: SearchResultI }">
       <CommonItemsInformation :item="item" />
     </template>
+    <template #item-slot-citizenship="{ item } : { item: SearchResultI }">
+      <div class="flex justify-center">
+        <CommonItemsCitizenship :item="item" />
+      </div>
+    </template>
     <template #item-slot-details="{ item } : { item: SearchResultI }">
       <CommonItemsBusinessDetails :item="item" />
+    </template>
+    <template #item-slot-date="{ item } : { item: SearchResultI }">
+      <CommonItemsEffectiveDates :item="item" />
     </template>
     <template #item-slot-actions="{ item } : { item: SearchResultI }">
       <div class="h-full w-full px-3 pt-3 shadow-action-col-item">
@@ -60,8 +68,8 @@
 
 <script setup lang="ts">
 import {
-  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails,
-  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport, CommonItemsInformation
+  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
+  CommonItemsName, CommonTitleExport, CommonItemsInformation, CommonItemsEffectiveDates, CommonItemsCitizenship
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

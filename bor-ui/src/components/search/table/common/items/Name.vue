@@ -24,11 +24,7 @@
 const prop = defineProps<{ icon?: string, item: SearchResultI }>()
 const { highlightMatch } = useBcrosSearch()
 
-const legalName = ref()
-onMounted(() => {
-  legalName.value = highlightMatch(prop.item.legalName.toUpperCase())
-})
-
+const legalName = highlightMatch(prop.item.legalName.toUpperCase())
 </script>
 
 <style lang="scss" scoped>

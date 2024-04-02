@@ -46,6 +46,7 @@ export const SearchResponseMock = {
         }],
         entityType: 'PERSON',
         legalName: 'KIAL TEST',
+        nationalities: ['CA'],
         roles: [{
           active: true,
           relatedBN: '123456789BC0001',
@@ -55,8 +56,43 @@ export const SearchResponseMock = {
           relatedLegalType: 'BC',
           relatedName: '0871105 B.C. LTD.',
           relatedState: 'ACTIVE',
-          roleDates: [{ score: 0.0, start: '2022-06-28T00:00:00Z' }],
+          roleDates: [
+            { score: 0.0, start: '2022-06-28T00:00:00Z' },
+            { score: 0.0, start: '2018-01-01T00:00:00Z', end: '2021-01-01T00:00:00Z' },
+            { score: 0.0, start: '2012-01-01T00:00:00Z', end: '2013-01-01T00:00:00Z' }
+          ],
           roleType: 'DIRECTOR',
+          score: 0.0
+        }],
+        score: 42.551533
+      },
+      {
+        entityAddresses: [{
+          addressCity: 'Vancouver',
+          addressCountry: 'CA',
+          addressRegion: 'BC',
+          addressType: 'DELIVERY',
+          postalCode: 'V1V 5A6',
+          score: 0.0,
+          streetAddress: '123 16th Avenue'
+        }],
+        entityType: 'PERSON',
+        legalName: 'TEST NAME',
+        nationalities: ['US', 'GB', 'FR'],
+        roles: [{
+          active: true,
+          relatedBN: '123456789BC0001',
+          relatedEmail: 'test@email.com',
+          relatedEntityType: 'BUSINESS',
+          relatedIdentifier: 'BC0871105',
+          relatedLegalType: 'BC',
+          relatedName: '0871105 B.C. LTD.',
+          relatedState: 'ACTIVE',
+          roleDates: [
+            { score: 0.0, start: '2018-01-01T00:00:00Z', end: '2021-01-01T00:00:00Z' },
+            { score: 0.0, end: '2014-01-01T00:00:00Z' }
+          ],
+          roleType: 'SIGNIFICANT INDIVIDUAL',
           score: 0.0
         }],
         score: 42.551533
@@ -134,6 +170,6 @@ export const SearchResponseMock = {
         score: 42.551533
       }
     ],
-    totalResults: 4
+    totalResults: 5
   }
 }

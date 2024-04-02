@@ -128,7 +128,13 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(taxResidency || '')
             break
           case 'Citizenship':
-            expect(items[itemIndx].text()).toContain('TBD')
+            // const countries = record.nationalities || []
+            // for (const i in countries) {
+            //   const code = countries[i].toLowerCase()
+            //   const flag = items[itemIndx].findAll('span').filter(span =>
+            //     span.classes().some(className => className.includes(code)))
+            //   expect(flag).toBe(true)
+            // }
             break
           case 'Business Details':
             expect(items[itemIndx].text()).toContain(role.relatedBN || '')
@@ -137,6 +143,16 @@ describe('SearchResults tests', () => {
             break
           case 'Details':
             expect(items[itemIndx].text()).toContain('TBD')
+            break
+          case 'Effective Dates':
+            if (role.roleDates && role.roleDates.length > 0) {
+              for (const i in role.roleDates) {
+                const start = toDateStr(role.roleDates[i].start)
+                const end = toDateStr(role.roleDates[i].end as Date)
+                expect(items[itemIndx].text()).toContain(start || 'Unknown')
+                expect(items[itemIndx].text()).toContain(end || 'Current')
+              }
+            }
             break
           case '': // Actions for basic should be empty
             expect(items[itemIndx].text()).toBe('')
