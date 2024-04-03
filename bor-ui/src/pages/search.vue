@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-8 mb-16">
+  <div class="container mt-8 mb-16" data-cy="search-page">
     <v-row no-gutters>
       <v-col>
         <h1>{{ searchTitleText }}</h1>

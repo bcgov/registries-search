@@ -53,7 +53,7 @@ const searchErrorMsg = computed(() => {
 })
 const searchHint = computed(() => {
   if (isExtended.value) {
-    return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba", 000 000 000'
+    return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba", "000 000 000"'
   }
   return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
 })

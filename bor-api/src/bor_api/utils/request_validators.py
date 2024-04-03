@@ -24,7 +24,6 @@ from .util import get_str
 
 def validate_search_request(user: User, access_flag_name: str) -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
-    print('here')
     errors = []
     request_json = request.get_json()
     query_json = request_json.get('query', {})

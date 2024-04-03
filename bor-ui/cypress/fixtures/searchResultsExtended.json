@@ -1,0 +1,389 @@
+{
+    "facets": {
+        "fields": {
+            "entityType": [
+                {
+                    "count": 7,
+                    "value": "PERSON"
+                }
+            ],
+            "legalType": [],
+            "relatedEntityType": [
+                {
+                    "count": 7,
+                    "parentCount": 7,
+                    "value": "BUSINESS"
+                }
+            ],
+            "relatedLegalType": [
+                {
+                    "count": 2,
+                    "parentCount": 4,
+                    "value": "BEN"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "BC"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "CP"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "GP"
+                }
+            ],
+            "relatedState": [
+                {
+                    "count": 11,
+                    "parentCount": 11,
+                    "value": "ACTIVE"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "HISTORICAL"
+                }
+            ],
+            "roleType": [
+                {
+                    "count": 2,
+                    "parentCount": 2,
+                    "value": "DIRECTOR"
+                },
+                {
+                    "count": 2,
+                    "parentCount": 2,
+                    "value": "SIGNIFICANT INDIVIDUAL"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "COMPLETING PARTY"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "INCORPORATOR"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "PARTNER"
+                }
+            ],
+            "state": []
+        }
+    },
+    "searchResults": {
+        "queryInfo": {
+            "categories": {
+                "entityAddresses": {
+                    "addressCity": null,
+                    "addressCountry": null,
+                    "addressRegion": null
+                },
+                "entityType": [
+                    "PERSON"
+                ],
+                "legalType": null,
+                "roles": {
+                    "relatedEntityType": null,
+                    "relatedState": null,
+                    "roleType": null
+                },
+                "state": null
+            },
+            "query": {
+                "bn": "",
+                "entityAddresses": "",
+                "identifier": "",
+                "legalName": "",
+                "roles": {
+                    "relatedBN": "",
+                    "relatedEmail": "",
+                    "relatedIdentifier": "",
+                    "relatedName": "",
+                    "roleDates": {},
+                    "value": ""
+                },
+                "value": "kial jinnah"
+            },
+            "rows": 50,
+            "start": 0
+        },
+        "results": [
+            {
+                "alternateName": "waffles wat",
+                "birthDate": "1993-03-10",
+                "email": "test@email.com",
+                "entityAddresses": [
+                    {
+                        "addressCity": "North York",
+                        "addressCountry": "",
+                        "addressRegion": "ON",
+                        "addressType": "RESIDENCE",
+                        "postalCode": "M6B 1W8",
+                        "score": 0.0,
+                        "streetAddress": "123-160 Tycos Dr"
+                    }
+                ],
+                "entityType": "PERSON",
+                "externalInfluence": "NoExternalInfluence",
+                "isPermanentResident": false,
+                "legalName": "Kial Jinnah",
+                "nationalities": [
+                    "CA"
+                ],
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871427",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871427 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2024-03-01"
+                            }
+                        ],
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854,
+                "taxNumber": "402 931 299",
+                "taxResidencies": [
+                    "CA"
+                ]
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V9A 6X9",
+                        "score": 0.0,
+                        "streetAddress": "55 Bay St"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEmail": "test@test.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "CP0001596",
+                        "relatedLegalType": "CP",
+                        "relatedName": "KILLARNEY GARDENS HOUSING CO-OPERATIVE",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": false,
+                                "end": "2020-11-12T00:00:00",
+                                "score": 0.0,
+                                "start": "2020-11-12T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-19T00:00:00"
+                            }
+                        ],
+                        "roleType": "INCORPORATOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-19T00:00:00"
+                            }
+                        ],
+                        "roleType": "COMPLETING PARTY",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V9C 4C5",
+                        "score": 0.0,
+                        "streetAddress": "4698 Wallaby Dr"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871416",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871416 B.C. LTD.",
+                        "relatedState": "HISTORICAL",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2023-06-13T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Penticton",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V2A 5C6",
+                        "score": 0.0,
+                        "streetAddress": "2-529 Main St"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "FM1060265",
+                        "relatedLegalType": "GP",
+                        "relatedName": "BTR'S GENERAL PARTNERSHIP",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2024-01-12T00:00:00"
+                            }
+                        ],
+                        "roleType": "PARTNER",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "alternateName": "wallaby willow",
+                "birthDate": "1997-02-05",
+                "email": "test@test.com",
+                "entityAddresses": [
+                    {
+                        "addressCity": "Kelowna",
+                        "addressCountry": "",
+                        "addressRegion": "BC",
+                        "addressType": "RESIDENCE",
+                        "postalCode": "V4V 1R8",
+                        "score": 0.0,
+                        "streetAddress": "123-720 Commonwealth Rd"
+                    }
+                ],
+                "entityType": "PERSON",
+                "externalInfluence": "CanBeInfluenced",
+                "isPermanentResident": false,
+                "legalName": "Kial Jinnah",
+                "nationalities": [
+                    "US",
+                    "FR"
+                ],
+                "roles": [
+                    {
+                        "relatedBN": "123456788BC001",
+                        "relatedEmail": "EFGH@email.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC9999991",
+                        "relatedLegalType": "BC",
+                        "relatedName": "EFGH TEST BUSINESS",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2024-02-07"
+                            }
+                        ],
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854,
+                "taxResidencies": [
+                    "FR"
+                ]
+            }
+        ],
+        "totalResults": 7
+    }
+}

@@ -9,4 +9,24 @@ export default defineNuxtRouteMiddleware(async (to) => {
       to.params.currentAccountId as string || to.query.currentAccountId as string
     )
   }
+  // For cypress tests. NOTE: all api calls will need to be intercepted/stubbed
+  if (process.client && sessionStorage?.getItem('FAKE_CYPRESS_LOGIN') === 'true') {
+    const { kc } = useBcrosKeycloak()
+    // set test kc values
+    kc.tokenParsed = {
+      firstname: 'TestFirst',
+      lastname: 'TestLast',
+      name: 'TestFirst TestLast',
+      username: 'testUsername',
+      email: 'testEmail@test.com',
+      sub: 'testSub',
+      loginSource: 'IDIR',
+      realm_access: { roles: ['basic'] }
+    }
+    kc.authenticated = true
+    // set account stuff (normally would happen after kc init in 'setupAuth')
+    const account = useBcrosAccount()
+    await account.setUserName()
+    await account.setAccountInfo()
+  }
 })

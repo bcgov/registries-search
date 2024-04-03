@@ -1,0 +1,592 @@
+{
+    "facets": {
+        "fields": {
+            "entityType": [
+                {
+                    "count": 18368,
+                    "value": "PERSON"
+                }
+            ],
+            "legalType": [],
+            "relatedEntityType": [
+                {
+                    "count": 18368,
+                    "parentCount": 18368,
+                    "value": "BUSINESS"
+                }
+            ],
+            "relatedLegalType": [
+                {
+                    "count": 16318,
+                    "parentCount": 16318,
+                    "value": "BC"
+                },
+                {
+                    "count": 1420,
+                    "parentCount": 1420,
+                    "value": "A"
+                },
+                {
+                    "count": 341,
+                    "parentCount": 341,
+                    "value": "S"
+                },
+                {
+                    "count": 150,
+                    "parentCount": 150,
+                    "value": "C"
+                },
+                {
+                    "count": 49,
+                    "parentCount": 49,
+                    "value": "XS"
+                },
+                {
+                    "count": 39,
+                    "parentCount": 39,
+                    "value": "CP"
+                },
+                {
+                    "count": 16,
+                    "parentCount": 16,
+                    "value": "BEN"
+                },
+                {
+                    "count": 9,
+                    "parentCount": 9,
+                    "value": "XCP"
+                },
+                {
+                    "count": 8,
+                    "parentCount": 8,
+                    "value": "SP"
+                },
+                {
+                    "count": 7,
+                    "parentCount": 7,
+                    "value": "GP"
+                }
+            ],
+            "relatedState": [
+                {
+                    "count": 10670,
+                    "parentCount": 10670,
+                    "value": "ACTIVE"
+                },
+                {
+                    "count": 7698,
+                    "parentCount": 7698,
+                    "value": "HISTORICAL"
+                }
+            ],
+            "roleType": [
+                {
+                    "count": 9919,
+                    "parentCount": 9919,
+                    "value": "DIRECTOR"
+                },
+                {
+                    "count": 7105,
+                    "parentCount": 7105,
+                    "value": "OFFICER"
+                },
+                {
+                    "count": 1068,
+                    "parentCount": 1068,
+                    "value": "INCORPORATOR"
+                },
+                {
+                    "count": 216,
+                    "parentCount": 216,
+                    "value": "ATTORNEY"
+                },
+                {
+                    "count": 29,
+                    "parentCount": 29,
+                    "value": "REC CUSTODIAN"
+                },
+                {
+                    "count": 10,
+                    "parentCount": 10,
+                    "value": "APPLICANT"
+                },
+                {
+                    "count": 9,
+                    "parentCount": 9,
+                    "value": "PARTNER"
+                },
+                {
+                    "count": 8,
+                    "parentCount": 8,
+                    "value": "PROPRIETOR"
+                },
+                {
+                    "count": 2,
+                    "parentCount": 2,
+                    "value": "COMPLETING PARTY"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "CUSTODIAN"
+                }
+            ],
+            "state": []
+        }
+    },
+    "searchResults": {
+        "queryInfo": {
+            "categories": {
+                "entityAddresses": {
+                    "addressCity": null,
+                    "addressCountry": null,
+                    "addressRegion": null
+                },
+                "entityType": [
+                    "PERSON"
+                ],
+                "legalType": null,
+                "roles": {
+                    "relatedEntityType": null,
+                    "relatedState": null,
+                    "roleType": null
+                },
+                "state": null
+            },
+            "query": {
+                "bn": "",
+                "entityAddresses": "",
+                "identifier": "",
+                "legalName": "",
+                "roles": {
+                    "relatedBN": "",
+                    "relatedEmail": "",
+                    "relatedIdentifier": "",
+                    "relatedName": "",
+                    "roleDates": {},
+                    "value": ""
+                },
+                "value": "kial"
+            },
+            "rows": 50,
+            "start": 0
+        },
+        "results": [
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V9A 6X9",
+                        "score": 0.0,
+                        "streetAddress": "55 Bay St"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEmail": "test@test.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "CP0001596",
+                        "relatedLegalType": "CP",
+                        "relatedName": "KILLARNEY GARDENS HOUSING CO-OPERATIVE",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": false,
+                                "end": "2020-11-12T00:00:00",
+                                "score": 0.0,
+                                "start": "2020-11-12T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEmail": "te@email.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230057",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "1230057 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-11T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEmail": "tester@email.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-19T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEmail": "test@email.com",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-19T00:00:00"
+                            }
+                        ],
+                        "roleType": "INCORPORATOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V8N 4R7",
+                        "score": 0.0,
+                        "streetAddress": "4105 Cortez Pl"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2021-01-19T00:00:00"
+                            }
+                        ],
+                        "roleType": "COMPLETING PARTY",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Aurora",
+                        "addressCountry": "Canada",
+                        "addressRegion": "ON",
+                        "addressType": "DELIVERY",
+                        "postalCode": "L4G 3W4",
+                        "score": 0.0,
+                        "streetAddress": "1 Caruso Gdns"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871389",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871389 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2023-06-20T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V9C 4C5",
+                        "score": 0.0,
+                        "streetAddress": "4698 Wallaby Dr"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871179",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871179 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": false,
+                                "end": "2022-10-07T00:00:00",
+                                "score": 0.0,
+                                "start": "2022-10-07T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Toronto",
+                        "addressCountry": "Canada",
+                        "addressRegion": "ON",
+                        "addressType": "DELIVERY",
+                        "postalCode": "M5B 2H5",
+                        "score": 0.0,
+                        "streetAddress": "1234-20 Carlton St"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871406",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "ALTERATION BC TO BEN TEST1 LIMITED",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2023-06-06T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Victoria",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V9C 4C5",
+                        "score": 0.0,
+                        "streetAddress": "4698 Wallaby Dr"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871416",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871416 B.C. LTD.",
+                        "relatedState": "HISTORICAL",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2023-06-13T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Penticton",
+                        "addressCountry": "Canada",
+                        "addressRegion": "BC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "V2A 5C6",
+                        "score": 0.0,
+                        "streetAddress": "2-529 Main St"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "FM1060265",
+                        "relatedLegalType": "GP",
+                        "relatedName": "BTR'S GENERAL PARTNERSHIP",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2024-01-12T00:00:00"
+                            }
+                        ],
+                        "roleType": "PARTNER",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Oakville",
+                        "addressCountry": "Canada",
+                        "addressRegion": "ON",
+                        "addressType": "DELIVERY",
+                        "postalCode": "L6M 3G8",
+                        "score": 0.0,
+                        "streetAddress": "1232-1490 Pilgrims Way"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIAL TEST",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871105",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871105 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2022-06-28T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 148.9067
+            },
+            {
+                "entityAddresses": [
+                    {
+                        "addressCity": "Pierrefonds",
+                        "addressCountry": "Canada",
+                        "addressRegion": "QC",
+                        "addressType": "DELIVERY",
+                        "postalCode": "H9H 1Z2",
+                        "score": 0.0,
+                        "streetAddress": "5-14505 Boul De Pierrefonds"
+                    }
+                ],
+                "entityType": "PERSON",
+                "legalName": "KIALS TEST",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871434",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871434 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2023-08-16T00:00:00"
+                            }
+                        ],
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 131.68665
+            }
+        ],
+        "totalResults": 18368
+    }
+}
