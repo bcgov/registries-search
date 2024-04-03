@@ -61,8 +61,8 @@ for (const role of localProps.item.roles) {
   if (votesInterest) {
     votes.value = {
       title: 'Votes',
-      content: `At least ${sharesInterest.sharesMin || 0}%
-      and up to ${sharesInterest.sharesMax || sharesInterest.sharesMin || 0}%`
+      content: `At least ${votesInterest.sharesMin || 0}%
+      and up to ${votesInterest.sharesMax || votesInterest.sharesMin || 0}%`
     }
   }
 }
