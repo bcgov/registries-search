@@ -1,3 +1,105 @@
+import type { SearchResultI } from '@/interfaces/search-i'
+
+export const testSearchResultInterest: SearchResultI[] = [
+  {
+    entityAddresses: [{
+      addressCity: 'Oakville',
+      addressCountry: 'CA',
+      addressRegion: 'ON',
+      postalCode: 'L6M 3G8',
+      streetAddress: '1232-1490 Pilgrims Way '
+    }],
+    entityType: 'PERSON',
+    legalName: 'ALL INTEREST TEST',
+    roles: [{
+      active: true,
+      relatedBN: '123456777BC0001',
+      relatedEmail: 'coop@email.com',
+      relatedEntityType: 'BUSINESS',
+      relatedIdentifier: 'CP1234567',
+      relatedLegalType: 'CP',
+      relatedName: 'KIALS COOP',
+      relatedState: 'ACTIVE',
+      relatedInterests: [
+        {
+          details: 'controlType.sharesOrVotes.beneficialOwner',
+          interestType: 'shareholding',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.beneficialOwner',
+          interestType: 'votingRights',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.indirectControl',
+          interestType: 'shareholding',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.indirectControl',
+          interestType: 'votingRights',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.inConcertControl',
+          interestType: 'shareholding',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.inConcertControl',
+          interestType: 'votingRights',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.registeredOwner',
+          interestType: 'shareholding',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        {
+          details: 'controlType.sharesOrVotes.registeredOwner',
+          interestType: 'votingRights',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        // other
+        {
+          details: 'Test',
+          interestType: 'otherInfluenceOrControl',
+          sharesMin: 25,
+          sharesMax: 50
+        },
+        // directors
+        {
+          details: 'controlType.directors.significantInfluence',
+          interestType: 'appointmentOfBoard'
+        },
+        {
+          details: 'controlType.directors.indirectControl',
+          interestType: 'appointmentOfBoard'
+        },
+        {
+          details: 'controlType.directors.inConcertControl',
+          interestType: 'appointmentOfBoard'
+        },
+        {
+          details: 'controlType.directors.directControl',
+          interestType: 'appointmentOfBoard'
+        }
+      ],
+      roleDates: [{ start: new Date('2022-06-28T00:00:00Z') }],
+      roleType: 'DIRECTOR'
+    }]
+  }
+]
+
 export const testSearchResults: SearchResultI[] = [
   {
     alternateName: 'Waffle Wallaby',
@@ -21,10 +123,10 @@ export const testSearchResults: SearchResultI[] = [
       relatedEntityType: 'BUSINESS',
       relatedIdentifier: 'BC0871105',
       relatedInterests: [{
-        type: 'shareholding',
+        interestType: 'shareholding',
         details: 'control.registeredOwner',
-        shareMax: 50,
-        shareMin: 25
+        sharesMax: 50,
+        sharesMin: 25
       }],
       relatedLegalType: 'BC',
       relatedName: '0871105 B.C. LTD.',
@@ -75,7 +177,10 @@ export const testSearchResults: SearchResultI[] = [
       relatedLegalType: 'BC',
       relatedName: '0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
-      roleDates: [{ start: new Date('2016-03-28T00:00:00Z'), end: new Date('2023-03-28T00:00:00Z') }],
+      roleDates: [{
+        start: new Date('2016-03-28T00:00:00Z'),
+        end: new Date('2023-03-28T00:00:00Z')
+      }],
       roleType: 'OFFICER'
     }]
   },
@@ -101,5 +206,6 @@ export const testSearchResults: SearchResultI[] = [
       roleDates: [{ start: new Date('2022-06-28T00:00:00Z') }],
       roleType: 'DIRECTOR'
     }]
-  }
+  },
+  testSearchResultInterest[0]
 ]

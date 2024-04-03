@@ -15,7 +15,12 @@ describe('SearchResults tests', () => {
   let wrapper: VueWrapper<any>
 
   const search = useBcrosSearch()
-  const { isExtended, results, totalResults, searchError } = storeToRefs(search)
+  const {
+    isExtended,
+    results,
+    totalResults,
+    searchError
+  } = storeToRefs(search)
 
   const basicHeaders = getPersonHeaders()
   const extendedHeaders = getPersonHeadersExtended()
@@ -52,7 +57,9 @@ describe('SearchResults tests', () => {
     const filters = wrapper.findAll('.base-table__header__item__filter')
     let filterIndex = 0
     for (const i in headerConfig) {
-      if (!headerConfig[i].hasFilter) { continue }
+      if (!headerConfig[i].hasFilter) {
+        continue
+      }
       const header = headerConfig[i]
       // check filter type
       if (header.filter.type === 'select') {
@@ -103,6 +110,18 @@ describe('SearchResults tests', () => {
         const address = record.entityAddresses ? record.entityAddresses[0] : undefined
         const countries = record.nationalities || []
         const role = record.roles[0]
+        let imgs = []
+        const allAltTexts = [
+          'Beneficial owner (e.g., through a trust)',
+          'Indirect control (e.g., through another business)',
+          'Registered owner',
+          'Other influence or control',
+          'Significant influence control',
+          'Indirect control (through another business)',
+          'This individual has control of the majority of directors through rights and/or exercised in concert ' +
+          'with other individuals',
+          'Direct control'
+        ]
         switch (headerConfig[itemIndx].value) {
           case 'Name':
             expect(items[itemIndx].text()).toContain(record.legalName)
@@ -142,7 +161,10 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(role.relatedName || '')
             break
           case 'Details':
-            expect(items[itemIndx].text()).toContain('TBD')
+            imgs = items[itemIndx].findAll('img')
+            for (const img of imgs) {
+              expect(allAltTexts.find(altText => altText === img.attributes().alt)).not.toBe(-1)
+            }
             break
           case 'Effective Dates':
             if (role.roleDates && role.roleDates.length > 0) {

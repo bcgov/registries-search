@@ -39,8 +39,6 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       col: 'nationalities',
       hasFilter: false,
       hasSort: false,
-      // eslint-disable-next-line
-      itemFn: (val: SearchResultI) => 'TBD',
       value: 'Citizenship',
       slotId: 'citizenship',
       width: '7%'
@@ -89,7 +87,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasFilter: false,
       hasSort: false,
       // eslint-disable-next-line
-      itemFn: (val: SearchResultI) => 'TBD',
+      itemFn: (val: SearchResultI) => 'TBD dd',
+      slotId: 'personControl',
       value: 'Details',
       width: '17%'
     },

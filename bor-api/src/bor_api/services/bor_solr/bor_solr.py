@@ -43,7 +43,8 @@ class BorSolr(Solr):
         EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_EMAIL.value,
         EntityRoleField.RELATED_ENTITY_TYPE.value, EntityRoleField.RELATED_IDENTIFIER.value,
         EntityRoleField.RELATED_NAME.value, EntityRoleField.RELATED_STATE.value, EntityRoleField.ROLE_DATES.value,
-        EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value
+        EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value,
+        EntityRoleField.RELATED_INTERESTS.value
     ]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
     interest_fields: list[str] = [

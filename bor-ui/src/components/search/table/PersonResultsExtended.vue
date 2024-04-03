@@ -55,6 +55,9 @@
         <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
       </div>
     </template>
+    <template #item-slot-personControl="{ item }: { item: SearchResultI }">
+      <CommonItemsPersonControl :item="item" />
+    </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
         class="my-5"
@@ -68,8 +71,9 @@
 
 <script setup lang="ts">
 import {
-  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
-  CommonItemsName, CommonTitleExport, CommonItemsInformation, CommonItemsEffectiveDates, CommonItemsCitizenship
+  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails, CommonItemsPersonControl,
+  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport, CommonItemsInformation, CommonItemsEffectiveDates,
+  CommonItemsCitizenship
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

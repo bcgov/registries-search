@@ -19,10 +19,10 @@ export interface SearchResultI {
     relatedLegalType: CorpTypeCdE
     relatedInterests?: {
       details: string
-      type: string
-      shareExact?: number
-      shareMax?: number
-      shareMin?: number
+      interestType: string
+      sharesExact?: number
+      sharesMax?: number
+      sharesMin?: number
     }[]
     relatedName: string
     relatedState: BusinessStateE
