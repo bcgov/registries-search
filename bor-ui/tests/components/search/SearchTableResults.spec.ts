@@ -101,6 +101,7 @@ describe('SearchResults tests', () => {
           ? (record.taxResidencies[0] === 'CA' ? 'Canada' : 'Other')
           : undefined
         const address = record.entityAddresses ? record.entityAddresses[0] : undefined
+        const countries = record.nationalities || []
         const role = record.roles[0]
         switch (headerConfig[itemIndx].value) {
           case 'Name':
@@ -128,13 +129,12 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(taxResidency || '')
             break
           case 'Citizenship':
-            // const countries = record.nationalities || []
-            // for (const i in countries) {
-            //   const code = countries[i].toLowerCase()
-            //   const flag = items[itemIndx].findAll('span').filter(span =>
-            //     span.classes().some(className => className.includes(code)))
-            //   expect(flag).toBe(true)
-            // }
+            for (const i in countries) {
+              const code = countries[i]
+              const flag = items[itemIndx].findAll('span').filter(span =>
+                span.text() === code)
+              expect(flag.length).toEqual(1)
+            }
             break
           case 'Business Details':
             expect(items[itemIndx].text()).toContain(role.relatedBN || '')
@@ -169,10 +169,24 @@ describe('SearchResults tests', () => {
     }
   }
 
+  const MockCountryFlag = {
+    template: '<span>{{ country }}</span>',
+    props: ['country', 'size']
+  }
+
   beforeEach(async () => {
     totalResults.value = 0
     results.value = []
-    wrapper = mount(SearchTableResults, { global: { plugins: [vuetify] } })
+    wrapper = mount(
+      SearchTableResults, {
+        global: {
+          plugins: [vuetify],
+          components: {
+            CountryFlag: MockCountryFlag
+          }
+        }
+      }
+    )
     await flushPromises()
   })
   afterEach(() => {
