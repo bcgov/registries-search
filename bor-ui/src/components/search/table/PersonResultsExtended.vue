@@ -22,6 +22,9 @@
         <b>Actions</b>
       </div>
     </template>
+    <template #header-filter-slot-personControl>
+      <CommonHeadersPersonControlDetailsFilter />
+    </template>
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
@@ -73,7 +76,7 @@
 import {
   CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails, CommonItemsPersonControl,
   CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport, CommonItemsInformation, CommonItemsEffectiveDates,
-  CommonItemsCitizenship
+  CommonItemsCitizenship, CommonHeadersPersonControlDetailsFilter
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

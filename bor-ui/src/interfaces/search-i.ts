@@ -44,6 +44,7 @@ export interface SearchPayloadI {
       relatedBN?: string
       relatedEmail?: string
       relatedIdentifier?: string
+      relatedInterests?: string[]
       relatedName?: string
       roleDates?: { start?: string, end?: string } // ISO strings. Can be partial (i.e. 2023-10) or full datetime
       value?: string // will match on related bn/identifer/name (creates 'or' clauses for all 3 fields)

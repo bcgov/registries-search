@@ -367,6 +367,28 @@
                         "relatedLegalType": "BC",
                         "relatedName": "EFGH TEST BUSINESS",
                         "relatedState": "ACTIVE",
+                        "relatedInterests": [
+                          {
+                            "details": "other reasons",
+                            "directOrIndirect": "direct",
+                            "interestType": "otherInfluenceOrControl",
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.sharesOrVotes.registeredOwner",
+                            "directOrIndirect": "direct",
+                            "interestType": "shareholding",
+                            "score": 0.0,
+                            "sharesExact": 67.0
+                          },
+                          {
+                            "details": "controlType.sharesOrVotes.registeredOwner",
+                            "directOrIndirect": "unknown",
+                            "interestType": "votingRights",
+                            "score": 0.0,
+                            "sharesExact": 37.0
+                          }
+                        ],
                         "roleDates": [
                             {
                                 "active": true,
