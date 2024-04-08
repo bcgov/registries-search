@@ -97,8 +97,8 @@ const search = useBcrosSearch()
 const selectedDetailsFilters: Ref<string[]> = ref([])
 
 // for clear filters
-const props = defineProps<{ clearFilter?: boolean }>()
-watch(() => props.clearFilter, () => {
+const localProps = defineProps<{ clearFilter?: boolean }>()
+watch(() => localProps.clearFilter, () => {
   selectedDetailsFilters.value = []
 })
 

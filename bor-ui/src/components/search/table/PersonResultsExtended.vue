@@ -82,7 +82,7 @@ import { getPersonHeadersExtended } from '@/utils'
 
 const props = defineProps<{
   resultsDesc: string,
-  updateTableHeaderFilters: (val: BaseTableHeaderI[]) => void,
+  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
 }>()
 
 // composables
