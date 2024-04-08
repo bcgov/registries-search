@@ -96,6 +96,12 @@
 const search = useBcrosSearch()
 const selectedDetailsFilters: Ref<string[]> = ref([])
 
+// for clear filters
+const props = defineProps<{ clearFilter?: boolean }>()
+watch(() => props.clearFilter, () => {
+  selectedDetailsFilters.value = []
+})
+
 const detailsFilterDisplay = computed(() => {
   if (selectedDetailsFilters.value.length === 0) {
     return ''

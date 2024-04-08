@@ -23,7 +23,7 @@
       </div>
     </template>
     <template #header-filter-slot-personControl>
-      <CommonHeadersPersonControlDetailsFilter />
+      <CommonHeadersPersonControlDetailsFilter :clear-filter="clearPersonDetailsFilter" />
     </template>
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
@@ -82,7 +82,7 @@ import { getPersonHeadersExtended } from '@/utils'
 
 const props = defineProps<{
   resultsDesc: string,
-  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
+  updateTableHeaderFilters: (val: BaseTableHeaderI[]) => void,
 }>()
 
 // composables
@@ -104,9 +104,11 @@ onMounted(() => { props.updateTableHeaderFilters(headers) })
 // filter clearing
 const resetFiltersTrigger = ref(false)
 const dateRangeReset = ref(false)
+const clearPersonDetailsFilter = ref(false)
 const clearFilters = () => {
   resetFiltersTrigger.value = !resetFiltersTrigger.value
   dateRangeReset.value = !dateRangeReset.value
+  clearPersonDetailsFilter.value = !clearPersonDetailsFilter.value
   // search on reset filters
   search.filterSearch(null, null, true)
 }
