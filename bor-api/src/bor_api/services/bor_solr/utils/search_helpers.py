@@ -35,47 +35,23 @@ def entities_search(params: SearchParams, solr: BorSolr):
     # initialize payload with base doc query (init query / filter)
     initial_queries = build_base_query(
         query=params.query,
-        fields=[EntityField.LEGAL_NAME_Q, EntityField.LEGAL_NAME_AGRO_Q, EntityField.LEGAL_NAME_SINGLE_Q,
-                EntityField.ALT_NAME_Q, EntityField.ALT_NAME_AGRO_Q, EntityField.ALT_NAME_SINGLE_Q,
-                EntityField.IDENTIFIER_Q, EntityField.BN_Q, EntityField.TAX_NUMBER_Q],
-        nested_fields=[AddressField.ADDRESS_Q],
-        boost_fields={
-            EntityField.LEGAL_NAME_Q: 2,
-            EntityField.LEGAL_NAME_AGRO_Q: 2,
-            EntityField.LEGAL_NAME_SINGLE_Q: 2,
-            EntityField.ALT_NAME_Q: 2,
-            EntityField.ALT_NAME_AGRO_Q: 2,
-            EntityField.ALT_NAME_SINGLE_Q: 2,
-            EntityField.BN_Q: 2,
-            EntityField.TAX_NUMBER_Q: 2
-        },
-        fuzzy_fields={
-            EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
-            EntityField.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
-            EntityField.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
-            EntityField.ALT_NAME_Q: {'short': 1, 'long': 2},
-            EntityField.ALT_NAME_AGRO_Q: {'short': 1, 'long': 2},
-            EntityField.ALT_NAME_SINGLE_Q: {'short': 1, 'long': 2},
-            EntityField.BN_Q: {'short': 1, 'long': 1},
-            EntityField.TAX_NUMBER_Q: {'short': 1, 'long': 1},
-            AddressField.ADDRESS_Q: {'short': 1, 'long': 1},
-            EntityRoleField.RELATED_EMAIL_Q: {'short': 1, 'long': 1}
-        },
-        synonym_fields={
-            EntityField.LEGAL_NAME_SYN_Q: 'parent',
-            EntityField.ALT_NAME_SYN_Q: 'parent',
-            AddressField.ADDRESS_SYN_Q: 'child'
-        })
+        fields=params.query_fields,
+        nested_fields=params.query_nested_fields,
+        boost_fields=params.query_boost_fields,
+        fuzzy_fields=params.query_fuzzy_fields,
+        synonym_fields=params.query_synonym_fields)
 
     # boosts for term order result ordering
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
-    initial_queries['query'] += f' OR ({EntityField.ALT_NAME_Q.value}:"{params.query["value"]}"~5^5)'
-    initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({EntityField.ALT_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
+    # Only add alternate name boost if it is specified in the query
+    if EntityField.ALT_NAME_Q.value in params.query_fields:
+        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_Q.value}:"{params.query["value"]}"~5^5)'
+        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
+        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
+        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults
     solr_payload = {

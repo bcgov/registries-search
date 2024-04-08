@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from bor_api.services.bor_solr.doc_models import Address, EntityRole, DateRange
+from bor_api.services.bor_solr.doc_models import Address, EntityRole, DateRange, Interest
 
 from .solr_helpers import create_entity
 
@@ -187,13 +187,36 @@ TEST_PERSONS = [
                                     relatedName=TEST_BUSINESSES[6].legalName,
                                     relatedState=TEST_BUSINESSES[6].state,
                                     roleType='SIGNIFICANT INDIVIDUAL',
-                                    roleDates=[DateRange(start='2019-03-09T00:03:54Z')])],
+                                    roleDates=[DateRange(start='2019-03-09T00:03:54Z')],
+                                    relatedInterests=[Interest(details='controlType.sharesOrVotes.registeredOwner', directOrIndirect='direct', interestType='shareholding', sharesMax=50, sharesMin=25)])],
                   addresses=[Address(addressCity='Vancouver',
                                      addressCountry='Canada',
                                      addressRegion='BC',
                                      addressType='DELIVERY',
                                      streetAddress='hello world 500',
                                      postalCode='V6V 1P2')]),
+    create_entity(name='person ten y.z. xk',
+                  alternate_name='s.i. rm',
+                  email='ten@si.com',
+                  tax_number='104 342 350',
+                  entity_id='SI10',
+                  roles=[EntityRole(id=f'SI10{TEST_BUSINESSES[7].identifier}SIGNIFICANT_INDIVIDUAL',
+                                    relatedBN=TEST_BUSINESSES[7].bn,
+                                    relatedEmail=TEST_BUSINESSES[7].email,
+                                    relatedEntityType='BUSINESS',
+                                    relatedIdentifier=TEST_BUSINESSES[7].identifier,
+                                    relatedLegalType=TEST_BUSINESSES[7].legalType,
+                                    relatedName=TEST_BUSINESSES[7].legalName,
+                                    relatedState=TEST_BUSINESSES[7].state,
+                                    roleType='SIGNIFICANT INDIVIDUAL',
+                                    roleDates=[DateRange(start='2020-11-09T00:03:54Z')],
+                                    relatedInterests=[Interest(details='controlType.sharesOrVotes.registeredOwner', directOrIndirect='direct', interestType='voting', sharesMax=75, sharesMin=50)])],
+                  addresses=[Address(addressCity='Victoria',
+                                     addressCountry='Canada',
+                                     addressRegion='BC',
+                                     addressType='DELIVERY',
+                                     streetAddress='hi universe 1000',
+                                     postalCode='V3L 4R1')]),
 ]
     
 SOLR_TEST_DOCS = TEST_BUSINESSES + TEST_PERSONS

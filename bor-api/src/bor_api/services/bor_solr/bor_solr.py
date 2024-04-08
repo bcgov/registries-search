@@ -24,10 +24,9 @@ class BorSolr(Solr):
 
     # TODO: split the field lists by access groups once we know who is allowed to see what
     entity_fields: list[str] = [
-        EntityField.BN.value, EntityField.EMAIL.value, EntityField.ENTITY_ADDRESSES.value,
-        EntityField.ENTITY_TYPE.value, EntityField.IDENTIFIER.value, EntityField.LEGAL_NAME.value,
-        EntityField.LEGAL_TYPE.value, EntityField.ROLES.value,
-        EntityField.STATE.value, EntityField.SCORE.value, '[child]'
+        EntityField.EMAIL.value, EntityField.ENTITY_ADDRESSES.value,
+        EntityField.ENTITY_TYPE.value, EntityField.LEGAL_NAME.value,
+        EntityField.ROLES.value, EntityField.SCORE.value, '[child]'
     ]
     entity_extended_fields: list[str] = [
         EntityField.ALT_NAME.value, EntityField.BIRTH_DATE.value, EntityField.EMAIL.value,
@@ -43,9 +42,9 @@ class BorSolr(Solr):
         EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_EMAIL.value,
         EntityRoleField.RELATED_ENTITY_TYPE.value, EntityRoleField.RELATED_IDENTIFIER.value,
         EntityRoleField.RELATED_NAME.value, EntityRoleField.RELATED_STATE.value, EntityRoleField.ROLE_DATES.value,
-        EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value,
-        EntityRoleField.RELATED_INTERESTS.value
+        EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value
     ]
+    entity_role_extended_fields = [EntityRoleField.RELATED_INTERESTS.value]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
     interest_fields: list[str] = [
         InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value, InterestField.SHARE_EXACT.value,

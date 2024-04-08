@@ -29,3 +29,8 @@ class SearchParams:  # pylint: disable=too-few-public-methods
     child_categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
     child_date_ranges: dict[DateRangeField, str]
     fields: list[str]
+    query_fields: list[EntityField]
+    query_boost_fields: dict[EntityField, int]
+    query_fuzzy_fields: dict[EntityField | AddressField | EntityRoleField, dict[str, int]]
+    query_nested_fields: list[AddressField | EntityRoleField]
+    query_synonym_fields: dict[EntityField | AddressField, str]

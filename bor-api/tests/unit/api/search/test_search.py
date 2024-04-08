@@ -98,7 +98,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
         }
      })
 ])
-def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, test_name, query, categories):
+def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, query, categories):
     """Assert that the entities search call works returns successfully."""
     # setup mocks
     account_id = 1
@@ -158,7 +158,7 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_basic',
      {'value': '123'},
      {},
-     [{'bn': 'BN00012334', 'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}, {'bn': 'BN00012334', 'email': '5555@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP0034567', 'legalName': 'tests 2222', 'legalType': 'CP', 'state': 'ACTIVE'}],
+     [{'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'legalName': 'test 1234'}],
     ),
     ('test_basic_name_match_exact',
      {'value': 'person one'},
@@ -239,83 +239,33 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
       {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEmail': 'xyz@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2021-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
       {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3R 1A4', 'score': 0.0, 'streetAddress': 'hello world 9002'}], 'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEmail': 'xyz@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2021-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
-    ('test_basic_alt_name_match_exact',
+    ('test_basic_name_match_._1',
+     {'value': 'person ten y.z.'},
+     {},
+     [{'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047',  'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+    ('test_basic_name_match_._2',
+     {'value': 'person ten yz'},
+     {},
+     [{'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047',  'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+    ('test_basic_name_match_._3',
+     {'value': 'person ten x.k.'},
+     {},
+     [{'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047',  'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+    ('test_basic_name_match_._4',
+     {'value': 'person ten xk'},
+     {},
+     [{'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047',  'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+    ('test_basic_alt_name_no_match',
      {'value': 'significant individual alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_partial_1',
-     {'value': 'sign individ alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_partial_2',
-     {'value': 'ignific vidua'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_spellcheck',
-     {'value': 'sagnificent endividuol alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_stem_1',
-     {'value': 'significanted individuals alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_stem_2',
-     {'value': 'significanting individualed alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_mix',
-     {'value': 'individual alt significant'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_mix_partial',
-     {'value': 'individ ifica'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_mix_stem',
-     {'value': 'individualing significants alt'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_alt_name_match_spec_char',
-     {'value': '*significant! [individual$] alt^'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_tax_number_match',
-     {'value': '705 362 853'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_tax_number_match_partial',
-     {'value': '705 3'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_tax_number_match_no_space',
-     {'value': '705362853'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_tax_number_match_no_space_partial',
-     {'value': '7053'},
-     {},
-     [{'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
-    ),
-    ('test_basic_tax_number_no_match',
-     {'value': '705 362 852'},
      {},
      []
     ),
-    ('test_basic_tax_number_no_match_partial',
-     {'value': '705 37'},
+    ('test_basic_tax_number_no_match',
+     {'value': '705 362 853'},
      {},
      []
     ),
@@ -348,7 +298,7 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_filters',
      {'value': 'test', EntityField.LEGAL_NAME.value: 'test 1234', EntityField.IDENTIFIER.value: 'CP123', EntityField.BN.value: 'BN00'},
      {},
-     [{'bn': 'BN00012334', 'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}]
+     [{'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'legalName': 'test 1234'}]
     ),
     ('test_filters_no_match',
      {'value': 'test filters', EntityField.LEGAL_NAME.value: 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
@@ -358,7 +308,7 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_categories',
      {'value': 'tests 2222'},
      {EntityField.ENTITY_TYPE.value: ['BUSINESS'], EntityField.STATE.value:['ACTIVE'], EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP']},
-     [{'bn': 'BN00012334', 'email': '5555@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP0034567', 'legalName': 'tests 2222', 'legalType': 'CP', 'state': 'ACTIVE'}]
+     [{'email': '5555@email.com', 'entityType': 'BUSINESS', 'legalName': 'tests 2222'}]
     ),
     ('test_categories_no_match',
      {'value': 'test 1234'},
@@ -551,7 +501,7 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
         EntityField.STATE.value:['ACTIVE'],
         EntityField.LEGAL_TYPE.value: ['BC', 'CP', 'SP']
      },
-     [{'bn': 'BN00012334', 'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'identifier': 'CP1234567', 'legalName': 'test 1234', 'legalType': 'CP', 'state': 'ACTIVE'}]
+     [{'email': 'abcd@email.com', 'entityType': 'BUSINESS', 'legalName': 'test 1234'}]
     ),
     ('test_basic_email_match_exact',
      {'value': 'xyz@email.com'},
@@ -581,15 +531,15 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_email_and_name_1',
      {'value': 'person abcd@email.com'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
       {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_email_and_name_2',
      {'value': 'abcd@email.com person'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
       {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_email_and_name_3',
@@ -600,22 +550,22 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
     ('test_email_domain_and_name',
      {'value': 'abc person @email. com'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
       {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_email_and_name_partial',
      {'value': 'person ab'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
       {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_email_and_name_fuzzy_1',
      {'value': 'person abcm@email.com'},
      {},
-     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+     [{'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3S 1E4', 'score': 0.0, 'streetAddress': 'walaby way 1112'}], 'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
+      {'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'T3R 43R', 'score': 0.0, 'streetAddress': 'charles place 4W2'}], 'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]},
       {'entityAddresses': [{'addressCity': 'Seattle', 'addressCountry': 'United States', 'addressRegion': 'WA', 'addressType': 'DELIVERY', 'postalCode': 'V3R 4E4', 'score': 0.0, 'streetAddress': 'jerry lane 9002'}], 'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEmail': 'abcd@email.com', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2018-08-04T00:03:54Z'}], 'roleType': 'DIRECTOR', 'score': 0.0}]}]
     ),
     ('test_email_and_name_fuzzy_2',
@@ -631,13 +581,15 @@ def test_search_entities_solr_mock(app, session, client, jwt, requests_mock, tes
      []
     )
 ])
-def test_search_entities(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
+def test_search(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
     """Assert that the entities search call works returns successfully."""
-    # setup solr data for test
-    solr.delete_all_docs()
-    time.sleep(1)
-    solr.create_or_replace_docs(SOLR_TEST_DOCS)
-    time.sleep(2)
+    # test setup
+    if test_name == 'test_basic':
+        # setup solr data for test (only needed the first time)
+        solr.delete_all_docs()
+        time.sleep(1)
+        solr.create_or_replace_docs(SOLR_TEST_DOCS)
+        time.sleep(2)
     # add test dependent synonyms to db
     SolrSynonymList(synonym='bc', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
     SolrSynonymList(synonym='british columbia', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
@@ -650,6 +602,7 @@ def test_search_entities(app, session, client, jwt, monkeypatch, test_name, quer
     payload = {'query': query}
     if categories:
         payload['categories'] = categories
+
     # call search
     resp = client.post(f'/api/v1/search',
                         data=json.dumps(payload),
@@ -668,7 +621,7 @@ def test_search_entities(app, session, client, jwt, monkeypatch, test_name, quer
     assert results == expected
 
 
-def test_search_entities_xlsx(app, session, client, jwt, requests_mock):
+def test_search_xlsx(app, session, client, jwt, requests_mock):
     """Assert that the entities search call works returns successfully."""
     # setup mocks
     account_id = 1
@@ -709,7 +662,7 @@ def test_search_entities_xlsx(app, session, client, jwt, requests_mock):
     assert resp.data
 
 
-def test_search_entities_error(app, session, client, jwt, monkeypatch, requests_mock):
+def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
     """Assert that the entities search call error handling works as expected."""
     # setup products mock in validator
     monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
@@ -737,7 +690,7 @@ def test_search_entities_error(app, session, client, jwt, monkeypatch, requests_
     ('test_invalid_accept_headers', {'value': 'a'}, {}, {'Accept': 'application/pdf'}, [{'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
     ('test_invalid_query_and_headers', {}, {}, {'Accept': 'application/pdf'}, [{'Invalid payload': "Expected a string for 'value'."}, {'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
 ])
-def test_search_entities_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
+def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""
     # setup products mock in validator
     monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])

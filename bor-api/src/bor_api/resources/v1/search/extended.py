@@ -107,7 +107,9 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
         # NOTE: this is where we decide what data on each record to return to the user
         base_access_fields = \
             solr_temp.entity_fields + solr_temp.address_fields + solr_temp.entity_role_fields + solr_temp.date_fields
-        extended_access_fields = solr_temp.entity_extended_fields + solr_temp.interest_fields
+        extended_access_fields = \
+            solr_temp.entity_extended_fields + solr_temp.entity_role_extended_fields + solr_temp.interest_fields
+
         params = SearchParams(query=query,
                               rows=rows,
                               start=start,
@@ -115,7 +117,38 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                               child_query=child_query,
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges,
-                              fields=base_access_fields + extended_access_fields)
+                              fields=base_access_fields + extended_access_fields,
+                              query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
+                                                  EntityField.LEGAL_NAME_AGRO_Q: 2,
+                                                  EntityField.LEGAL_NAME_SINGLE_Q: 2,
+                                                  EntityField.LEGAL_NAME_XTRA_Q: 2,
+                                                  EntityField.ALT_NAME_Q: 2,
+                                                  EntityField.ALT_NAME_AGRO_Q: 2,
+                                                  EntityField.ALT_NAME_SINGLE_Q: 2,
+                                                  EntityField.ALT_NAME_XTRA_Q: 2,
+                                                  EntityField.TAX_NUMBER_Q: 2},
+                              query_fields=[EntityField.LEGAL_NAME_Q,
+                                            EntityField.LEGAL_NAME_AGRO_Q,
+                                            EntityField.LEGAL_NAME_SINGLE_Q,
+                                            EntityField.LEGAL_NAME_XTRA_Q,
+                                            EntityField.ALT_NAME_Q,
+                                            EntityField.ALT_NAME_AGRO_Q,
+                                            EntityField.ALT_NAME_SINGLE_Q,
+                                            EntityField.ALT_NAME_XTRA_Q,
+                                            EntityField.TAX_NUMBER_Q],
+                              query_fuzzy_fields={EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
+                                                  EntityField.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
+                                                  EntityField.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
+                                                  EntityField.ALT_NAME_Q: {'short': 1, 'long': 2},
+                                                  EntityField.ALT_NAME_AGRO_Q: {'short': 1, 'long': 2},
+                                                  EntityField.ALT_NAME_SINGLE_Q: {'short': 1, 'long': 2},
+                                                  EntityField.TAX_NUMBER_Q: {'short': 1, 'long': 1},
+                                                  AddressField.ADDRESS_Q: {'short': 1, 'long': 1},
+                                                  EntityRoleField.RELATED_EMAIL_Q: {'short': 1, 'long': 1}},
+                              query_nested_fields=[AddressField.ADDRESS_Q],
+                              query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent',
+                                                    EntityField.ALT_NAME_SYN_Q: 'parent',
+                                                    AddressField.ADDRESS_SYN_Q: 'child'})
 
         results = entities_search(params, solr_temp)
         docs = results.get('response', {}).get('docs')

@@ -108,6 +108,7 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
             return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
 
         search_fields = solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields
+
         params = SearchParams(query=query,
                               rows=rows,
                               start=start,
@@ -115,7 +116,23 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
                               child_query=child_query,
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges,
-                              fields=search_fields)
+                              fields=search_fields,
+                              query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
+                                                  EntityField.LEGAL_NAME_AGRO_Q: 2,
+                                                  EntityField.LEGAL_NAME_SINGLE_Q: 2,
+                                                  EntityField.LEGAL_NAME_XTRA_Q: 2},
+                              query_fields=[EntityField.LEGAL_NAME_Q,
+                                            EntityField.LEGAL_NAME_AGRO_Q,
+                                            EntityField.LEGAL_NAME_SINGLE_Q,
+                                            EntityField.LEGAL_NAME_XTRA_Q],
+                              query_fuzzy_fields={EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
+                                                  EntityField.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
+                                                  EntityField.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
+                                                  AddressField.ADDRESS_Q: {'short': 1, 'long': 1},
+                                                  EntityRoleField.RELATED_EMAIL_Q: {'short': 1, 'long': 1}},
+                              query_nested_fields=[AddressField.ADDRESS_Q],
+                              query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent',
+                                                    AddressField.ADDRESS_SYN_Q: 'child'})
 
         results = entities_search(params, solr)
         docs = results.get('response', {}).get('docs')

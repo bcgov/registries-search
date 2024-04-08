@@ -56,6 +56,7 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     ALT_NAME_AGRO_Q = 'alternateName_stem_agro_q'
     ALT_NAME_SINGLE_Q = 'alternateName_single_term_q'
     ALT_NAME_SYN_Q = 'alternateName_synonym_q'
+    ALT_NAME_XTRA_Q = 'alternateName_xtra_q'
     BN_Q = 'bn_q'
     IDENTIFIER_Q = 'identifier_q'
     TAX_NUMBER_Q = 'taxNumber_q'
@@ -63,5 +64,6 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     LEGAL_NAME_AGRO_Q = 'legalName_stem_agro_q'
     LEGAL_NAME_SINGLE_Q = 'legalName_single_term_q'
     LEGAL_NAME_SYN_Q = 'legalName_synonym_q'
+    LEGAL_NAME_XTRA_Q = 'legalName_xtra_q'
     # common built in across docs
     SCORE = 'score'
