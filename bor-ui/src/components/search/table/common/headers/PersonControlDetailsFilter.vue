@@ -29,7 +29,6 @@
     <v-expansion-panels
       variant="accordion"
       multiple
-
     >
       <v-expansion-panel data-cy="details-filter-shares-votes" class="w-52 max-w-52">
         <v-expansion-panel-title class="font-bold">
