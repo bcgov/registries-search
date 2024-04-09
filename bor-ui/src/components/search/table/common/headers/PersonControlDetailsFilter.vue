@@ -32,17 +32,23 @@
             v-model="selectedDetailsFilters"
             label="Registered Owner"
             :value="PersonControlTypeE.SharesOrVotesRegisteredOwner"
+            density="compact"
+            class="uppercase pt-1"
             data-cy="details-filter-shares-votes-registered-owner"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
             label="Beneficial Owner"
             :value="PersonControlTypeE.SharesOrVotesBeneficialOwner"
+            density="compact"
+            class="uppercase pt-1"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
             label="Indirect Control"
             :value="PersonControlTypeE.SharesOrVotesIndirectControl"
+            density="compact"
+            class="uppercase pt-1"
           />
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -56,22 +62,30 @@
             v-model="selectedDetailsFilters"
             label="Indirect Control of directors"
             :value="PersonControlTypeE.DirectorsIndirectControl"
+            density="compact"
+            class="uppercase pt-1"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
             label="Direct Control"
             :value="PersonControlTypeE.DirectorsDirectControl"
+            density="compact"
+            class="uppercase pt-1"
             data-cy="details-filter-directors-direct-control"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
             label="Control Majority of Directors"
             :value="PersonControlTypeE.DirectorsInConcertControl"
+            density="compact"
+            class="uppercase pt-1"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
             label="Significant Influence Control"
             :value="PersonControlTypeE.DirectorsSignificantInfluence"
+            density="compact"
+            class="uppercase pt-1"
           />
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -84,6 +98,8 @@
             v-model="selectedDetailsFilters"
             label="Other"
             value="other"
+            density="compact"
+            class="uppercase"
             data-cy="details-filter-other-other"
           />
         </v-expansion-panel-text>
@@ -126,3 +142,10 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 })
 
 </script>
+
+<style scoped lang="scss">
+:deep .v-input__details {
+  display: none;
+}
+
+</style>
