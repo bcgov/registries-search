@@ -39,7 +39,7 @@ export interface SearchPayloadI {
     bn?: string
     entityAddresses?: string
     identifier?: string
-    legalName?: string
+    name?: string
     roles: {
       relatedBN?: string
       relatedEmail?: string

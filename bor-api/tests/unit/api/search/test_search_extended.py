@@ -31,7 +31,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
 @pytest.mark.parametrize('test_name,query,categories', [
     ('test_basic', {'value': '123'}, {}),
     ('test_filters',
-     {'value': 'test filters', EntityField.LEGAL_NAME.value: 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
+     {'value': 'test filters', 'name': 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
      {}
     ),
     ('test_categories',
@@ -69,7 +69,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
     ('test_all_combined',
      {
         'value': 'test all combined',
-        EntityField.LEGAL_NAME.value: 'name',
+        'name': 'name',
         EntityField.IDENTIFIER.value: 'BC23',
         EntityField.BN.value: '023',
         EntityField.ENTITY_ADDRESSES.value: 'vancouver bc',
@@ -137,7 +137,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         'bn': query.get(EntityField.BN.value, ''),
         'entityAddresses': query.get(EntityField.ENTITY_ADDRESSES.value, ''),
         'identifier': query.get(EntityField.IDENTIFIER.value, '').lower(),
-        'legalName': query.get(EntityField.LEGAL_NAME.value, ''),
+        'name': query.get('name', ''),
         'roles': {
             'relatedBN': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_BN.value, ''),
             'relatedEmail': query.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_EMAIL.value, ''),
@@ -387,6 +387,26 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ),
     ('test_filters_no_match',
      {'value': 'test filters', EntityField.LEGAL_NAME.value: 'name', EntityField.IDENTIFIER.value: 'BC23', EntityField.BN.value: '023'},
+     {},
+     []
+    ),
+    ('test_legal_name_filter',
+     {'value': 'person nine', 'name': 'nine'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_preferred_name_filter',
+     {'value': 'person nine', 'name': 'alt'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_name_filter_combined',
+     {'value': 'person nine', 'name': 'nine alt'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_preferred_name_filter_no_match',
+     {'value': 'person nine', 'name': 'alternate'},
      {},
      []
     ),

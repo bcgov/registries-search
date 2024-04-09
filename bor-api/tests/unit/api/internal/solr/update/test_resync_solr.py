@@ -39,10 +39,12 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
         # set one record to find and one record to miss (older / current version)
         entity = deepcopy(orig_entity)
         entity.legalName = f'{entity.id} test_update_business_in_solr'
+        entity.name_q = entity.legalName
         solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id).save()
         SolrDocEvent(solr_doc_id=solr_doc.id, event_status=SolrDocEventStatus.COMPLETE, event_type=SolrDocEventType.UPDATE).save()
         entity_old = deepcopy(entity)
         entity_old.legalName = f'{entity.id} test_should_not_have_updated'
+        entity_old.name_q = entity_old.legalName
         solr_doc_old = SolrDoc(doc=asdict(entity_old), entity_id=entity_old.id).save()
         solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
         solr_doc_old.save()

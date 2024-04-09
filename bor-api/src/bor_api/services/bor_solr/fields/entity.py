@@ -57,6 +57,7 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     ALT_NAME_SINGLE_Q = 'alternateName_single_term_q'
     ALT_NAME_SYN_Q = 'alternateName_synonym_q'
     ALT_NAME_XTRA_Q = 'alternateName_xtra_q'
+    NAME_Q = 'name_q'
     BN_Q = 'bn_q'
     IDENTIFIER_Q = 'identifier_q'
     TAX_NUMBER_Q = 'taxNumber_q'

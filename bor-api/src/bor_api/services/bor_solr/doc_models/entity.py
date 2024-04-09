@@ -42,3 +42,8 @@ class Entity:
     nationalities: list[str] = None
     taxNumber: str = None
     taxResidencies: list[str] = None
+    name_q: str = None
+
+    def __post_init__(self):
+        """Set extra field to support name filtering."""
+        self.name_q = f'{self.legalName} {self.alternateName}' if self.alternateName else self.legalName
