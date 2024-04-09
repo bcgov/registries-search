@@ -6,16 +6,24 @@
       <div class="pb-5 cursor-pointer" data-cy="details-filter">
         <v-text-field
           v-model="detailsFilterDisplay"
-          density="comfortable"
+          density="compact"
           hide-details
           v-bind="props"
-          clearable
-          clear-icon="mdi-close"
           :append-inner-icon="isActive ? 'mdi-menu-up' : 'mdi-menu-down' "
           placeholder="Details"
           data-cy="details-filter-textbox"
-          @click:clear="selectedDetailsFilters=[]"
+          :class="['filterClass', 'base-table__header__item__filter', detailsFilterDisplay!='' ? 'active' : '']"
         />
+        <v-btn
+          v-if="detailsFilterDisplay!=''"
+          class="base-table__header__item__clear-btn header-select"
+          icon
+          @click="selectedDetailsFilters=[]"
+        >
+          <v-icon color="primary" size="20">
+            mdi-close
+          </v-icon>
+        </v-btn>
       </div>
     </template>
     <v-expansion-panels
@@ -151,7 +159,188 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+td,
+th {
+  min-width: 40px;
+  text-align: inherit;
+  white-space: normal;
+}
+.table-title {
+  text-align: start;
+  position: sticky;
+  left: 0;
+}
+.base-table {
+  border-spacing: 0px;
+  table-layout: auto;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    &__item {
+      background-color: white;
+      border-bottom: 1px solid $gray4;
+      padding: 20px 0 0 12px;
+      position: relative;
+
+      &__clear-btn {
+        background-color: transparent;
+        bottom: 37%;
+        box-shadow: none;
+        height: 25px;
+        position: absolute;
+        width: 25px;
+      }
+      &__clear-btn.header-select {
+        right: 25px;
+      }
+      &__clear-btn.header-text-field {
+        right: 10px;
+      }
+
+      &__filter {
+        :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label) {
+          font-size: 14px;
+          margin: 3px 0 0 8px;
+          max-width: none;
+        }
+        :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label.v-field-label--floating) {
+          color: $gray7;
+          font-size: 14px;
+          margin: 11px 0 0 8px;
+          top: 0 !important;
+          --v-field-label-scale: 1;
+        }
+        :deep(.v-label.v-field-label) {
+          transform: none;
+          transform-origin: none;
+          transition: none;
+        }
+      }
+
+      &__filter.v-input--dirty {
+        :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
+          background-color: $blueSelected;
+          opacity: 1;
+        }
+        :deep(.v-input__control .v-field--active.v-field--dirty .v-field__input .v-select__selection) {
+          margin-bottom: 10px;
+        }
+      }
+
+      &__title,
+      &__title::after,
+      &__title::before,
+      &__title:hover {
+        background-color: transparent;
+        box-shadow: none;
+        color: $gray9;
+        font-size: 0.875rem !important;
+        font-weight: 700 !important;
+        justify-content: start;
+        padding: 0;
+        text-align: start;
+      }
+
+      &__title :deep(.v-btn__content) {
+        align-self: end;
+      }
+    }
+  }
+
+  &__body {
+
+    &__empty {
+
+      td {
+        color: $gray7;
+      }
+    }
+
+    &__row {
+      background-color: white;
+      transition: linear 0.5s;
+
+      &:focus-visible {
+        background-color: #EBEEF0;
+        outline: none;
+      }
+
+      &:hover {
+
+        .base-table__body__row__item {
+          background-color: $blueSelected !important;
+          transition: linear 0.5s;
+        }
+      }
+
+      &:not(:hover) {
+
+        .base-table__body__row__item {
+          background-color: white;
+          transition: linear 0.5s;
+        }
+      }
+
+      &__item {
+        border-bottom: 1px solid $gray3;
+        color: $gray7 !important;
+        font-size: 0.875rem !important;
+        height: 40px;
+        margin: 8px 0 0 0;
+        padding: 26px 0 16px 12px;
+        position: relative;
+        vertical-align: top;
+      }
+    }
+
+    &__row:focus-visible {
+      background-color: #EBEEF0;
+      outline: none;
+    }
+
+    &__row:hover {
+      background-color: $blueSelected !important;
+      transition: linear 0.5s;
+    }
+  }
+}
+// preset optional itemClasses
+.small-cell {
+  min-width: 115px !important;
+}
+.large-cell {
+  min-width: 156px !important;
+}
+:deep(.v-btn__content) {
+  display: block;
+  white-space: normal;
+}
+:deep(.v-btn__overlay),
+:deep(.v-btn__overlay::before),
+:deep(.v-btn__overlay::after) {
+  background-color: transparent !important;
+}
+:deep(.v-field__input) {
+  align-items: end;
+  flex-wrap: nowrap;
+  font-size: 0.875rem;
+}
+:deep(.v-text-field .v-field__input) {
+  padding: 0 0 0 8px;
+}
+:deep(.v-field__append-inner) {
+  margin: auto;
+  padding: 0;
+}
+:deep(.v-list-item-header) {
+  background-color: black !important;
+  padding: 20px;
+}
 :deep .v-expansion-panel-text__wrapper {
   padding: 0;
 }
