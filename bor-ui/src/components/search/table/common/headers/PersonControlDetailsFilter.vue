@@ -3,7 +3,7 @@
     :close-on-content-click="false"
   >
     <template #activator="{ isActive, props }">
-      <div class="pb-5 person-details-filter" data-cy="details-filter">
+      <div class="pb-5 cursor-pointer" data-cy="details-filter">
         <v-text-field
           v-model="detailsFilterDisplay"
           density="compact"
@@ -21,10 +21,10 @@
     <v-expansion-panels
       variant="accordion"
       multiple
-      class="accordion-filter"
+
     >
-      <v-expansion-panel class="expansion-panel" data-cy="details-filter-shares-votes">
-        <v-expansion-panel-title class="expansion-panel-title">
+      <v-expansion-panel data-cy="details-filter-shares-votes" class="w-52 max-w-52">
+        <v-expansion-panel-title class="font-bold">
           Control of Shares/Votes
         </v-expansion-panel-title>
         <v-expansion-panel-text>
@@ -47,8 +47,8 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
 
-      <v-expansion-panel class="expansion-panel" data-cy="details-filter-directors">
-        <v-expansion-panel-title class="expansion-panel-title">
+      <v-expansion-panel data-cy="details-filter-directors" class="w-52 max-w-52">
+        <v-expansion-panel-title class="font-bold">
           Control of Directors
         </v-expansion-panel-title>
         <v-expansion-panel-text>
@@ -75,8 +75,8 @@
           />
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <v-expansion-panel class="expansion-panel" data-cy="details-filter-other">
-        <v-expansion-panel-title class="expansion-panel-title">
+      <v-expansion-panel data-cy="details-filter-other" class="w-52 max-w-52">
+        <v-expansion-panel-title class="font-bold">
           Other
         </v-expansion-panel-title>
         <v-expansion-panel-text>
@@ -126,15 +126,3 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 })
 
 </script>
-
-<style>
-
-.expansion-panel-title {
-  font-weight: bold;
-  font-size: smaller
-}
-
-.person-details-filter {
-  cursor: pointer;
-}
-</style>
