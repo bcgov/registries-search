@@ -12,7 +12,7 @@
           :append-inner-icon="isActive ? 'mdi-menu-up' : 'mdi-menu-down' "
           placeholder="Details"
           data-cy="details-filter-textbox"
-          :class="['filterClass', 'base-table__header__item__filter', detailsFilterDisplay!='' ? 'active' : '']"
+          :class="['base-table__header__item__filter', detailsFilterDisplay!='' ? 'active' : '']"
         />
         <v-btn
           v-if="detailsFilterDisplay!=''"
@@ -41,7 +41,7 @@
             :value="PersonControlTypeE.SharesOrVotesRegisteredOwner"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-200 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-200 hover:text-blue-500"
             data-cy="details-filter-shares-votes-registered-owner"
           />
           <v-checkbox
@@ -50,7 +50,7 @@
             :value="PersonControlTypeE.SharesOrVotesBeneficialOwner"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
@@ -58,7 +58,7 @@
             :value="PersonControlTypeE.SharesOrVotesIndirectControl"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
           />
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -74,7 +74,7 @@
             :value="PersonControlTypeE.DirectorsIndirectControl"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
@@ -82,7 +82,7 @@
             :value="PersonControlTypeE.DirectorsDirectControl"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500 color:primary"
             data-cy="details-filter-directors-direct-control"
           />
           <v-checkbox
@@ -91,7 +91,7 @@
             :value="PersonControlTypeE.DirectorsInConcertControl"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
           />
           <v-checkbox
             v-model="selectedDetailsFilters"
@@ -99,7 +99,7 @@
             :value="PersonControlTypeE.DirectorsSignificantInfluence"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
           />
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -114,7 +114,7 @@
             value="other"
             density="comfortable"
             hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-700"
+            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
             data-cy="details-filter-other-other"
           />
         </v-expansion-panel-text>
@@ -160,17 +160,7 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-td,
-th {
-  min-width: 40px;
-  text-align: inherit;
-  white-space: normal;
-}
-.table-title {
-  text-align: start;
-  position: sticky;
-  left: 0;
-}
+
 .base-table {
   border-spacing: 0px;
   table-layout: auto;
@@ -194,9 +184,11 @@ th {
         position: absolute;
         width: 25px;
       }
+
       &__clear-btn.header-select {
         right: 25px;
       }
+
       &__clear-btn.header-text-field {
         right: 10px;
       }
@@ -207,6 +199,7 @@ th {
           margin: 3px 0 0 8px;
           max-width: none;
         }
+
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label.v-field-label--floating) {
           color: $gray7;
           font-size: 14px;
@@ -214,6 +207,7 @@ th {
           top: 0 !important;
           --v-field-label-scale: 1;
         }
+
         :deep(.v-label.v-field-label) {
           transform: none;
           transform-origin: none;
@@ -226,6 +220,7 @@ th {
           background-color: $blueSelected;
           opacity: 1;
         }
+
         :deep(.v-input__control .v-field--active.v-field--dirty .v-field__input .v-select__selection) {
           margin-bottom: 10px;
         }
@@ -250,97 +245,42 @@ th {
       }
     }
   }
-
-  &__body {
-
-    &__empty {
-
-      td {
-        color: $gray7;
-      }
-    }
-
-    &__row {
-      background-color: white;
-      transition: linear 0.5s;
-
-      &:focus-visible {
-        background-color: #EBEEF0;
-        outline: none;
-      }
-
-      &:hover {
-
-        .base-table__body__row__item {
-          background-color: $blueSelected !important;
-          transition: linear 0.5s;
-        }
-      }
-
-      &:not(:hover) {
-
-        .base-table__body__row__item {
-          background-color: white;
-          transition: linear 0.5s;
-        }
-      }
-
-      &__item {
-        border-bottom: 1px solid $gray3;
-        color: $gray7 !important;
-        font-size: 0.875rem !important;
-        height: 40px;
-        margin: 8px 0 0 0;
-        padding: 26px 0 16px 12px;
-        position: relative;
-        vertical-align: top;
-      }
-    }
-
-    &__row:focus-visible {
-      background-color: #EBEEF0;
-      outline: none;
-    }
-
-    &__row:hover {
-      background-color: $blueSelected !important;
-      transition: linear 0.5s;
-    }
-  }
 }
-// preset optional itemClasses
-.small-cell {
-  min-width: 115px !important;
-}
-.large-cell {
-  min-width: 156px !important;
-}
+
 :deep(.v-btn__content) {
   display: block;
   white-space: normal;
 }
+
 :deep(.v-btn__overlay),
 :deep(.v-btn__overlay::before),
+:deep(.v-checkbox__overlay)
 :deep(.v-btn__overlay::after) {
   background-color: transparent !important;
 }
+
 :deep(.v-field__input) {
   align-items: end;
   flex-wrap: nowrap;
   font-size: 0.875rem;
 }
+
 :deep(.v-text-field .v-field__input) {
   padding: 0 0 0 8px;
 }
+
 :deep(.v-field__append-inner) {
   margin: auto;
   padding: 0;
 }
+
 :deep(.v-list-item-header) {
   background-color: black !important;
   padding: 20px;
 }
+
 :deep .v-expansion-panel-text__wrapper {
   padding: 0;
+  background-color: transparent !important;
 }
 </style>
