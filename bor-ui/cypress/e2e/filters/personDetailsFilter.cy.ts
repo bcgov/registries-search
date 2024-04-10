@@ -22,8 +22,8 @@ context('Search extended', () => {
         .click()
 
       cy.wait('@getSearchResults').then((search) => {
-        expect(search?.request?.body?.query?.roles?.relatedInterests !== undefined)
-        const relatedInterests = search.request.body.query.roles.relatedInterests
+        expect(search?.request?.body?.categories?.roles?.relatedInterests !== undefined)
+        const relatedInterests = search.request.body.categories.roles.relatedInterests
         expect(relatedInterests.length === 1)
         expect(relatedInterests.length[0] === 'controlType.sharesOrVotes.registeredOwner')
       })

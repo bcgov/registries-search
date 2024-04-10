@@ -21,16 +21,11 @@
     @click="scrollToDatePicker()"
     @click:append-inner="scrollToDatePicker()"
   />
-  <v-btn
+  <BaseTableFilterClearButton
     v-if="dateFilterText"
-    class="search-table__clear-btn"
-    icon
+    right="40px"
     @click="dateRangeResetTrigger = !dateRangeResetTrigger"
-  >
-    <v-icon color="primary" size="20">
-      mdi-close
-    </v-icon>
-  </v-btn>
+  />
 </template>
 <script setup lang="ts">
 const search = useBcrosSearch()
@@ -78,3 +73,15 @@ watch(() => props.dateRangeReset, () => {
 // for teleport behaviour in tests
 const isVitestRunning = !!process.env.VITEST_WORKER_ID
 </script>
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+
+:deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {
+  cursor: pointer;
+}
+
+// NOTE: below should match base table styling
+:deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
+  background-color: $blueSelected !important;
+}
+</style>

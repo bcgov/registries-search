@@ -16,15 +16,16 @@ from dataclasses import asdict
 
 import pytest
 
+from bor_api.enums import InterestDetails
 from bor_api.services.bor_solr.fields import InterestField
 from bor_api.services.bor_solr.doc_models import Interest
 
 
 @pytest.mark.parametrize('test_name,interest_info', [
     ('test_1', {'details': 'bla'}),
-    ('test_2', {'details': 'bla', 'directOrIndirect': 'direct'}),
-    ('test_3', {'details': 'bla', 'directOrIndirect': 'direct', 'interestType': 'shareholding'}),
-    ('test_4', {'details': 'bla', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'sharesMax': 23.4}),
+    ('test_2', {'details': InterestDetails.DIR_DIRECT.value, 'directOrIndirect': 'direct'}),
+    ('test_3', {'details': InterestDetails.SV_BEN_OWNER.value, 'directOrIndirect': 'direct', 'interestType': 'shareholding'}),
+    ('test_4', {'details': InterestDetails.SV_REG_OWNER.value, 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'sharesMax': 23.4}),
 ])
 def test_interest_doc(test_name, interest_info):
     """Assert the Interest solr doc class works as expected."""
@@ -39,7 +40,12 @@ def test_interest_doc(test_name, interest_info):
 
     json = asdict(interest)
     assert json
-    assert json.get(InterestField.DETAILS.value) == interest_info.get('details')
+    if interest_info.get('details') == 'bla':
+        assert json.get(InterestField.DETAILS.value) == 'other'
+        assert json.get(InterestField.OTHER_REASON.value) == 'bla'
+    else:
+        assert json.get(InterestField.DETAILS.value) == interest_info.get('details')
+        assert json.get(InterestField.OTHER_REASON.value) == None
     assert json.get(InterestField.DIRECT_INDIRECT.value) == interest_info.get('directOrIndirect')
     assert json.get(InterestField.TYPE.value) == interest_info.get('interestType')
     assert json.get(InterestField.SHARE_EXACT.value) == interest_info.get('sharesExact')

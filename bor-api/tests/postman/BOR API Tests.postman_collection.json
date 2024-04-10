@@ -1739,13 +1739,13 @@
 											},
 											{
 												"key": "Account-ID",
-												"value": "1999",
+												"value": "3040",
 												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"query\": {\n        \"value\": \"tester\"\n    }\n}",
+											"raw": "{\n    \"query\": {\n        \"value\": \"wallaby\"\n    }\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1774,7 +1774,7 @@
 										},
 										{
 											"key": "Date",
-											"value": "Tue, 05 Mar 2024 18:47:36 GMT"
+											"value": "Tue, 09 Apr 2024 20:24:26 GMT"
 										},
 										{
 											"key": "Content-Type",
@@ -1782,7 +1782,7 @@
 										},
 										{
 											"key": "Content-Length",
-											"value": "1407"
+											"value": "2304"
 										},
 										{
 											"key": "Access-Control-Allow-Origin",
@@ -1798,7 +1798,255 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedEmail\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"tester\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"email\": \"email@test.com\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Calgary\",\n                        \"addressCountry\": \"\",\n                        \"addressRegion\": \"AB\",\n                        \"addressType\": \"RESIDENCE\",\n                        \"postalCode\": \"T3K 5N4\",\n                        \"score\": 0,\n                        \"streetAddress\": \"123-655 Kenderdine Rd\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"tester testing\",\n                \"roles\": [\n                    {\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC0871427\",\n                        \"relatedLegalType\": \"BEN\",\n                        \"relatedName\": \"0871427 B.C. LTD.\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-01\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 8.640431\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"roles\": {\n                    \"details\": null,\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedEmail\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"wallaby\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"alternateName\": \"wallaby willow\",\n                \"birthDate\": \"1997-02-05\",\n                \"email\": \"test@test.com\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Kelowna\",\n                        \"addressCountry\": \"\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"RESIDENCE\",\n                        \"postalCode\": \"V4V 1R8\",\n                        \"score\": 0,\n                        \"streetAddress\": \"123-720 Commonwealth Rd\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"externalInfluence\": \"CanBeInfluenced\",\n                \"isPermanentResident\": false,\n                \"legalName\": \"Kial Jinnah\",\n                \"nationalities\": [\n                    \"US\",\n                    \"FR\"\n                ],\n                \"roles\": [\n                    {\n                        \"relatedBN\": \"123456788BC001\",\n                        \"relatedEmail\": \"EFGH@email.com\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC9999991\",\n                        \"relatedInterests\": [\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"other\",\n                                \"interestType\": \"otherInfluenceOrControl\",\n                                \"score\": 0\n                            }\n                        ],\n                        \"relatedLegalType\": \"BC\",\n                        \"relatedName\": \"EFGH TEST BUSINESS\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-07\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 4.1190834\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parent categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Account-ID",
+										"value": "3040",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"nationalities\": [\"CA\", \"US\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/search/extended",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"extended"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "parent categories Copy",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Account-ID",
+												"value": "3040",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"b\"\n    },\n    \"categories\": {\n        \"nationalities\": [\"CA\", \"US\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/{{version}}/search/extended",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"extended"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 09 Apr 2024 20:38:32 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2326"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.1.0a3.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"nationalities\": [\n                    \"CA\",\n                    \"US\"\n                ],\n                \"roles\": {\n                    \"details\": null,\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedEmail\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"b\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"alternateName\": \"wallaby willow\",\n                \"birthDate\": \"1997-02-05\",\n                \"email\": \"test@test.com\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Kelowna\",\n                        \"addressCountry\": \"\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"RESIDENCE\",\n                        \"postalCode\": \"V4V 1R8\",\n                        \"score\": 0,\n                        \"streetAddress\": \"123-720 Commonwealth Rd\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"externalInfluence\": \"CanBeInfluenced\",\n                \"isPermanentResident\": false,\n                \"legalName\": \"Kial Jinnah\",\n                \"nationalities\": [\n                    \"US\",\n                    \"FR\"\n                ],\n                \"roles\": [\n                    {\n                        \"relatedBN\": \"123456788BC001\",\n                        \"relatedEmail\": \"EFGH@email.com\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC9999991\",\n                        \"relatedInterests\": [\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"other\",\n                                \"interestType\": \"otherInfluenceOrControl\",\n                                \"score\": 0\n                            }\n                        ],\n                        \"relatedLegalType\": \"BC\",\n                        \"relatedName\": \"EFGH TEST BUSINESS\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-07\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 0.4304251\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "child categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Account-ID",
+										"value": "3040",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"a\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedInterests\": [\"other\", \"controlType.sharesOrVotes.indirectControl\"]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/search/extended",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"extended"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "child categories",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Account-ID",
+												"value": "3040",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"a\"\n    },\n    \"categories\": {\n        \"roles\": {\n            \"relatedInterests\": [\"other\", \"controlType.sharesOrVotes.indirectControl\"]\n        }\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/{{version}}/search/extended",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"extended"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 09 Apr 2024 21:12:06 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2368"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.1.0a3.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"entityType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"PERSON\"\n                }\n            ],\n            \"legalType\": [],\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ],\n            \"state\": []\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"entityAddresses\": {\n                    \"addressCity\": null,\n                    \"addressCountry\": null,\n                    \"addressRegion\": null\n                },\n                \"entityType\": null,\n                \"legalType\": null,\n                \"nationalities\": null,\n                \"roles\": {\n                    \"details\": [\n                        \"other\",\n                        \"controlType.sharesOrVotes.indirectControl\"\n                    ],\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                },\n                \"state\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"entityAddresses\": \"\",\n                \"identifier\": \"\",\n                \"legalName\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedEmail\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"a\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"alternateName\": \"wallaby willow\",\n                \"birthDate\": \"1997-02-05\",\n                \"email\": \"test@test.com\",\n                \"entityAddresses\": [\n                    {\n                        \"addressCity\": \"Kelowna\",\n                        \"addressCountry\": \"\",\n                        \"addressRegion\": \"BC\",\n                        \"addressType\": \"RESIDENCE\",\n                        \"postalCode\": \"V4V 1R8\",\n                        \"score\": 0,\n                        \"streetAddress\": \"123-720 Commonwealth Rd\"\n                    }\n                ],\n                \"entityType\": \"PERSON\",\n                \"externalInfluence\": \"CanBeInfluenced\",\n                \"isPermanentResident\": false,\n                \"legalName\": \"Kial Jinnah\",\n                \"nationalities\": [\n                    \"US\",\n                    \"FR\"\n                ],\n                \"roles\": [\n                    {\n                        \"relatedBN\": \"123456788BC001\",\n                        \"relatedEmail\": \"EFGH@email.com\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC9999991\",\n                        \"relatedInterests\": [\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.registeredOwner\",\n                                \"directOrIndirect\": \"direct\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"votingRights\",\n                                \"score\": 0,\n                                \"sharesMax\": 45\n                            },\n                            {\n                                \"details\": \"controlType.sharesOrVotes.indirectControl\",\n                                \"directOrIndirect\": \"indirect\",\n                                \"interestType\": \"shareholding\",\n                                \"score\": 0,\n                                \"sharesMax\": 33\n                            },\n                            {\n                                \"details\": \"other\",\n                                \"interestType\": \"otherInfluenceOrControl\",\n                                \"score\": 0\n                            }\n                        ],\n                        \"relatedLegalType\": \"BC\",\n                        \"relatedName\": \"EFGH TEST BUSINESS\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-07\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 1.4136002\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
 								}
 							]
 						}

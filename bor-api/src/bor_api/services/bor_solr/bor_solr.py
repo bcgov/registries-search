@@ -47,7 +47,8 @@ class BorSolr(Solr):
     entity_role_extended_fields = [EntityRoleField.RELATED_INTERESTS.value]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
     interest_fields: list[str] = [
-        InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value, InterestField.SHARE_EXACT.value,
+        InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value,
+        InterestField.OTHER_REASON.value, InterestField.SHARE_EXACT.value,
         InterestField.SHARE_MAX.value, InterestField.SHARE_MIN.value, InterestField.TYPE.value
     ]
 

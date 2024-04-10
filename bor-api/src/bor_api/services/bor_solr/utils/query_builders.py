@@ -15,7 +15,7 @@
 import re
 
 from bor_api.enums import SolrSynonymType
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 from bor_api.services.base_solr.utils.formatting_helpers import prep_query_str
 
 
@@ -164,7 +164,7 @@ def build_facet(field: AddressField | EntityField | EntityRoleField, is_nested: 
     return facet
 
 
-def build_facet_query(field: AddressField | EntityField | EntityRoleField,
+def build_facet_query(field: AddressField | EntityField | EntityRoleField | InterestField,
                       values: list[str], is_nested: bool = False) -> str:
     """Return the facet filter clause for the given params."""
     filter_q = f'{field.value}:("{values[0]}"'

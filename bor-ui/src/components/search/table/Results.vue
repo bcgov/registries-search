@@ -76,18 +76,6 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
     text-decoration: underline;
   }
 
-  &__date-picker-filter {
-    :deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {
-      cursor: pointer;
-    }
-  }
-  &__date-picker-filter.v-input--dirty {
-    :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
-      background-color: $blueSelected;
-      opacity: 1;
-    }
-  }
-
   &__clear {
     font-size: 14px !important;
     height: 36px;
@@ -104,16 +92,6 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
     .v-btn__content {
       white-space: nowrap;
     }
-  }
-
-  &__clear-btn {
-    background-color: transparent;
-    bottom: 37%;
-    box-shadow: none;
-    height: 25px;
-    position: absolute;
-    right: 20%;
-    width: 25px;
   }
 
   &__export-select {

@@ -37,6 +37,7 @@ class InterestField(BaseEnum):  # pylint: disable=too-few-public-methods
     TYPE = 'interestType'
     DETAILS = 'details'
     DIRECT_INDIRECT = 'directOrIndirect'
+    OTHER_REASON = 'otherReason'
     SHARE_EXACT = 'sharesExact'
     SHARE_MAX = 'sharesMax'
     SHARE_MIN = 'sharesMin'

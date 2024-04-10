@@ -21,7 +21,7 @@ from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import User, SearchHistory
 from bor_api.services import jwt, solr_temp
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 from bor_api.services.base_solr.utils import parse_facets, prep_query_str, prep_query_str_adv
 from bor_api.utils.request_validators import validate_search_request
 
@@ -55,7 +55,8 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
         categories = {
             EntityField.ENTITY_TYPE: categories_json.get(EntityField.ENTITY_TYPE.value, None),
             EntityField.LEGAL_TYPE: categories_json.get(EntityField.LEGAL_TYPE.value, None),
-            EntityField.STATE: categories_json.get(EntityField.STATE.value, None)
+            EntityField.STATE: categories_json.get(EntityField.STATE.value, None),
+            EntityField.NATIONALITIES: categories_json.get(EntityField.NATIONALITIES.value, None)
         }
         # set nested child query params
         roles_json: dict = query_json.get(EntityField.ROLES.value, {})
@@ -84,7 +85,8 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
             EntityRoleField.RELATED_ENTITY_TYPE: role_categories_json.get(EntityRoleField.RELATED_ENTITY_TYPE.value,
                                                                           None),
             EntityRoleField.RELATED_STATE: role_categories_json.get(EntityRoleField.RELATED_STATE.value, None),
-            EntityRoleField.ROLE_TYPE: role_categories_json.get(EntityRoleField.ROLE_TYPE.value, None)
+            EntityRoleField.ROLE_TYPE: role_categories_json.get(EntityRoleField.ROLE_TYPE.value, None),
+            InterestField.DETAILS: role_categories_json.get(EntityRoleField.RELATED_INTERESTS.value, None)
         }
         child_categories = {**address_categories, **role_categories}
         # set nested date params

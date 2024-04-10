@@ -24,6 +24,7 @@ def create_entity(name: str,
                   entity_type: str = 'PERSON',
                   entity_id: str = 'LEAR1234567',
                   legal_type: str = None,
+                  nationalities: list[str] = None,
                   roles: list[EntityRole] = None,
                   state: str = None) -> Entity:
     """Create a base entity doc."""
@@ -38,6 +39,7 @@ def create_entity(name: str,
         identifier=None if entity_type == 'PERSON' else entity_id,
         legalName=name,
         legalType=legal_type,
+        nationalities=nationalities,
         roles=roles,
         state=state
     )

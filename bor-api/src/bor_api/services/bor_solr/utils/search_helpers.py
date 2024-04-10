@@ -13,7 +13,7 @@
 # limitations under the License.
 """BOR solr search functions."""
 from bor_api.services.bor_solr import BorSolr
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 from .query_builders import (PRE_CHILD_FILTER_CLAUSE, build_child_query,
                              build_facet, build_facet_query, build_base_query)
@@ -21,7 +21,7 @@ from .search_params import SearchParams
 
 
 def _add_category_filters(solr_payload: dict,
-                          categories: dict[AddressField | EntityField | EntityRoleField, list[str]],
+                          categories: dict[AddressField | EntityField | EntityRoleField | InterestField, list[str]],
                           is_nested: bool):
     """Attach filter queries for categories to the params."""
     for category in categories:

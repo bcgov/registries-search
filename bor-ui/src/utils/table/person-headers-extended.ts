@@ -33,7 +33,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasSort: false,
       value: 'Information',
       slotId: 'information',
-      width: '18%'
+      width: '17%'
     },
     {
       col: 'nationalities',
@@ -65,7 +65,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         return 'N/A'
       },
       value: 'Roles',
-      width: '11%'
+      width: '15%'
     },
     {
       col: 'roles',
@@ -80,7 +80,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasSort: false,
       slotId: 'details',
       value: 'Business Details',
-      width: '17%'
+      width: '15%'
     },
     {
       col: 'roles',
@@ -90,7 +90,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       itemFn: (val: SearchResultI) => 'TBD dd',
       slotId: 'personControl',
       value: 'Details',
-      width: '17%'
+      width: '16%'
     },
     {
       class: 'effective-date-header',

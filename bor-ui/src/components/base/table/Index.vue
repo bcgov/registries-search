@@ -104,17 +104,11 @@
                       :placeholder="!header.filter.value ? header.filter.label || '' : ''"
                       @update:model-value="filter(header)"
                     />
-                    <v-btn
+                    <BaseTableFilterClearButton
                       v-if="header.hasFilter && header.filter.value && header.filter.clearable"
-                      class="base-table__header__item__clear-btn"
-                      :class="header.filter.type === 'text' ? 'header-text-field' : 'header-select'"
-                      icon
+                      :right="header.filter.type === 'text' ? '10px' : '25px'"
                       @click="header.filter.value=header.filter.type === 'text' ? '' : null; filter(header)"
-                    >
-                      <v-icon color="primary" size="20">
-                        mdi-close
-                      </v-icon>
-                    </v-btn>
+                    />
                   </div>
                 </slot>
               </th>
@@ -323,21 +317,6 @@ th {
       padding: 20px 0 0 12px;
       position: relative;
 
-      &__clear-btn {
-        background-color: transparent;
-        bottom: 37%;
-        box-shadow: none;
-        height: 25px;
-        position: absolute;
-        width: 25px;
-      }
-      &__clear-btn.header-select {
-        right: 25px;
-      }
-      &__clear-btn.header-text-field {
-        right: 10px;
-      }
-
       &__filter {
         :deep(.v-input__control .v-field .v-field__field .v-label.v-field-label) {
           font-size: 14px;
@@ -360,8 +339,7 @@ th {
 
       &__filter.v-input--dirty {
         :deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
-          background-color: $blueSelected;
-          opacity: 1;
+          background-color: $blueSelected !important;
         }
         :deep(.v-input__control .v-field--active.v-field--dirty .v-field__input .v-select__selection) {
           margin-bottom: 10px;

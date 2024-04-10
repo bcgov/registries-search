@@ -14,7 +14,7 @@
 """Solr search params."""
 from dataclasses import dataclass
 
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
+from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 
 @dataclass
@@ -24,9 +24,9 @@ class SearchParams:  # pylint: disable=too-few-public-methods
     query: dict[str, str]
     rows: int
     start: int
-    categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
+    categories: dict[EntityField, list[str]]
     child_query: dict[str, str]
-    child_categories: dict[AddressField | EntityField | EntityRoleField, list[str]]
+    child_categories: dict[AddressField | EntityRoleField | InterestField, list[str]]
     child_date_ranges: dict[DateRangeField, str]
     fields: list[str]
     query_fields: list[EntityField]
