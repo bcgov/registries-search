@@ -145,7 +145,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     }
     assert resp_json['searchResults']['queryInfo']['query'] == {
         'bn': query.get(EntityField.BN.value, ''),
-        'entityAddresses': query.get(EntityField.ENTITY_ADDRESSES.value, ''),
+        'info': query.get(EntityField.INFO_Q.value, ''),
         'identifier': query.get(EntityField.IDENTIFIER.value, '').lower(),
         'name': query.get('name', ''),
         'roles': {
@@ -419,6 +419,31 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      {'value': 'person nine', 'name': 'alternate'},
      {},
      []
+    ),
+    ('test_info_filter_tax_number',
+     {'value': 'person nine', 'info': '705'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_info_filter_email',
+     {'value': 'person nine', 'info': 'nine@si.com'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_info_filter_email_no_match',
+     {'value': 'person nine', 'info': 'nine@com'},
+     {},
+     []
+    ),
+    ('test_info_filter_address',
+     {'value': 'person nine', 'info': 'V6V 1P2'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
+    ),
+    ('test_info_filter_combined',
+     {'value': 'person nine', 'info': '853 Vancouver si.com'},
+     {},
+     [{'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'}]
     ),
     ('test_categories_1',
      {'value': 'person'},

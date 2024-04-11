@@ -103,6 +103,7 @@
                 "entityAddresses": "",
                 "identifier": "",
                 "name": "",
+                "info": "",
                 "roles": {
                     "relatedBN": "",
                     "relatedEmail": "",

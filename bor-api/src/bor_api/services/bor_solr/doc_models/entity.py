@@ -43,7 +43,22 @@ class Entity:
     taxNumber: str = None
     taxResidencies: list[str] = None
     name_q: str = None
+    info_q: str = None
 
     def __post_init__(self):
-        """Set extra field to support name filtering."""
+        """Set extra field to support the information filter including tax number, email and address."""
         self.name_q = f'{self.legalName} {self.alternateName}' if self.alternateName else self.legalName
+
+        if not self.info_q:
+            if self.taxNumber:
+                self.info_q = f"{self.info_q or ''} {self.taxNumber}".strip()
+
+            if self.email:
+                self.info_q = f"{self.info_q or ''} {self.email}".strip()
+
+            if self.entityAddresses:
+                address = self.entityAddresses[0]
+                if isinstance(address, dict):
+                    self.info_q = f"{self.info_q or ''} {address['address_q']}".strip()
+                elif isinstance(address, Address):
+                    self.info_q = f"{self.info_q or ''} {address.address_q}".strip()

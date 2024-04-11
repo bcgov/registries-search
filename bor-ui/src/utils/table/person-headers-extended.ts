@@ -24,7 +24,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       col: 'entityAddresses',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['query', 'entityAddresses'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'info'], filterVal),
         label: 'Address',
         type: 'text',
         value: ''

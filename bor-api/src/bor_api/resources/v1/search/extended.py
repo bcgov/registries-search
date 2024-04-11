@@ -48,7 +48,8 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
             'email_value': prep_query_str_adv(value),
             EntityField.BN_Q.value: prep_query_str(query_json.get(EntityField.BN.value, '')),
             EntityField.IDENTIFIER_Q.value: prep_query_str(query_json.get(EntityField.IDENTIFIER.value, '')),
-            EntityField.NAME_Q.value: prep_query_str(query_json.get('name', ''))
+            EntityField.NAME_Q.value: prep_query_str(query_json.get('name', '')),
+            EntityField.INFO_Q.value: prep_query_str_adv(query_json.get('info', ''))
         }
         # set faceted category params
         categories_json: dict = request_json.get('categories', {})
@@ -177,7 +178,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                         EntityField.BN.value: query[EntityField.BN_Q.value],
                         EntityField.IDENTIFIER.value: query[EntityField.IDENTIFIER_Q.value],
                         'name': query[EntityField.NAME_Q.value],
-                        EntityField.ENTITY_ADDRESSES.value: child_query[AddressField.ADDRESS_Q.value],
+                        'info': query[EntityField.INFO_Q.value],
                         EntityField.ROLES.value: {
                             EntityRoleField.RELATED_BN.value: child_query[EntityRoleField.RELATED_BN_Q.value],
                             EntityRoleField.RELATED_EMAIL.value: child_query[EntityRoleField.RELATED_EMAIL_Q.value],
