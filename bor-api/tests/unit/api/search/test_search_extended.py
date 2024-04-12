@@ -20,7 +20,7 @@ import pytest
 
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
-from bor_api.services import solr_temp
+from bor_api.services import solr
 from bor_api.services.authz import BASIC_USER
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
@@ -112,7 +112,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     account_id = 1
     requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",
                       json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
-    requests_mock.post(f"{app.config.get('TEMP_SOLR_SVC_URL')}/bo/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
     # format payload
     payload = {'query': query}
     if categories:
@@ -252,22 +252,22 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic_name_match_._1',
      {'value': 'person ten y.z.'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_name_match_._2',
      {'value': 'person ten yz'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_name_match_._3',
      {'value': 'person ten x.k.'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_name_match_._4',
      {'value': 'person ten xk'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_alt_name_match_exact',
      {'value': 'significant individual alt'},
@@ -322,17 +322,17 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic_alt_name_match_._1',
      {'value': 'person ten si'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_alt_name_match_._2',
      {'value': 'person ten s.i.'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_alt_name_match_._3',
      {'value': 'person ten r.m.'},
      {},
-     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+     [{'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_basic_tax_number_match',
      {'value': '705 362 853'},
@@ -455,7 +455,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      {EntityField.NATIONALITIES.value: ['FR', 'CA']},
      [
         {'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'},
-        {'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+        {'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_categories_no_match',
      {'value': 'person'},
@@ -597,7 +597,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      },
      [
         {'alternateName': 'significant individual alt', 'email': 'nine@si.com', 'entityAddresses': [{'addressCity': 'Vancouver', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V6V 1P2', 'score': 0.0, 'streetAddress': 'hello world 500'}], 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['US', 'FR'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.registeredOwner', 'directOrIndirect': 'direct', 'interestType': 'shareholding', 'score': 0.0, 'sharesMax': 50.0, 'sharesMin': 25.0}], 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2019-03-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '705 362 853'},
-        {'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
+        {'alternateName': 's.i. rm', 'email': 'ten@si.com', 'entityAddresses': [{'addressCity': 'Victoria', 'addressCountry': 'Canada', 'addressRegion': 'BC', 'addressType': 'DELIVERY', 'locationDescription': 'location desc', 'postalCode': 'V3L 4R1', 'score': 0.0, 'streetAddress': 'hi universe 1000'}], 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedInterests': [{'details': 'controlType.sharesOrVotes.beneficialOwner', 'directOrIndirect': 'direct', 'interestType': 'voting', 'score': 0.0, 'sharesMax': 75.0, 'sharesMin': 50.0}], 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleDates': [{'active': True, 'score': 0.0, 'start': '2020-11-09T00:03:54Z'}], 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}], 'taxNumber': '104 342 350'}]
     ),
     ('test_child_categories_no_match',
      {'value': 'person'},
@@ -747,9 +747,9 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
     # test setup
     if test_name == 'test_basic':
         # setup solr data for test (only needed the first time)
-        solr_temp.delete_all_docs()
+        solr.delete_all_docs()
         time.sleep(1)
-        solr_temp.create_or_replace_docs(SOLR_TEST_DOCS)
+        solr.create_or_replace_docs(SOLR_TEST_DOCS)
         time.sleep(2)
     # add test dependent synonyms to db
     SolrSynonymList(synonym='bc', synonym_list=['british columbia', 'bc'], synonym_type=SolrSynonymType.ADDRESS).save()
@@ -808,7 +808,7 @@ def test_search_xlsx(app, session, client, jwt, requests_mock):
                       'roleType': 'DIRECTOR',
                       'score': 0.0}]}
 
-    requests_mock.post(f"{app.config.get('TEMP_SOLR_SVC_URL')}/bo/query",json={'response': {'docs': [doc], 'numFound': 1, 'start': 0}})
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query",json={'response': {'docs': [doc], 'numFound': 1, 'start': 0}})
     # format payload
     payload = {'query': {'value': 'persons two'}}
     # call search
@@ -830,7 +830,7 @@ def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
     # setup solr mock
     mocked_error_msg = 'mocked error'
     mocked_status_code = HTTPStatus.BAD_GATEWAY
-    requests_mock.post(f"{app.config.get('TEMP_SOLR_SVC_URL')}/bo/query", json={'error': {'msg': mocked_error_msg}}, status_code=mocked_status_code)
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'error': {'msg': mocked_error_msg}}, status_code=mocked_status_code)
     # create payload
     payload = {'query': {'value': '123'}}
     # call search

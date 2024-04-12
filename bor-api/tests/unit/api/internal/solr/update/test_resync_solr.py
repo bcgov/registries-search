@@ -108,7 +108,12 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
                 entity_in_payload = False
                 for payload_entity in m.request_history[0].json():
                     # this info was sent as a payload
-                    if payload_entity == asdict(entity):
+                    entity_after_set_conversion = asdict(entity)
+                    for key in ['entityAddresses', 'nationalities', 'roles', 'taxResidencies']:
+                        if key_value := entity_after_set_conversion.get(key):
+                            entity_after_set_conversion[key] = {'set': key_value}
+
+                    if payload_entity == entity_after_set_conversion:
                         entity_in_payload = True
                         break
                 assert entity_in_payload

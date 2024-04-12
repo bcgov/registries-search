@@ -36,7 +36,8 @@ class BorSolr(Solr):
     address_fields: list[str] = [
         AddressField.ADDRESS_CITY.value, AddressField.ADDRESS_COUNTRY.value,
         AddressField.ADDRESS_REGION.value, AddressField.ADDRESS_TYPE.value,
-        AddressField.POSTAL_CODE.value, AddressField.STREET_ADDRESS.value
+        AddressField.POSTAL_CODE.value, AddressField.STREET_ADDRESS.value,
+        AddressField.LOCATION_DESC.value
     ]
     entity_role_fields: list[str] = [
         EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_EMAIL.value,

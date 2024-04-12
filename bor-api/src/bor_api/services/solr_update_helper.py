@@ -17,22 +17,18 @@ from flask import current_app
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc, SolrDocEvent, db
-from bor_api.services import solr, solr_temp
+from bor_api.services import solr
 from bor_api.services.bor_solr.doc_models import Entity
 
 
-def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent], temp: bool = False):
+def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
     """Update the docs for the entity_ids in the solr instance."""
     entities: list[Entity] = []
     for entity_id in entity_ids:
         doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
         entities.append(Entity(**doc_update.doc))
     try:
-        if temp:
-            # TODO: remove this once solr_temp is merged into solr
-            solr_temp.create_or_replace_docs(docs=entities, additive=False)
-        else:
-            solr.create_or_replace_docs(entities)
+        solr.create_or_replace_docs(entities, additive=False)
         SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
     except Exception as err:  # noqa: B902
@@ -58,7 +54,7 @@ def resync_bor_solr(entity_ids: list[str]):
         doc_events.append(doc_event)
     try:
         if len(entities) > 0:
-            solr.create_or_replace_docs(entities)
+            solr.create_or_replace_docs(entities, additive=False)
             SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
     except Exception as err:  # noqa: B902

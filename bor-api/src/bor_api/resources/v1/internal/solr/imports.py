@@ -18,7 +18,7 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
-from bor_api.services import SYSTEM_ROLE, jwt, solr, solr_temp
+from bor_api.services import SYSTEM_ROLE, jwt, solr
 from bor_api.services.bor_solr.doc_models import Entity
 
 
@@ -32,31 +32,6 @@ def import_entities():
     """Import entities into BOR SOLR."""
     try:
         request_json: dict = request.json
-        if not (entities_list := request_json.get('entities', [])):
-            return bad_request_response('Invalid payload.', ['Expecting required field: "entities"'])
-
-        if (timeout := int(request_json.get('timeout', '25'))) > 200:
-            return bad_request_response('Invalid payload.', ['Expecting desired "timeout" to be under 200.'])
-
-        current_app.logger.debug('Translating import payload to entity docs...')
-        entities = [Entity(**e) for e in entities_list]
-        current_app.logger.debug('Sending entity docs to SOLR...')
-        solr.create_or_replace_docs(docs=entities, timeout=timeout)
-        current_app.logger.debug('Import completed.')
-
-        return jsonify({'message': 'Import finished.'}), HTTPStatus.CREATED
-
-    except Exception as exception:  # noqa: B902
-        return exception_response(exception)
-
-
-@bp.put('/extended')
-@cross_origin(origin='*')
-@jwt.requires_roles([SYSTEM_ROLE])
-def import_extended():
-    """Import docs into BOR TEMP-SOLR."""
-    try:
-        request_json: dict = request.json
         if not (doc_list := request_json.get('entities', [])):
             return bad_request_response('Invalid payload.', ['Expecting required field: "entities"'])
 
@@ -65,14 +40,13 @@ def import_extended():
 
         if request_json.get('type') == 'partial':
             # NOTE: raw_docs may be partial data and/or child documents
-            current_app.logger.debug('Sending partials list to TEMP SOLR...')
-            solr_temp.create_or_replace_docs(raw_docs=doc_list, timeout=timeout)
+            current_app.logger.debug('Sending partials list to SOLR...')
+            solr.create_or_replace_docs(raw_docs=doc_list, timeout=timeout)
         else:
             current_app.logger.debug('Translating import payload to entity docs...')
             entities = [Entity(**e) for e in doc_list]
-            current_app.logger.debug('Sending entity docs to TEMP SOLR...')
-            solr_temp.create_or_replace_docs(docs=entities, timeout=timeout, additive=False)
-
+            current_app.logger.debug('Sending entity docs to SOLR...')
+            solr.create_or_replace_docs(docs=entities, timeout=timeout, additive=False)
         current_app.logger.debug('Import completed.')
 
         return jsonify({'message': 'Import finished.'}), HTTPStatus.CREATED

@@ -22,5 +22,4 @@ class SolrDocEventType(BaseEnum):
 
     RESYNC = auto()
     UPDATE = auto()
-    UPDATE_EXT = auto()
     UPDATE_CEASE = auto()

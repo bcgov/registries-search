@@ -51,8 +51,7 @@ def update_entity():
 
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
 
-        # for director search - TODO: these two flows will be merged
-        entities = _parse_entities(request_json, False)
+        entities = _parse_entities(request_json)
         for entity in entities:
             if entity.entityType != 'PERSON':
                 # skip business entities for now
@@ -60,22 +59,9 @@ def update_entity():
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
             solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             SolrDocEvent(event_type=SolrDocEventType.UPDATE, solr_doc_id=solr_doc.id).save()
-            # TODO: remove this once temp solr is merged into solr
-            SolrDocEvent(event_type=SolrDocEventType.UPDATE_EXT, solr_doc_id=solr_doc.id).save()
             # SOLR update will be triggered by job (does a frequent bulk update to solr)
 
-        # for new search (temporary - this will be collapsed into above)
-        entities_extended = _parse_entities(request_json, True)
-        for entity in entities_extended:
-            if entity.entityType != 'PERSON':
-                # skip business entities for now
-                continue
-            # commit each entity. Ensures other flows (i.e. resync) will use the current data
-            solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
-            SolrDocEvent(event_type=SolrDocEventType.UPDATE_EXT, solr_doc_id=solr_doc.id).save()
-            # SOLR update will be triggered by job (does a frequent bulk update to solr)
-
-        # create cease update record
+        # create cease update record - TODO: relook at this once BTR filing is flushed out
         for party in request_json.get('ceasedOwners', []):
             solr_doc = SolrDoc(doc={**party, 'relatedIdentifier': request_json['business']['identifier']},
                                entity_id=party['id'],
@@ -88,23 +74,22 @@ def update_entity():
         return exception_response(exception)
 
 
-def _parse_entities(request_json: dict, extended: bool) -> list[Entity]:
+def _parse_entities(request_json: dict) -> list[Entity]:
     """Return the entity docs for the given data."""
     entities = []
 
     business = get_lear_business(request_json['business'])
 
-    if not extended:
-        # entities.append(business)  TODO: uncomment this when implementing search business with owners
-        for party_info in request_json.get('parties', []):
-            entities += get_lear_party(party_info, business)
+    # entities.append(business) TODO: uncomment this when implementing search business with owners
 
-    else:
-        owners = request_json.get('owners', [])
-        if len(owners) == 0:
-            # TODO: get existing owners from BTR for the business
-            pass
-        for party_info in owners:
-            entities.append(get_btr_owner(party_info, business))
+    for party_info in request_json.get('parties', []):
+        entities += get_lear_party(party_info, business)
+
+    owners = request_json.get('owners', [])
+    if len(owners) == 0:
+        # TODO: get existing owners from BTR for the business
+        pass
+    for party_info in owners:
+        entities.append(get_btr_owner(party_info, business))
 
     return entities

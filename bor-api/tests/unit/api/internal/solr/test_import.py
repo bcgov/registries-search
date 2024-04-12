@@ -48,7 +48,16 @@ def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
         assert m.called == True
         assert m.call_count == 1  # batch updated all docs
         assert solr_url in m.request_history[0].url
-        assert m.request_history[0].json() == docs_json
+        
+        expected = []
+        for doc in docs_json:
+            update_doc = {**doc}
+            for key in ['entityAddresses', 'nationalities', 'roles', 'taxResidencies']:
+                if key_value := update_doc.get(key):
+                    update_doc[key] = {'set': key_value}
+            expected.append(update_doc)
+
+        assert m.request_history[0].json() == expected
 
 
 @integration_solr

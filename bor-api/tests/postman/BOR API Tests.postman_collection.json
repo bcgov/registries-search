@@ -3001,7 +3001,8 @@
 											"});\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -3031,7 +3032,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"1\",\r\n            \"entityAddresses\": [\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"MAILING\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                },\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"DELIVERY\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                }\r\n            ],\r\n            \"entityType\": \"PERSON\",\r\n            \"legalName\": \"BCREG2 LIANG FORTY\",\r\n            \"roles\": [\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"end\": \"2023-02-13\",\r\n                            \"start\": \"2023-01-01\"\r\n                        },\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2022-05-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"INCORPORATOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456788BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"CP1234567\",\r\n                    \"relatedName\": \"KIALS COOP\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"1\",\r\n            \"entityAddresses\": [\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"MAILING\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                },\r\n                {\r\n                    \"addressCity\": \"Calgary\",\r\n                    \"addressCountry\": \"CA\",\r\n                    \"addressRegion\": \"AB\",\r\n                    \"addressType\": \"DELIVERY\",\r\n                    \"postalCode\": \"T3J 3Z5\",\r\n                    \"streetAddress\": \"1234-4818 Westwinds Dr NE\"\r\n                }\r\n            ],\r\n            \"entityType\": \"PERSON\",\r\n            \"legalName\": \"BCREG2 LIANG FORTY\",\r\n            \"roles\": [\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"end\": \"2023-02-13\",\r\n                            \"start\": \"2023-01-01\"\r\n                        },\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456789BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"BC0871330\",\r\n                    \"relatedName\": \"KIALS BUSINESS NAME CORP.\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2022-05-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"INCORPORATOR\"\r\n                },\r\n                {\r\n                    \"active\": true,\r\n                    \"relatedBN\": \"123456788BC0001\",\r\n                    \"relatedEntityType\": \"BUSINESS\",\r\n                    \"relatedIdentifier\": \"CP1234567\",\r\n                    \"relatedName\": \"KIALS COOP\",\r\n                    \"relatedState\": \"ACTIVE\",\r\n                    \"roleDates\": [\r\n                        {\r\n                            \"start\": \"2023-03-01\"\r\n                        }\r\n                    ],\r\n                    \"roleType\": \"DIRECTOR\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3039,7 +3040,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{internal_url}}/{{version}}/internal/solr/import/extended",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import",
 									"host": [
 										"{{internal_url}}"
 									],
@@ -3047,8 +3048,7 @@
 										"{{version}}",
 										"internal",
 										"solr",
-										"import",
-										"extended"
+										"import"
 									]
 								}
 							},
@@ -3072,7 +3072,8 @@
 											"});\r",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -3110,7 +3111,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{internal_url}}/{{version}}/internal/solr/import/extended",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import",
 									"host": [
 										"{{internal_url}}"
 									],
@@ -3118,8 +3119,7 @@
 										"{{version}}",
 										"internal",
 										"solr",
-										"import",
-										"extended"
+										"import"
 									]
 								}
 							},

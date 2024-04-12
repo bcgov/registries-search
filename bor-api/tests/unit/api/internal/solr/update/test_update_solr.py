@@ -21,7 +21,7 @@ import pytest
 import requests_mock
 
 from bor_api.enums import SolrDocEventStatus
-from bor_api.services import solr, solr_temp
+from bor_api.services import solr
 from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import (SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE,
@@ -53,11 +53,9 @@ del REQUEST_TEMPLATE_PARTY_NO_DELIVERY['parties'][0]['deliveryAddress']
 def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     """Assert that update operation sends correct payload to solr."""
     solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
-    temp_solr_url = app.config.get('TEMP_SOLR_SVC_URL') + '/bo/update?commitWithin=1000&overwrite=true&wt=json'
 
     with requests_mock.mock() as m:
         m.post(solr_url)
-        m.post(temp_solr_url)
         
         api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
@@ -77,7 +75,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         # check SI update
         for owner in request_json.get('owners', []):
             identifier = owner['interestedParty']['describedByPersonStatement']
-            check_update_recorded(identifier, True, is_owner=True)
+            check_update_recorded(identifier, True)
             
         # check did not call to solr mock (only updates the DB)
         assert m.called == False
@@ -96,16 +94,11 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         for owner in request_json.get('owners', []):
             identifier = owner['interestedParty']['describedByPersonStatement']
-            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE, is_owner=True)
+            check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
-        if request_json.get('parties'):
-            assert m.call_count == 2
-            assert solr_url in m.request_history[0].url
-            assert temp_solr_url in m.request_history[1].url
-        else:
-            assert m.call_count == 1
-            assert temp_solr_url in m.request_history[0].url
+        assert m.call_count == 1
+        assert solr_url in m.request_history[0].url
 
         entity_addresses = None
         if request_json.get('parties', [{}])[0].get('deliveryAddress'):
@@ -121,7 +114,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'addressCountry': 'Canada'}]
         elif request_json.get('owners'):
             entity_addresses = [{
-                'address_q': '123-720 Commonwealth Rd test street additional Kelowna BC V4V 1R8 test description',
+                'address_q': '123-720 Commonwealth Rd test street additional Kelowna British Columbia Canada V4V 1R8 test description',
                 'locationDescription': 'test description',
                 'postalCode': 'V4V 1R8',
                 'addressCity': 'Kelowna',
@@ -129,7 +122,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'addressRegion': 'BC',
                 'streetAddress': '123-720 Commonwealth Rd',
                 'streetAdditional': 'test street additional',
-                'addressCountry': ''}]
+                'addressCountry': 'Canada'}]
 
         if request_json.get('parties'):
             assert m.request_history[0].json() == [
@@ -154,7 +147,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 #     'state': 'ACTIVE'
                 # },
                 {
-                    'entityAddresses': entity_addresses,
+                    'entityAddresses': {'set': entity_addresses} if entity_addresses else None,
                     'entityType': 'PERSON',
                     'externalInfluence': None,
                     'id': f'LEAR570343{business_identifier}DIRECTOR0',
@@ -170,7 +163,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'isPermanentResident': None,
                     'legalType': None,
                     'nationalities': None,
-                    'roles': [{
+                    'roles': {'set': [{
                         'id': f'LEAR570343{business_identifier}DIRECTOR0/roles0',
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
@@ -182,13 +175,13 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                         'relatedLegalType': request_json['business']['legalType'],
                         'relatedEntityType': 'BUSINESS',
                         'relatedInterests': None,
-                        'relatedIdentifier': request_json['business']['identifier'],}],
+                        'relatedIdentifier': request_json['business']['identifier'],}]},
                     'state': None,
                     'taxNumber': None,
                     'taxResidencies': None
                 },
                 {
-                    'entityAddresses': [{
+                    'entityAddresses': {'set': [{
                         'address_q': 'W-558 Rue Saint-Vallier O Québec Quebec Canada G1N 1C1',
                         'locationDescription': None,
                         'postalCode': 'G1N 1C1',
@@ -197,7 +190,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                         'addressRegion': 'QC',
                         'streetAddress': 'W-558 Rue Saint-Vallier O',
                         'streetAdditional': None,
-                        'addressCountry': 'Canada'}],
+                        'addressCountry': 'Canada'}]},
                     'entityType': 'PERSON',
                     'externalInfluence': None,
                     'id': f'LEAR570721{business_identifier}DIRECTOR0',
@@ -213,7 +206,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'email': None,
                     'identifier': None,
                     'legalType': None,
-                    'roles': [{
+                    'roles': {'set': [{
                         'id': f'LEAR570721{business_identifier}DIRECTOR0/roles0',
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
@@ -225,7 +218,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                         'relatedLegalType': request_json['business']['legalType'],
                         'relatedEntityType': 'BUSINESS',
                         'relatedInterests': None,
-                        'relatedIdentifier': request_json['business']['identifier'],}],
+                        'relatedIdentifier': request_json['business']['identifier'],}]},
                     'state': None,
                     'taxNumber': None,
                     'taxResidencies': None
@@ -337,7 +330,7 @@ def test_update_solr(session, client, jwt, test_name, request_json):
     for owner in request_json.get('owners', []):
         si_id = owner['interestedParty']['describedByPersonStatement']
         si_ids.append(si_id)
-        check_update_recorded(si_id, True, is_owner=True)
+        check_update_recorded(si_id, True)
     # verify update has NOT synced to solr yet
     for entity_id in [business_identifier] + party_ids:
         search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
@@ -357,16 +350,12 @@ def test_update_solr(session, client, jwt, test_name, request_json):
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     for owner in request_json.get('owners', []):
         si_id = owner['interestedParty']['describedByPersonStatement']
-        check_update_recorded(si_id, True, status=SolrDocEventStatus.COMPLETE, is_owner=True)
+        check_update_recorded(si_id, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
-    for entity_id in party_ids:
-        search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
-        assert search_response['response']
-        assert search_response['response']['docs']
-        assert len(search_response['response']['docs']) == 1
+    # verify search returns updated records
     for entity_id in party_ids + si_ids:
-        search_response = solr_temp.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
+        search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1

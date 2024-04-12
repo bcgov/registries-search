@@ -21,6 +21,5 @@ from .flags import Flags
 
 # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 solr = BorSolr()
-solr_temp = BorSolr()
 flags = Flags()
 jwt = JwtManager()

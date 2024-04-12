@@ -42,17 +42,6 @@ def sync_solr():
         current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
         if identifiers_to_sync:
             update_bor_solr(identifiers_to_sync, pending_update_events)
-        # TODO: merge this with above once solr_temp is merged into bor solr
-        pending_update_events_ext = SolrDocEvent.get_events_by_status(
-            statuses=[SolrDocEventStatus.PENDING, SolrDocEventStatus.ERROR],
-            event_type=SolrDocEventType.UPDATE_EXT,
-            limit=current_app.config.get('MAX_BATCH_UPDATE_NUM')
-        )
-        identifiers_to_sync_ext = \
-            [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events_ext]
-        current_app.logger.debug(f'Extended syncing: {identifiers_to_sync_ext}')
-        if identifiers_to_sync_ext:
-            update_bor_solr(identifiers_to_sync_ext, pending_update_events_ext, True)
 
         return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
 

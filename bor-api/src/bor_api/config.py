@@ -39,9 +39,6 @@ class Config():  # pylint: disable=too-few-public-methods
     SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_URL', 'http://localhost:8883/solr')
     SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_URL', 'http://localhost:8884/solr')
 
-    TEMP_SOLR_SVC_CORE = os.getenv('TEMP_SOLR_SVC_CORE', 'bo')
-    TEMP_SOLR_SVC_URL = os.getenv('TEMP_SOLR_SVC_URL', 'http://localhost:8885/solr')
-
     AUTH_SVC_URL = os.getenv('AUTH_API_URL', '') + os.getenv('AUTH_API_VERSION', '')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')

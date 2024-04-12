@@ -27,7 +27,7 @@ from bor_api import errorhandlers, models
 from bor_api.config import config
 from bor_api.models import db
 from bor_api.resources import v1_endpoint
-from bor_api.services import Flags, jwt, solr, solr_temp
+from bor_api.services import Flags, jwt, solr
 from bor_api.utils.logging import set_log_level_by_flag, setup_logging
 from bor_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort
@@ -57,11 +57,6 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs
     errorhandlers.init_app(app)
     db.init_app(app)
     solr.init_app(app)
-    # TODO: remove after merging this instance into the regular instance
-    solr_temp.leader_core = app.config.get('TEMP_SOLR_SVC_CORE')
-    solr_temp.follower_core = app.config.get('TEMP_SOLR_SVC_CORE')
-    solr_temp.leader_url = app.config.get('TEMP_SOLR_SVC_URL')
-    solr_temp.follower_url = app.config.get('TEMP_SOLR_SVC_URL')
 
     migrate.init_app(app, db)
     v1_endpoint.init_app(app)

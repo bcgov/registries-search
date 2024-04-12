@@ -19,7 +19,7 @@ from flask_cors import cross_origin
 
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import User, SearchHistory
-from bor_api.services import jwt, solr_temp
+from bor_api.services import jwt, solr
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 from bor_api.services.base_solr.utils import parse_facets, prep_query_str, prep_query_str_adv
@@ -99,8 +99,8 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                 DateRangeField.END: role_date_range.get(DateRangeField.END.value, '*')
             }
 
-        start = request_json.get('start', solr_temp.default_start)
-        rows = request_json.get('rows', solr_temp.default_rows)
+        start = request_json.get('start', solr.default_start)
+        rows = request_json.get('rows', solr.default_rows)
         try:
             start = int(start)
             rows = int(rows)
@@ -109,9 +109,9 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
 
         # NOTE: this is where we decide what data on each record to return to the user
         base_access_fields = \
-            solr_temp.entity_fields + solr_temp.address_fields + solr_temp.entity_role_fields + solr_temp.date_fields
+            solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields
         extended_access_fields = \
-            solr_temp.entity_extended_fields + solr_temp.entity_role_extended_fields + solr_temp.interest_fields
+            solr.entity_extended_fields + solr.entity_role_extended_fields + solr.interest_fields
 
         params = SearchParams(query=query,
                               rows=rows,
@@ -153,7 +153,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                                                     EntityField.ALT_NAME_SYN_Q: 'parent',
                                                     AddressField.ADDRESS_SYN_Q: 'child'})
 
-        results = entities_search(params, solr_temp)
+        results = entities_search(params, solr)
         docs = results.get('response', {}).get('docs')
 
         # save search in the db
@@ -190,8 +190,8 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                             'value': child_query[EntityRoleField.RELATED_Q.value]
                         }
                     },
-                    'rows': rows or solr_temp.default_rows,
-                    'start': start or solr_temp.default_start
+                    'rows': rows or solr.default_rows,
+                    'start': start or solr.default_start
                 },
                 'totalResults': results.get('response', {}).get('numFound'),
                 'results': docs}}

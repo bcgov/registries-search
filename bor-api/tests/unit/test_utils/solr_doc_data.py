@@ -218,7 +218,8 @@ TEST_PERSONS = [
                                      addressRegion='BC',
                                      addressType='DELIVERY',
                                      streetAddress='hi universe 1000',
-                                     postalCode='V3L 4R1')]),
+                                     postalCode='V3L 4R1',
+                                     locationDescription='location desc')]),
 ]
     
 SOLR_TEST_DOCS = TEST_BUSINESSES + TEST_PERSONS
