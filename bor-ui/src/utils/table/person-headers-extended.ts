@@ -1,3 +1,5 @@
+import { getCode, getNames } from 'country-list'
+
 /** Return the table headers for the entity table. */
 export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
   const { facetItems, filterSearch, highlightMatch } = useBcrosSearch()
@@ -18,7 +20,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
       slotId: 'name',
       value: 'Name',
-      width: '17%'
+      width: '16%'
     },
     {
       col: 'entityAddresses',
@@ -33,15 +35,27 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasSort: false,
       value: 'Information',
       slotId: 'information',
-      width: '17%'
+      width: '16%'
     },
     {
       col: 'nationalities',
-      hasFilter: false,
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(
+          ['categories', 'nationalities'], filterVal ? [getCode(filterVal)] : null),
+        hasSelectedSlot: true,
+        itemValue: 'value',
+        items: ['Canada', 'United States of America'].concat(
+          (getNames()).filter(country => !['Canada', 'United States of America'].includes(country))),
+        label: 'Citizenship',
+        type: 'select',
+        value: null
+      },
+      hasFilter: true,
       hasSort: false,
       value: 'Citizenship',
       slotId: 'citizenship',
-      width: '7%'
+      width: '9%'
     },
     {
       col: 'roles',

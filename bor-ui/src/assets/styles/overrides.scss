@@ -144,6 +144,12 @@ td {
   opacity: 1;
 }
 
+.v-input.v-select .v-input__control .v-field--active:not(.v-field--error) .v-field__outline::after,
+.v-input.v-select .v-input__control .v-field--active:not(.v-field--error) .v-field__outline::before {
+  border-color: $app-blue;
+  opacity: 1;
+}
+
 // Dialogs
 .v-dialog {
   margin: 2rem;

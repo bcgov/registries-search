@@ -22,6 +22,9 @@
         <b>Actions</b>
       </div>
     </template>
+    <template #header-filter-selected-slot-citizenship="{ item }">
+      <CountryFlag :country="getCode(item.value)" size="normal" />
+    </template>
     <template #header-filter-slot-personControl>
       <CommonHeadersPersonControlDetailsFilter :clear-filter="clearPersonDetailsFilter" />
     </template>
@@ -73,10 +76,12 @@
 </template>
 
 <script setup lang="ts">
+import { getCode } from 'country-list'
 import {
-  CommonHeadersActionFilter, CommonItemsAction, CommonItemsBusinessDetails, CommonItemsPersonControl,
-  CommonHeadersDateRangeFilter, CommonItemsName, CommonTitleExport, CommonItemsInformation, CommonItemsEffectiveDates,
-  CommonItemsCitizenship, CommonHeadersPersonControlDetailsFilter
+  CommonHeadersActionFilter, CommonHeadersDateRangeFilter,
+  CommonHeadersPersonControlDetailsFilter, CommonItemsAction, CommonItemsBusinessDetails,
+  CommonItemsPersonControl, CommonItemsName, CommonTitleExport, CommonItemsInformation,
+  CommonItemsEffectiveDates, CommonItemsCitizenship
 } from './common'
 import { getPersonHeadersExtended } from '@/utils'
 

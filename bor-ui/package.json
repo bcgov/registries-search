@@ -1,6 +1,6 @@
 {
   "name": "bor-ui",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +21,9 @@
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "@vuepic/vue-datepicker": "^8.2.0",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.7",
+    "country-list": "^2.3.0",
     "http-status-codes": "^2.3.0",
     "keycloak-js": "22.0.5",
     "launchdarkly-vue-client-sdk": "2.0.4",

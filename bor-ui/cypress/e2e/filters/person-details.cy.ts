@@ -1,8 +1,8 @@
-context('Search extended', () => {
+context('filters extended - person details', () => {
   beforeEach(() => {
     cy.visitSearchExtended()
   })
-  it('should display expected results after a search is triggered', () => {
+  it('should trigger a search with the expected payload when updating the filter', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')
     cy.get('[data-cy="search-input"]')
       .find('#search-bar-field')

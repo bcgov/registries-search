@@ -84,7 +84,10 @@
                       :open-on-clear="true"
                       @update:model-value="filter(header)"
                     >
-                      <template #selection="{ item, index }">
+                      <template v-if="header.filter.hasSelectedSlot" #selection="{ item }">
+                        <slot :name="'header-filter-selected-slot-' + header.slotId" :item="item" />
+                      </template>
+                      <template v-else #selection="{ item, index }">
                         <span v-if="index == 0" style="font-size: 0.825rem;">
                           <span v-if="header.filter.value.length == 1">
                             {{ capFirstLetter(item.title) }}
@@ -93,6 +96,9 @@
                             Multiple
                           </span>
                         </span>
+                      </template>
+                      <template v-if="header.filter.hasItemSlot" #item="{ props, item }">
+                        <slot :name="'header-filter-item-slot-' + header.slotId" :item="item" :props="props" />
                       </template>
                     </v-select>
                     <v-text-field
@@ -170,7 +176,7 @@ import _ from 'lodash'
 // local
 import { BaseSelectFilter, BaseTextFilter } from './resources'
 
-const props = defineProps<{
+const localProps = defineProps<{
   colors?: BaseTableColorsI,
   filterClass?: string,
   height?: string,
@@ -193,15 +199,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{(e: 'filterActive', value: boolean): void }>()
 
-const headers = reactive(_.cloneDeep(props.setHeaders) as BaseTableHeaderI[])
+const headers = reactive(_.cloneDeep(localProps.setHeaders) as BaseTableHeaderI[])
 
-const sortedItems = ref([...props.setItems])
+const sortedItems = ref([...localProps.setItems])
 
-const emptyText = computed(() => props.noResultsText || 'No results found')
+const emptyText = computed(() => localProps.noResultsText || 'No results found')
 const isFilteringActive = ref(false)
 
-const headerBg = computed(() => props.colors?.backgrounds?.header || 'white')
-const titleBg = computed(() => props.colors?.backgrounds?.title || '#e0e7ed')
+const headerBg = computed(() => localProps.colors?.backgrounds?.header || 'white')
+const titleBg = computed(() => localProps.colors?.backgrounds?.title || '#e0e7ed')
 
 const sortBy = ref('')
 const sortDirection = ref('desc')
@@ -224,7 +230,7 @@ const resetAll = () => {
   }
   resettingFilters.value = false
 }
-watch(() => props.resetFiltersTrigger, () => { resetAll() })
+watch(() => localProps.resetFiltersTrigger, () => { resetAll() })
 
 const sort = (itemFn: (val: any) => string) => {
   const compareFn = (item1: object, item2: object) => {
@@ -267,7 +273,7 @@ const filter = _.debounce(async (header: BaseTableHeaderI) => {
     isFilteringActive.value = false
   } else {
     // client side custom or base filter
-    sortedItems.value = props.setItems.filter((item) => {
+    sortedItems.value = localProps.setItems.filter((item) => {
       if (header.filter.filterFn) {
         return header.filter.filterFn(item[header.col], header.filter.value)
       } else if (header.filter.type === 'select') {
@@ -282,10 +288,10 @@ const filter = _.debounce(async (header: BaseTableHeaderI) => {
   sortDirection.value = 'desc'
 }, 500)
 
-watch(() => props.setItems, (val) => {
+watch(() => localProps.setItems, (val) => {
   if (val) { sortedItems.value = [...val] } else { sortedItems.value = [] }
 
-  if (props.resetOnItemChange) { resetAll() }
+  if (localProps.resetOnItemChange) { resetAll() }
 }, { deep: true })
 </script>
 
