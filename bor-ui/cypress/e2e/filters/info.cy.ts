@@ -14,8 +14,8 @@ context('filters extended - info', () => {
       cy.get('.base-table__header').find('tr').eq(1).find('input').eq(1).type(infoFilter)
 
       cy.wait('@getSearchResults').then((search) => {
-        expect(search?.request?.body?.query !== undefined)
-        expect(search.request.body.query.info === infoFilter)
+        expect(search).to.have.nested.property('request.body.query')
+        expect(search.request.body.query.info).to.eql(infoFilter)
       })
     })
   })

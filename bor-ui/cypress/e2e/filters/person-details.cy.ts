@@ -22,10 +22,10 @@ context('filters extended - person details', () => {
         .click()
 
       cy.wait('@getSearchResults').then((search) => {
-        expect(search?.request?.body?.categories?.roles?.relatedInterests !== undefined)
+        expect(search).to.have.nested.property('request.body.categories.roles.relatedInterests')
         const relatedInterests = search.request.body.categories.roles.relatedInterests
-        expect(relatedInterests.length === 1)
-        expect(relatedInterests.length[0] === 'controlType.sharesOrVotes.registeredOwner')
+        expect(relatedInterests).to.have.length(1)
+        expect(relatedInterests[0]).to.eql('controlType.sharesOrVotes.registeredOwner')
       })
     })
   })

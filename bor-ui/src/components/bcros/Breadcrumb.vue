@@ -10,6 +10,7 @@
             icon
             small
             :disabled="breadcrumbs?.length <= 1"
+            aria-label="back"
             @click="back()"
           >
             <v-icon color="primary">

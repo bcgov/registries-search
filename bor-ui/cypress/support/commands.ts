@@ -23,6 +23,7 @@ Cypress.Commands.add('visitSearch', () => {
   cy.interceptSearch('', 'searchResultsBasic.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
+  cy.injectAxe()
 })
 
 Cypress.Commands.add('visitSearchExtended', () => {
@@ -37,6 +38,7 @@ Cypress.Commands.add('visitSearchExtended', () => {
   cy.interceptSearch('/extended', 'searchResultsExtended.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
+  cy.injectAxe()
 })
 
 Cypress.Commands.add('interceptSearch', (path: string, fixtureFileName: string) => {

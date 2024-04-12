@@ -19,7 +19,7 @@ context('filters extended - citizenship', () => {
         .find('.flag.f-ca').should('exist')
 
       cy.wait('@getSearchResults').then((search) => {
-        expect(search?.request?.body?.query !== undefined)
+        expect(search).to.have.nested.property('request.body.query')
         expect(search.request.body.categories.nationalities).to.eql(['CA'])
       })
     })
