@@ -128,6 +128,9 @@ describe('SearchResults tests', () => {
             if (extended) {
               expect(items[itemIndx].text()).toContain(record.alternateName || '')
               expect(items[itemIndx].text()).toContain(record.birthDate || '')
+              if (record.alternateName) {
+                expect(items[itemIndx].text()).toContain('Preferred Name')
+              }
             }
             break
           case 'Address':
@@ -145,7 +148,14 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(address?.addressRegion || '')
             expect(items[itemIndx].text()).toContain(address?.postalCode || '')
             expect(items[itemIndx].text()).toContain(address?.streetAddress || '')
+            expect(items[itemIndx].text()).toContain(address?.locationDescription || '')
             expect(items[itemIndx].text()).toContain(taxResidency || '')
+            if (address?.locationDescription) {
+              expect(items[itemIndx].text()).toContain('Location Description')
+            }
+            if (taxResidency) {
+              expect(items[itemIndx].text()).toContain('Tax Residency')
+            }
             break
           case 'Citizenship':
             for (const i in countries) {

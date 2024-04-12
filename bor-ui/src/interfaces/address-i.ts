@@ -4,4 +4,5 @@ export interface AddressI {
   addressRegion: string
   postalCode: string
   streetAddress: string
+  locationDescription: string
 }

@@ -7,7 +7,8 @@ export const testSearchResultInterest: SearchResultI[] = [
       addressCountry: 'CA',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
-      streetAddress: '1232-1490 Pilgrims Way '
+      streetAddress: '1232-1490 Pilgrims Way ',
+      locationDescription: ''
     }],
     entityType: 'PERSON',
     legalName: 'ALL INTEREST TEST',
@@ -110,7 +111,8 @@ export const testSearchResults: SearchResultI[] = [
       addressCountry: 'CA',
       addressRegion: 'BC',
       postalCode: 'V6L 4V9',
-      streetAddress: '99 Waffles street'
+      streetAddress: '99 Waffles street',
+      locationDescription: 'Unit 201, Building A'
     }],
     entityType: 'PERSON',
     isPR: false,
@@ -143,7 +145,8 @@ export const testSearchResults: SearchResultI[] = [
       addressCountry: 'CA',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
-      streetAddress: '1232-1490 Pilgrims Way '
+      streetAddress: '1232-1490 Pilgrims Way ',
+      locationDescription: ''
     }],
     entityType: 'PERSON',
     legalName: 'KIAL TEST',
@@ -166,7 +169,8 @@ export const testSearchResults: SearchResultI[] = [
       addressCountry: 'CA',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
-      streetAddress: '1232-1490 Pilgrims Way '
+      streetAddress: '1232-1490 Pilgrims Way ',
+      locationDescription: ''
     }],
     entityType: 'PERSON',
     legalName: 'KIAL TEST 2',
@@ -190,7 +194,8 @@ export const testSearchResults: SearchResultI[] = [
       addressCountry: 'CA',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
-      streetAddress: '1232-1490 Pilgrims Way '
+      streetAddress: '1232-1490 Pilgrims Way ',
+      locationDescription: ''
     }],
     entityType: 'PERSON',
     legalName: 'KIAL TEST',
