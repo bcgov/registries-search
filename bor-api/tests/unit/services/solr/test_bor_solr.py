@@ -54,7 +54,7 @@ def test_create_update_delete_query(app):
     # delete doc
     deleted = solr.delete_docs([docs[0][EntityField.UNIQUE_KEY.value]])
     assert deleted.status_code == HTTPStatus.OK
-    time.sleep(2)  # takes up to 1 second for solr to register update
+    time.sleep(5)  # takes up to 1 second for solr to register update
 
     # test search returns nothing
     params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': solr.entity_fields}

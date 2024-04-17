@@ -234,7 +234,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'legalName': 'Kial Jinnah',
                     'alternateName': 'wallaby willow',
                     'name_q': 'Kial Jinnah wallaby willow',
-                    'info_q': f"402 931 299 test@test.com {entity_addresses[0]['address_q']}",
+                    'info_q': f"402931299 test@test.com {entity_addresses[0]['address_q']}",
                     'birthDate': '1997-02-05',
                     'bn': None,
                     'deathDate': None,

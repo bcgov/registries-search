@@ -51,7 +51,7 @@ class Entity:
 
         if not self.info_q:
             if self.taxNumber:
-                self.info_q = f"{self.info_q or ''} {self.taxNumber}".strip()
+                self.info_q = f"{self.info_q or ''} {self.taxNumber.replace(' ', '')}".strip()
 
             if self.email:
                 self.info_q = f"{self.info_q or ''} {self.email}".strip()

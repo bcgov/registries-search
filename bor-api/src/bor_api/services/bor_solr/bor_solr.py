@@ -73,5 +73,7 @@ class BorSolr(Solr):
                 if tax_residencies := entity_dict.get('taxResidencies', None):
                     entity_dict['taxResidencies'] = {'set': tax_residencies}
 
-        response = self.call_solr('POST', self.update_url, json_data=update_list, timeout=timeout)
+        url = self.update_url if len(update_list) < 1000 else self.bulk_update_url
+
+        response = self.call_solr('POST', url, json_data=update_list, timeout=timeout)
         return response
