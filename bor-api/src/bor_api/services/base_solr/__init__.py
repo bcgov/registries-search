@@ -62,8 +62,8 @@ class Solr:
         self.replication_url = '{url}/{core}/replication'
         self.search_url = '{url}/{core}/query'
         self.synonyms_url = '{url}/{core}/schema/analysis/synonyms'
-        self.update_url = '{url}/{core}/update?commitWithin=1000&overwrite=true&wt=json'
-        self.bulk_update_url = '{url}/{core}/update?commitWithin=60000&overwrite=true&wt=json'
+        self.update_url = '{url}/{core}/update?commit=true&overwrite=true&wt=json'
+        self.bulk_update_url = '{url}/{core}/update?overwrite=true&wt=json'
 
         if app:
             self.init_app(app)

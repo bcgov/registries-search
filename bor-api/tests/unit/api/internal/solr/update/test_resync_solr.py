@@ -65,7 +65,7 @@ def prep_resync(entities: list[Entity]) -> list[tuple[Entity, SolrDoc, SolrDoc]]
 ])
 def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict, entities: list[Entity]):
     """Assert that resync operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commit=true&overwrite=true&wt=json'
     if 'identifiers' in payload:
         payload['identifiers'] = [x.id for x in entities]
 

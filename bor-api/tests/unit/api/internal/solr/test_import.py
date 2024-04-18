@@ -32,7 +32,7 @@ from tests import integration_solr
 ])
 def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
     """Assert that update operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commitWithin=1000&overwrite=true&wt=json'
+    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commit=true&overwrite=true&wt=json'
     docs_json = [asdict(x) for x in docs]
     with requests_mock.mock() as m:
         m.post(solr_url)
