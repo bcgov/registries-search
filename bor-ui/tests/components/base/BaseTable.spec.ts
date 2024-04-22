@@ -104,8 +104,8 @@ describe('BaseTable tests', () => {
   it('renders loading when set', async () => {
     wrapper.setProps({ loading: true })
     await nextTick()
-    expect(wrapper.find('.base-table__body__loader').exists()).toBe(true)
-    expect(wrapper.find('.base-table__body__row').exists()).toBe(false)
+    expect(wrapper.find('.base-table__body').exists()).toBe(true)
+    expect(wrapper.findAll('.base-table__body__row.animate-pulse').length).toBe(4)
     expect(wrapper.find('.base-table__body__empty').exists()).toBe(false)
     // updates when changed
     wrapper.setProps({ loading: false })

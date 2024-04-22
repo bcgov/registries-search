@@ -122,23 +122,22 @@
           </slot>
         </slot>
       </thead>
-      <tbody v-if="loading && !isFilteringActive" class="base-table__body">
-        <tr class="base-table__body__loader">
-          <td :colspan="headers.length">
-            <v-row class="my-15" justify="center" no-gutters>
-              <v-col cols="auto">
-                <v-progress-circular color="primary" size="50" indeterminate />
-              </v-col>
-            </v-row>
-          </td>
-        </tr>
+      <tbody v-if="loading" class="base-table__body">
+        <slot name="loading" :headers="headers">
+          <tr v-for="index in 4" :key="index" class="base-table__body__row animate-pulse">
+            <td
+              v-for="header, i in headers"
+              :key="header.col + i"
+              :class="[header.itemLoadingClass, 'base-table__body__row__item']"
+            >
+              <slot :header="header" :name="'item-loading-slot-' + header.slotId">
+                <div class="h-10 bg-gray-300 rounded" />
+              </slot>
+            </td>
+          </tr>
+        </slot>
       </tbody>
       <tbody v-else class="base-table__body">
-        <tr v-if="isFilteringActive">
-          <td :colspan="headers.length">
-            <v-progress-linear color="primary" indeterminate />
-          </td>
-        </tr>
         <slot name="body" :headers="headers" :items="sortedItems">
           <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row" :tabindex="i + 1">
             <slot name="body-row">
@@ -349,6 +348,7 @@ th {
         }
         :deep(.v-input__control .v-field--active.v-field--dirty .v-field__input .v-select__selection) {
           margin-bottom: 10px;
+          white-space: nowrap;
         }
       }
 

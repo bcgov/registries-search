@@ -144,6 +144,24 @@
                     {
                         "relatedEntityType": "BUSINESS",
                         "relatedIdentifier": "BC0871427",
+                        "relatedInterests": [
+                            {
+                              "details": "controlType.sharesOrVotes.registeredOwner",
+                              "directOrIndirect": "direct",
+                              "interestType": "shareholding",
+                              "score": 0.0,
+                              "sharesMax": 75.0,
+                              "sharesMin": 50.0
+                            },
+                            {
+                              "details": "controlType.sharesOrVotes.beneficialOwner",
+                              "directOrIndirect": "unknown",
+                              "interestType": "votingRights",
+                              "score": 0.0,
+                              "sharesMax": 50.0,
+                              "sharesMin": 25.0
+                            }
+                        ],
                         "relatedLegalType": "BEN",
                         "relatedName": "0871427 B.C. LTD.",
                         "relatedState": "ACTIVE",
@@ -380,14 +398,22 @@
                             "directOrIndirect": "direct",
                             "interestType": "shareholding",
                             "score": 0.0,
-                            "sharesExact": 67.0
+                            "sharesMax": 100.0,
+                            "sharesMin": 75.0
                           },
                           {
-                            "details": "controlType.sharesOrVotes.registeredOwner",
+                            "details": "controlType.sharesOrVotes.beneficialOwner",
                             "directOrIndirect": "unknown",
                             "interestType": "votingRights",
                             "score": 0.0,
-                            "sharesExact": 37.0
+                            "sharesMax": 25.0,
+                            "sharesMin": 0.0
+                          },
+                          {
+                            "details": "controlType.directors.directControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "appointmentOfBoard",
+                            "score": 0.0
                           }
                         ],
                         "roleDates": [

@@ -20,7 +20,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
       slotId: 'name',
       value: 'Name',
-      width: '16%'
+      width: '17%'
     },
     {
       col: 'entityAddresses',
@@ -47,7 +47,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         itemValue: 'value',
         items: ['Canada', 'United States of America'].concat(
           (getNames()).filter(country => !['Canada', 'United States of America'].includes(country))),
-        label: 'Citizenship',
+        label: 'Country',
         type: 'select',
         value: null
       },
@@ -79,7 +79,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         return 'N/A'
       },
       value: 'Roles',
-      width: '15%'
+      width: '16%'
     },
     {
       col: 'roles',
@@ -94,7 +94,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       hasSort: false,
       slotId: 'details',
       value: 'Business Details',
-      width: '15%'
+      width: '14%'
     },
     {
       col: 'roles',
@@ -133,16 +133,18 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       },
       slotId: 'date',
       value: 'Effective Dates',
-      width: '14%'
-    },
-    {
-      class: 'actions-col',
-      col: '',
-      hasFilter: false,
-      hasSort: false,
-      itemClass: 'actions-col',
-      slotId: 'actions',
-      value: 'Actions'
+      width: '11%'
     }
+    // NOTE: to be added back in after details page flow is figured out
+    // {
+    //   class: 'actions-col',
+    //   col: '',
+    //   hasFilter: false,
+    //   hasSort: false,
+    //   itemClass: 'actions-col',
+    //   itemLoadingClass: 'actions-col',
+    //   slotId: 'actions',
+    //   value: 'Actions'
+    // }
   ]
 }

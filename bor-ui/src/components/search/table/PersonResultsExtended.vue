@@ -9,7 +9,6 @@
     :results-description="resultsDesc"
     :set-headers="headers"
     :set-items="results"
-    :table-width="'1600px'"
     title="Search Results"
     :title-extras="true"
     :total-items="totalResults"
@@ -37,6 +36,11 @@
           v-if="isFilteringActive"
           @clear="clearFilters()"
         />
+      </div>
+    </template>
+    <template #item-loading-slot-actions>
+      <div class="h-[83px] pt-[26px] pb-4 px-3 shadow-action-col-item bg-white">
+        <div class="w-full h-10 bg-gray-300 rounded" />
       </div>
     </template>
     <template #item-slot-name="{ item } : { item: SearchResultI }">

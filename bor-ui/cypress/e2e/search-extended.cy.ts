@@ -1,3 +1,6 @@
+import { SearchResultI } from '../../src/interfaces/search-i'
+import { PersonControlTypeE } from '../../src/enums/person-control-type-e'
+
 context('Search extended', () => {
   beforeEach(() => {
     cy.visitSearchExtended()
@@ -32,7 +35,7 @@ context('Search extended', () => {
     cy.wait('@getSearchResults')
     cy.get('[data-cy="search-results-table"]').should('exist')
     cy.fixture('searchResultsExtended.json').then((searchResponse) => {
-      const results = searchResponse.searchResults.results
+      const results: SearchResultI[] = searchResponse.searchResults.results
       const totalResults = searchResponse.searchResults.totalResults
       // title
       cy.get('[data-cy="search-results-table"]')
@@ -47,7 +50,7 @@ context('Search extended', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(0).find('th').then((headerTitles) => {
-          expect(headerTitles, '8 headers').to.have.length(8)
+          expect(headerTitles, '7 headers').to.have.length(7)
           expect(headerTitles.eq(0), 'Name header').to.have.text('Name')
           expect(headerTitles.eq(1), 'Information header').to.have.text('Information')
           expect(headerTitles.eq(2), 'Citizenship header').to.have.text('Citizenship')
@@ -55,7 +58,8 @@ context('Search extended', () => {
           expect(headerTitles.eq(4), 'Business Details header').to.have.text('Business Details')
           expect(headerTitles.eq(5), 'Details header').to.have.text('Details')
           expect(headerTitles.eq(6), 'Effective Dates header').to.have.text('Effective Dates')
-          expect(headerTitles.eq(7), 'Actions header').to.have.text('Actions')
+          // NB: will be added back in later
+          // expect(headerTitles.eq(7), 'Actions header').to.have.text('Actions')
         })
       // filters
       cy.get('[data-cy="search-results-table"]')
@@ -63,8 +67,7 @@ context('Search extended', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(1).find('th').then((headerFilters) => {
-          // TODO: fill these out
-          expect(headerFilters, '8 filters').to.have.length(8)
+          expect(headerFilters, '7 filters').to.have.length(7)
         })
       // item data
       cy.get('[data-cy="search-results-table"]')
@@ -75,7 +78,7 @@ context('Search extended', () => {
       cy.get('@rows').should('have.length', results.length)
       for (const i in results) {
         cy.get('@rows').eq(Number(i)).find('td').then((cols) => {
-          expect(cols, '8 columns').to.have.length(8)
+          expect(cols, '7 columns').to.have.length(7)
           // name
           expect(cols.eq(0), 'Name column - name').to.include.text(results[i].legalName.toUpperCase())
           expect(cols.eq(0), 'Name column - preferred name').to.include.text(results[i].alternateName || '')
@@ -112,8 +115,55 @@ context('Search extended', () => {
           if (role.relatedBN) {
             expect(cols.eq(4), 'Business Details column - bn').to.include.text(role.relatedBN)
           }
-          // details, TODO: fill this out
-          expect(cols.eq(5), 'Details column').to.include.text('')
+          // details
+          if (role.relatedInterests) {
+            role.relatedInterests.forEach((interest, index) => {
+              switch (interest.details) {
+                case PersonControlTypeE.DirectorsDirectControl:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt')).includes('Direct control')
+                  break
+                case PersonControlTypeE.DirectorsInConcertControl:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt'))
+                    .includes('majority of directors through rights and/or exercised in concert')
+                  break
+                case PersonControlTypeE.DirectorsIndirectControl:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt')).includes('Indirect control (through another business)')
+                  break
+                case PersonControlTypeE.DirectorsSignificantInfluence:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt')).includes('Significant influence control')
+                  break
+                case PersonControlTypeE.SharesOrVotesBeneficialOwner:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt')).includes('Beneficial owner (e.g., through a trust)')
+                  break
+                case PersonControlTypeE.SharesOrVotesInConcertControl:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt'))
+                    .includes('Indirect control (e.g., through another business)')
+                  break
+                case PersonControlTypeE.SharesOrVotesRegisteredOwner:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt')).to.include('Registered owner')
+                  break
+                default:
+                  expect(cols.eq(5).find('.detail-icons-container').find('.detail-icon').find('img')
+                    .eq(index).attr('alt'))
+                    .includes('Any other reason(s) this individual is a significant individual')
+              }
+              if (interest.interestType === 'shareholding') {
+                expect(cols.eq(5), 'Details column - shares').to.include.text('Shares')
+              } else if (interest.interestType === 'votingRights') {
+                expect(cols.eq(5), 'Details column - votes').to.include.text('Votes')
+              }
+            })
+            expect(cols.eq(5), 'Details column').to.include.text('')
+          } else {
+            expect(cols.eq(5), 'Details column').to.have.text('')
+          }
           // dates
           const date = role.roleDates[0]
           if (role.roleType === 'INCORPORATOR') {
@@ -125,9 +175,9 @@ context('Search extended', () => {
             expect(cols.eq(6), 'Effective Dates column - end').to.include.text(
               date.end ? date.end.substring(0, 10) : 'Current')
           }
-          // actions
-          expect(cols.eq(7).find('button'), 'Actions column - 1 button').to.have.length(1)
-          expect(cols.eq(7).find('button'), 'Actions column - text').to.include.text('Open')
+          // actions - will be added back in later
+          // expect(cols.eq(7).find('button'), 'Actions column - 1 button').to.have.length(1)
+          // expect(cols.eq(7).find('button'), 'Actions column - text').to.include.text('Open')
         })
       }
     })
