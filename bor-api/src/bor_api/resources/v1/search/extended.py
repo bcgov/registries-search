@@ -36,7 +36,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
     """Return a list of entity results from solr including extended entity information."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
-        request_json, errors = validate_search_request(user, 'enable-comp-auth-search')
+        request_json, errors = validate_search_request(user, 'enable-comp-auth-search', 'CA_SEARCH')
         if errors:
             return bad_request_response('Errors processing request.', errors)
 

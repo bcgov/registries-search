@@ -710,3 +710,24 @@ def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, q
     resp_json = resp.json
     assert resp_json.get('message') == 'Errors processing request.'
     assert resp_json.get('details') == errors
+
+
+@pytest.mark.parametrize('test_name,subscription,expected', [
+    ('test_authorized', {'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.OK),
+    ('test_wrong_product_CA_SEARCH', {'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
+    ('test_wrong_product_BUSINESS', {'code': 'BUSINESS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
+    ('test_subscription_inactive', {'code': 'NDS', 'subscriptionStatus': 'INACTIVE'}, HTTPStatus.UNAUTHORIZED),
+])
+def test_search_product_access(app, session, client, jwt, monkeypatch, requests_mock, test_name, subscription, expected):
+    """Assert access is granted/denied based on having the right product subscription."""
+    # setup mocks
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [subscription])
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
+    # call search
+    resp = client.post(f'/api/v1/search',
+                       data=json.dumps({'query': {'value': 'a'}}),
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Account-Id': 1}))
+    # test
+    assert resp.status_code == expected

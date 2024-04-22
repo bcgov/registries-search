@@ -111,7 +111,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     # setup mocks
     account_id = 1
     requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",
-                      json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+                      json=[{'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}])
     requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
     # format payload
     payload = {'query': query}
@@ -758,7 +758,7 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
     SolrSynonymList(synonym='us', synonym_list=['us', 'united states'], synonym_type=SolrSynonymType.ADDRESS).save()
     SolrSynonymList(synonym='chute', synonym_list=['chute', 'shoot'], synonym_type=SolrSynonymType.NAME).save()
     # setup products mock in validator
-    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}])
     # format payload
     payload = {'query': query}
     if categories:
@@ -787,7 +787,7 @@ def test_search_xlsx(app, session, client, jwt, requests_mock):
     # setup mocks
     account_id = 1
     requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",
-                      json=[{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+                      json=[{'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}])
     doc = {'entityAddresses': [{'addressCity': 'Victoria',
                                 'addressCountry': 'Canada',
                                 'addressRegion': 'BC',
@@ -826,7 +826,7 @@ def test_search_xlsx(app, session, client, jwt, requests_mock):
 def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
     """Assert that the entities search call error handling works as expected."""
     # setup products mock in validator
-    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}])
     # setup solr mock
     mocked_error_msg = 'mocked error'
     mocked_status_code = HTTPStatus.BAD_GATEWAY
@@ -854,7 +854,7 @@ def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
 def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""
     # setup products mock in validator
-    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}])
     # create payload
     payload = {'query': query}
     if categories:
@@ -871,3 +871,24 @@ def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, q
     resp_json = resp.json
     assert resp_json.get('message') == 'Errors processing request.'
     assert resp_json.get('details') == errors
+
+
+@pytest.mark.parametrize('test_name,subscription,expected', [
+    ('test_authorized', {'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.OK),
+    ('test_wrong_product_NDS', {'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
+    ('test_wrong_product_BUSINESS', {'code': 'BUSINESS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
+    ('test_subscription_inactive', {'code': 'CA_SEARCH', 'subscriptionStatus': 'INACTIVE'}, HTTPStatus.UNAUTHORIZED),
+])
+def test_search_product_access(app, client, session, jwt, monkeypatch, requests_mock, test_name, subscription, expected):
+    """Assert access is granted/denied based on having the right product subscription."""
+    # setup mocks
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [subscription])
+    requests_mock.post(f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={'response': {'docs': [], 'numFound': 0, 'start': 0}})
+    # call search
+    resp = client.post(f'/api/v1/search/extended',
+                       data=json.dumps({'query': {'value': 'a'}}),
+                       headers=create_header(jwt,[BASIC_USER], **{'Accept-Version': 'v1',
+                                                                  'content-type': 'application/json',
+                                                                  'Account-Id': 1}))
+    # test
+    assert resp.status_code == expected

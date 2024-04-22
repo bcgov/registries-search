@@ -22,7 +22,7 @@ from bor_api.services.authz import account_products
 from .util import get_str
 
 
-def validate_search_request(user: User, access_flag_name: str) -> tuple[dict, list[dict]]:
+def validate_search_request(user: User, access_flag_name: str, access_code: str) -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
@@ -45,8 +45,8 @@ def validate_search_request(user: User, access_flag_name: str) -> tuple[dict, li
         if not isinstance(products, list):
             current_app.logger.debug(products)
             raise AuthorizationException(f'Error collecting information from Auth service. {products}')
-        if not any(p['code'] == 'NDS' and p['subscriptionStatus'] == 'ACTIVE' for p in products):
-            raise AuthorizationException('This account is not authorized to access Director Search.')
+        if not any(p['code'] == access_code and p['subscriptionStatus'] == 'ACTIVE' for p in products):
+            raise AuthorizationException('This account is not authorized for this level of search.')
     current_app.logger.debug('Access granted.')
 
     accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
