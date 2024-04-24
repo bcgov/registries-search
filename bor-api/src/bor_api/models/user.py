@@ -131,10 +131,11 @@ class User(db.Model):
                 current_app.logger.debug('Updated user.')
             else:
                 # update if there are any values that weren't saved previously or have changed since
-                current_app.logger.debug('Checking for changes to username or first and last names...')
+                current_app.logger.debug('Checking for changes to jwt info...')
                 user_keys = [{'jwt_key': current_app.config.get('JWT_OIDC_USERNAME'), 'table_key': 'username'},
                              {'jwt_key': current_app.config.get('JWT_OIDC_FIRSTNAME'), 'table_key': 'firstname'},
-                             {'jwt_key': current_app.config.get('JWT_OIDC_LASTNAME'), 'table_key': 'lastname'}]
+                             {'jwt_key': current_app.config.get('JWT_OIDC_LASTNAME'), 'table_key': 'lastname'},
+                             {'jwt_key': 'sub', 'table_key': 'sub'}]
                 for keys in user_keys:
                     value = jwt_oidc_token.get(keys['jwt_key'], None)
                     if value and value != getattr(user, keys['table_key']):

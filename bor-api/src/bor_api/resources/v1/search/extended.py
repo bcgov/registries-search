@@ -22,7 +22,7 @@ from bor_api.models import User, SearchHistory
 from bor_api.services import jwt, solr
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
-from bor_api.services.base_solr.utils import parse_facets, prep_query_str, prep_query_str_adv
+from bor_api.services.base_solr.utils import parse_facets, prep_query_str_adv
 from bor_api.utils.request_validators import validate_search_request
 
 
@@ -44,11 +44,10 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
         query_json: dict = request_json.get('query', {})
         value = query_json.get('value', None)
         query = {
-            'value': prep_query_str(value),
-            'email_value': prep_query_str_adv(value),
-            EntityField.BN_Q.value: prep_query_str(query_json.get(EntityField.BN.value, '')),
-            EntityField.IDENTIFIER_Q.value: prep_query_str(query_json.get(EntityField.IDENTIFIER.value, '')),
-            EntityField.NAME_Q.value: prep_query_str(query_json.get('name', '')),
+            'value': prep_query_str_adv(value),
+            EntityField.BN_Q.value: prep_query_str_adv(query_json.get(EntityField.BN.value, '')),
+            EntityField.IDENTIFIER_Q.value: prep_query_str_adv(query_json.get(EntityField.IDENTIFIER.value, '')),
+            EntityField.NAME_Q.value: prep_query_str_adv(query_json.get('name', '')),
             EntityField.INFO_Q.value: prep_query_str_adv(query_json.get('info', ''))
         }
         # set faceted category params
@@ -63,16 +62,17 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
         roles_json: dict = query_json.get(EntityField.ROLES.value, {})
         child_query = {
             # addresses
-            AddressField.ADDRESS_Q.value: prep_query_str(query_json.get(EntityField.ENTITY_ADDRESSES.value, '')),
+            AddressField.ADDRESS_Q.value: prep_query_str_adv(query_json.get(EntityField.ENTITY_ADDRESSES.value, '')),
             # roles
-            EntityRoleField.RELATED_BN_Q.value: prep_query_str(roles_json.get(EntityRoleField.RELATED_BN.value, '')),
+            EntityRoleField.RELATED_BN_Q.value:
+                prep_query_str_adv(roles_json.get(EntityRoleField.RELATED_BN.value, '')),
             EntityRoleField.RELATED_EMAIL_Q.value:
                 prep_query_str_adv(roles_json.get(EntityRoleField.RELATED_EMAIL.value, '')),
             EntityRoleField.RELATED_IDENTIFIER_Q.value:
-                prep_query_str(roles_json.get(EntityRoleField.RELATED_IDENTIFIER.value, '')),
+                prep_query_str_adv(roles_json.get(EntityRoleField.RELATED_IDENTIFIER.value, '')),
             EntityRoleField.RELATED_NAME_SINGLE_Q.value:
-                prep_query_str(roles_json.get(EntityRoleField.RELATED_NAME.value, '')),
-            EntityRoleField.RELATED_Q.value: prep_query_str(roles_json.get('value', ''))
+                prep_query_str_adv(roles_json.get(EntityRoleField.RELATED_NAME.value, '')),
+            EntityRoleField.RELATED_Q.value: prep_query_str_adv(roles_json.get('value', ''))
         }
         # set nested child faceted category params
         address_categories_json: dict = categories_json.get(EntityField.ENTITY_ADDRESSES.value, {})
@@ -130,15 +130,17 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                                                   EntityField.ALT_NAME_SINGLE_Q: 2,
                                                   EntityField.ALT_NAME_XTRA_Q: 2,
                                                   EntityField.TAX_NUMBER_Q: 2},
-                              query_fields=[EntityField.LEGAL_NAME_Q,
-                                            EntityField.LEGAL_NAME_AGRO_Q,
-                                            EntityField.LEGAL_NAME_SINGLE_Q,
-                                            EntityField.LEGAL_NAME_XTRA_Q,
-                                            EntityField.ALT_NAME_Q,
-                                            EntityField.ALT_NAME_AGRO_Q,
-                                            EntityField.ALT_NAME_SINGLE_Q,
-                                            EntityField.ALT_NAME_XTRA_Q,
-                                            EntityField.TAX_NUMBER_Q],
+                              query_fields={EntityField.LEGAL_NAME_Q: 'parent',
+                                            EntityField.LEGAL_NAME_AGRO_Q: 'parent',
+                                            EntityField.LEGAL_NAME_SINGLE_Q: 'parent',
+                                            EntityField.LEGAL_NAME_XTRA_Q: 'parent',
+                                            EntityField.ALT_NAME_Q: 'parent',
+                                            EntityField.ALT_NAME_AGRO_Q: 'parent',
+                                            EntityField.ALT_NAME_SINGLE_Q: 'parent',
+                                            EntityField.ALT_NAME_XTRA_Q: 'parent',
+                                            EntityField.EMAIL_Q: 'parent',
+                                            EntityField.TAX_NUMBER_Q: 'parent',
+                                            AddressField.ADDRESS_Q: 'child'},
                               query_fuzzy_fields={EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
                                                   EntityField.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
                                                   EntityField.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2},
@@ -147,8 +149,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                                                   EntityField.ALT_NAME_SINGLE_Q: {'short': 1, 'long': 2},
                                                   EntityField.TAX_NUMBER_Q: {'short': 1, 'long': 1},
                                                   AddressField.ADDRESS_Q: {'short': 1, 'long': 1},
-                                                  EntityRoleField.RELATED_EMAIL_Q: {'short': 1, 'long': 1}},
-                              query_nested_fields=[AddressField.ADDRESS_Q],
+                                                  EntityField.EMAIL_Q: {'short': 1, 'long': 1}},
                               query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent',
                                                     EntityField.ALT_NAME_SYN_Q: 'parent',
                                                     AddressField.ADDRESS_SYN_Q: 'child'})

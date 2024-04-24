@@ -16,7 +16,6 @@ import re
 
 from bor_api.enums import SolrSynonymType
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
-from bor_api.services.base_solr.utils.formatting_helpers import prep_query_str
 
 
 IDENTIFIER_FIELDS: list[str] = [EntityField.IDENTIFIER_Q.value, EntityRoleField.RELATED_IDENTIFIER_Q.value,
@@ -28,42 +27,6 @@ FIELD_SYNONYM_TYPE_MAP = {
     EntityField.LEGAL_NAME_SYN_Q: SolrSynonymType.NAME,
     EntityRoleField.RELATED_NAME_SYN_Q: SolrSynonymType.NAME
 }
-
-
-def _get_terms(query: dict[str, str]) -> tuple[list[str], list[str]]:
-    """Return the terms and email_terms."""
-    terms = query['value'].split()
-    raw_email_terms = query['email_value'].split()
-
-    if len(terms) == len(raw_email_terms):
-        return terms, raw_email_terms
-
-    email_terms = []
-    term_index = 0
-    email_term_index = 0
-    long_email_term_words = []
-    long_email_term_found = False
-
-    while term_index < len(terms):
-        if long_email_term_found:
-            email_terms.append(raw_email_terms[email_term_index])
-            # remove the first appearance of terms[term_index] from the long_email_term_words list
-            if terms[term_index] in long_email_term_words:
-                long_email_term_words.remove(terms[term_index])
-            # if long_email_term_words is empty, set long_email_term_found to False and increment email_term_index
-            if not long_email_term_words:
-                long_email_term_found = False
-                email_term_index += 1
-            term_index += 1
-        elif terms[term_index] == raw_email_terms[email_term_index]:
-            email_terms.append(raw_email_terms[email_term_index])
-            email_term_index += 1
-            term_index += 1
-        else:
-            long_email_term_found = True
-            long_email_term_words = prep_query_str(raw_email_terms[email_term_index]).split()
-
-    return terms, email_terms
 
 
 def _add_identifier(field: str, term: str, is_child=False) -> str:
@@ -181,13 +144,12 @@ def build_facet_query(field: AddressField | EntityField | EntityRoleField | Inte
 
 
 def build_base_query(query: dict[str, str],  # pylint: disable=too-many-arguments,too-many-branches
-                     fields: list[AddressField | EntityField | EntityRoleField | DateRangeField],
-                     nested_fields: list[AddressField | EntityField | EntityRoleField | DateRangeField],
+                     fields: dict[AddressField | EntityField | EntityRoleField | DateRangeField, str],
                      boost_fields: dict[AddressField | EntityField | EntityRoleField, int],
                      fuzzy_fields: dict[AddressField | EntityField | EntityRoleField, dict[str, int]],
                      synonym_fields: dict[AddressField | EntityField | EntityRoleField, str]) -> dict[str, list[str]]:
     """Return a solr query with filters for each subsequent term."""
-    terms, email_terms = _get_terms(query)
+    terms = query['value'].split()
 
     synonym_info = {}
     for syn_field in synonym_fields:
@@ -196,8 +158,8 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
     for term_index, term in enumerate(terms):
         # each term only needs to match one of the given fields, but all terms must match at least 1
         term_clause = ''
-        for field in fields:
-            field_clause = _add_identifier(field.value, term)
+        for field, level in fields.items():
+            field_clause = _add_identifier(field.value, term, level == 'child')
             pre_boost_clause = field_clause
             # add boost
             if field in boost_fields:
@@ -211,23 +173,12 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
                 # add another with fuzzy (this one will give a lower score on a hit if the original has a boost)
                 term_clause = _update_clause(term_clause, f'{pre_boost_clause}{fuzzy_str}', 'OR')
 
-        # add nested field clauses
-        for nested_field in nested_fields:
-            nested_field_clause = build_child_query({nested_field.value: term})
-            if nested_field in fuzzy_fields and (fuzzy_str := _get_fuzzy_str(term,
-                                                                             fuzzy_fields[nested_field]['short'],
-                                                                             fuzzy_fields[nested_field]['long'])):
-                # add fuzzy match chars before ending bracket
-                nested_field_clause = f'{nested_field_clause[:-1]}{fuzzy_str})'
-
-            term_clause = _update_clause(term_clause, nested_field_clause, 'OR')
-
         # add synonym field clauses
-        for field in synonym_fields:
+        for field, level in synonym_fields.items():
             synonym_terms = synonym_info[field]['synonym_terms']
             synonym_start_index = synonym_info[field]['synonym_start_index']
             field_value = field.value
-            if synonym_fields[field] == 'child':
+            if level == 'child':
                 field_value = PRE_CHILD_FILTER_CLAUSE + field.value
             synonym_clause = ''
             if synonym_terms and term_index < synonym_start_index + len(synonym_terms):
@@ -241,23 +192,12 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
             if synonym_clause:
                 term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
 
-        # add special nested clause for related email
-        nested_email_field_clause = build_child_query({EntityRoleField.RELATED_EMAIL_Q.value: email_terms[term_index]})
-        # Add fuzzy matching for email if desired
-        if EntityRoleField.RELATED_EMAIL_Q in fuzzy_fields and (
-            fuzzy_str := _get_fuzzy_str(email_terms[term_index],
-                                        fuzzy_fields[EntityRoleField.RELATED_EMAIL_Q]['short'],
-                                        fuzzy_fields[EntityRoleField.RELATED_EMAIL_Q]['long'])):
-            # add fuzzy match chars before ending bracket
-            nested_email_field_clause = f'{nested_email_field_clause[:-1]}{fuzzy_str})'
-        term_clause = _update_clause(term_clause, f'({nested_email_field_clause})', 'OR')
-
         query_clause = _update_clause(query_clause, f'({term_clause})', 'AND')
 
     # extra filters
     filters = []
     for key in query:
-        if key in ['value', 'email_value'] or not query[key]:
+        if key in ['value'] or not query[key]:
             continue
         terms = query[key].split()
         for term in terms:

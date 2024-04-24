@@ -36,7 +36,6 @@ def entities_search(params: SearchParams, solr: BorSolr):
     initial_queries = build_base_query(
         query=params.query,
         fields=params.query_fields,
-        nested_fields=params.query_nested_fields,
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields,
         synonym_fields=params.query_synonym_fields)

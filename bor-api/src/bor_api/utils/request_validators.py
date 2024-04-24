@@ -38,7 +38,7 @@ def validate_search_request(user: User, access_flag_name: str, access_code: str)
 
     # check access
     current_app.logger.debug('Checking user access...')
-    if not jwt.contains_role(['system']) and not flags.value(access_flag_name, {'key': user.idp_userid}):
+    if not jwt.contains_role(['system']) and not flags.value(access_flag_name, {'key': user.sub}):
         # individual flag not enabled for user. Check account has product subscription
         current_app.logger.debug('Individual access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)

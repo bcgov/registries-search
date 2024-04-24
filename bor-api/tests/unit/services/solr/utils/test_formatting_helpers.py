@@ -75,19 +75,25 @@ def test_prep_query_str(test_name, value, expected):
     ('test_none', None, ''),
     ('test_uppercase', 'test AND test OR NOT', 'test and test or not'),
     ('test_spec_double_&', '& test&&test& &&', '& test&test& &'),
-    ('test_spec_double_|', '| |test||test| ||', '| |test|test| |'),
+    ('test_spec_double_+', 'test++test++', 'test+test+'),
     ('test_spec_begin_+', '+ +test+test+ +', '\\+ \\+test+test+ \\+'),
     ('test_spec_begin_-', '- -test-test- -', '\\- \\-test-test- \\-'),
     ('test_spec_begin_/', '/ /test/test/ /', '\\/ \\/test/test/ \\/'),
-    ('test_spec_begin_~', '~ ~test~test~ ~', '\\~ \\~test~test~ \\~'),
+    ('test_spec_begin_~', '~ ~test~test~ ~', '\\~ \\~test\\~test\\~ \\~'),
     ('test_spec_begin_!', '! !test!test! !', '\\! \\!test!test! \\!'),
     ('test_spec_all_"', '" "test"test" "', '\\" \\"test\\"test\\" \\"'),
     ('test_spec_all_:', ': :test:test: :', '\\: \\:test\\:test\\: \\:'),
     ('test_spec_all_[]', '[ ]test[test[ ]', '\\[ \\]test\\[test\\[ \\]'),
-    ('test_spec_rmv_^', '^ ^test^test^ ^', ' testtest '),
-    ('test_spec_rmv_\\', '\\ \\test\\test\\ \\', ' testtest '),
-    ('test_spec_rmv_{}', '{ }test{t}est{ }', ' testtest '),
-    ('test_spec_rmv_()', '( )test(t)est( )', ' testtest ')
+    ('test_spec_all_~', '~ ~test~test~ ~', '\\~ \\~test\\~test\\~ \\~'),
+    ('test_spec_all_<>', '> <test>test< >', '\\> \\<test\\>test\\< \\>'),
+    ('test_spec_all_?', '? ?test?test? ?', '\\? \\?test\\?test\\? \\?'),
+    ('test_spec_rmv_^', '^ ^test^test^ ^', 'testtest'),
+    ('test_spec_rmv_\\', '\\ \\test\\test\\ \\', 'testtest'),
+    ('test_spec_rmv_|', '| |test||test| |', 'testtest'),
+    ('test_spec_rmv_^', '^ ^test^^test^ ^', 'testtest'),
+    ('test_spec_rmv_{}', '{ }test{t}est{ }', 'testtest'),
+    ('test_spec_rmv_()', '( )test(t)est( )', 'testtest'),
+    ('test_lower', 'TESTTEST', 'testtest')
 ])
 def test_prep_query_str_adv(test_name, value, expected):
     """Assert the prep_query_str_adv function works as expected."""
