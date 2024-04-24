@@ -22,6 +22,7 @@
     <template #header-filter-slot-actions>
       <CommonHeadersActionFilter
         v-if="isFilteringActive"
+        :outer-class="'h-[60px] pt-1'"
         @clear="clearFilters()"
       />
     </template>

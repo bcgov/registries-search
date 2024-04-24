@@ -80,7 +80,7 @@ describe('search page tests', () => {
       .toContain('Learn how to use Business and Person Search - User Guide')
     expect(wrapper.find('.learn-more').attributes('href')).toContain(wrapper.vm.searchGuideURL)
     const text = (
-      'Search for the names, addresses, SIN/TTN/ITN, and business email ' +
+      'Search for the names, addresses, SIN/TTN/ITN, and email ' +
       'addresses of people associated with businesses in B.C.')
     expect(wrapper.find('[data-cy="search-input-info-text"]').text()).toBe(text)
   })

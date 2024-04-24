@@ -31,12 +31,11 @@
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
     <template #header-filter-slot-actions>
-      <div class="h-[81px] w-full pl-3 pt-5 shadow-action-col-header">
-        <CommonHeadersActionFilter
-          v-if="isFilteringActive"
-          @clear="clearFilters()"
-        />
-      </div>
+      <CommonHeadersActionFilter
+        v-if="isFilteringActive"
+        :outer-class="'h-[81px] w-full pl-3 pt-5 shadow-action-col-header'"
+        @clear="clearFilters()"
+      />
     </template>
     <template #item-loading-slot-actions>
       <div class="h-[83px] pt-[26px] pb-4 px-3 shadow-action-col-item bg-white">

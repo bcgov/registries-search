@@ -79,7 +79,6 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
   &__clear {
     font-size: 14px !important;
     height: 36px;
-    margin: auto;
     padding: 0 12px !important;
     min-width: 108px;
     width: 90%;

@@ -9,7 +9,7 @@ context('Search extended', () => {
     // info text
     cy.get('[data-cy="search-input-info-text"]').should(
       'have.text',
-      'Search for the names, addresses, SIN/TTN/ITN, and business ' +
+      'Search for the names, addresses, SIN/TTN/ITN, and ' +
       'email addresses of people associated with businesses in B.C.'
     )
     // search input

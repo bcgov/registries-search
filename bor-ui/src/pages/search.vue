@@ -108,7 +108,7 @@ const searchTitleText = computed(() => isExtended.value ? 'Business and Person S
 const searchInfoText = computed(() => {
   if (isExtended.value) {
     // eslint-disable-next-line
-    return 'Search for the names, addresses, SIN/TTN/ITN, and business email addresses of people associated with businesses in B.C.'
+    return 'Search for the names, addresses, SIN/TTN/ITN, and email addresses of people associated with businesses in B.C.'
   }
   return 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
 })
