@@ -18,9 +18,14 @@ from bor_api.enums import SolrSynonymType
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 
-IDENTIFIER_FIELDS: list[str] = [EntityField.IDENTIFIER_Q.value, EntityRoleField.RELATED_IDENTIFIER_Q.value,
-                                EntityRoleField.RELATED_Q.value]
+IDENTIFIER_FIELD_VALUES: list[str] = [
+    EntityField.IDENTIFIER_Q.value,
+    EntityRoleField.RELATED_IDENTIFIER_Q.value,
+    EntityRoleField.RELATED_Q.value
+]
+
 PRE_CHILD_FILTER_CLAUSE = "{!parent which = '-_nest_path_:* " + EntityField.ENTITY_TYPE.value + ":*'}"
+
 FIELD_SYNONYM_TYPE_MAP = {
     AddressField.ADDRESS_SYN_Q: SolrSynonymType.ADDRESS,
     EntityField.ALT_NAME_SYN_Q: SolrSynonymType.NAME,
@@ -29,22 +34,21 @@ FIELD_SYNONYM_TYPE_MAP = {
 }
 
 
-def _add_identifier(field: str, term: str, is_child=False) -> str:
-    """Return a special identifier query."""
+def _create_clause(field_value: str, term: str, is_child=False) -> str:
+    """Return the query clause for the field and term."""
     corp_prefix_regex = r'(^[aA-zZ]+)[0-9]+$'
-    identifier_field = EntityField.IDENTIFIER_Q.value
-    if field in IDENTIFIER_FIELDS and (identifier := re.search(corp_prefix_regex, term)):
-        prefix = identifier.group(1)
-        new_term = term.replace(prefix, '', 1)
-        if is_child:
-            field = PRE_CHILD_FILTER_CLAUSE + field
-            identifier_field = PRE_CHILD_FILTER_CLAUSE + EntityRoleField.RELATED_IDENTIFIER_Q.value
 
-        return f'({field}:"{new_term}" AND {identifier_field}:"{prefix.upper()}")'
+    search_field = field_value
     if is_child:
-        field = PRE_CHILD_FILTER_CLAUSE + field
+        search_field = PRE_CHILD_FILTER_CLAUSE + search_field
 
-    return f'{field}:{term}'
+    if field_value in IDENTIFIER_FIELD_VALUES and (identifier := re.search(corp_prefix_regex, term)):
+        prefix = identifier.group(1)
+        no_prefix_term = term.replace(prefix, '', 1)
+
+        return f'({search_field}:"{no_prefix_term}" AND {search_field}:"{prefix.upper()}")'
+
+    return f'{search_field}:{term}'
 
 
 def _get_fuzzy_str(term: str, short: int, long: int) -> str:
@@ -87,7 +91,7 @@ def _find_synonym_terms(start_term: str,
     return best_synonym_match_terms
 
 
-def _update_clause(current_clause: str, new_clause: str, join_str: str):
+def _join_clause(current_clause: str, new_clause: str, join_str: str):
     """Return the current clause added with the new clause."""
     if current_clause:
         current_clause += f' {join_str} '
@@ -104,12 +108,12 @@ def build_child_query(child_query: dict[str, str]) -> str | None:
 
         terms = child_query[key].split()
         if not child_q:
-            child_q = _add_identifier(key, terms[0], True)
+            child_q = _create_clause(key, terms[0], True)
         else:
-            child_q += f' AND {_add_identifier(key, terms[0], True)}'
+            child_q += f' AND {_create_clause(key, terms[0], True)}'
 
         for term in terms[1:]:
-            child_q += f' AND {_add_identifier(key, term, True)}'
+            child_q += f' AND {_create_clause(key, term, True)}'
 
     if not child_q:
         return None
@@ -159,19 +163,19 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
         # each term only needs to match one of the given fields, but all terms must match at least 1
         term_clause = ''
         for field, level in fields.items():
-            field_clause = _add_identifier(field.value, term, level == 'child')
+            field_clause = _create_clause(field.value, term, level == 'child')
             pre_boost_clause = field_clause
             # add boost
             if field in boost_fields:
                 field_clause += f'^{boost_fields[field]}'
 
-            term_clause = _update_clause(term_clause, field_clause, 'OR')
+            term_clause = _join_clause(term_clause, field_clause, 'OR')
             # add fuzzy matching
             if field in fuzzy_fields and (fuzzy_str := _get_fuzzy_str(term,
                                                                       fuzzy_fields[field]['short'],
                                                                       fuzzy_fields[field]['long'])):
                 # add another with fuzzy (this one will give a lower score on a hit if the original has a boost)
-                term_clause = _update_clause(term_clause, f'{pre_boost_clause}{fuzzy_str}', 'OR')
+                term_clause = _join_clause(term_clause, f'{pre_boost_clause}{fuzzy_str}', 'OR')
 
         # add synonym field clauses
         for field, level in synonym_fields.items():
@@ -190,9 +194,9 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
                 synonym_clause = f"{field_value}:{' '.join(new_synonym_terms)}"
 
             if synonym_clause:
-                term_clause = _update_clause(term_clause, f'({synonym_clause})', 'OR')
+                term_clause = _join_clause(term_clause, f'({synonym_clause})', 'OR')
 
-        query_clause = _update_clause(query_clause, f'({term_clause})', 'AND')
+        query_clause = _join_clause(query_clause, f'({term_clause})', 'AND')
 
     # extra filters
     filters = []
@@ -201,6 +205,6 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
             continue
         terms = query[key].split()
         for term in terms:
-            filters.append(_add_identifier(key, term))
+            filters.append(_create_clause(key, term))
 
     return {'query': query_clause, 'filter': filters}

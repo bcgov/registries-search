@@ -19,10 +19,11 @@ import pytest
 import requests_mock
 
 from bor_api.services import solr
-from bor_api.services.bor_solr.fields import EntityField
+from bor_api.services.bor_solr.fields import EntityField, EntityRoleField
+from bor_api.services.bor_solr.utils.query_builders import PRE_CHILD_FILTER_CLAUSE
 
 from tests import integration_solr
-from tests.unit.test_utils import create_entity, factory_entity_default
+from tests.unit.test_utils import TEST_PERSONS, create_entity, factory_entity_default
 
 
 @integration_solr
@@ -104,7 +105,10 @@ def test_create_update_delete_query(app):
 
     # replace entity_1
     new_name = 'bla'
-    updated_entity = create_entity(name=new_name)
+    updated_entity = TEST_PERSONS[-1]
+    updated_entity.legalName = new_name
+    updated_entity.name_q = new_name
+    updated_entity.id = entity_1.id
     # verify identifier is the same
     assert updated_entity.id == entity_1.id
     replaced = solr.create_or_replace_docs([updated_entity])
@@ -122,6 +126,42 @@ def test_create_update_delete_query(app):
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
+    
+    # partial atomic update
+    new_bn = '1'
+    new_email = 'changed@change.com'
+    new_legal_type = 'TST'
+    new_name = 'Partial atomic update test'
+    new_state = 'CHANGE'
+    
+    partial_update = {
+        '_root_': updated_entity.id,
+        'id': updated_entity.roles[0].id,
+        'relatedBN': {'set': new_bn},
+        'relatedEmail': {'set': new_email},
+        'relatedLegalType': {'set': new_legal_type},
+        'relatedName': {'set': new_name},
+        'relatedState': {'set': new_state}
+    }
+    partial = solr.create_or_replace_docs(raw_docs=[partial_update])
+    assert partial.status_code == HTTPStatus.OK
+    time.sleep(2)
+    # search updated entity (should still be searchable by all query fields after partial update)
+    info_q_clause = f'{EntityField.INFO_Q.value}:{updated_entity.email}'
+    name_q_clause = f'{EntityField.NAME_Q.value}:{updated_entity.legalName}'
+    related_q_clause = f'{PRE_CHILD_FILTER_CLAUSE}{EntityRoleField.RELATED_Q.value}:{updated_entity.roles[0].relatedIdentifier}'
+    
+    params = {
+        'query': f'{info_q_clause} AND {name_q_clause} AND {related_q_clause}',
+        'fields': solr.entity_fields + solr.entity_role_fields + [EntityField.UNIQUE_KEY.value]
+    }
+    resp = solr.query(params, 0, 10)
+    docs = resp['response']['docs']
+    assert len(docs) == 1
+    assert docs[0]['id'] == updated_entity.id
+    for field in partial_update:
+        if field not in ['_root_', 'id']:
+            assert partial_update[field]['set'] == docs[0]['roles'][0][field]
 
     # assert delete 1
     deleted = solr.delete_docs([updated_entity.id])

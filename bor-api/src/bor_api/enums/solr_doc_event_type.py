@@ -20,6 +20,5 @@ from .base import BaseEnum
 class SolrDocEventType(BaseEnum):
     """Enum of the solr doc event types."""
 
-    RESYNC = auto()
-    UPDATE = auto()
-    UPDATE_CEASE = auto()
+    RESYNC = auto()  # event for re-applying an entity update to solr
+    UPDATE = auto()  # event for applying an entity update to solr

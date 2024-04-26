@@ -13,6 +13,6 @@
 # limitations under the License.
 """Tests utils module."""
 from .auth_helpers import create_header, create_header_account, helper_create_jwt
-from .solr_doc_data import SOLR_TEST_DOCS
+from .solr_doc_data import SOLR_TEST_DOCS, TEST_PERSONS
 from .solr_helpers import create_entity, factory_entity_default
 from .solr_update_templates import SOLR_UPDATE_REQUEST_TEMPLATE, SOLR_UPDATE_REQUEST_OWNER_TEMPLATE

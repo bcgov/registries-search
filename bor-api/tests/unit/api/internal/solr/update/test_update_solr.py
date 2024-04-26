@@ -26,7 +26,7 @@ from bor_api.services.authz import SYSTEM_ROLE
 
 from tests.unit.test_utils import (SOLR_UPDATE_REQUEST_TEMPLATE as REQUEST_TEMPLATE,
                                    SOLR_UPDATE_REQUEST_OWNER_TEMPLATE as REQUEST_OWNER_TEMPLATE,
-                                   create_header)
+                                   TEST_PERSONS, create_header)
 from tests import integration_solr
 
 from . import check_update_recorded
@@ -44,18 +44,20 @@ del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
 REQUEST_TEMPLATE_PARTY_NO_DELIVERY = deepcopy(SP_REQUEST_TEMPLATE)
 del REQUEST_TEMPLATE_PARTY_NO_DELIVERY['parties'][0]['deliveryAddress']
 
-@pytest.mark.parametrize('test_name,request_json', [
-    ('ben', REQUEST_TEMPLATE),
-    ('sp', SP_REQUEST_TEMPLATE),
-    ('party_no_delivery', REQUEST_TEMPLATE_PARTY_NO_DELIVERY),
-    ('si', REQUEST_OWNER_TEMPLATE)
+@pytest.mark.parametrize('test_name,request_json,role_info', [
+    ('ben', REQUEST_TEMPLATE, [{'id': '1-1', '_nest_parent_': '1'}]),
+    ('sp', SP_REQUEST_TEMPLATE, []),
+    ('party_no_delivery', REQUEST_TEMPLATE_PARTY_NO_DELIVERY, []),
+    ('si', REQUEST_OWNER_TEMPLATE, [{'id': '1-1', '_nest_parent_': '1'}, {'id': '2-1', '_nest_parent_': '2'}])
 ])
-def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
+def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, role_info):
     """Assert that update operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commit=true&overwrite=true&wt=json'
+    solr_url_update = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commit=true&overwrite=true&wt=json'
+    solr_url_query = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/query'
 
     with requests_mock.mock() as m:
-        m.post(solr_url)
+        m.post(solr_url_update)
+        m.post(solr_url_query, json={'response': {'docs': role_info}})
         
         api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
@@ -66,7 +68,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update
         business_identifier = request_json['business']['identifier']
-        # check_update_recorded(business_identifier)
+        check_update_recorded(business_identifier)
         # check parties update
         for party in request_json.get('parties', []):
             for count, role in enumerate(party['roles']):
@@ -85,9 +87,9 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         assert api_response.status_code == HTTPStatus.OK
         # check events were completed
         business_identifier = request_json['business']['identifier']
-        # check_update_recorded(business_identifier,
-        #                       is_party=False,
-        #                       status=SolrDocEventStatus.COMPLETE)
+        check_update_recorded(business_identifier,
+                              is_party=False,
+                              status=SolrDocEventStatus.COMPLETE)
         for party in request_json.get('parties', []):
             for count, role in enumerate(party['roles']):
                 identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
@@ -97,9 +99,21 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
-        assert m.call_count == 1
-        assert solr_url in m.request_history[0].url
+        # in order: 1 for existing business query + 1 for record update + 1 for existing business role update
+        assert m.call_count == 2 if not role_info else 3
 
+        # query for business roles
+        assert solr_url_query in m.request_history[0].url
+        assert m.request_history[0].json() == {
+            'query': f'((relatedIdentifier_q:"{business_identifier[2:]}" AND relatedIdentifier_q:"{business_identifier[:2]}"))',
+            'filter': [],
+            'fields': ['id', '_nest_parent_'],
+            'offset': 0,
+            'limit': 1000
+        }
+
+        # verify record update (should've been the 2nd call to solr)
+        assert solr_url_update in m.request_history[1].url
         entity_addresses = None
         if request_json.get('parties', [{}])[0].get('deliveryAddress'):
             entity_addresses = [{
@@ -125,27 +139,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 'addressCountry': 'Canada'}]
 
         if request_json.get('parties'):
-            assert m.request_history[0].json() == [
-                # NOTE: uncomment once serving business updates
-                # {
-                #     'entityAddresses': [{
-                #         'address_q': 'Bc-435 North Rd Coquitlam British Columbia Canada V3K 3V9',
-                #         'postalCode': 'V3K 3V9',
-                #         'addressCity': 'Coquitlam',
-                #         'addressType': 'delivery',
-                #         'addressRegion': 'BC',
-                #         'streetAddress': 'Bc-435 North Rd',
-                #         'addressCountry': 'Canada'}],
-                #     'entityType': 'BUSINESS',
-                #     'id': request_json['business']['identifier'],
-                #     'identifier': request_json['business']['identifier'],
-                #     'legalName': request_json['business']['legalName'],
-                #     'bn': '123456789',
-                #     'email': 'test@email.com',
-                #     'legalType': request_json['business']['legalType'],
-                #     'roles': None,
-                #     'state': 'ACTIVE'
-                # },
+            assert m.request_history[1].json() == [
                 {
                     'entityAddresses': {'set': entity_addresses} if entity_addresses else None,
                     'entityType': 'PERSON',
@@ -225,7 +219,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 }
             ]
         else:
-            assert m.request_history[0].json() == [
+            assert m.request_history[1].json() == [
                 {
                     'entityAddresses': {'set': entity_addresses},
                     'entityType': 'PERSON',
@@ -297,17 +291,43 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                 }
             ]
 
+        # update per existing business role_info 
+        if role_info:
+            # for index, role_info in enumerate(role_info):
+            assert solr_url_update in m.request_history[2].url
+            for index, role_ids in enumerate(role_info):
+                assert m.request_history[2].json()[index] == {
+                    '_root_': role_ids['_nest_parent_'],
+                    'id': role_ids['id'],
+                    'relatedBN': {'set': request_json['business']['taxId']},
+                    'relatedEmail': {'set': request_json['business']['email']},
+                    'relatedLegalType': {'set': request_json['business']['legalType']},
+                    'relatedName': {'set': request_json['business']['legalName']},
+                    'relatedState': {'set': request_json['business']['state']},
+                    'related_q': {'set': f"{request_json['business']['legalName']} {business_identifier} {request_json['business']['taxId']}"},
+                }
+
 
 @integration_solr
-@pytest.mark.parametrize('test_name,request_json', [
-    ('ben', REQUEST_TEMPLATE),
-    ('si', REQUEST_OWNER_TEMPLATE)
+@pytest.mark.parametrize('test_name,request_json,existing_entities', [
+    ('ben', REQUEST_TEMPLATE, []),
+    ('si', REQUEST_OWNER_TEMPLATE, []),
+    ('partial', deepcopy(REQUEST_TEMPLATE), TEST_PERSONS[-4:])
 ])
-def test_update_solr(session, client, jwt, test_name, request_json):
+def test_update_solr(session, client, jwt, test_name, request_json, existing_entities):
     """Assert that update operation is successful."""
     # setup -- start with no docs
     solr.delete_all_docs()
     time.sleep(2)  # wait for solr to register update
+    # setup -- add existing docs
+    if existing_entities:
+        # set the request_json identifier to match one of the existing entities (ensures a partial update will occur)
+        request_json['business']['identifier'] = existing_entities[0].roles[0].relatedIdentifier
+        # check integrity of the test (if fails then alter the test data)
+        assert request_json['business']['legalName'] != existing_entities[0].roles[0].relatedName
+        # add existing docs
+        solr.create_or_replace_docs(existing_entities)
+    time.sleep(1)  # wait for solr to register update
     # update
     api_response = client.put(f'/api/v1/internal/solr/update',
                               data=json.dumps(request_json),
@@ -318,8 +338,8 @@ def test_update_solr(session, client, jwt, test_name, request_json):
     business_identifier = request_json['business']['identifier']
     party_ids = []
     si_ids = []
-    # check business update - NOTE: uncomment once serving business updates
-    # check_update_recorded(business_identifier)
+    # check business update
+    check_update_recorded(business_identifier)
     # check parties update
     for party in request_json.get('parties', []):
         for role in party['roles']:
@@ -332,7 +352,7 @@ def test_update_solr(session, client, jwt, test_name, request_json):
         si_ids.append(si_id)
         check_update_recorded(si_id, True)
     # verify update has NOT synced to solr yet
-    for entity_id in [business_identifier] + party_ids:
+    for entity_id in party_ids:
         search_response = solr.query(payload={'query': f'id:{entity_id}', 'fields': '*'})
         assert search_response['response']
         assert len(search_response['response']['docs']) == 0
@@ -340,10 +360,10 @@ def test_update_solr(session, client, jwt, test_name, request_json):
     api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
     # check success
     assert api_response.status_code == HTTPStatus.OK
-    # check events were completed - NOTE: uncomment once serving business updates
-    # check_update_recorded(business_identifier,
-    #                       is_party=False,
-    #                       status=SolrDocEventStatus.COMPLETE)
+    # check events were completed
+    check_update_recorded(business_identifier,
+                          is_party=False,
+                          status=SolrDocEventStatus.COMPLETE)
     for party in request_json.get('parties', []):
         for role in party['roles']:
             identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
@@ -359,7 +379,19 @@ def test_update_solr(session, client, jwt, test_name, request_json):
         assert search_response['response']
         assert search_response['response']['docs']
         assert len(search_response['response']['docs']) == 1
-
+    # verify existing entities with the same business were updated
+    for entity in existing_entities:
+        for role in entity.roles:
+            if role.relatedIdentifier == business_identifier:
+                resp = solr.query(payload={'query': f'id:{role.id}', 'fields': '*'})
+                assert len(resp['response']['docs']) == 1
+                doc = resp['response']['docs'][0]
+                assert doc['relatedIdentifier'] == business_identifier
+                assert doc['relatedName'] == request_json['business']['legalName']
+                assert doc['relatedState'] == request_json['business']['state']
+                assert doc['relatedLegalType'] == request_json['business']['legalType']
+                assert doc['relatedEmail'] == request_json['business']['email']
+                assert doc['relatedBN'] == request_json['business']['taxId']
 
 @pytest.mark.skip  # NOTE: unskip once serving businesses in search
 @integration_solr

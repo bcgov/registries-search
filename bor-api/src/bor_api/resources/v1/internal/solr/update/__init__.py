@@ -53,20 +53,10 @@ def update_entity():
 
         entities = _parse_entities(request_json)
         for entity in entities:
-            if entity.entityType != 'PERSON':
-                # skip business entities for now
-                continue
             # commit each entity. Ensures other flows (i.e. resync) will use the current data
             solr_doc = SolrDoc(doc=asdict(entity), entity_id=entity.id, _submitter_id=user.id).save()
             SolrDocEvent(event_type=SolrDocEventType.UPDATE, solr_doc_id=solr_doc.id).save()
             # SOLR update will be triggered by job (does a frequent bulk update to solr)
-
-        # create cease update record - TODO: relook at this once BTR filing is flushed out
-        for party in request_json.get('ceasedOwners', []):
-            solr_doc = SolrDoc(doc={**party, 'relatedIdentifier': request_json['business']['identifier']},
-                               entity_id=party['id'],
-                               _submitter_id=user.id).save()
-            SolrDocEvent(event_type=SolrDocEventType.UPDATE_CEASE, solr_doc_id=solr_doc.id).save()
 
         return jsonify({'message': 'Update accepted.'}), HTTPStatus.ACCEPTED
 
@@ -79,16 +69,12 @@ def _parse_entities(request_json: dict) -> list[Entity]:
     entities = []
 
     business = get_lear_business(request_json['business'])
-
-    # entities.append(business) TODO: uncomment this when implementing search business with owners
+    entities.append(business)
 
     for party_info in request_json.get('parties', []):
         entities += get_lear_party(party_info, business)
 
     owners = request_json.get('owners', [])
-    if len(owners) == 0:
-        # TODO: get existing owners from BTR for the business
-        pass
     for party_info in owners:
         entities.append(get_btr_owner(party_info, business))
 

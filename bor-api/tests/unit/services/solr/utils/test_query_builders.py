@@ -17,7 +17,7 @@ import pytest
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services.bor_solr.fields import AddressField, EntityField, EntityRoleField
-from bor_api.services.bor_solr.utils.query_builders import (PRE_CHILD_FILTER_CLAUSE, _add_identifier, _find_synonym_terms,
+from bor_api.services.bor_solr.utils.query_builders import (PRE_CHILD_FILTER_CLAUSE, _create_clause, _find_synonym_terms,
                                                             build_base_query, build_child_query, build_facet, build_facet_query)
 
 
@@ -41,8 +41,8 @@ from bor_api.services.bor_solr.utils.query_builders import (PRE_CHILD_FILTER_CLA
     ('test_bn_q', EntityField.BN_Q, 'BC1234567', f'{EntityField.BN_Q.value}:BC1234567', False),
 ])
 def test_add_identifier(test_name, field: EntityField | EntityRoleField, term: str, expected: str, is_child: bool):
-    """Assert the _add_identifier function works as expected."""
-    assert _add_identifier(field.value, term, is_child) == expected
+    """Assert the _create_clause function works as expected."""
+    assert _create_clause(field.value, term, is_child) == expected
 
 
 @pytest.mark.parametrize('test_name,term,term_index,terms,expected,test_prep', [

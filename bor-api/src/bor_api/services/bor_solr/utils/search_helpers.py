@@ -59,11 +59,7 @@ def entities_search(params: SearchParams, solr: BorSolr):
             'parents': f'{EntityField.ENTITY_TYPE.value}:*',
             'parentFilters': ' AND '.join(initial_queries['filter'])},
         'facet': {
-            # facets entity
-            **build_facet(EntityField.ENTITY_TYPE, False),
-            **build_facet(EntityField.LEGAL_TYPE, False),
-            **build_facet(EntityField.STATE, False),
-            # facets roles
+            # facets for roles
             **build_facet(EntityRoleField.RELATED_ENTITY_TYPE, True),
             **build_facet(EntityRoleField.RELATED_LEGAL_TYPE, True),
             **build_facet(EntityRoleField.RELATED_STATE, True),

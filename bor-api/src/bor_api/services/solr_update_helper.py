@@ -12,23 +12,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """BOR Solr update functions."""
-# TODO: turn this into a class that isn't BOR specific
 from flask import current_app
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
 from bor_api.models import SolrDoc, SolrDocEvent, db
 from bor_api.services import solr
-from bor_api.services.bor_solr.doc_models import Entity
+from bor_api.services.bor_solr.doc_models import Entity, EntityRole
+from bor_api.services.bor_solr.fields import EntityRoleField
+from bor_api.services.bor_solr.utils.query_builders import build_base_query
 
 
 def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
     """Update the docs for the entity_ids in the solr instance."""
-    entities: list[Entity] = []
+    businesses: list[dict] = []
+    people: list[Entity] = []
     for entity_id in entity_ids:
         doc_update = SolrDoc.find_most_recent_by_entity_id(entity_id)
-        entities.append(Entity(**doc_update.doc))
+        entity = Entity(**doc_update.doc)
+        if entity.entityType == 'PERSON':
+            people.append(entity)
+        else:
+            # get all role records containing this business
+            query_roles_with_business = build_base_query(query={'value': entity.identifier},
+                                                         fields={EntityRoleField.RELATED_IDENTIFIER_Q: 'parent'},
+                                                         boost_fields={},
+                                                         fuzzy_fields={},
+                                                         synonym_fields={})
+
+            payload = {
+                **query_roles_with_business,
+                'fields': ['id', '_nest_parent_']
+            }
+            roles_with_business = solr.query(payload, 0, 1000)
+            for role in roles_with_business.get('response', {}).get('docs', []):
+                # init via EntityRole to capture calculated values like related_q
+                entity_role = EntityRole(id=role['id'],
+                                         relatedIdentifier=entity.identifier,
+                                         relatedLegalType=entity.legalType,
+                                         relatedBN=entity.bn,
+                                         relatedEmail=entity.email,
+                                         relatedName=entity.legalName,
+                                         relatedEntityType='BUSINESS',
+                                         relatedState=entity.state,
+                                         roleType='',
+                                         roleDates=None)
+                # these are applied via partial atomic updates requiring id and _root_
+                businesses.append({
+                    '_root_': role['_nest_parent_'],
+                    'id': entity_role.id,
+                    EntityRoleField.RELATED_BN.value: {'set': entity_role.relatedBN},
+                    EntityRoleField.RELATED_EMAIL.value: {'set': entity_role.relatedEmail},
+                    EntityRoleField.RELATED_LEGAL_TYPE.value: {'set': entity_role.relatedLegalType},
+                    EntityRoleField.RELATED_NAME.value: {'set': entity_role.relatedName},
+                    EntityRoleField.RELATED_STATE.value: {'set': entity_role.relatedState},
+                    EntityRoleField.RELATED_Q.value: {'set': entity_role.related_q}
+                })
     try:
-        solr.create_or_replace_docs(entities, additive=False)
+        # update people
+        solr.create_or_replace_docs(people, additive=False)
+
+        if businesses:
+            # update all previously existing related business records if any existed previously
+            solr.create_or_replace_docs(raw_docs=businesses)
+
         SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
     except Exception as err:  # noqa: B902
