@@ -1,13 +1,6 @@
 {
     "facets": {
         "fields": {
-            "entityType": [
-                {
-                    "count": 18368,
-                    "value": "PERSON"
-                }
-            ],
-            "legalType": [],
             "relatedEntityType": [
                 {
                     "count": 18368,
@@ -130,8 +123,7 @@
                     "parentCount": 1,
                     "value": "CUSTODIAN"
                 }
-            ],
-            "state": []
+            ]
         }
     },
     "searchResults": {

@@ -1,13 +1,6 @@
 {
     "facets": {
         "fields": {
-            "entityType": [
-                {
-                    "count": 7,
-                    "value": "PERSON"
-                }
-            ],
-            "legalType": [],
             "relatedEntityType": [
                 {
                     "count": 7,
@@ -75,8 +68,7 @@
                     "parentCount": 1,
                     "value": "PARTNER"
                 }
-            ],
-            "state": []
+            ]
         }
     },
     "searchResults": {

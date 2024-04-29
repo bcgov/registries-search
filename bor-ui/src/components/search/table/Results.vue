@@ -33,21 +33,11 @@ import PersonResults from './PersonResults.vue'
 import PersonResultsExtended from './PersonResultsExtended.vue'
 
 const search = useBcrosSearch()
-const { hasMoreResults, isExtended, loadingNext } = storeToRefs(search)
+const { totalResults, hasMoreResults, isExtended, loadingNext } = storeToRefs(search)
 
 // text functions
 const resultsDesc = computed(() => {
-  let desc = ''
-  if (search.filters.categories.entityType?.includes(EntityTypeE.PERSON)) {
-    const count = search.facetCount('entityType', EntityTypeE.PERSON)
-    desc += `${count} ${count === 1 ? 'Person' : 'People'}`
-  }
-  if (search.filters.categories.entityType?.includes(EntityTypeE.BUSINESS)) {
-    const count = search.facetCount('entityType', EntityTypeE.BUSINESS)
-    if (desc) { desc += ', ' }
-    desc += `${count} ${count === 1 ? 'Business' : 'Businesses'}`
-  }
-  return desc
+  return `${totalResults.value} ${totalResults.value === 1 ? 'Person' : 'People'}`
 })
 
 /** Update the base table header filters to display what the current filters are.
