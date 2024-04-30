@@ -74,10 +74,12 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
+      itemColspan: 4,
       itemFn: (val: SearchResultI) => {
         if (val.roles) { return capFirstLetter(`${val.roles[0].roleType}`) }
         return 'N/A'
       },
+      slotId: 'roles',
       value: 'Roles',
       width: '16%'
     },
@@ -92,6 +94,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
+      itemColspan: 0,
+      itemHidden: true,
       slotId: 'details',
       value: 'Business Details',
       width: '14%'
@@ -100,8 +104,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       col: 'roles',
       hasFilter: false,
       hasSort: false,
-      // eslint-disable-next-line
-      itemFn: (val: SearchResultI) => 'TBD dd',
+      itemColspan: 0,
+      itemHidden: true,
       slotId: 'personControl',
       value: 'Details',
       width: '16%'
@@ -111,26 +115,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       col: 'roles',
       hasFilter: false,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (val.roles && val.roles.length > 0) {
-          // only 1 role per item for now
-          const roleType = val.roles[0].roleType
-          let dates = ''
-          for (const i in val.roles[0].roleDates) {
-            if (i !== '0') { dates += '<br>' }
-            const start = toDateStr(val.roles[0].roleDates[i].start)
-            const end = toDateStr(val.roles[0].roleDates[i].end as Date)
-
-            if (roleType === RoleTypeE.INCORPORATOR) {
-              dates += start
-            } else {
-              dates += `${start || 'Unknown'} To ${end || 'Current'}`
-            }
-          }
-          return dates
-        }
-        return 'N/A'
-      },
+      itemColspan: 0,
+      itemHidden: true,
       slotId: 'date',
       value: 'Effective Dates',
       width: '11%'

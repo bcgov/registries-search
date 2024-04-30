@@ -7,26 +7,22 @@
 </template>
 
 <script setup lang="ts">
-const prop = defineProps<{ item: SearchResultI }>()
+const prop = defineProps<{ role: SearchResultRoleI }>()
 
-const getEffectiveDates = (item: SearchResultI) => {
+const getEffectiveDates = (role: SearchResultRoleI) => {
   const effectiveDates = []
-  if (item.roles && item.roles.length > 0) {
-    // only 1 role per item for now
-    const roleType = item.roles[0].roleType
 
-    for (const i in item.roles[0].roleDates) {
-      const start = toDateStr(item.roles[0].roleDates[i].start)
-      const end = toDateStr(item.roles[0].roleDates[i].end as Date)
-      let dateRange = ''
-      if (roleType === RoleTypeE.INCORPORATOR) {
-        dateRange += start
-      } else {
-        dateRange += `${start || 'Unknown'} To ${end || 'Current'}`
-      }
-
-      effectiveDates.push({ start, dateRange })
+  for (const i in role.roleDates) {
+    const start = toDateStr(role.roleDates[i].start)
+    const end = toDateStr(role.roleDates[i].end as Date)
+    let dateRange = ''
+    if (role.roleType === RoleTypeE.INCORPORATOR) {
+      dateRange += start
+    } else {
+      dateRange += `${start || 'Unknown'} To ${end || 'Current'}`
     }
+
+    effectiveDates.push({ start, dateRange })
   }
 
   // sort effectiveDates by start date
@@ -34,7 +30,7 @@ const getEffectiveDates = (item: SearchResultI) => {
   return effectiveDates
 }
 
-const effectiveDates = ref(getEffectiveDates(prop.item))
+const effectiveDates = ref(getEffectiveDates(prop.role))
 </script>
 
 <style lang="scss" scoped>

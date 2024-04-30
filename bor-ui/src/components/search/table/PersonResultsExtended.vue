@@ -53,19 +53,28 @@
         <CommonItemsCitizenship :item="item" />
       </div>
     </template>
-    <template #item-slot-details="{ item } : { item: SearchResultI }">
-      <CommonItemsBusinessDetails :item="item" />
-    </template>
-    <template #item-slot-date="{ item } : { item: SearchResultI }">
-      <CommonItemsEffectiveDates :item="item" />
+    <template #item-slot-roles="{ item, header } : { item: SearchResultI, header: BaseTableHeaderI }">
+      <tr v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
+        <div class="inner-row-div">
+          <td width="192px">
+            {{ header.itemFn(item) }}
+          </td>
+          <td class="pl-3" width="166px">
+            <CommonItemsBusinessDetails :role="role" />
+          </td>
+          <td class="pl-3" width="204px">
+            <CommonItemsPersonControl :role="role" />
+          </td>
+          <td class="pl-3" width="136px">
+            <CommonItemsEffectiveDates :role="role" />
+          </td>
+        </div>
+      </tr>
     </template>
     <template #item-slot-actions="{ item } : { item: SearchResultI }">
       <div class="h-full w-full px-3 pt-3 shadow-action-col-item">
         <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
       </div>
-    </template>
-    <template #item-slot-personControl="{ item }: { item: SearchResultI }">
-      <CommonItemsPersonControl :item="item" />
     </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
@@ -121,3 +130,11 @@ const clearFilters = () => {
   search.filterSearch(null, null, true)
 }
 </script>
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+tr.child-row-item:not(:first-child) .inner-row-div {
+  border-top: 1px solid $gray3;
+  margin-top: 20px;
+  padding-top: 20px;
+}
+</style>

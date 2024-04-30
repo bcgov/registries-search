@@ -98,7 +98,7 @@ describe('SearchResults tests', () => {
     for (const rowIndx in rows) {
       // verify each item
       const items = rows[rowIndx].findAll('.base-table__body__row__item')
-      expect(items.length).toBe(headerConfig.length)
+      expect(items.length).toBe(headerConfig.filter(val => !val.itemHidden).length)
       for (const itemIndx in items) {
         const itemFn = headerConfig[itemIndx].itemFn
         const record = testSearchResults[rowIndx]

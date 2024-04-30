@@ -1,3 +1,23 @@
+export interface SearchResultRoleI {
+  active: boolean
+  relatedBN?: string
+  relatedEmail?: string
+  relatedEntityType: 'BUSINESS' | 'PERSON'
+  relatedIdentifier: string
+  relatedLegalType: CorpTypeCdE
+  relatedInterests?: {
+    details: string
+    interestType: string
+    sharesExact?: number
+    sharesMax?: number
+    sharesMin?: number
+  }[]
+  relatedName: string
+  relatedState: BusinessStateE
+  roleDates: { end?: Date, start: Date }[]
+  roleType: RoleTypeE
+}
+
 export interface SearchResultI {
   alternateName?: string,
   birthDate?: string,
@@ -10,25 +30,7 @@ export interface SearchResultI {
   legalType?: CorpTypeCdE
   identifier?: string,
   nationalities?: string[]
-  roles: {
-    active: boolean
-    relatedBN?: string
-    relatedEmail?: string
-    relatedEntityType: 'BUSINESS' | 'PERSON'
-    relatedIdentifier: string
-    relatedLegalType: CorpTypeCdE
-    relatedInterests?: {
-      details: string
-      interestType: string
-      sharesExact?: number
-      sharesMax?: number
-      sharesMin?: number
-    }[]
-    relatedName: string
-    relatedState: BusinessStateE
-    roleDates: { end?: Date, start: Date }[]
-    roleType: RoleTypeE
-  }[],
+  roles: SearchResultRoleI[],
   state?: BusinessStateE,
   taxNumber?: string,
   taxResidencies?: string[]

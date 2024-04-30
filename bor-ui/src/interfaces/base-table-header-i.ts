@@ -7,6 +7,8 @@ export interface BaseTableHeaderI {
   hasFilter: boolean
   hasSort: boolean
   itemClass?: string
+  itemColspan?: number
+  itemHidden?: boolean
   itemLoadingClass?: string
   itemFn?: (val: any) => string
   slotId?: string

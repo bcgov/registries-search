@@ -142,13 +142,16 @@
           <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row" :tabindex="i + 1">
             <slot name="body-row">
               <td
-                v-for="header in headers"
+                v-for="header in displayItemHeaders"
                 :key="'item-' + header.col"
                 :class="[header.itemClass, 'base-table__body__row__item']"
+                :colspan="header.itemColspan || 1"
               >
                 <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
-                  <span v-if="header.itemFn" v-html="header.itemFn(item)" />
-                  <span v-else>{{ item[header.col] }}</span>
+                  <div v-if="!header.itemHidden">
+                    <span v-if="header.itemFn" v-html="header.itemFn(item)" />
+                    <span v-else>{{ item[header.col] }}</span>
+                  </div>
                 </slot>
               </td>
             </slot>
@@ -199,6 +202,7 @@ const localProps = defineProps<{
 const emit = defineEmits<{(e: 'filterActive', value: boolean): void }>()
 
 const headers = reactive(_.cloneDeep(localProps.setHeaders) as BaseTableHeaderI[])
+const displayItemHeaders = headers.filter(header => !header.itemHidden)
 
 const sortedItems = ref([...localProps.setItems])
 

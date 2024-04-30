@@ -1,9 +1,9 @@
 <template>
-  <div v-if="item.roles">
-    <a :href="getItemDetailsLink(item)" target="_blank">
-      {{ item.roles[0].relatedName }}
+  <div>
+    <a :href="getItemDetailsLink(role)" target="_blank">
+      {{ role.relatedName }}
       <v-icon
-        v-if="!isModernized(item)"
+        v-if="!isModernized(role)"
         class="mb-1"
         color="primary"
         icon="mdi-open-in-new"
@@ -11,29 +11,28 @@
       />
     </a>
     <br>
-    {{ item.roles[0].relatedIdentifier }}
+    {{ role.relatedIdentifier }}
     <br>
-    {{ item.roles[0].relatedBN }}
+    {{ role.relatedBN }}
   </div>
-  <span v-else>N/A</span>
 </template>
 <script setup lang="ts">
-defineProps<{ item: SearchResultI }>()
+defineProps<{ role: SearchResultRoleI }>()
 
 // business details link
 const config = useRuntimeConfig().public
-const isModernized = (item: SearchResultI) => {
+const isModernized = (role: SearchResultRoleI) => {
   const modernizedTypes = [
     CorpTypeCdE.BENEFIT_COMPANY,
     CorpTypeCdE.COOP,
     CorpTypeCdE.SOLE_PROP,
     CorpTypeCdE.PARTNERSHIP
   ]
-  return modernizedTypes.includes(item.roles[0].relatedLegalType)
+  return modernizedTypes.includes(role.relatedLegalType)
 }
-const getItemDetailsLink = (item: SearchResultI) => {
-  if (isModernized(item)) {
-    return `${config.businessSearchURL}?identifier=${item.roles[0].relatedIdentifier}`
+const getItemDetailsLink = (role: SearchResultRoleI) => {
+  if (isModernized(role)) {
+    return `${config.businessSearchURL}?identifier=${role.relatedIdentifier}`
   }
   return config.bcolURL
 }

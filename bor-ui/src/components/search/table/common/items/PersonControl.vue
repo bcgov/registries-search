@@ -21,18 +21,15 @@
 import { convertDetailsToIcon, OtherControlIcon } from '@/utils'
 import type { ControlColumnDetailsInfoBoxI, ControlColumnIconI } from '@/interfaces/person-search-table'
 
-const localProps = defineProps<{ item: SearchResultI }>()
+const localProps = defineProps<{ role: SearchResultRoleI }>()
 
 const icons: Ref<ControlColumnIconI[]> = ref([])
 const shares: Ref<ControlColumnDetailsInfoBoxI | null> = ref(null)
 const votes: Ref<ControlColumnDetailsInfoBoxI | null> = ref(null)
 
-for (const role of localProps.item.roles) {
-  if (!role.relatedInterests) {
-    continue
-  }
-  // get icons if exist
-  for (const relatedInterest of role.relatedInterests) {
+// get icons if exist
+if (localProps.role.relatedInterests) {
+  for (const relatedInterest of localProps.role.relatedInterests) {
     // console.log(icons)
     if (relatedInterest.interestType === 'otherInfluenceOrControl') {
       icons.value.push(OtherControlIcon)
@@ -44,7 +41,7 @@ for (const role of localProps.item.roles) {
     }
   }
 
-  const sharesInterest = role.relatedInterests.find(interest =>
+  const sharesInterest = localProps.role.relatedInterests.find(interest =>
     interest.interestType === 'shareholding' && interest.details.startsWith('controlType.sharesOrVotes.')
   )
   if (sharesInterest) {
@@ -55,7 +52,7 @@ for (const role of localProps.item.roles) {
     }
   }
 
-  const votesInterest = role.relatedInterests.find(interest =>
+  const votesInterest = localProps.role.relatedInterests.find(interest =>
     interest.interestType === 'votingRights' && interest.details.startsWith('controlType.sharesOrVotes.')
   )
   if (votesInterest) {

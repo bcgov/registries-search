@@ -33,7 +33,8 @@
       />
     </template>
     <template #item-slot-details="{ item } : { item: SearchResultI }">
-      <CommonItemsBusinessDetails :item="item" />
+      <CommonItemsBusinessDetails v-if="item.roles" :role="item.roles[0]" />
+      <span v-else>N/A</span>
     </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
