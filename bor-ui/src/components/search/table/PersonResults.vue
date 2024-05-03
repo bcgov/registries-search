@@ -32,6 +32,10 @@
         :item="item"
       />
     </template>
+    <template #item-slot-date="{ item } : { item: SearchResultI }">
+      <CommonItemsEffectiveDates v-if="item.roles" :role="item.roles[0]" />
+      <span v-else>N/A</span>
+    </template>
     <template #item-slot-details="{ item } : { item: SearchResultI }">
       <CommonItemsBusinessDetails v-if="item.roles" :role="item.roles[0]" />
       <span v-else>N/A</span>
@@ -50,7 +54,7 @@
 <script setup lang="ts">
 import {
   CommonHeadersActionFilter, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
-  CommonItemsName, CommonTitleExport
+  CommonItemsEffectiveDates, CommonItemsName, CommonTitleExport
 } from './common'
 import { getPersonHeaders } from '@/utils'
 

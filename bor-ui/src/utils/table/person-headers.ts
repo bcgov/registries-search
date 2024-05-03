@@ -68,26 +68,6 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       col: 'roles',
       hasFilter: false,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (val.roles && val.roles.length > 0) {
-          // only 1 role per item for now
-          const roleType = val.roles[0].roleType
-          let dates = ''
-          for (const i in val.roles[0].roleDates) {
-            if (i !== '0') { dates += '<br>' }
-            const start = toDateStr(val.roles[0].roleDates[i].start)
-            const end = toDateStr(val.roles[0].roleDates[i].end as Date)
-
-            if (roleType === RoleTypeE.INCORPORATOR) {
-              dates += start
-            } else {
-              dates += `${start || 'Unknown'} To ${end || 'Current'}`
-            }
-          }
-          return dates
-        }
-        return 'N/A'
-      },
       slotId: 'date',
       value: 'Effective Dates',
       width: '9%'
