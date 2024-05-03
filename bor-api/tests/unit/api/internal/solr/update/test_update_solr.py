@@ -37,9 +37,6 @@ SP_REQUEST_TEMPLATE = deepcopy(REQUEST_TEMPLATE)
 SP_REQUEST_TEMPLATE['business']['identifier'] = 'FM1233334'
 SP_REQUEST_TEMPLATE['business']['legalType'] = 'SP'
 SP_REQUEST_TEMPLATE['business']['legalName'] = 'ABCD Prop'
-SP_REQUEST_TEMPLATE['businessAddresses']['businessOffice'] = SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
-del SP_REQUEST_TEMPLATE['businessAddresses']['registeredOffice']
-del SP_REQUEST_TEMPLATE['businessAddresses']['recordsOffice']
 
 REQUEST_TEMPLATE_PARTY_NO_DELIVERY = deepcopy(SP_REQUEST_TEMPLATE)
 del REQUEST_TEMPLATE_PARTY_NO_DELIVERY['parties'][0]['deliveryAddress']
@@ -123,6 +120,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                 'addressCity': 'Calgary',
                 'addressType': 'DELIVERY',
                 'addressRegion': 'AB',
+                'parentDoc': 'entity',
                 'streetAddress': '1234-4818 Westwinds Dr NE',
                 'streetAdditional': None,
                 'addressCountry': 'Canada'}]
@@ -134,9 +132,26 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                 'addressCity': 'Kelowna',
                 'addressType': 'RESIDENCE',
                 'addressRegion': 'BC',
+                'parentDoc': 'entity',
                 'streetAddress': '123-720 Commonwealth Rd',
                 'streetAdditional': 'test street additional',
                 'addressCountry': 'Canada'}]
+        expectedRelatedAddresses = None
+        if bus_addresses := request_json['business'].get('addresses'):
+            expectedRelatedAddresses = []
+            for address_json in bus_addresses:
+                expectedRelatedAddresses.append({
+                    'address_q': None,
+                    'locationDescription': address_json['deliveryInstructions'],
+                    'postalCode': address_json['postalCode'],
+                    'addressCity': address_json['addressCity'],
+                    'addressType': address_json['addressType'].upper(),
+                    'addressRegion': address_json['addressRegion'],
+                    'parentDoc': 'entityRole',
+                    'streetAddress': address_json['streetAddress'],
+                    'streetAdditional': address_json['streetAddressAdditional'],
+                    'addressCountry': 'Canada'
+                })
 
         if request_json.get('parties'):
             assert m.request_history[1].json() == [
@@ -159,6 +174,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'nationalities': None,
                     'roles': {'set': [{
                         'id': f'LEAR570343{business_identifier}DIRECTOR0/roles0',
+                        'relatedAddresses': expectedRelatedAddresses,
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
                         'relatedEmail': 'test@email.com',
@@ -182,6 +198,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                         'addressCity': 'Québec',
                         'addressType': 'DELIVERY',
                         'addressRegion': 'QC',
+                        'parentDoc': 'entity',
                         'streetAddress': 'W-558 Rue Saint-Vallier O',
                         'streetAdditional': None,
                         'addressCountry': 'Canada'}]},
@@ -202,6 +219,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'legalType': None,
                     'roles': {'set': [{
                         'id': f'LEAR570721{business_identifier}DIRECTOR0/roles0',
+                        'relatedAddresses': expectedRelatedAddresses,
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
                         'relatedEmail': 'test@email.com',
@@ -239,6 +257,17 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'nationalities': {'set': ['CA']},
                     'roles': {'set': [{
                         'id': '7f0511ba-9621-4134-8363-462c61b9162aBC1233335SIGNIFICANT_INDIVIDUAL',
+                        'relatedAddresses': [{
+                            'address_q': None,
+                            'parentDoc': 'entityRole',
+                            'postalCode': 'W2R 1C1',
+                            'addressCity': 'Ladysmith',
+                            'addressType': 'DELIVERY',
+                            'addressRegion': 'BC',
+                            'streetAddress': '123456 Lalalane',
+                            'addressCountry': 'Canada',
+                            'streetAdditional': 'additional info',
+                            'locationDescription': 'bla bla'}],
                         'roleType': 'SIGNIFICANT INDIVIDUAL',
                         'relatedBN': '123456788BC001',
                         'relatedEmail': 'test@email.com',
@@ -299,6 +328,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                 assert m.request_history[2].json()[index] == {
                     '_root_': role_ids['_nest_parent_'],
                     'id': role_ids['id'],
+                    'relatedAddresses': {'set': expectedRelatedAddresses},
                     'relatedBN': {'set': request_json['business']['taxId']},
                     'relatedEmail': {'set': request_json['business']['email']},
                     'relatedLegalType': {'set': request_json['business']['legalType']},

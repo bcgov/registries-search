@@ -16,6 +16,8 @@ import re
 
 from bor_api.services.bor_solr.doc_models import Entity
 
+from . import get_lear_addresses
+
 
 def needs_bc_prefix(identifier: str, legal_type: str) -> bool:
     """Return if the identifier should have the BC prefix or not."""
@@ -31,7 +33,11 @@ def get_lear_business(business_info: dict) -> Entity:
         # set prefix to BC
         identifier = f'BC{identifier}'
 
-    return Entity(entityAddresses=[],
+    business_addresses = None
+    if addresses := business_info.get('addresses'):
+        business_addresses = get_lear_addresses(addresses, 'UNKNOWN')
+
+    return Entity(entityAddresses=business_addresses,
                   entityType='BUSINESS',
                   id=identifier,
                   identifier=identifier,

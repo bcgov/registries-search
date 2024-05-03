@@ -51,7 +51,7 @@ def sync_solr():
 
 @bp.get('/heartbeat')
 @cross_origin(origin='*')
-def follower_heartbeat():
+def sync_follower_heartbeat():
     """Verify the solr follower instance is serving updated/synced records."""
     try:
         now = datetime.now(UTC)
@@ -64,39 +64,41 @@ def follower_heartbeat():
                                                   '%a %b %d %H:%M:%S %Z %Y')).replace(tzinfo=UTC)
             current_app.logger.debug(f'Last replication was at {last_replication.isoformat()}')
 
-            # NOTE: during a reindex, follower polling / replication will be paused for ~8/9 hours
-            is_reindex_day = current_app.config.get('REINDEX_UTC_WEEKDAY_NUM') == now.weekday()
-            in_reindex_hours = current_app.config.get('REINDEX_UTC_HOUR_END_EST') > now.hour
-            if is_reindex_day and in_reindex_hours:
-                message = 'Skipped sync verification. Estimated that a reindex is running.'
-                current_app.logger.debug(message)
-                return jsonify({'message': message}), HTTPStatus.OK
-
+            errors = []
             # verify polling is active
             if details['follower']['isPollingDisabled'] == 'true':
-                message = 'Follower polling disabled when it should be enabled.'
-                current_app.logger.error(message)
-                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+                errors.append('Follower polling disabled when it should be enabled.')
 
             # verify last_replication datetime is within a reasonable timeframe
             if last_replication + timedelta(hours=current_app.config.get('LAST_REPLICATION_THRESHOLD')) < now:
                 # its been too long since a replication. Log / return error
-                message = 'Follower last replication datetime is longer than expected.'
-                current_app.logger.error(message)
-                return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+                errors.append('Follower last replication datetime is longer than expected.')
+
+            if errors:
+                current_app.logger.error(errors)
+                return jsonify({'errors': errors}), HTTPStatus.INTERNAL_SERVER_ERROR
 
         # verify an update that happened in the last hour (if there is one)
-        event_to_verify = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.COMPLETE],
-                                                            event_type=SolrDocEventType.UPDATE,
-                                                            start_date=now - timedelta(minutes=60),
-                                                            limit=1)
+        events_to_verify = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.COMPLETE],
+                                                             event_type=SolrDocEventType.UPDATE,
+                                                             start_date=now - timedelta(minutes=60),
+                                                             limit=2)
 
-        if len(event_to_verify) != 1 or event_to_verify[0].event_date + timedelta(minutes=5) > now:
+        if len(events_to_verify) == 0 or events_to_verify[0].event_date + timedelta(minutes=5) > now:
             # either no updates to check or the event may not be reflected in the search yet
             current_app.logger.debug('No update events to verify in the last hour.')
         else:
             # there was an update in the last hour and it is at least 5 minutes old
-            doc_obj_to_verify = SolrDoc.get_by_id(event_to_verify[0].solr_doc_id)
+            doc_obj_to_verify = SolrDoc.get_by_id(events_to_verify[0].solr_doc_id)
+            if doc_obj_to_verify.doc['entityType'] == 'BUSINESS':
+                # skip business event for this check
+                if len(events_to_verify) < 2:
+                    # should never get here
+                    message = 'Business event without corresponding person update event.'
+                    current_app.logger.error(message)
+                    return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
+                doc_obj_to_verify = SolrDoc.get_by_id(events_to_verify[1].solr_doc_id)
+
             most_recent_doc_for_entity = SolrDoc.find_most_recent_by_entity_id(doc_obj_to_verify.entity_id)
             if most_recent_doc_for_entity.id != doc_obj_to_verify.id:
                 # there's been an update since so skip verification of this event
@@ -125,10 +127,6 @@ def follower_heartbeat():
 
                 if not is_equal:
                     # data returned from the follower does match the update or is not there
-                    current_app.logger.debug(f'name_eq: {name_eq}\nrelated_id_eq: {related_id_eq}\n'
-                                             f'related_name_eq: {related_name_eq}\n'
-                                             f'related_state_eq: {related_state_eq}\n'
-                                             f'role_type_eq: {role_type_eq}\nstreet_eq: {street_eq}')
                     current_app.logger.debug(f'Entity expected: {doc}')
                     current_app.logger.debug(f'Entity served: {entity}')
                     message = f'Follower failed to update entity: {doc_obj_to_verify.entity_id}.'

@@ -31,6 +31,7 @@ class Address:
     streetAddress: str = None
     streetAdditional: str = None
     address_q: str = None
+    parentDoc: str = None  # i.e. entity, entityRole
 
     def __post_init__(self):
         """Set extra solr address search fields dependent on base fields."""

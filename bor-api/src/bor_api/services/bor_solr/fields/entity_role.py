@@ -34,6 +34,7 @@ class EntityRoleField(BaseEnum):  # pylint: disable=too-few-public-methods
     # unique key for all docs
     UNIQUE_KEY = 'id'
     # entity role doc stored fields
+    RELATED_ADDRESSES = 'relatedAddresses'
     RELATED_BN = 'relatedBN'
     RELATED_EMAIL = 'relatedEmail'
     RELATED_ENTITY_TYPE = 'relatedEntityType'

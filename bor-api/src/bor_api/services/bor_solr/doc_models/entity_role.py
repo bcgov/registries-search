@@ -15,6 +15,7 @@
 """Manages dataclass for the solr entity role doc."""
 from dataclasses import dataclass
 
+from .address import Address
 from .date_range import DateRange
 from .interest import Interest
 
@@ -31,6 +32,7 @@ class EntityRole:
     relatedState: str
     roleDates: list[DateRange]
     roleType: str  # i.e. director, partner, significant individual, incorporator, etc.
+    relatedAddresses: list[Address] = None
     relatedBN: str = None
     relatedEmail: str = None
     relatedInterests: list[Interest] = None
@@ -40,3 +42,13 @@ class EntityRole:
         """Set extra solr role search fields dependent on base fields."""
         self.related_q = f"{self.relatedName} {self.relatedIdentifier} {self.relatedBN or ''}".strip()
         self.roleType = self.roleType.replace('_', ' ').upper()
+
+        for address in self.relatedAddresses or []:
+            # set parent doc to entityRole and remove address_q since we don't search over role addresses
+            if isinstance(address, dict):
+                address['parentDoc'] = 'entityRole'
+                if address.get('address_q'):
+                    del address['address_q']
+            elif isinstance(address, Address):
+                address.parentDoc = 'entityRole'
+                address.address_q = None

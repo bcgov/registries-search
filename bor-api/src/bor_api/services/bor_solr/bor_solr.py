@@ -37,7 +37,7 @@ class BorSolr(Solr):
         AddressField.ADDRESS_CITY.value, AddressField.ADDRESS_COUNTRY.value,
         AddressField.ADDRESS_REGION.value, AddressField.ADDRESS_TYPE.value,
         AddressField.POSTAL_CODE.value, AddressField.STREET_ADDRESS.value,
-        AddressField.LOCATION_DESC.value
+        AddressField.STREET_ADDITIONAL.value, AddressField.LOCATION_DESC.value
     ]
     entity_role_fields: list[str] = [
         EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_EMAIL.value,
@@ -45,7 +45,7 @@ class BorSolr(Solr):
         EntityRoleField.RELATED_NAME.value, EntityRoleField.RELATED_STATE.value, EntityRoleField.ROLE_DATES.value,
         EntityRoleField.ROLE_TYPE.value, EntityRoleField.RELATED_LEGAL_TYPE.value
     ]
-    entity_role_extended_fields = [EntityRoleField.RELATED_INTERESTS.value]
+    entity_role_extended_fields = [EntityRoleField.RELATED_ADDRESSES.value, EntityRoleField.RELATED_INTERESTS.value]
     date_fields: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
     interest_fields: list[str] = [
         InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value,

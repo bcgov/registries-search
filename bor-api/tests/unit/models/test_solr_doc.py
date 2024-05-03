@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the SolrDoc Class."""
-import pytest
 from copy import deepcopy
 from dataclasses import asdict
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from bor_api.models import SolrDoc
 from bor_api.services.bor_solr.doc_models import Entity
@@ -63,7 +62,7 @@ def test_get_updated_entity_ids_after_date(session):
     for doc in [entity_doc_1, entity_doc_2, entity_doc_3, entity_doc_4]:
         SolrDoc(doc=asdict(doc), entity_id=doc.id).save()
 
-    entity_ids = SolrDoc.get_updated_entity_ids_after_date(datetime.utcnow() - timedelta(minutes=5))
+    entity_ids = SolrDoc.get_updated_entity_ids_after_date(datetime.now(UTC) - timedelta(minutes=5))
     # should be 1 of each identifier (no dupes)
     assert len(entity_ids) == 3
     assert entity_doc_1.id in entity_ids

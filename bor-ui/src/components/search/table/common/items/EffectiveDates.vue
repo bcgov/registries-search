@@ -26,7 +26,7 @@ const getEffectiveDates = (role: SearchResultRoleI) => {
   }
 
   // sort effectiveDates by start date
-  effectiveDates.sort((a, b) => b.start.getTime() - a.start.getTime())
+  effectiveDates.sort((a, b) => b.start.localeCompare(a.start))
   return effectiveDates
 }
 

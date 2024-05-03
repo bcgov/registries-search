@@ -45,8 +45,9 @@ def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
             }
             roles_with_business = solr.query(payload, 0, 1000)
             for role in roles_with_business.get('response', {}).get('docs', []):
-                # init via EntityRole to capture calculated values like related_q
+                # init via EntityRole to capture calculated values like related_q/address_q
                 entity_role = EntityRole(id=role['id'],
+                                         relatedAddresses=entity.entityAddresses,
                                          relatedIdentifier=entity.identifier,
                                          relatedLegalType=entity.legalType,
                                          relatedBN=entity.bn,
@@ -60,6 +61,7 @@ def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
                 businesses.append({
                     '_root_': role['_nest_parent_'],
                     'id': entity_role.id,
+                    EntityRoleField.RELATED_ADDRESSES.value: {'set': entity_role.relatedAddresses},
                     EntityRoleField.RELATED_BN.value: {'set': entity_role.relatedBN},
                     EntityRoleField.RELATED_EMAIL.value: {'set': entity_role.relatedEmail},
                     EntityRoleField.RELATED_LEGAL_TYPE.value: {'set': entity_role.relatedLegalType},

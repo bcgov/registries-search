@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages data conversion methods for data received following BTR and LEAR schemas."""
-from .address import get_lear_address
+from .address import get_lear_addresses
 from .business import get_lear_business
 from .party import get_btr_owner, get_lear_party

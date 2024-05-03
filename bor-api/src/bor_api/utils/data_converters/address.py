@@ -15,23 +15,28 @@
 from bor_api.services.bor_solr.doc_models import Address
 
 
-def get_lear_address(address_info: dict, address_type: str) -> Address:
-    """Return the address from LEAR format as an Address doc."""
-    return Address(addressType=address_info.get('addressType') or address_type,
-                   addressCity=address_info.get('addressCity', '') or '',
-                   addressCountry=address_info.get('addressCountry', '') or '',
-                   addressRegion=address_info.get('addressRegion', '') or '',
-                   postalCode=address_info.get('postalCode', '') or '',
-                   streetAddress=address_info.get('streetAddress', '') or '')
+def get_lear_addresses(addresses: list[dict[str, str]], address_type_default: str) -> list[Address]:
+    """Return the list of addresses from LEAR format as a list of Address docs."""
+    address_docs: list[Address] = []
+    for address in addresses:
+        address_docs.append(Address(addressType=address.get('addressType', address_type_default).upper(),
+                                    addressCity=address.get('addressCity') or None,
+                                    addressCountry=address.get('addressCountry') or None,
+                                    addressRegion=address.get('addressRegion') or None,
+                                    postalCode=address.get('postalCode') or None,
+                                    streetAddress=address.get('streetAddress') or None,
+                                    streetAdditional=address.get('streetAddressAdditional') or None,
+                                    locationDescription=address.get('deliveryInstructions') or None))
+    return address_docs
 
 
-def get_btr_address(address_info: dict, address_type: str) -> Address:
+def get_btr_address(address_info: dict[str, str], address_type_default: str) -> Address:
     """Return the address from BTR format as an Address doc."""
-    return Address(addressType=address_info.get('type') or address_type,
-                   addressCity=address_info.get('city', '') or '',
-                   addressCountry=address_info.get('country', '') or '',
-                   addressRegion=address_info.get('region', '') or '',
-                   postalCode=address_info.get('postalCode', '') or '',
-                   streetAddress=address_info.get('street', '') or '',
-                   streetAdditional=address_info.get('streetAdditional', '') or '',
-                   locationDescription=address_info.get('locationDescription', '') or '')
+    return Address(addressType=address_info.get('type', address_type_default).upper(),
+                   addressCity=address_info.get('city') or None,
+                   addressCountry=address_info.get('country') or None,
+                   addressRegion=address_info.get('region') or None,
+                   postalCode=address_info.get('postalCode') or None,
+                   streetAddress=address_info.get('street') or None,
+                   streetAdditional=address_info.get('streetAdditional') or None,
+                   locationDescription=address_info.get('locationDescription') or None)

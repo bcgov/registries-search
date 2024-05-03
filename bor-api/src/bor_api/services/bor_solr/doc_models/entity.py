@@ -59,6 +59,12 @@ class Entity:
             if self.entityAddresses:
                 address = self.entityAddresses[0]
                 if isinstance(address, dict):
-                    self.info_q = f"{self.info_q or ''} {address['address_q']}".strip()
+                    self.info_q = f"{self.info_q or ''} {address.get('address_q') or ''}".strip()
                 elif isinstance(address, Address):
-                    self.info_q = f"{self.info_q or ''} {address.address_q}".strip()
+                    self.info_q = f"{self.info_q or ''} {address.address_q or ''}".strip()
+
+        for address in self.entityAddresses or []:
+            if isinstance(address, dict):
+                address['parentDoc'] = 'entity'
+            elif isinstance(address, Address):
+                address.parentDoc = 'entity'

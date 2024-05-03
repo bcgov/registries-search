@@ -15,62 +15,25 @@
 
 SOLR_UPDATE_REQUEST_TEMPLATE = {
     "business": {
+        "addresses": [
+            {
+                "addressCity": "Coquitlam",
+                "addressCountry": "CA",
+                "addressRegion": "BC",
+                "addressType": "delivery",
+                "deliveryInstructions": "dial 340",
+                "id": 2664213,
+                "postalCode": "V3K 3V9",
+                "streetAddress": "Bc-435 North Rd",
+                "streetAddressAdditional": "Crystal Condos"
+            }
+        ],
         "email": "test@email.com",
         "identifier": "BC1233334",
         "legalName": "ABCD Corp",
         "legalType": "BEN",
         "taxId": "123456789",
         "state": "ACTIVE"
-    },
-    "businessAddresses": {
-        "recordsOffice": {
-            "deliveryAddress": {
-                "addressCity": "Coquitlam",
-                "addressCountry": "CA",
-                "addressRegion": "BC",
-                "addressType": "delivery",
-                "deliveryInstructions": "",
-                "id": 2664211,
-                "postalCode": "V3K 3V9",
-                "streetAddress": "Bc-435 North Rd",
-                "streetAddressAdditional": ""
-            },
-            "mailingAddress": {
-                "addressCity": "Coquitlam",
-                "addressCountry": "CA",
-                "addressRegion": "BC",
-                "addressType": "mailing",
-                "deliveryInstructions": "",
-                "id": 2664210,
-                "postalCode": "V3K 3V9",
-                "streetAddress": "Bc-435 North Rd",
-                "streetAddressAdditional": ""
-            }
-        },
-        "registeredOffice": {
-            "deliveryAddress": {
-                "addressCity": "Coquitlam",
-                "addressCountry": "CA",
-                "addressRegion": "BC",
-                "addressType": "delivery",
-                "deliveryInstructions": "",
-                "id": 2664213,
-                "postalCode": "V3K 3V9",
-                "streetAddress": "Bc-435 North Rd",
-                "streetAddressAdditional": ""
-            },
-            "mailingAddress": {
-                "addressCity": "Coquitlam",
-                "addressCountry": "CA",
-                "addressRegion": "BC",
-                "addressType": "mailing",
-                "deliveryInstructions": "",
-                "id": 2664212,
-                "postalCode": "V3K 3V9",
-                "streetAddress": "Bc-435 North Rd",
-                "streetAddressAdditional": ""
-            }
-        }
     },
     "parties": [
         {
@@ -152,6 +115,16 @@ SOLR_UPDATE_REQUEST_TEMPLATE = {
 
 SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
     "business": {
+        "addresses": [{
+            "addressCity": "Ladysmith",
+            "addressCountry": "CA",
+            "addressRegion": "BC",
+            "addressType": "delivery",
+            "deliveryInstructions": "bla bla",
+            "postalCode": "W2R 1C1",
+            "streetAddress": "123456 Lalalane",
+            "streetAddressAdditional": "additional info"
+        }],
         "email": "test@email.com",
         "identifier": "BC1233335",
         "legalName": "EFGH Corp",

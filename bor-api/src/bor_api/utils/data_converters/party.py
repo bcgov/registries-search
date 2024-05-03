@@ -14,7 +14,7 @@
 """Data conversion methods for party."""
 from bor_api.services.bor_solr.doc_models import DateRange, Entity, EntityRole, Interest
 
-from .address import get_btr_address, get_lear_address
+from .address import get_btr_address, get_lear_addresses
 
 
 def get_lear_party_name(officer: dict[str, str]) -> str:
@@ -33,9 +33,9 @@ def get_lear_party_name(officer: dict[str, str]) -> str:
 
 def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
     """Return the party from LEAR format as a list of Entity docs (1 per role)."""
-    address = None
+    addresses = None
     if delivery_address_info := party_info.get('deliveryAddress'):
-        address = get_lear_address(delivery_address_info, 'DELIVERY')
+        addresses = get_lear_addresses([delivery_address_info], 'DELIVERY')
 
     name = get_lear_party_name(party_info['officer'])
     # NOTE: business parties are being ignored for now
@@ -47,11 +47,12 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
     # NOTE: if the id is not unique then multiple roles will be added under the same entity in solr
     for count, role in enumerate(party_info.get('roles', [])):
         entity_id = f"{base_party_id}{business.identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
-        entities.append(Entity(entityAddresses=[address] if address else None,
+        entities.append(Entity(entityAddresses=addresses,
                                entityType=entity_type,
                                id=entity_id,
                                legalName=name,
                                roles=[EntityRole(id=entity_id + '/roles0',
+                                                 relatedAddresses=business.entityAddresses,
                                                  relatedEntityType='BUSINESS',
                                                  relatedIdentifier=business.identifier,
                                                  relatedLegalType=business.legalType,
@@ -108,6 +109,7 @@ def get_btr_owner(owner_info: dict, business: Entity):
                   taxResidencies=[country.get('code') for country in party.get('taxResidencies', [])],
                   email=party.get('email'),
                   roles=[EntityRole(id=role_id,
+                                    relatedAddresses=business.entityAddresses,
                                     relatedEntityType='BUSINESS',
                                     relatedIdentifier=business.identifier,
                                     relatedLegalType=business.legalType or 'N/A',

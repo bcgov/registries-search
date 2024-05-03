@@ -411,6 +411,12 @@
                         "roleDates": [
                             {
                                 "active": true,
+                                "end": "2020-06-14",
+                                "score": 0.0,
+                                "start": "2019-02-07"
+                            },
+                            {
+                                "active": true,
                                 "score": 0.0,
                                 "start": "2024-02-07"
                             }
