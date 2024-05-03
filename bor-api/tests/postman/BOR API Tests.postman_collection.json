@@ -49,7 +49,8 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
+								"value": "application/x-www-form-urlencoded",
+								"uuid": "874b235b-2209-4375-b1be-7707eed9bfc9"
 							}
 						],
 						"body": {
@@ -96,7 +97,8 @@
 							{
 								"key": "Accept",
 								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"uuid": "78cfe3a9-701c-4490-8f69-5c7953c29a0c"
 							}
 						],
 						"url": {
@@ -182,7 +184,8 @@
 							{
 								"key": "Accept",
 								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"uuid": "6655f3aa-8450-40dc-b885-9f7e853656ac"
 							}
 						],
 						"url": {
@@ -273,7 +276,8 @@
 							{
 								"key": "Accept",
 								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"uuid": "8109a0ea-adcc-4745-9a0d-5e6852af187a"
 							}
 						],
 						"url": {
@@ -373,12 +377,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "059314ea-bbf8-4b71-bd74-ff04526a421e"
 									},
 									{
 										"key": "Account-ID",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "0200f2de-b5e7-4fc7-9a03-08671a7b8963"
 									}
 								],
 								"body": {
@@ -491,12 +497,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "9cf19fe8-87c9-4b25-b94a-8501def0faf5"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "c8a4aa7e-2945-4fbe-9f8d-436caf29d7b6"
 									}
 								],
 								"body": {
@@ -609,12 +617,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "c6472e7b-a2fb-4141-94c0-3e8906dc9ba8"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "615794c9-5734-46a5-8d96-9ff7d4d88c9e"
 									}
 								],
 								"body": {
@@ -717,7 +727,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "9378dd72-f3c3-43b6-9e83-0fe8c1a125aa"
 									}
 								],
 								"body": {
@@ -820,7 +831,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "79f9cc5f-13ed-4fd9-a770-ffc82273f2f5"
 									}
 								],
 								"body": {
@@ -933,12 +945,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "05594ec6-e99a-4385-ba7a-ca82f2406c8a"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "b784f61f-4f01-4e88-b291-8b8d7cc8c821"
 									}
 								],
 								"body": {
@@ -1041,7 +1055,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "fbb7a0ec-8a97-4c0f-a2b4-bcdcc930a4ef"
 									}
 								],
 								"body": {
@@ -1144,7 +1159,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "b61269b6-9b24-4afd-9960-b942cb974581"
 									}
 								],
 								"body": {
@@ -1247,7 +1263,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "492f26ec-8690-41c7-be6e-210aafcb3c7c"
 									}
 								],
 								"body": {
@@ -1350,7 +1367,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "08a6ba3f-3253-488a-889f-2100ad1e5b1a"
 									}
 								],
 								"body": {
@@ -1453,7 +1471,8 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "e88e8cb5-d4c8-4440-a4eb-a711e508cd8d"
 									}
 								],
 								"body": {
@@ -1569,12 +1588,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+										"value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+										"uuid": "e10267cd-8d36-4387-abe9-37718db54ae6"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "eb98fa5f-2958-415f-9d01-dfb2112c6401"
 									}
 								],
 								"body": {
@@ -1696,12 +1717,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "d9e4ab2e-1002-4135-822a-e6ad27765316"
 									},
 									{
 										"key": "Account-ID",
 										"value": "1999",
-										"type": "text"
+										"type": "text",
+										"uuid": "c53b0e31-f62c-407c-80b0-bb7205379ffd"
 									}
 								],
 								"body": {
@@ -1820,12 +1843,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "4ee8bdb0-3b6d-4460-958f-d80454ea4509"
 									},
 									{
 										"key": "Account-ID",
 										"value": "3040",
-										"type": "text"
+										"type": "text",
+										"uuid": "efd9805e-8128-4bd7-8940-2b907147cf1c"
 									}
 								],
 								"body": {
@@ -1944,12 +1969,14 @@
 									{
 										"key": "Accept",
 										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"uuid": "b02c24a0-5933-4c74-8d83-f43aef950bc4"
 									},
 									{
 										"key": "Account-ID",
 										"value": "3040",
-										"type": "text"
+										"type": "text",
+										"uuid": "afaeae68-30db-4413-95c5-cf13f001806e"
 									}
 								],
 								"body": {
@@ -2099,12 +2126,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "126b33c8-e18e-4cad-89cc-ae0ac746af55"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "5447e7b7-f050-4398-9cc7-4908cb8c7794"
 									}
 								],
 								"body": {
@@ -2170,12 +2199,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "0d076b1d-f3e3-43c2-85af-fab783dec280"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "be15f092-8e30-4144-baea-7e306bc4e5a1"
 									}
 								],
 								"body": {
@@ -2241,12 +2272,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "2c3ba231-405e-4402-9706-cb32b5616df6"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "be8d467b-5fa0-423b-9328-8e58166d6117"
 									}
 								],
 								"body": {
@@ -2314,7 +2347,8 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "52c6b685-61ed-4c24-9ff3-c34621cc0db3"
 									}
 								],
 								"body": {
@@ -2383,7 +2417,8 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "2edf9abf-6bb8-4a86-9251-b56fbf382859"
 									}
 								],
 								"body": {
@@ -2451,12 +2486,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "6af3740f-268e-4d73-b2d6-af25c361cc1b"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "e3e61f27-c910-4040-ada5-01223a5d2c8b"
 									}
 								],
 								"body": {
@@ -2522,12 +2559,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "f3851e74-8d7d-41a4-a1a4-cbfb2460a854"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "b66efb9d-cd6a-4194-b518-10754d5f1f05"
 									}
 								],
 								"body": {
@@ -2593,12 +2632,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "c8a8cbf9-4b46-4ac5-9a28-3cc2a046a23c"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "bb8d0ac4-7f9f-4816-815d-f9346ff21001"
 									}
 								],
 								"body": {
@@ -2664,12 +2705,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "5906d7c7-b2f3-4123-b9ca-f9486431d62b"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "a9e9b79d-f4cb-475f-a5ae-e15005e3a9a4"
 									}
 								],
 								"body": {
@@ -2740,12 +2783,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "e12f7e63-ccc5-4ce8-8d60-27659753770c"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "44eba92c-131a-4447-9f0c-bc8d9ee172fc"
 									}
 								],
 								"body": {
@@ -2810,12 +2855,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "138568cf-4c7f-4c41-8b00-b78ed183b12e"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "b2fcb706-97bc-4df3-9d03-0ed773edb30f"
 									}
 								],
 								"body": {
@@ -2880,12 +2927,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "fea0c0ef-3217-4ffd-8c68-eea54a05f25d"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "8784a717-b1fe-4a62-a108-0c04a28fa23c"
 									}
 								],
 								"body": {
@@ -2955,12 +3004,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "17ad1373-42cc-4919-80e9-9d35319d1a02"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "722292f9-9dd2-4a61-a099-d31cadd9d938"
 									}
 								],
 								"body": {
@@ -3026,17 +3077,17 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"uuid": "0b8f7765-620b-49b0-9bab-dd495724d24c"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"uuid": "f9907be4-3102-42b6-bdb8-bdf7a572a863"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"entities\": [\r\n        {\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"entityAddresses\":[\r\n                {\r\n                \"addressType\":\"RESIDENCE\",\r\n                \"addressCity\":\"Montréal-Nord\",\r\n                \"addressCountry\":\"Canada\",\r\n                \"addressRegion\":\"QC\",\r\n                \"locationDescription\":\"\",\r\n                \"postalCode\":\"H1H 2R1\",\r\n                \"streetAddress\":\"3-3185 Peter-Curry St\",\r\n                \"streetAdditional\":\"\",\r\n                \"address_q\":\"3-3185 Peter-Curry St Montréal-Nord Quebec Canada H1H 2R1\"\r\n                }\r\n            ],\r\n            \"entityType\":\"PERSON\",\r\n            \"legalName\":\"testio name\",\r\n            \"email\":\"w31e@gmail.com\",\r\n            \"roles\":[\r\n                {\r\n                    \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n                    \"relatedEntityType\":\"BUSINESS\",\r\n                    \"relatedIdentifier\":\"BC0871567\",\r\n                    \"relatedLegalType\":\"N/A\",\r\n                    \"relatedName\":\"KD AMALGMATION TEST INC.\",\r\n                    \"relatedState\":\"N/A\",\r\n                    \"roleDates\":[\r\n                        {\r\n                            \"start\":\"2024-04-03\",\r\n                            \"active\":true\r\n                        }\r\n                    ],\r\n                    \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                    \"relatedInterests\":[\r\n                        {\r\n                            \"details\":\"controlType.directors.indirectControl\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"appointmentOfBoard\"\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                            \"directOrIndirect\":\"direct\",\r\n                            \"interestType\":\"votingRights\",\r\n                            \"sharesMax\":100,\r\n                            \"sharesMin\":75\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                            \"directOrIndirect\":\"direct\",\r\n                            \"interestType\":\"shareholding\",\r\n                            \"sharesMax\":75,\r\n                            \"sharesMin\":50\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"votingRights\",\r\n                            \"sharesMax\":100,\r\n                            \"sharesMin\":75\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"shareholding\",\r\n                            \"sharesMax\":75,\r\n                            \"sharesMin\":50\r\n                        }\r\n                    ],\r\n                    \"related_q\":\"KD AMALGMATION TEST INC. BC0871567\"\r\n                }\r\n            ],\r\n            \"alternateName\":\"cool test\",\r\n            \"birthDate\":\"2024-04-02\",\r\n            \"externalInfluence\":\"NoExternalInfluence\",\r\n            \"isPermanentResident\":false,\r\n            \"nationalities\":[\r\n                \"CA\"\r\n            ],\r\n            \"taxNumber\":\"608 538 237\",\r\n            \"taxResidencies\":[\r\n                \"CA\"\r\n            ],\r\n            \"name_q\":\"testio name cool test\",\r\n            \"info_q\":\"608 538 237 w31e@gmail.com 3-3185 Peter-Curry St Montréal-Nord Quebec Canada H1H 2R1\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"entities\": [\r\n        {\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"entityAddresses\":[\r\n                {\r\n                \"addressType\":\"RESIDENCE\",\r\n                \"addressCity\":\"Montréal-Nord\",\r\n                \"addressCountry\":\"Canada\",\r\n                \"addressRegion\":\"QC\",\r\n                \"locationDescription\":\"\",\r\n                \"postalCode\":\"H1H 2R1\",\r\n                \"streetAddress\":\"3-3185 Peter-Curry St\",\r\n                \"streetAdditional\":\"\",\r\n                \"address_q\":\"3-3185 Peter-Curry St Montréal-Nord Quebec Canada H1H 2R1\"\r\n                }\r\n            ],\r\n            \"entityType\":\"PERSON\",\r\n            \"legalName\":\"test pm import\",\r\n            \"email\":\"import@pm.com\",\r\n            \"roles\":[\r\n                {\r\n                    \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n                    \"relatedEntityType\":\"BUSINESS\",\r\n                    \"relatedIdentifier\":\"BC0871567\",\r\n                    \"relatedLegalType\":\"N/A\",\r\n                    \"relatedName\":\"KD AMALGMATION TEST INC.\",\r\n                    \"relatedState\":\"N/A\",\r\n                    \"roleDates\":[\r\n                        {\r\n                            \"start\":\"2024-04-03\",\r\n                            \"active\":true\r\n                        }\r\n                    ],\r\n                    \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                    \"relatedInterests\":[\r\n                        {\r\n                            \"details\":\"controlType.directors.indirectControl\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"appointmentOfBoard\"\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                            \"directOrIndirect\":\"direct\",\r\n                            \"interestType\":\"votingRights\",\r\n                            \"sharesMax\":100,\r\n                            \"sharesMin\":75\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                            \"directOrIndirect\":\"direct\",\r\n                            \"interestType\":\"shareholding\",\r\n                            \"sharesMax\":75,\r\n                            \"sharesMin\":50\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"votingRights\",\r\n                            \"sharesMax\":100,\r\n                            \"sharesMin\":75\r\n                        },\r\n                        {\r\n                            \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                            \"directOrIndirect\":\"indirect\",\r\n                            \"interestType\":\"shareholding\",\r\n                            \"sharesMax\":75,\r\n                            \"sharesMin\":50\r\n                        }\r\n                    ],\r\n                    \"related_q\":\"KD AMALGMATION TEST INC. BC0871567\"\r\n                }\r\n            ],\r\n            \"alternateName\":\"cool alternate name\",\r\n            \"birthDate\":\"1998-04-02\",\r\n            \"externalInfluence\":\"NoExternalInfluence\",\r\n            \"isPermanentResident\":false,\r\n            \"nationalities\":[\r\n                \"CA\", \"FR\"\r\n            ],\r\n            \"taxNumber\":\"608 538 237\",\r\n            \"taxResidencies\":[\r\n                \"CA\"\r\n            ],\r\n            \"name_q\":\"test pm import cool alternate name\",\r\n            \"info_q\":\"608 538 237 import@pm.com 3-3185 Peter-Curry St Montréal-Nord Quebec Canada H1H 2R1\"\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3097,12 +3148,14 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"uuid": "fbd6f483-5c1a-40e3-a255-5673b6da07ef"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"type": "text",
+										"uuid": "14ddcc2c-f0fe-4afe-a40d-e54abc2907e0"
 									}
 								],
 								"body": {
@@ -3168,17 +3221,17 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text"
+										"uuid": "0d3da601-c1d1-4e0c-bd17-537969780b5f"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text"
+										"uuid": "46ab7fb4-4676-4319-babf-d23c437e89b2"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"roles\":{\r\n                \"set\": [\r\n                    {\r\n                        \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n                        \"relatedAddresses\": [\r\n                            {\r\n                                \"addressCity\": \"City of dreams\",\r\n                                \"addressCountry\": \"CA\",\r\n                                \"addressRegion\": \"BC\",\r\n                                \"addressType\": \"DELIVERY\",\r\n                                \"locationDescription\": \"pillow\",\r\n                                \"parentDoc\": \"entityRole\",\r\n                                \"postalCode\": \"V8J 4L2\",\r\n                                \"streetAddress\": \"54 sleepy ave\",\r\n                                \"streetAdditional\": \"bunk bed\"\r\n                            }\r\n                        ],\r\n                        \"relatedEntityType\":\"BUSINESS\",\r\n                        \"relatedIdentifier\":\"BC0871567\",\r\n                        \"relatedLegalType\":\"BC\",\r\n                        \"relatedName\":\"KD AMALGMATION TEST INC.\",\r\n                        \"relatedState\":\"ACTIVE\",\r\n                        \"roleDates\":[\r\n                            {\r\n                                \"start\":\"2024-04-03\",\r\n                                \"active\":true\r\n                            },\r\n                            {\r\n                                \"start\":\"2020-11-23\",\r\n                                \"active\": false,\r\n                                \"end\": \"2023-09-15\"\r\n                            }\r\n                        ],\r\n                        \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                        \"relatedInterests\":[\r\n                            {\r\n                                \"details\":\"controlType.directors.indirectControl\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"appointmentOfBoard\"\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"votingRights\",\r\n                                \"sharesMax\":100,\r\n                                \"sharesMin\":75\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"shareholding\",\r\n                                \"sharesMax\":75,\r\n                                \"sharesMin\":50\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"votingRights\",\r\n                                \"sharesMax\":100,\r\n                                \"sharesMin\":75\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"shareholding\",\r\n                                \"sharesMax\":75,\r\n                                \"sharesMin\":50\r\n                            }\r\n                        ],\r\n                        \"related_q\":\"KD AMALGMATION TEST INC. BC0871567\"\r\n                    },\r\n                    {\r\n                        \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC9999991SIGNIFICANT_INDIVIDUAL\",\r\n                        \"relatedAddresses\": [\r\n                            {\r\n                                \"addressCity\": \"Victoria\",\r\n                                \"addressCountry\": \"CA\",\r\n                                \"addressRegion\": \"BC\",\r\n                                \"addressType\": \"delivery\",\r\n                                \"locationDescription\": \"Basement suite\",\r\n                                \"parentDoc\": \"entityRole\",\r\n                                \"postalCode\": \"V6J 5L2\",\r\n                                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                                \"streetAdditional\": \"Test Way\"\r\n                            }\r\n                        ],\r\n                        \"relatedEntityType\":\"BUSINESS\",\r\n                        \"relatedIdentifier\":\"BC9999991\",\r\n                        \"relatedLegalType\":\"BC\",\r\n                        \"relatedName\":\"KD Test Bla INC.\",\r\n                        \"relatedState\":\"ACTIVE\",\r\n                        \"roleDates\":[\r\n                            {\r\n                                \"start\":\"2024-04-03\",\r\n                                \"active\":true\r\n                            }\r\n                        ],\r\n                        \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                        \"relatedInterests\":[\r\n                            {\r\n                                \"details\":\"controlType.directors.indirectControl\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"appointmentOfBoard\"\r\n                            }\r\n                        ],\r\n                        \"related_q\":\"KD Test Bla INC. BC9999991\"\r\n                    }\r\n                ]\r\n            }\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"roles\":{\r\n                \"set\": [\r\n                    {\r\n                        \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n                        \"relatedAddresses\": [\r\n                            {\r\n                                \"addressCity\": \"City of dreams\",\r\n                                \"addressCountry\": \"CA\",\r\n                                \"addressRegion\": \"BC\",\r\n                                \"addressType\": \"DELIVERY\",\r\n                                \"locationDescription\": \"pillow\",\r\n                                \"parentDoc\": \"entityRole\",\r\n                                \"postalCode\": \"V8J 4L2\",\r\n                                \"streetAddress\": \"54 sleepy ave\",\r\n                                \"streetAdditional\": \"bunk bed\"\r\n                            }\r\n                        ],\r\n                        \"relatedEntityType\":\"BUSINESS\",\r\n                        \"relatedIdentifier\":\"BC0871567\",\r\n                        \"relatedLegalType\":\"BC\",\r\n                        \"relatedName\":\"KD AMALGMATION TEST INC.\",\r\n                        \"relatedState\":\"ACTIVE\",\r\n                        \"roleDates\":[\r\n                            {\r\n                                \"start\":\"2024-04-03\",\r\n                                \"active\":true\r\n                            },\r\n                            {\r\n                                \"start\":\"2020-11-23\",\r\n                                \"active\": false,\r\n                                \"end\": \"2023-09-15\"\r\n                            }\r\n                        ],\r\n                        \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                        \"relatedInterests\":[\r\n                            {\r\n                                \"details\":\"controlType.directors.indirectControl\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"appointmentOfBoard\"\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"votingRights\",\r\n                                \"sharesMax\":100,\r\n                                \"sharesMin\":75\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"shareholding\",\r\n                                \"sharesMax\":75,\r\n                                \"sharesMin\":50\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"votingRights\",\r\n                                \"sharesMax\":100,\r\n                                \"sharesMin\":75\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                                \"directOrIndirect\":\"indirect\",\r\n                                \"interestType\":\"shareholding\",\r\n                                \"sharesMax\":75,\r\n                                \"sharesMin\":50\r\n                            }\r\n                        ],\r\n                        \"related_q\":\"KD AMALGMATION TEST INC. BC0871567\"\r\n                    },\r\n                    {\r\n                        \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC9999991SIGNIFICANT_INDIVIDUAL\",\r\n                        \"relatedAddresses\": [\r\n                            {\r\n                                \"addressCity\": \"Victoria\",\r\n                                \"addressCountry\": \"CA\",\r\n                                \"addressRegion\": \"BC\",\r\n                                \"addressType\": \"delivery\",\r\n                                \"locationDescription\": \"Basement suite\",\r\n                                \"parentDoc\": \"entityRole\",\r\n                                \"postalCode\": \"V6J 5L2\",\r\n                                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                                \"streetAdditional\": \"Test Way\"\r\n                            }\r\n                        ],\r\n                        \"relatedEntityType\":\"BUSINESS\",\r\n                        \"relatedIdentifier\":\"BC9999991\",\r\n                        \"relatedLegalType\":\"BC\",\r\n                        \"relatedName\":\"KD Test Bla INC.\",\r\n                        \"relatedState\":\"ACTIVE\",\r\n                        \"roleDates\":[\r\n                            {\r\n                                \"start\":\"2024-04-03\",\r\n                                \"active\":true\r\n                            }\r\n                        ],\r\n                        \"roleType\":\"SIGNIFICANT INDIVIDUAL\",\r\n                        \"relatedInterests\":[\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.registeredOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"votingRights\",\r\n                                \"sharesMax\":50,\r\n                                \"sharesMin\":25\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.sharesOrVotes.beneficialOwner\",\r\n                                \"directOrIndirect\":\"direct\",\r\n                                \"interestType\":\"shareholding\",\r\n                                \"sharesMax\":100,\r\n                                \"sharesMin\":75\r\n                            },\r\n                            {\r\n                                \"details\":\"controlType.directors.significantInfluence\",\r\n                                \"directOrIndirect\":\"unknown\",\r\n                                \"interestType\":\"appointmentOfBoard\"\r\n                            },\r\n                            {\r\n                                \"details\":\"other\",\r\n                                \"interestType\":\"otherInfluenceOrControl\",\r\n                                \"otherReason\":\"cool reason for control\"\r\n                            }\r\n                        ],\r\n                        \"related_q\":\"KD Test Bla INC. BC9999991\"\r\n                    }\r\n                ]\r\n            }\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
