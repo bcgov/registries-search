@@ -109,7 +109,7 @@ describe('SearchResults tests', () => {
           : undefined
         const address = record.entityAddresses ? record.entityAddresses[0] : undefined
         const countries = record.nationalities || []
-        const role = record.roles[0]
+        const roles = record.roles
         let imgs = []
         const allAltTexts = [
           'Beneficial owner (e.g., through a trust)',
@@ -166,9 +166,15 @@ describe('SearchResults tests', () => {
             }
             break
           case 'Business Details':
-            expect(items[itemIndx].text()).toContain(role.relatedBN || '')
-            expect(items[itemIndx].text()).toContain(role.relatedIdentifier || '')
-            expect(items[itemIndx].text()).toContain(role.relatedName || '')
+            for (const i in roles) {
+              const role = roles[i]
+              expect(items[itemIndx].text()).toContain(role.relatedBN || '')
+              expect(items[itemIndx].text()).toContain(role.relatedIdentifier || '')
+              expect(items[itemIndx].text()).toContain(role.relatedName || '')
+              if (!extended) {
+                break
+              }
+            }
             break
           case 'Details':
             imgs = items[itemIndx].findAll('img')
@@ -177,12 +183,18 @@ describe('SearchResults tests', () => {
             }
             break
           case 'Effective Dates':
-            if (role.roleDates && role.roleDates.length > 0) {
-              for (const i in role.roleDates) {
-                const start = toDateStr(role.roleDates[i].start)
-                const end = toDateStr(role.roleDates[i].end as Date)
-                expect(items[itemIndx].text()).toContain(start || 'Unknown')
-                expect(items[itemIndx].text()).toContain(end || 'Current')
+            for (const i in roles) {
+              const role = roles[i]
+              if (role.roleDates && role.roleDates.length > 0) {
+                for (const date of role.roleDates) {
+                  const start = toDateStr(date.start)
+                  const end = toDateStr(date.end as Date)
+                  expect(items[itemIndx].text()).toContain(start || 'Unknown')
+                  expect(items[itemIndx].text()).toContain(end || 'Current')
+                }
+              }
+              if (!extended) {
+                break
               }
             }
             break

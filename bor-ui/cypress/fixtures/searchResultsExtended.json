@@ -166,6 +166,32 @@
                         ],
                         "roleType": "SIGNIFICANT INDIVIDUAL",
                         "score": 0.0
+                    },
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871428",
+                        "relatedInterests": [
+                            {
+                              "details": "controlType.sharesOrVotes.registeredOwner",
+                              "directOrIndirect": "direct",
+                              "interestType": "shareholding",
+                              "score": 0.0,
+                              "sharesMax": 75.0,
+                              "sharesMin": 50.0
+                            }
+                        ],
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871428 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleDates": [
+                            {
+                                "active": true,
+                                "score": 0.0,
+                                "start": "2024-03-01"
+                            }
+                        ],
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
                     }
                 ],
                 "score": 273.68854,

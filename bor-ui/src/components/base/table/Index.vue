@@ -37,8 +37,7 @@
                 v-for="header, i in headers"
                 :key="header.col + i"
                 :class="[header.class, 'base-table__header__item']"
-                :style="!header.col ? 'text-align: center;' : ''"
-                :width="header.width"
+                :style="[!header.col ? 'text-align: center;' : '', `width: ${header.width}`]"
               >
                 <slot :name="'header-item-slot-' + header.slotId" :header="header">
                   <v-btn
@@ -64,7 +63,7 @@
                 v-for="header, i in headers"
                 :key="header.col + i"
                 :class="[header.class, 'base-table__header__item']"
-                :width="header.width"
+                :style="{ width: header.width }"
               >
                 <slot :name="'header-filter-slot-' + header.slotId" :header="header">
                   <div class="pb-5">
@@ -144,7 +143,11 @@
               <td
                 v-for="header in displayItemHeaders"
                 :key="'item-' + header.col"
-                :class="[header.itemClass, 'base-table__body__row__item']"
+                :class="[
+                  header.itemClass,
+                  'base-table__body__row__item',
+                  (header.itemColspan && header.itemColspan > 1) ? 'pl-0' : ''
+                ]"
                 :colspan="header.itemColspan || 1"
               >
                 <slot :header="header" :item="item" :name="'item-slot-' + header.slotId">
@@ -218,8 +221,6 @@ const sortIcon = computed(() => {
   if (sortDirection.value === 'desc') { return 'mdi-chevron-down' }
   return 'mdi-chevron-up'
 })
-
-const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 
 const resettingFilters = ref(false)
 const resetAll = () => {

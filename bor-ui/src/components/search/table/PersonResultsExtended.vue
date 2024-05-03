@@ -53,23 +53,23 @@
         <CommonItemsCitizenship :item="item" />
       </div>
     </template>
-    <template #item-slot-roles="{ item, header } : { item: SearchResultI, header: BaseTableHeaderI }">
-      <tr v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
-        <div class="inner-row-div">
-          <td width="192px">
-            {{ header.itemFn(item) }}
-          </td>
-          <td class="pl-3" width="166px">
+    <template #item-slot-details="{ item } : { item: SearchResultI }">
+      <div v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
+        <div class="inner-row-div flex w-full">
+          <div class="inner-col-div pl-3" :style="{ width: getWidth('Business Details', roleHeaders) }">
             <CommonItemsBusinessDetails :role="role" />
-          </td>
-          <td class="pl-3" width="204px">
+          </div>
+          <div class="inner-col-div pl-3" :style="{width: getWidth('Roles', roleHeaders) }">
+            {{ capFirstLetter(`${role.roleType}`) }}
+          </div>
+          <div class="inner-col-div pl-3" :style="{width: getWidth('Details', roleHeaders) }">
             <CommonItemsPersonControl :role="role" />
-          </td>
-          <td class="pl-3" width="136px">
+          </div>
+          <div class="inner-col-div pl-3 mr-0" :style="{width: getWidth('Effective Dates', roleHeaders) }">
             <CommonItemsEffectiveDates :role="role" />
-          </td>
+          </div>
         </div>
-      </tr>
+      </div>
     </template>
     <template #item-slot-actions="{ item } : { item: SearchResultI }">
       <div class="h-full w-full px-3 pt-3 shadow-action-col-item">
@@ -129,10 +129,45 @@ const clearFilters = () => {
   // search on reset filters
   search.filterSearch(null, null, true)
 }
+
+// get width for role columns dynamically
+const roleHeaders: string[] = ['Business Details', 'Roles', 'Details', 'Effective Dates']
+const getWidth = (headerValue: string, allHeaders: string[]): string => {
+  try {
+    // get the total width percentage of the parent container
+    const totalPercentage = headers.reduce((total, curHeader) => {
+      if (allHeaders.find(val => val === curHeader.value)) {
+        return total + parseFloat(curHeader.width.replace('%', ''))
+      } else {
+        return total
+      }
+    }, 0)
+
+    // prevent getting 'Infinity%'
+    if (totalPercentage === 0) {
+      console.error('total width percentage is zero')
+      return '0%'
+    }
+
+    // get the header
+    const header = headers.find(val => val.value === headerValue)
+    if (!header) {
+      return '0%'
+    }
+
+    const widthPercentage = parseFloat(header.width.replace('%', '')) / totalPercentage
+
+    return `${widthPercentage * 100}%`
+  } catch (error) {
+    // handle potential errors such as invalid header.width string
+    console.error(error)
+    return '0%'
+  }
+}
 </script>
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-tr.child-row-item:not(:first-child) .inner-row-div {
+.child-row-item:not(:first-child) .inner-row-div {
   border-top: 1px solid $gray3;
   margin-top: 20px;
   padding-top: 20px;

@@ -117,7 +117,7 @@ export const testSearchResults: SearchResultI[] = [
     entityType: 'PERSON',
     isPR: false,
     legalName: 'KIAL TEST',
-    nationalities: ['CA'],
+    nationalities: ['CA', 'US'],
     roles: [{
       active: true,
       relatedBN: '123456789BC0001',
@@ -126,16 +126,69 @@ export const testSearchResults: SearchResultI[] = [
       relatedIdentifier: 'BC0871105',
       relatedInterests: [{
         interestType: 'shareholding',
-        details: 'control.registeredOwner',
+        details: 'controlType.sharesOrVotes.beneficialOwner',
         sharesMax: 50,
         sharesMin: 25
       }],
       relatedLegalType: 'BC',
-      relatedName: '0871105 B.C. LTD.',
+      relatedName: 'AA 0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
       roleDates: [
         { start: new Date('2020-06-28T00:00:00') },
-        { start: new Date('2019-02-19T00:00:00'), end: new Date('2019-06-09T00:00:00') }],
+        { start: new Date('2019-02-19T00:00:00'), end: new Date('2019-06-09T00:00:00') }
+      ],
+      roleType: 'SIGNIFICANT INDIVIDUAL'
+    },
+    {
+      active: true,
+      relatedBN: '123456789BC0002',
+      relatedEmail: 'test@email.com',
+      relatedEntityType: 'BUSINESS',
+      relatedIdentifier: 'BC0871105',
+      relatedInterests: [{
+        details: 'controlType.sharesOrVotes.beneficialOwner',
+        interestType: 'votingRights',
+        sharesMin: 25,
+        sharesMax: 50
+      },
+      {
+        details: 'controlType.sharesOrVotes.indirectControl',
+        interestType: 'shareholding',
+        sharesMin: 25,
+        sharesMax: 50
+      },
+      {
+        details: 'controlType.sharesOrVotes.indirectControl',
+        interestType: 'votingRights',
+        sharesMin: 25,
+        sharesMax: 50
+      }],
+      relatedLegalType: 'BC',
+      relatedName: 'BB 0871106 B.C. LTD.',
+      relatedState: 'ACTIVE',
+      roleDates: [
+        { start: new Date('2010-01-10T00:00:00'), end: new Date('2016-07-11T00:00:00') },
+        { start: new Date('2022-01-10T00:00:00') },
+        { start: new Date('2018-02-21T00:00:00'), end: new Date('2019-05-11T00:00:00') }
+      ],
+      roleType: 'DIRECTOR'
+    },
+    {
+      active: true,
+      relatedBN: '123456789BC0003',
+      relatedEmail: 'test@email.com',
+      relatedEntityType: 'BUSINESS',
+      relatedIdentifier: 'BC0871107',
+      relatedInterests: [{
+        interestType: 'shareholding',
+        details: 'controlType.sharesOrVotes.beneficialOwner',
+        sharesMax: 50,
+        sharesMin: 25
+      }],
+      relatedLegalType: 'BC',
+      relatedName: 'CC 0871105 B.C. LTD.',
+      relatedState: 'ACTIVE',
+      roleDates: [{ start: new Date('2020-06-29T00:00:00Z') }],
       roleType: 'SIGNIFICANT INDIVIDUAL'
     }],
     taxNumber: '123 456 789',

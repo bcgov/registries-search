@@ -1,6 +1,6 @@
 <template>
-  <div class="dates">
-    <div v-for="(effectiveDate, index) in effectiveDates" :key="index">
+  <div class="dates pr-2">
+    <div v-for="(effectiveDate, index) in effectiveDates" :key="index" class="text-right">
       {{ effectiveDate.dateRange }}
     </div>
   </div>

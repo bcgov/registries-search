@@ -3,7 +3,6 @@ import { getCode, getNames } from 'country-list'
 /** Return the table headers for the entity table. */
 export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
   const { facetItems, filterSearch, highlightMatch } = useBcrosSearch()
-  const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 
   return [
     {
@@ -61,6 +60,23 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       col: 'roles',
       filter: {
         clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'roles', 'value'], filterVal),
+        label: 'Business Details',
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      itemColspan: 4,
+      itemHidden: false,
+      slotId: 'details',
+      value: 'Business Details',
+      width: '14%'
+    },
+    {
+      col: 'roles',
+      filter: {
+        clearable: true,
         filterApiFn: (filterVal: string[]) => {
           return filterSearch(['categories', 'roles', 'roleType'], filterVal)
         },
@@ -74,7 +90,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      itemColspan: 4,
+      itemColspan: 0,
+      itemHidden: true,
       itemFn: (val: SearchResultI) => {
         if (val.roles) { return capFirstLetter(`${val.roles[0].roleType}`) }
         return 'N/A'
@@ -82,23 +99,6 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
       slotId: 'roles',
       value: 'Roles',
       width: '16%'
-    },
-    {
-      col: 'roles',
-      filter: {
-        clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['query', 'roles', 'value'], filterVal),
-        label: 'Business Details',
-        type: 'text',
-        value: ''
-      },
-      hasFilter: true,
-      hasSort: false,
-      itemColspan: 0,
-      itemHidden: true,
-      slotId: 'details',
-      value: 'Business Details',
-      width: '14%'
     },
     {
       col: 'roles',
@@ -133,4 +133,8 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
     //   value: 'Actions'
     // }
   ]
+}
+
+export const capFirstLetter = (val: string) => {
+  return val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 }
