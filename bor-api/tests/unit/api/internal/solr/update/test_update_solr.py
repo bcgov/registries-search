@@ -68,8 +68,8 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
         check_update_recorded(business_identifier)
         # check parties update
         for party in request_json.get('parties', []):
-            for count, role in enumerate(party['roles']):
-                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
+            for role in party['roles']:
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
                 check_update_recorded(identifier, True)
         # check SI update
         for owner in request_json.get('owners', []):
@@ -88,8 +88,8 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                               is_party=False,
                               status=SolrDocEventStatus.COMPLETE)
         for party in request_json.get('parties', []):
-            for count, role in enumerate(party['roles']):
-                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
+            for role in party['roles']:
+                identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         for owner in request_json.get('owners', []):
             identifier = owner['interestedParty']['describedByPersonStatement']
@@ -159,7 +159,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'entityAddresses': {'set': entity_addresses} if entity_addresses else None,
                     'entityType': 'PERSON',
                     'externalInfluence': None,
-                    'id': f'LEAR570343{business_identifier}DIRECTOR0',
+                    'id': f'LEAR570343{business_identifier}DIRECTOR',
                     'legalName': 'BCREG2 LIANG FORTY',
                     'alternateName': None,
                     'name_q': 'BCREG2 LIANG FORTY',
@@ -173,7 +173,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'legalType': None,
                     'nationalities': None,
                     'roles': {'set': [{
-                        'id': f'LEAR570343{business_identifier}DIRECTOR0/roles0',
+                        'id': f'LEAR570343{business_identifier}DIRECTOR/roles0',
                         'relatedAddresses': expectedRelatedAddresses,
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
@@ -204,7 +204,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                         'addressCountry': 'Canada'}]},
                     'entityType': 'PERSON',
                     'externalInfluence': None,
-                    'id': f'LEAR570721{business_identifier}DIRECTOR0',
+                    'id': f'LEAR570721{business_identifier}DIRECTOR',
                     'legalName': 'BLIPPITY BOP',
                     'alternateName': None,
                     'name_q': 'BLIPPITY BOP',
@@ -218,7 +218,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'identifier': None,
                     'legalType': None,
                     'roles': {'set': [{
-                        'id': f'LEAR570721{business_identifier}DIRECTOR0/roles0',
+                        'id': f'LEAR570721{business_identifier}DIRECTOR/roles0',
                         'relatedAddresses': expectedRelatedAddresses,
                         'roleType': 'DIRECTOR',
                         'relatedBN': '123456789',
@@ -373,7 +373,7 @@ def test_update_solr(session, client, jwt, test_name, request_json, existing_ent
     # check parties update
     for party in request_json.get('parties', []):
         for role in party['roles']:
-            party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
+            party_id = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
             party_ids.append(party_id)
             check_update_recorded(party_id, True)
     # check si update
@@ -396,7 +396,7 @@ def test_update_solr(session, client, jwt, test_name, request_json, existing_ent
                           status=SolrDocEventStatus.COMPLETE)
     for party in request_json.get('parties', []):
         for role in party['roles']:
-            identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}0".upper()
+            identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     for owner in request_json.get('owners', []):
         si_id = owner['interestedParty']['describedByPersonStatement']

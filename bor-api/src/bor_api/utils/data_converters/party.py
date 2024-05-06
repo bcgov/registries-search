@@ -42,11 +42,17 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
     entity_type = 'PERSON' if party_info['officer']['partyType'] == 'person' else 'BUSINESS'
 
     base_party_id = f"{party_info['source']}{party_info['officer']['id']}"
+    # NOTE: if the id is not unique then multiple roles will be added under the same entity
+    # TODO: combine roles across role types under the same entity (UI for director search needs update first)
+    # combine roles of the same role type, split roles of different types into their own entity
+    roles_to_split: dict[str, str | dict[str, list[DateRange]]] = {}
+    for role in party_info.get('roles', []):
+        entity_id = f"{base_party_id}{business.identifier}{role['roleType'].replace(' ', '_')}".upper()
+        roles_to_split.setdefault(entity_id, {'dates': [], 'roleType': role['roleType']})['dates']\
+            .append(DateRange(start=role['appointmentDate'], end=role.get('cessationDate', None)))
     # add a doc for each role
     entities = []
-    # NOTE: if the id is not unique then multiple roles will be added under the same entity in solr
-    for count, role in enumerate(party_info.get('roles', [])):
-        entity_id = f"{base_party_id}{business.identifier}{role['roleType'].replace(' ', '_')}{count}".upper()
+    for entity_id, role_data in roles_to_split.items():
         entities.append(Entity(entityAddresses=addresses,
                                entityType=entity_type,
                                id=entity_id,
@@ -58,9 +64,8 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
                                                  relatedLegalType=business.legalType,
                                                  relatedName=business.legalName,
                                                  relatedState=business.state,
-                                                 roleDates=[DateRange(start=role['appointmentDate'],
-                                                                      end=role.get('cessationDate', None))],
-                                                 roleType=role['roleType'],
+                                                 roleDates=role_data['dates'],
+                                                 roleType=role_data['roleType'],
                                                  relatedBN=business.bn,
                                                  relatedEmail=business.email)]))
 
