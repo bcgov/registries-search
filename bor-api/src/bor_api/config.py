@@ -49,6 +49,8 @@ class Config():  # pylint: disable=too-few-public-methods
 
     # Used by /sync endpoint
     MAX_BATCH_UPDATE_NUM = int(os.getenv('MAX_BATCH_UPDATE_NUM', '1000'))
+    # Used by /sync heartbeat
+    LAST_REPLICATION_THRESHOLD = int(os.getenv('LAST_REPLICATION_THRESHOLD', '24'))  # hours
 
     # Flag Names
     OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
