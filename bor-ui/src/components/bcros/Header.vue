@@ -244,10 +244,10 @@ const keycloak = useBcrosKeycloak()
 const authenticated = computed(() => keycloak.kc.authenticated)
 const { createAccount, logout } = useBcrosAuth()
 
-function switchAccount (accountId: string) {
+function switchAccount (accountId: number) {
   account.switchCurrentAccount(accountId)
   // refresh the page so that account based checks are rerun
-  window.location.reload()
+  window.location.search = '?accountid=' + accountId
 }
 
 const loginOptions = [

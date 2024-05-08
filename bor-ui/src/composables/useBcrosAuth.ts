@@ -1,4 +1,4 @@
-import { KeycloakConfig } from 'keycloak-js'
+import type { KeycloakConfig } from 'keycloak-js'
 
 /** Manages auth flows */
 export const useBcrosAuth = () => {
@@ -49,7 +49,7 @@ export const useBcrosAuth = () => {
           await account.setUserName()
           // set account info
           console.info('Setting user account information...')
-          await account.setAccountInfo(currentAccountId)
+          await account.setAccountInfo(Number(currentAccountId))
           // check account status
           console.info('Checking account status...')
           // verify account status
