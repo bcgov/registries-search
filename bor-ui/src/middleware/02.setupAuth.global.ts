@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const { kcURL, kcRealm, kcClient } = useRuntimeConfig().public
     await useBcrosAuth().setupAuth(
       { url: kcURL, realm: kcRealm, clientId: kcClient },
-      to.params.currentAccountId as string || to.query.currentAccountId as string
+      to.params.accountid as string || to.query.accountid as string
     )
   }
   // For cypress tests. NOTE: all api calls will need to be intercepted/stubbed

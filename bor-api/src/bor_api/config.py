@@ -42,6 +42,7 @@ class Config():  # pylint: disable=too-few-public-methods
     AUTH_SVC_URL = os.getenv('AUTH_API_URL', '') + os.getenv('AUTH_API_VERSION', '')
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
+    TRUSTED_TESTER_IDS = os.getenv('TRUSTED_TESTER_IDS', '').split(',')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
@@ -120,6 +121,7 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     DEVELOPMENT = False
     TESTING = True
+    POD_NAMESPACE = 'unittest'
     # API urls
     AUTH_SVC_URL = os.getenv('AUTH_API_TEST_URL', 'http://auth-api.mock') + os.getenv('AUTH_API_VERSION', '')
     # SOLR

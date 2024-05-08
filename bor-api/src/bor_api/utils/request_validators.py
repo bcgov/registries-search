@@ -22,7 +22,7 @@ from bor_api.services.authz import account_products
 from .util import get_str
 
 
-def validate_search_request(user: User, access_flag_name: str, access_code: str) -> tuple[dict, list[dict]]:
+def validate_search_request(user: User, access_flag_name: str, access_code: str) -> tuple[dict, bool, list[dict]]:
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
@@ -38,7 +38,8 @@ def validate_search_request(user: User, access_flag_name: str, access_code: str)
 
     # check access
     current_app.logger.debug('Checking user access...')
-    if not jwt.contains_role(['system']) and not flags.value(access_flag_name, {'key': user.sub}):
+    has_individual_access = jwt.contains_role(['system']) or flags.value(access_flag_name, {'key': user.sub})
+    if not has_individual_access:
         # individual flag not enabled for user. Check account has product subscription
         current_app.logger.debug('Individual access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
@@ -54,7 +55,7 @@ def validate_search_request(user: User, access_flag_name: str, access_code: str)
         msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
         errors.append({'Invalid header': msg})
 
-    return request_json, errors
+    return request_json, has_individual_access, errors
 
 
 def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches,too-many-statements

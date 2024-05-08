@@ -23,6 +23,7 @@ from bor_api.services import jwt, solr
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
 from bor_api.services.base_solr.utils import parse_facets, prep_query_str_adv
+from bor_api.utils.data_protection_helpers import add_prod_protection_params
 from bor_api.utils.request_validators import validate_search_request
 
 from .extended import bp as extended_bp
@@ -39,7 +40,7 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
     """Return a list of entity results from solr."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
-        request_json, errors = validate_search_request(user, 'enable-director-search', 'NDS')
+        request_json, has_individual_access, errors = validate_search_request(user, 'enable-director-search', 'NDS')
         if errors:
             return bad_request_response('Errors processing request.', errors)
 
@@ -135,7 +136,7 @@ def search():  # pylint: disable=too-many-branches, too-many-return-statements, 
                               query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent',
                                                     AddressField.ADDRESS_SYN_Q: 'child'})
 
-        results = entities_search(params, solr)
+        results = entities_search(add_prod_protection_params(params, user, has_individual_access), solr)
         docs = results.get('response', {}).get('docs')
 
         # save search in the db
