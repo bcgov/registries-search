@@ -1,5 +1,6 @@
 export interface SearchResultRoleI {
   active: boolean
+  relatedAddresses?: Partial<AddressI>[]
   relatedBN?: string
   relatedEmail?: string
   relatedEntityType: 'BUSINESS' | 'PERSON'
@@ -23,7 +24,7 @@ export interface SearchResultI {
   birthDate?: string,
   bn?: string,
   email?: string,
-  entityAddresses: AddressI[]
+  entityAddresses: Partial<AddressI>[]
   entityType: 'BUSINESS' | 'PERSON'
   isPR?: boolean
   legalName: string

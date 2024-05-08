@@ -152,7 +152,7 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-:deep .v-expansion-panel-text__wrapper {
+:deep(.v-expansion-panel-text__wrapper) {
   padding: 0;
   background-color: transparent !important;
 }

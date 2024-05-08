@@ -32,6 +32,13 @@
         :item="item"
       />
     </template>
+    <template #item-slot-address="{ item }">
+      <BcrosAddressDisplay
+        v-if="item.entityAddresses"
+        :address="item.entityAddresses[0]"
+      />
+      <span v-else>N/A</span>
+    </template>
     <template #item-slot-date="{ item } : { item: SearchResultI }">
       <CommonItemsEffectiveDates v-if="item.roles" :role="item.roles[0]" />
       <span v-else>N/A</span>

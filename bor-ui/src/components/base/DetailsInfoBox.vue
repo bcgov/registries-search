@@ -3,7 +3,7 @@
     <p v-if="title" class="title">
       {{ title }}
     </p>
-    <p v-if="content">
+    <p v-if="content" data-cy="content">
       {{ content }}
     </p>
   </div>

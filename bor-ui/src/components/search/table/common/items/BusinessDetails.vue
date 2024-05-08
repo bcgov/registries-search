@@ -10,10 +10,17 @@
         size="small"
       />
     </a>
-    <br>
-    {{ role.relatedIdentifier }}
-    <br>
-    {{ role.relatedBN }}
+    <BcrosAddressDisplay
+      v-if="role.relatedAddresses"
+      :address="role.relatedAddresses[0]"
+      class="mt-2"
+    />
+    <div class="mt-2">
+      {{ role.relatedIdentifier }}
+    </div>
+    <div>
+      {{ role.relatedBN }}
+    </div>
   </div>
 </template>
 <script setup lang="ts">

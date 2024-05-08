@@ -11,6 +11,19 @@ import SearchTableResults from '../../../src/components/search/table/Results.vue
 import { testSearchResults } from '../../test-utils'
 import { vuetify } from '../../setup'
 
+const verifyAddress = (text: string, address: Partial<AddressI>) => {
+  expect(text).toContain(address?.addressCity || '')
+  expect(text).toContain(address?.addressCountry || '')
+  expect(text).toContain(address?.addressRegion || '')
+  expect(text).toContain(address?.postalCode || '')
+  expect(text).toContain(address?.streetAddress || '')
+  expect(text).toContain(address?.streetAdditional || '')
+  expect(text).toContain(address?.locationDescription || '')
+  if (address?.locationDescription) {
+    expect(text).toContain('Location Description')
+  }
+}
+
 describe('SearchResults tests', () => {
   let wrapper: VueWrapper<any>
 
@@ -134,25 +147,12 @@ describe('SearchResults tests', () => {
             }
             break
           case 'Address':
-            expect(items[itemIndx].text()).toContain(address?.addressCity || '')
-            expect(items[itemIndx].text()).toContain(address?.addressCountry || '')
-            expect(items[itemIndx].text()).toContain(address?.addressRegion || '')
-            expect(items[itemIndx].text()).toContain(address?.postalCode || '')
-            expect(items[itemIndx].text()).toContain(address?.streetAddress || '')
+            verifyAddress(items[itemIndx].text(), address)
             break
           case 'Information':
             expect(items[itemIndx].text()).toContain(taxNumber || '')
             expect(items[itemIndx].text()).toContain(email || '')
-            expect(items[itemIndx].text()).toContain(address?.addressCity || '')
-            expect(items[itemIndx].text()).toContain(address?.addressCountry || '')
-            expect(items[itemIndx].text()).toContain(address?.addressRegion || '')
-            expect(items[itemIndx].text()).toContain(address?.postalCode || '')
-            expect(items[itemIndx].text()).toContain(address?.streetAddress || '')
-            expect(items[itemIndx].text()).toContain(address?.locationDescription || '')
-            expect(items[itemIndx].text()).toContain(taxResidency || '')
-            if (address?.locationDescription) {
-              expect(items[itemIndx].text()).toContain('Location Description')
-            }
+            verifyAddress(items[itemIndx].text(), address)
             if (taxResidency) {
               expect(items[itemIndx].text()).toContain('Tax Residency')
             }
@@ -168,6 +168,8 @@ describe('SearchResults tests', () => {
           case 'Business Details':
             for (const i in roles) {
               const role = roles[i]
+              const roleAddress = role.relatedAddresses ? role.relatedAddresses[0] : undefined
+              verifyAddress(items[itemIndx].text(), roleAddress)
               expect(items[itemIndx].text()).toContain(role.relatedBN || '')
               expect(items[itemIndx].text()).toContain(role.relatedIdentifier || '')
               expect(items[itemIndx].text()).toContain(role.relatedName || '')

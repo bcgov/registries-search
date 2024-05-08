@@ -31,12 +31,7 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (!val.entityAddresses) { return 'N/A' }
-        return `${val.entityAddresses[0].streetAddress}<br>${val.entityAddresses[0].addressCity} ` +
-          `${val.entityAddresses[0].addressRegion} ${val.entityAddresses[0].postalCode}` +
-          `<br>${val.entityAddresses[0].addressCountry}`
-      },
+      slotId: 'address',
       value: 'Address',
       width: '17%'
     },

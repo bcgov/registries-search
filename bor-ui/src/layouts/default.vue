@@ -12,7 +12,7 @@
     <div class="app-body container mx-auto px-4">
       <slot />
     </div>
-    <bcros-footer :about-text="'Person Search UI v' + version" />
+    <bcros-footer :about-text="'Business and Person Search UI v' + version" />
   </v-app>
 </template>
 

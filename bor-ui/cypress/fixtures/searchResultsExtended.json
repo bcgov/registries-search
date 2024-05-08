@@ -1,13 +1,6 @@
 {
     "facets": {
         "fields": {
-            "relatedEntityType": [
-                {
-                    "count": 7,
-                    "parentCount": 7,
-                    "value": "BUSINESS"
-                }
-            ],
             "relatedLegalType": [
                 {
                     "count": 2,
@@ -134,6 +127,17 @@
                 ],
                 "roles": [
                     {
+                        "relatedAddresses": [
+                            {
+                                "addressCity": "North York",
+                                "addressCountry": "",
+                                "addressRegion": "ON",
+                                "addressType": "RESIDENCE",
+                                "postalCode": "M6B 1W8",
+                                "score": 0.0,
+                                "streetAddress": "445-96 Tycos Dr"
+                            }
+                        ],
                         "relatedEntityType": "BUSINESS",
                         "relatedIdentifier": "BC0871427",
                         "relatedInterests": [
@@ -168,6 +172,17 @@
                         "score": 0.0
                     },
                     {
+                        "relatedAddresses": [
+                            {
+                                "addressCity": "North York",
+                                "addressCountry": "",
+                                "addressRegion": "ON",
+                                "addressType": "RESIDENCE",
+                                "postalCode": "M6B 1W8",
+                                "score": 0.0,
+                                "streetAddress": "445-96 Tycos Dr"
+                            }
+                        ],
                         "relatedEntityType": "BUSINESS",
                         "relatedIdentifier": "BC0871428",
                         "relatedInterests": [
@@ -216,6 +231,19 @@
                 "legalName": "KIAL JINNAH",
                 "roles": [
                     {
+                        "relatedAddresses": [
+                            {
+                                "addressCity": "Vancouver",
+                                "addressCountry": "Canada",
+                                "addressRegion": "BC",
+                                "addressType": "RESIDENCE",
+                                "postalCode": "V2R 2P8",
+                                "score": 0.0,
+                                "streetAddress": "Fun Street",
+                                "streetAdditional": "Waffles",
+                                "locationDescription": "Use syrup"
+                            }
+                        ],
                         "relatedEmail": "test@test.com",
                         "relatedEntityType": "BUSINESS",
                         "relatedIdentifier": "CP0001596",
@@ -286,6 +314,17 @@
                 "legalName": "KIAL JINNAH",
                 "roles": [
                     {
+                        "relatedAddresses": [
+                            {
+                                "addressCity": "",
+                                "addressCountry": "Canada",
+                                "addressType": "RESIDENCE",
+                                "postalCode": null,
+                                "score": 0.0,
+                                "streetAddress": "",
+                                "locationDescription": "Find us"
+                            }
+                        ],
                         "relatedEntityType": "BUSINESS",
                         "relatedIdentifier": "BC1230075",
                         "relatedLegalType": "BEN",

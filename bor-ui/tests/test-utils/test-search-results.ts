@@ -120,6 +120,15 @@ export const testSearchResults: SearchResultI[] = [
     nationalities: ['CA', 'US'],
     roles: [{
       active: true,
+      relatedAddresses: [{
+        addressCity: 'Victoria',
+        addressCountry: 'CA',
+        addressRegion: 'BC',
+        postalCode: 'V2M 7W0',
+        streetAddress: '224 Sleepy Lane',
+        streetAdditional: 'Fun Place',
+        locationDescription: 'Dogs in the backyard'
+      }],
       relatedBN: '123456789BC0001',
       relatedEmail: 'test@email.com',
       relatedEntityType: 'BUSINESS',
@@ -141,6 +150,13 @@ export const testSearchResults: SearchResultI[] = [
     },
     {
       active: true,
+      relatedAddresses: [{
+        addressCountry: '',
+        addressRegion: null,
+        streetAddress: '',
+        streetAdditional: 'Lost my glasses',
+        locationDescription: 'Where am I'
+      }],
       relatedBN: '123456789BC0002',
       relatedEmail: 'test@email.com',
       relatedEntityType: 'BUSINESS',
@@ -231,6 +247,13 @@ export const testSearchResults: SearchResultI[] = [
     legalName: 'KIAL TEST 2',
     roles: [{
       active: true,
+      relatedAddresses: [{
+        addressCity: 'Victoria',
+        addressCountry: 'CA',
+        addressRegion: 'BC',
+        postalCode: 'V2M 7W0',
+        streetAddress: '123 Normal Street'
+      }],
       relatedEntityType: 'BUSINESS',
       relatedIdentifier: 'BC0871105',
       relatedLegalType: 'BC',

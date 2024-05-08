@@ -121,6 +121,28 @@ context('Search extended', () => {
             if (role.relatedBN) {
               expect(roleDivs.eq(0), 'Business Details column - bn').to.include.text(role.relatedBN)
             }
+            if (role.relatedAddresses) {
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - city')
+                .to.include.text(role.relatedAddresses[0].addressCity || '')
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - country')
+                .to.include.text(role.relatedAddresses[0].addressCountry || '')
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - region')
+                .to.include.text(role.relatedAddresses[0].addressRegion || '')
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - postal code')
+                .to.include.text(role.relatedAddresses[0].postalCode || '')
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - street')
+                .to.include.text(role.relatedAddresses[0].streetAddress || '')
+              expect(roleDivs.eq(0).find('[data-cy=address-display]'), 'Business Details column - street additional')
+                .to.include.text(role.relatedAddresses[0].streetAdditional || '')
+              if (role.relatedAddresses[0].locationDescription) {
+                expect(roleDivs.eq(0)
+                  .find('[data-cy=address-display]'), 'Business Details column - Location Description (title)')
+                  .to.include.text('Location Description')
+                expect(roleDivs.eq(0)
+                  .find('[data-cy=address-display]'), 'Business Details column - Location Description (content)')
+                  .to.include.text(role.relatedAddresses[0].locationDescription)
+              }
+            }
 
             // role
             expect(roleDivs.eq(1).text().toLowerCase(), 'Roles column').to.equal(role.roleType.toLowerCase())
