@@ -27,9 +27,9 @@ def add_prod_protection_params(params: SearchParams, user: User, has_individual_
     if is_prod or is_trusted_tester:
         return params
 
-    # Only search over businesses in LEAR
+    # Only search over businesses in LEAR or fake generated businesses
     if params.child_categories.get(EntityRoleField.RELATED_LEGAL_TYPE):
         current_app.logger.warn('Overwiting %s param setting to prevent old prod data visibility.',
                                 EntityRoleField.RELATED_LEGAL_TYPE)
-    params.child_categories[EntityRoleField.RELATED_LEGAL_TYPE] = ['BEN', 'CP', 'SP', 'GP']
+    params.child_categories[EntityRoleField.RELATED_LEGAL_TYPE] = ['BEN', 'CP', 'SP', 'GP', 'N/A']
     return params
