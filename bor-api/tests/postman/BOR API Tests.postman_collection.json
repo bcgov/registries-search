@@ -49,8 +49,7 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded",
-								"uuid": "874b235b-2209-4375-b1be-7707eed9bfc9"
+								"value": "application/x-www-form-urlencoded"
 							}
 						],
 						"body": {
@@ -96,9 +95,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
 								"value": "application/json",
-								"uuid": "78cfe3a9-701c-4490-8f69-5c7953c29a0c"
+								"type": "text"
 							}
 						],
 						"url": {
@@ -122,8 +120,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -183,9 +181,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
 								"value": "application/json",
-								"uuid": "6655f3aa-8450-40dc-b885-9f7e853656ac"
+								"type": "text"
 							}
 						],
 						"url": {
@@ -209,8 +206,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -275,9 +272,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
 								"value": "application/json",
-								"uuid": "8109a0ea-adcc-4745-9a0d-5e6852af187a"
+								"type": "text"
 							}
 						],
 						"url": {
@@ -301,8 +297,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -376,15 +372,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "059314ea-bbf8-4b71-bd74-ff04526a421e"
+										"type": "text"
 									},
 									{
 										"key": "Account-ID",
 										"value": "1999",
-										"type": "text",
-										"uuid": "0200f2de-b5e7-4fc7-9a03-08671a7b8963"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -416,8 +410,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -496,15 +490,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "9cf19fe8-87c9-4b25-b94a-8501def0faf5"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text",
-										"uuid": "c8a4aa7e-2945-4fbe-9f8d-436caf29d7b6"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -536,8 +528,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -616,15 +608,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "c6472e7b-a2fb-4141-94c0-3e8906dc9ba8"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text",
-										"uuid": "615794c9-5734-46a5-8d96-9ff7d4d88c9e"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -656,8 +646,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -726,9 +716,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "9378dd72-f3c3-43b6-9e83-0fe8c1a125aa"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -760,8 +749,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -830,9 +819,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "79f9cc5f-13ed-4fd9-a770-ffc82273f2f5"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -864,8 +852,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -944,15 +932,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "05594ec6-e99a-4385-ba7a-ca82f2406c8a"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text",
-										"uuid": "b784f61f-4f01-4e88-b291-8b8d7cc8c821"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -984,8 +970,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1054,9 +1040,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "fbb7a0ec-8a97-4c0f-a2b4-bcdcc930a4ef"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1088,8 +1073,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1158,9 +1143,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "b61269b6-9b24-4afd-9960-b942cb974581"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1192,8 +1176,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1262,9 +1246,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "492f26ec-8690-41c7-be6e-210aafcb3c7c"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1296,8 +1279,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1366,9 +1349,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "08a6ba3f-3253-488a-889f-2100ad1e5b1a"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1400,8 +1382,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1470,9 +1452,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "e88e8cb5-d4c8-4440-a4eb-a711e508cd8d"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1504,8 +1485,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1587,15 +1568,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-										"uuid": "e10267cd-8d36-4387-abe9-37718db54ae6"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "1999",
-										"type": "text",
-										"uuid": "eb98fa5f-2958-415f-9d01-dfb2112c6401"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1627,8 +1606,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+												"value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+												"type": "text"
 											}
 										],
 										"body": {
@@ -1716,20 +1695,16 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json",
-										"uuid": "d9e4ab2e-1002-4135-822a-e6ad27765316"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-ID",
-										"value": "1999",
-										"type": "text",
-										"uuid": "c53b0e31-f62c-407c-80b0-bb7205379ffd"
+										"value": "1999"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"test\"\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"402 931 299\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1757,8 +1732,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											},
 											{
 												"key": "Account-ID",
@@ -1842,15 +1817,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "4ee8bdb0-3b6d-4460-958f-d80454ea4509"
+										"type": "text"
 									},
 									{
 										"key": "Account-ID",
 										"value": "3040",
-										"type": "text",
-										"uuid": "efd9805e-8128-4bd7-8940-2b907147cf1c"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -1883,8 +1856,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											},
 											{
 												"key": "Account-ID",
@@ -1968,15 +1941,13 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
 										"value": "application/json",
-										"uuid": "b02c24a0-5933-4c74-8d83-f43aef950bc4"
+										"type": "text"
 									},
 									{
 										"key": "Account-ID",
 										"value": "3040",
-										"type": "text",
-										"uuid": "afaeae68-30db-4413-95c5-cf13f001806e"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2009,8 +1980,8 @@
 										"header": [
 											{
 												"key": "Accept",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											},
 											{
 												"key": "Account-ID",
@@ -2078,6 +2049,246 @@
 							]
 						}
 					]
+				},
+				{
+					"name": "public search",
+					"item": [
+						{
+							"name": "basic (not logged in)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Account-ID",
+										"value": "1999",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"bop\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/search/public",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"public"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "basic (not logged in)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Account-ID",
+												"value": "1999",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"kial\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/{{version}}/search/public",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"public"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 10 May 2024 23:29:50 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "998"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.1.0a3.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                }\n            },\n            \"query\": {\n                \"name\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"kial\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"birthDate\": \"1997-02-05\",\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"Kial Jinnahh\",\n                \"nationalities\": [\n                    \"CA\"\n                ],\n                \"roles\": [\n                    {\n                        \"relatedBN\": \"123456788BC001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC9999991\",\n                        \"relatedLegalType\": \"BC\",\n                        \"relatedName\": \"EFGH TEST BUSINESS\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-07\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 3.772159\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "basic (logged in)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Account-ID",
+										"value": "1999"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"blippity\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/search/public",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"search",
+										"public"
+									]
+								},
+								"description": "Get drafts example."
+							},
+							"response": [
+								{
+									"name": "basic (logged in)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Account-ID",
+												"value": "1999"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"kial\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/{{version}}/search/public",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"{{version}}",
+												"search",
+												"public"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 10 May 2024 23:30:16 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "998"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "bor_api/1.1.0a3.dev1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"relatedEntityType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BUSINESS\"\n                }\n            ],\n            \"relatedLegalType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"relatedState\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"roleType\": [\n                {\n                    \"count\": 1,\n                    \"parentCount\": 1,\n                    \"value\": \"SIGNIFICANT INDIVIDUAL\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"roles\": {\n                    \"relatedEntityType\": null,\n                    \"relatedState\": null,\n                    \"roleType\": null\n                }\n            },\n            \"query\": {\n                \"name\": \"\",\n                \"roles\": {\n                    \"relatedBN\": \"\",\n                    \"relatedIdentifier\": \"\",\n                    \"relatedName\": \"\",\n                    \"roleDates\": {},\n                    \"value\": \"\"\n                },\n                \"value\": \"kial\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"birthDate\": \"1997-02-05\",\n                \"entityType\": \"PERSON\",\n                \"legalName\": \"Kial Jinnahh\",\n                \"nationalities\": [\n                    \"CA\"\n                ],\n                \"roles\": [\n                    {\n                        \"relatedBN\": \"123456788BC001\",\n                        \"relatedEntityType\": \"BUSINESS\",\n                        \"relatedIdentifier\": \"BC9999991\",\n                        \"relatedLegalType\": \"BC\",\n                        \"relatedName\": \"EFGH TEST BUSINESS\",\n                        \"relatedState\": \"ACTIVE\",\n                        \"roleDates\": [\n                            {\n                                \"active\": true,\n                                \"score\": 0,\n                                \"start\": \"2024-02-07\"\n                            }\n                        ],\n                        \"roleType\": \"SIGNIFICANT INDIVIDUAL\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 3.772159\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						}
+					]
 				}
 			]
 		},
@@ -2126,14 +2337,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "126b33c8-e18e-4cad-89cc-ae0ac746af55"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "5447e7b7-f050-4398-9cc7-4908cb8c7794"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2198,20 +2407,16 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"type": "text",
-										"uuid": "0d076b1d-f3e3-43c2-85af-fab783dec280"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "be15f092-8e30-4144-baea-7e306bc4e5a1"
+										"value": "{{account_id}}"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"business\": {\r\n        \"addresses\": [\r\n            {\r\n                \"addressCity\": \"Vancouver\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"loco desc\",\r\n                \"id\": 2716701,\r\n                \"postalCode\": \"V6J 5L2\",\r\n                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                \"streetAddressAdditional\": \"additional\"\r\n            }\r\n        ],\r\n        \"email\": \"ABCD@email.com\",\r\n        \"identifier\": \"BC9999991\",\r\n        \"legalName\": \"ABCD TEST BUSINESS\",\r\n        \"legalType\": \"BC\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456789\"\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": \"2023-03-08\",\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"business\": {\r\n        \"addresses\": [\r\n            {\r\n                \"addressCity\": \"Vancouver\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"loco desc\",\r\n                \"id\": 2716701,\r\n                \"postalCode\": \"V6J 5L2\",\r\n                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                \"streetAddressAdditional\": \"additional\"\r\n            }\r\n        ],\r\n        \"email\": \"ABCD@email.com\",\r\n        \"identifier\": \"BC9999991\",\r\n        \"legalName\": \"ABCD TEST BUSINESS\",\r\n        \"legalType\": \"BC\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456789\"\r\n    },\r\n    \"parties\": [\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Calgary\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"AB\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2664208,\r\n                \"postalCode\": \"T3J 3Z5\",\r\n                \"streetAddress\": \"1234-4818 Westwinds Dr NE\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": \"ppr@dev.com\",\r\n                \"firstName\": \"BCREG2 LIANG\",\r\n                \"id\": 570343,\r\n                \"lastName\": \"FORTY\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-06\",\r\n                    \"cessationDate\": \"2023-03-08\",\r\n                    \"roleType\": \"Director\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        },\r\n        {\r\n            \"deliveryAddress\": {\r\n                \"addressCity\": \"Québec\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"QC\",\r\n                \"deliveryInstructions\": null,\r\n                \"id\": 2669641,\r\n                \"postalCode\": \"G1N 1C1\",\r\n                \"streetAddress\": \"W-558 Rue Saint-Vallier O\",\r\n                \"streetAddressAdditional\": \"\"\r\n            },\r\n            \"officer\": {\r\n                \"email\": null,\r\n                \"firstName\": \"BLIPPITY\",\r\n                \"id\": 570721,\r\n                \"lastName\": \"BOP\",\r\n                \"partyType\": \"person\"\r\n            },\r\n            \"roles\": [\r\n                {\r\n                    \"appointmentDate\": \"2023-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Director\"\r\n                },\r\n                {\r\n                    \"appointmentDate\": \"2020-03-20\",\r\n                    \"cessationDate\": \"2021-05-22\",\r\n                    \"roleType\": \"Director\"\r\n                },\r\n                {\r\n                    \"appointmentDate\": \"2020-03-20\",\r\n                    \"cessationDate\": null,\r\n                    \"roleType\": \"Incorporator\"\r\n                }\r\n            ],\r\n            \"source\": \"LEAR\"\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2271,20 +2476,16 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"type": "text",
-										"uuid": "2c3ba231-405e-4402-9706-cb32b5616df6"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "be8d467b-5fa0-423b-9328-8e58166d6117"
+										"value": "{{account_id}}"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"business\": {\r\n        \"addresses\": [\r\n            {\r\n                \"addressCity\": \"Victoria\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"Basement suite\",\r\n                \"id\": 2716701,\r\n                \"postalCode\": \"V6J 5L2\",\r\n                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                \"streetAddressAdditional\": \"Test Way\"\r\n            }\r\n        ],\r\n        \"email\": \"EFGH@email.com\",\r\n        \"identifier\": \"BC9999991\",\r\n        \"legalName\": \"EFGH TEST BUSINESS\",\r\n        \"legalType\": \"BC\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456788BC001\"\r\n    },\r\n    \"owners\": [\r\n        {\r\n            \"interestedParty\": {\r\n                \"describedByPersonStatement\": \"7f0511ba-9621-4134-8363-462c61b9162b\",\r\n                \"addresses\": [\r\n                    {\r\n                        \"city\": \"Kelowna\",\r\n                        \"country\": \"CA\",\r\n                        \"countryName\": \"Canada\",\r\n                        \"street\": \"123-720 Commonwealth Rd\",\r\n                        \"streetAdditional\": \"test street additional\",\r\n                        \"locationDescription\": \"test description\",\r\n                        \"postalCode\": \"V4V 1R8\",\r\n                        \"region\": \"BC\"\r\n                    }\r\n                ],\r\n                \"birthDate\": \"1997-02-05\",\r\n                \"email\": \"test@test.com\",\r\n                \"externalInfluence\": \"CanBeInfluenced\",\r\n                \"hasTaxNumber\": true,\r\n                \"identifiers\": [\r\n                    {\r\n                        \"id\": \"402 931 299\",\r\n                        \"scheme\": \"CAN-TAXID\",\r\n                        \"schemeName\": \"ITN\"\r\n                    }\r\n                ],\r\n                \"isComponent\": false,\r\n                \"isPermanentResidentCa\": false,\r\n                \"missingInfoReason\": \"\",\r\n                \"names\": [\r\n                    {\r\n                        \"fullName\": \"Kial Jinnahh\",\r\n                        \"type\": \"individual\"\r\n                    },\r\n                    {\r\n                        \"fullName\": \"w@alla*by wi))o^(w$`!!;:'\\\"\\\",<%>.?/\\\\ ~~_--=|][#}}i{\",\r\n                        \"type\": \"alternative\"\r\n                    }\r\n                ],\r\n                \"nationalities\": [\r\n                    {\r\n                        \"code\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    }\r\n                ],\r\n                \"personType\": \"knownPerson\",\r\n                \"placeOfResidence\": {\r\n                    \"city\": \"Kelowna\",\r\n                    \"country\": {\r\n                        \"alpha_2\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    },\r\n                    \"line1\": \"123-720 Commonwealth Rd\",\r\n                    \"line2\": \"wewa\",\r\n                    \"locationDescription\": \"2nd Driveway\",\r\n                    \"postalCode\": \"V4V 1R8\",\r\n                    \"region\": \"BC\"\r\n                },\r\n                \"publicationDetails\": {\r\n                    \"bodsVersion\": \"0.3\",\r\n                    \"publicationDate\": \"2024-02-23\",\r\n                    \"publisher\": {\r\n                        \"name\": \"BCROS - BC Registries and Online Services\",\r\n                        \"url\": \"https://www.bcregistry.gov.bc.ca/\"\r\n                    }\r\n                },\r\n                \"source\": {\r\n                    \"assertedBy\": [\r\n                        {\r\n                            \"name\": \"Hrvoje Fekete\"\r\n                        }\r\n                    ],\r\n                    \"description\": \"Using Gov BC - BTR - Web UI\",\r\n                    \"type\": [\r\n                        \"selfDeclaration\"\r\n                    ]\r\n                },\r\n                \"statementDate\": \"2024-02-07\",\r\n                \"statementID\": \"7f0511ba-9621-4134-8363-462c61b9162b\",\r\n                \"statementType\": \"personStatement\",\r\n                \"taxResidencies\": [\r\n                    {\r\n                        \"code\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    }\r\n                ]\r\n            },\r\n            \"interests\": [\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.registeredOwner\",\r\n                    \"directOrIndirect\": \"direct\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 45\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"votingRights\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.registeredOwner\",\r\n                    \"directOrIndirect\": \"direct\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 33\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"shareholding\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.indirectControl\",\r\n                    \"directOrIndirect\": \"indirect\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 45\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"votingRights\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.indirectControl\",\r\n                    \"directOrIndirect\": \"indirect\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 33\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"shareholding\"\r\n                },\r\n                {\r\n                    \"details\": \"bla bla\",\r\n                    \"type\": \"otherInfluenceOrControl\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"business\": {\r\n        \"addresses\": [\r\n            {\r\n                \"addressCity\": \"Victoria\",\r\n                \"addressCountry\": \"CA\",\r\n                \"addressRegion\": \"BC\",\r\n                \"addressType\": \"delivery\",\r\n                \"deliveryInstructions\": \"Basement suite\",\r\n                \"id\": 2716701,\r\n                \"postalCode\": \"V6J 5L2\",\r\n                \"streetAddress\": \"201-1768 8th Ave W\",\r\n                \"streetAddressAdditional\": \"Test Way\"\r\n            }\r\n        ],\r\n        \"email\": \"EFGH@email.com\",\r\n        \"identifier\": \"BC9999991\",\r\n        \"legalName\": \"EFGH TEST BUSINESS\",\r\n        \"legalType\": \"BEN\",\r\n        \"state\": \"ACTIVE\",\r\n        \"taxId\": \"123456788BC001\"\r\n    },\r\n    \"owners\": [\r\n        {\r\n            \"interestedParty\": {\r\n                \"describedByPersonStatement\": \"7f0511ba-9621-4134-8363-462c61b9162b\",\r\n                \"addresses\": [\r\n                    {\r\n                        \"city\": \"Kelowna\",\r\n                        \"country\": \"CA\",\r\n                        \"countryName\": \"Canada\",\r\n                        \"street\": \"123-720 Commonwealth Rd\",\r\n                        \"streetAdditional\": \"test street additional\",\r\n                        \"locationDescription\": \"test description\",\r\n                        \"postalCode\": \"V4V 1R8\",\r\n                        \"region\": \"BC\"\r\n                    }\r\n                ],\r\n                \"birthDate\": \"1997-02-05\",\r\n                \"email\": \"test@test.com\",\r\n                \"externalInfluence\": \"CanBeInfluenced\",\r\n                \"hasTaxNumber\": true,\r\n                \"identifiers\": [\r\n                    {\r\n                        \"id\": \"402 931 299\",\r\n                        \"scheme\": \"CAN-TAXID\",\r\n                        \"schemeName\": \"ITN\"\r\n                    }\r\n                ],\r\n                \"isComponent\": false,\r\n                \"isPermanentResidentCa\": false,\r\n                \"missingInfoReason\": \"\",\r\n                \"names\": [\r\n                    {\r\n                        \"fullName\": \"Kial Jinnahh\",\r\n                        \"type\": \"individual\"\r\n                    },\r\n                    {\r\n                        \"fullName\": \"Waffle jones\",\r\n                        \"type\": \"alternative\"\r\n                    }\r\n                ],\r\n                \"nationalities\": [\r\n                    {\r\n                        \"code\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    },\r\n                    {\r\n                        \"code\": \"FR\",\r\n                        \"name\": \"France\"\r\n                    }\r\n                ],\r\n                \"personType\": \"knownPerson\",\r\n                \"placeOfResidence\": {\r\n                    \"city\": \"Kelowna\",\r\n                    \"country\": {\r\n                        \"alpha_2\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    },\r\n                    \"line1\": \"123-720 Commonwealth Rd\",\r\n                    \"line2\": \"wewa\",\r\n                    \"locationDescription\": \"2nd Driveway\",\r\n                    \"postalCode\": \"V4V 1R8\",\r\n                    \"region\": \"BC\"\r\n                },\r\n                \"publicationDetails\": {\r\n                    \"bodsVersion\": \"0.3\",\r\n                    \"publicationDate\": \"2024-02-23\",\r\n                    \"publisher\": {\r\n                        \"name\": \"BCROS - BC Registries and Online Services\",\r\n                        \"url\": \"https://www.bcregistry.gov.bc.ca/\"\r\n                    }\r\n                },\r\n                \"source\": {\r\n                    \"assertedBy\": [\r\n                        {\r\n                            \"name\": \"Hrvoje Fekete\"\r\n                        }\r\n                    ],\r\n                    \"description\": \"Using Gov BC - BTR - Web UI\",\r\n                    \"type\": [\r\n                        \"selfDeclaration\"\r\n                    ]\r\n                },\r\n                \"statementDate\": \"2024-02-07\",\r\n                \"statementID\": \"7f0511ba-9621-4134-8363-462c61b9162b\",\r\n                \"statementType\": \"personStatement\",\r\n                \"taxResidencies\": [\r\n                    {\r\n                        \"code\": \"CA\",\r\n                        \"name\": \"Canada\"\r\n                    }\r\n                ]\r\n            },\r\n            \"interests\": [\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.registeredOwner\",\r\n                    \"directOrIndirect\": \"direct\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 45\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"votingRights\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.registeredOwner\",\r\n                    \"directOrIndirect\": \"direct\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 33\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"shareholding\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.indirectControl\",\r\n                    \"directOrIndirect\": \"indirect\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 45\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"votingRights\"\r\n                },\r\n                {\r\n                    \"details\": \"controlType.sharesOrVotes.indirectControl\",\r\n                    \"directOrIndirect\": \"indirect\",\r\n                    \"share\": {\r\n                        \"exclusiveMaximum\": false,\r\n                        \"maximum\": 33\r\n                    },\r\n                    \"startDate\": \"2024-02-07\",\r\n                    \"type\": \"shareholding\"\r\n                },\r\n                {\r\n                    \"details\": \"bla bla\",\r\n                    \"type\": \"otherInfluenceOrControl\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2347,8 +2548,7 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "52c6b685-61ed-4c24-9ff3-c34621cc0db3"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2417,8 +2617,7 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "2edf9abf-6bb8-4a86-9251-b56fbf382859"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2486,14 +2685,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "6af3740f-268e-4d73-b2d6-af25c361cc1b"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "e3e61f27-c910-4040-ada5-01223a5d2c8b"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2559,14 +2756,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "f3851e74-8d7d-41a4-a1a4-cbfb2460a854"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "b66efb9d-cd6a-4194-b518-10754d5f1f05"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2632,14 +2827,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "c8a8cbf9-4b46-4ac5-9a28-3cc2a046a23c"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "bb8d0ac4-7f9f-4816-815d-f9346ff21001"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2705,14 +2898,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "5906d7c7-b2f3-4123-b9ca-f9486431d62b"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "a9e9b79d-f4cb-475f-a5ae-e15005e3a9a4"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2783,14 +2974,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "e12f7e63-ccc5-4ce8-8d60-27659753770c"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "44eba92c-131a-4447-9f0c-bc8d9ee172fc"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2855,14 +3044,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "138568cf-4c7f-4c41-8b00-b78ed183b12e"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "b2fcb706-97bc-4df3-9d03-0ed773edb30f"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2927,14 +3114,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "fea0c0ef-3217-4ffd-8c68-eea54a05f25d"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "8784a717-b1fe-4a62-a108-0c04a28fa23c"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -3004,14 +3189,12 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
-										"uuid": "17ad1373-42cc-4919-80e9-9d35319d1a02"
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
 										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "722292f9-9dd2-4a61-a099-d31cadd9d938"
+										"type": "text"
 									}
 								],
 								"body": {
@@ -3076,13 +3259,11 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"uuid": "0b8f7765-620b-49b0-9bab-dd495724d24c"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"uuid": "f9907be4-3102-42b6-bdb8-bdf7a572a863"
+										"value": "{{account_id}}"
 									}
 								],
 								"body": {
@@ -3147,20 +3328,16 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"type": "text",
-										"uuid": "fbd6f483-5c1a-40e3-a255-5673b6da07ef"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"type": "text",
-										"uuid": "14ddcc2c-f0fe-4afe-a40d-e54abc2907e0"
+										"value": "{{account_id}}"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"_root_\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n            \"relatedAddresses\": {\r\n                \"set\": [\r\n                    {\r\n                        \"addressCity\": \"City of dreams\",\r\n                        \"addressCountry\": \"CA\",\r\n                        \"addressRegion\": \"BC\",\r\n                        \"addressType\": \"DELIVERY\",\r\n                        \"locationDescription\": \"pillow\",\r\n                        \"parentDoc\": \"entityRole\",\r\n                        \"postalCode\": \"V8J 4L2\",\r\n                        \"streetAddress\": \"54 sleepy ave\",\r\n                        \"streetAdditional\": \"bunk bed\"\r\n                    }\r\n                ]\r\n            },\r\n            \"relatedBN\": {\r\n                \"set\":\"123456789BC0001\"\r\n            },\r\n            \"relatedEmail\": {\r\n                \"set\":\"None\"\r\n            },\r\n            \"relatedLegalType\": {\r\n                \"set\":\"BEN\"\r\n            },\r\n            \"relatedName\": {\r\n                \"set\":\"KD AMALGMATION TEST INC.\"\r\n            },\r\n            \"relatedState\": {\r\n                \"set\":\"ACTIVE\"\r\n            }\r\n        }\r\n    ]\r\n}",
+									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"entities\": [\r\n        {\r\n            \"_root_\":\"7f0511ba-9621-4134-8363-462c61b9162a\",\r\n            \"id\":\"7f0511ba-9621-4134-8363-462c61b9162aBC0871567SIGNIFICANT_INDIVIDUAL\",\r\n            \"relatedAddresses\": {\r\n                \"set\": [\r\n                    {\r\n                        \"addressCity\": \"Dreamtown\",\r\n                        \"addressCountry\": \"CA\",\r\n                        \"addressRegion\": \"BC\",\r\n                        \"addressType\": \"DELIVERY\",\r\n                        \"locationDescription\": \"1st driveway on the left\",\r\n                        \"parentDoc\": \"entityRole\",\r\n                        \"postalCode\": \"V8J 4L2\",\r\n                        \"streetAddress\": \"54 sleepy ave\",\r\n                        \"streetAdditional\": \"bunk bed\"\r\n                    }\r\n                ]\r\n            },\r\n            \"relatedBN\": {\r\n                \"set\":\"123456789BC0001\"\r\n            },\r\n            \"relatedEmail\": {\r\n                \"set\":\"None\"\r\n            },\r\n            \"relatedLegalType\": {\r\n                \"set\":\"BEN\"\r\n            },\r\n            \"relatedName\": {\r\n                \"set\":\"KD AMALGMATION TEST INC.\"\r\n            },\r\n            \"relatedState\": {\r\n                \"set\":\"ACTIVE\"\r\n            }\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3220,13 +3397,11 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"uuid": "0d3da601-c1d1-4e0c-bd17-537969780b5f"
+										"value": "application/json"
 									},
 									{
 										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"uuid": "46ab7fb4-4676-4319-babf-d23c437e89b2"
+										"value": "{{account_id}}"
 									}
 								],
 								"body": {

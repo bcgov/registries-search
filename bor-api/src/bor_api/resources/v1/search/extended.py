@@ -17,15 +17,19 @@ from http import HTTPStatus
 from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
+from bor_api.enums import SearchAccessLevel
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.models import User, SearchHistory
 from bor_api.services import jwt, solr
+from bor_api.services.base_solr.utils import parse_facets, prep_query_str_adv
 from bor_api.services.bor_solr import SearchParams, entities_search, xlsx_response
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
-from bor_api.services.base_solr.utils import parse_facets, prep_query_str_adv
 from bor_api.utils.data_protection_helpers import add_prod_protection_params
-from bor_api.utils.request_validators import validate_search_request
+from bor_api.utils.request_validators import validate_search
 
+
+# NOTE: this value determines access validation and data returned
+_ACCESS_LEVEL = SearchAccessLevel.EXTENDED
 
 bp = Blueprint('EXTENDED', __name__, url_prefix='/extended')  # pylint: disable=invalid-name
 
@@ -37,9 +41,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
     """Return a list of entity results from solr including extended entity information."""
     try:
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
-        request_json, has_individual_access, errors = validate_search_request(user,
-                                                                              'enable-comp-auth-search',
-                                                                              'CA_SEARCH')
+        request_json, fields, has_direct_access, errors = validate_search(user, _ACCESS_LEVEL)
         if errors:
             return bad_request_response('Errors processing request.', errors)
 
@@ -104,17 +106,6 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
 
         start = request_json.get('start', solr.default_start)
         rows = request_json.get('rows', solr.default_rows)
-        try:
-            start = int(start)
-            rows = int(rows)
-        except ValueError:  # catch invalid start/row entry
-            return {'message': "Expected integer for params: 'start', 'rows'"}, HTTPStatus.BAD_REQUEST
-
-        # NOTE: this is where we decide what data on each record to return to the user
-        base_access_fields = \
-            solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields
-        extended_access_fields = \
-            solr.entity_extended_fields + solr.entity_role_extended_fields + solr.interest_fields
 
         params = SearchParams(query=query,
                               rows=rows,
@@ -123,7 +114,7 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                               child_query=child_query,
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges,
-                              fields=base_access_fields + extended_access_fields,
+                              fields=fields,
                               query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
                                                   EntityField.LEGAL_NAME_AGRO_Q: 2,
                                                   EntityField.LEGAL_NAME_SINGLE_Q: 2,
@@ -157,13 +148,15 @@ def extended_search():  # pylint: disable=too-many-branches, too-many-return-sta
                                                     EntityField.ALT_NAME_SYN_Q: 'parent',
                                                     AddressField.ADDRESS_SYN_Q: 'child'})
 
-        results = entities_search(add_prod_protection_params(params, user, has_individual_access), solr)
+        results = entities_search(add_prod_protection_params(params, user, has_direct_access), solr)
         docs = results.get('response', {}).get('docs')
 
         # save search in the db
         SearchHistory(params=request_json,
                       results=docs,
-                      submitter_id=user.id).save()
+                      submitter_id=user.id,
+                      submitter_account_id=request.headers.get('Account-Id', None),
+                      access_level=_ACCESS_LEVEL).save()
 
         if str(request.accept_mimetypes) == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             return xlsx_response(docs)

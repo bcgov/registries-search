@@ -41,7 +41,7 @@ def test_create_update_delete_query(app):
     time.sleep(20)  # long wait necessary due to backup tests
 
     # search new doc
-    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
@@ -58,7 +58,7 @@ def test_create_update_delete_query(app):
     time.sleep(5)  # takes up to 1 second for solr to register update
 
     # test search returns nothing
-    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': solr.entity_fields}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': [EntityField.LEGAL_NAME.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
@@ -73,7 +73,7 @@ def test_create_update_delete_query(app):
     assert (restore_status.json())['restorestatus']['status'] == 'success'
 
     # test search returns doc again
-    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:{name}', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
@@ -94,7 +94,7 @@ def test_create_update_delete_query(app):
     time.sleep(2)  # takes up to 1 second for solr to register update
 
     # search new docs
-    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:test', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:test', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 2
@@ -116,13 +116,13 @@ def test_create_update_delete_query(app):
     time.sleep(2)
 
     # search entity_1 -- should not be there
-    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{entity_1.legalName}', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{entity_1.legalName}', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0
 
     # search updated_entity -- should be there
-    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{updated_entity.legalName}', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_SINGLE_Q.value}:{updated_entity.legalName}', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
@@ -153,7 +153,7 @@ def test_create_update_delete_query(app):
     
     params = {
         'query': f'{info_q_clause} AND {name_q_clause} AND {related_q_clause}',
-        'fields': solr.entity_fields + solr.entity_role_fields + [EntityField.UNIQUE_KEY.value]
+        'fields': [EntityField.UNIQUE_KEY.value, EntityField.ROLES.value, EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_EMAIL.value, EntityRoleField.RELATED_LEGAL_TYPE.value, EntityRoleField.RELATED_NAME.value, EntityRoleField.RELATED_STATE.value, '[child]']
     }
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
@@ -169,7 +169,7 @@ def test_create_update_delete_query(app):
     time.sleep(2)  # takes up to 1 second for solr to register update
 
     # test search returns the other one only
-    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:*', 'fields': solr.entity_fields + [EntityField.UNIQUE_KEY.value]}
+    params = {'query': f'{EntityField.LEGAL_NAME_Q.value}:*', 'fields': [EntityField.LEGAL_NAME.value, EntityField.UNIQUE_KEY.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 1
@@ -182,7 +182,7 @@ def test_create_update_delete_query(app):
     # assert delete all
     solr.delete_all_docs()
     time.sleep(1)
-    params = {'query': '*:*', 'fields': solr.entity_fields}
+    params = {'query': '*:*', 'fields': [EntityField.LEGAL_NAME.value]}
     resp = solr.query(params, 0, 10)
     docs = resp['response']['docs']
     assert len(docs) == 0

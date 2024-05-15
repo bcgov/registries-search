@@ -57,7 +57,7 @@ def set_log_level_by_flag():
                 and flag_value != level_name:  # pylint: disable=E0601; linter hates the walrus
             set_logging_level(flag_value)
     except Exception:  # noqa: B902
-        return
+        pass
 
 
 def set_logging_level(level: Level | str):

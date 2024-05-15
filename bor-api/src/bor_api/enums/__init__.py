@@ -15,6 +15,7 @@
 """This exports all of the enums used by the application."""
 from .interest_details import InterestDetails
 from .log_level import LogLevel
+from .search_access_level import SearchAccessLevel
 from .solr_doc_event_status import SolrDocEventStatus
 from .solr_doc_event_type import SolrDocEventType
 from .solr_synonym_type import SolrSynonymType

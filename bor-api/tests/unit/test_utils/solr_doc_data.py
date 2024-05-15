@@ -184,7 +184,7 @@ TEST_PERSONS = [
                   email='nine@si9.com',
                   tax_number='705 362 853',
                   entity_id='SI9',
-                  nationalities=['US', 'FR'],
+                  nationalities=['CA', 'US', 'FR'],
                   roles=[EntityRole(id=f'SI9{TEST_BUSINESSES[6].identifier}SIGNIFICANT_INDIVIDUAL',
                                     relatedAddresses=[Address(addressCity='Fake',
                                                               addressCountry='Canada',

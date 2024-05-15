@@ -17,9 +17,10 @@ from dataclasses import asdict
 import pytest
 from unittest import mock
 
+from bor_api.enums import SearchAccessLevel
 from bor_api.services import solr
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField
-from bor_api.services.bor_solr.utils import SearchParams, entities_search
+from bor_api.services.bor_solr.utils import SearchParams, entities_search, get_search_field_group
 from bor_api.services.bor_solr.utils.query_builders import PRE_CHILD_FILTER_CLAUSE
 from bor_api.services.bor_solr.utils.search_helpers import _add_category_filters
 
@@ -49,7 +50,7 @@ BASIC_PAYLOAD = {
                             'field': 'roleType',
                             'domain': {'blockChildren': '{!v=$parents}'},
                             'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
-    'fields': ['email', 'entityAddresses', 'entityType', 'legalName', 'roles', 'score', '[child]', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'relatedBN', 'relatedEmail', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleDates', 'roleType', 'relatedLegalType', 'active', 'start', 'end']}
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType', 'entityAddresses', 'relatedEmail', 'roleDates', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'active', 'start', 'end']}
 
 
 BASIC_PAYLOAD_EXTENDED = {
@@ -76,7 +77,30 @@ BASIC_PAYLOAD_EXTENDED = {
                             'field': 'roleType',
                             'domain': {'blockChildren': '{!v=$parents}'},
                             'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
-    'fields': ['email', 'entityAddresses', 'entityType', 'legalName', 'roles', 'score', '[child]', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'relatedBN', 'relatedEmail', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleDates', 'roleType', 'relatedLegalType', 'active', 'start', 'end', 'alternateName', 'birthDate', 'email', 'isPermanentResident', 'nationalities', 'externalInfluence', 'taxNumber', 'taxResidencies', 'relatedAddresses', 'relatedInterests', 'details', 'directOrIndirect', 'otherReason', 'sharesExact', 'sharesMax', 'sharesMin', 'interestType']}
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType', 'entityAddresses', 'relatedEmail', 'roleDates', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'active', 'start', 'end', 'alternateName', 'email', 'isPermanentResident', 'externalInfluence', 'taxNumber', 'taxResidencies', 'relatedAddresses', 'relatedInterests', 'details', 'directOrIndirect', 'otherReason', 'sharesExact', 'sharesMax', 'sharesMin', 'interestType']}
+
+BASIC_PAYLOAD_PUBLIC = {
+    'query': '(legalName_q:name^2 OR legalName_q:name~1 OR legalName_stem_agro_q:name^2 OR legalName_stem_agro_q:name~1 OR legalName_single_term_q:name^2 OR legalName_single_term_q:name~1 OR legalName_xtra_q:name^2) OR ' +
+             '(legalName_q:"name"~5^5) OR (legalName_stem_agro_q:"name"~10^3) OR (legalName_synonym_q:"name"~10^3) OR (legalName_stem_agro_q:"name"^2)',
+    'filter': [],
+    'queries': {'parents': 'entityType:*', 'parentFilters': ''},
+    'facet': {
+                'relatedEntityType': {'type': 'terms', 'field': 'relatedEntityType',
+                                    'domain': {'blockChildren': '{!v=$parents}'},
+                                    'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}},
+                'relatedLegalType': {'type': 'terms',
+                                    'field': 'relatedLegalType',
+                                    'domain': {'blockChildren': '{!v=$parents}'},
+                                    'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}},
+                'relatedState': {'type': 'terms',
+                                'field': 'relatedState',
+                                'domain': {'blockChildren': '{!v=$parents}'},
+                                'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}},
+                'roleType': {'type': 'terms',
+                            'field': 'roleType',
+                            'domain': {'blockChildren': '{!v=$parents}'},
+                            'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType']}
 
 COMPLEX_PAYLOAD = {
     'query': '(legalName_q:name1^2 OR legalName_q:name1~1 OR legalName_stem_agro_q:name1^2 OR legalName_stem_agro_q:name1~1 OR legalName_single_term_q:name1^2 OR legalName_single_term_q:name1~1 OR legalName_xtra_q:name1^2 OR ' +
@@ -89,7 +113,7 @@ COMPLEX_PAYLOAD = {
     "filter":['(identifier_q:"12345" AND identifier_q:"BC")', 'legalName_single_term_q:Test', 'state:("ACTIVE" OR "HISTORICAL")', 'entityType:("PERSON" OR "BUSINESS")', '({!parent which = \'-_nest_path_:* entityType:*\'}address_q:vancouver AND {!parent which = \'-_nest_path_:* entityType:*\'}address_q:bc AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedBN_q:123 AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:123@email.com AND ({!parent which = \'-_nest_path_:* entityType:*\'}related_q:"0012345" AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:"S") AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:name)', '{!parent which = \'-_nest_path_:* entityType:*\'}addressCity:"North Vancouver" OR addressCity: "Victoria"', '{!parent which = \'-_nest_path_:* entityType:*\'}relatedState:"ACTIVE"', "{!parent which = '-_nest_path_:* entityType:*'}(start:[* TO *] OR (active:* AND NOT start:*)) AND (end:[2022-03-21 TO *] OR (active:* AND NOT end:*))"],
     'queries': {'parents': 'entityType:*', 'parentFilters': '(identifier_q:"12345" AND identifier_q:"BC") AND legalName_single_term_q:Test'},
     'facet': {'relatedEntityType': {'type': 'terms', 'field': 'relatedEntityType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedLegalType': {'type': 'terms', 'field': 'relatedLegalType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedState': {'type': 'terms', 'field': 'relatedState', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'roleType': {'type': 'terms', 'field': 'roleType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
-    'fields': ['email', 'entityAddresses', 'entityType', 'legalName', 'roles', 'score', '[child]', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'relatedBN', 'relatedEmail', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleDates', 'roleType', 'relatedLegalType', 'active', 'start', 'end']}
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType', 'entityAddresses', 'relatedEmail', 'roleDates', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'active', 'start', 'end']}
 
 COMPLEX_PAYLOAD_EXTENDED = {
     'query': '(legalName_q:name1^2 OR legalName_q:name1~1 OR legalName_stem_agro_q:name1^2 OR legalName_stem_agro_q:name1~1 OR legalName_single_term_q:name1^2 OR legalName_single_term_q:name1~1 OR legalName_xtra_q:name1^2 OR ' +
@@ -109,7 +133,17 @@ COMPLEX_PAYLOAD_EXTENDED = {
     "filter":['(identifier_q:"12345" AND identifier_q:"BC")', 'legalName_single_term_q:Test', 'state:("ACTIVE" OR "HISTORICAL")', 'entityType:("PERSON" OR "BUSINESS")', '({!parent which = \'-_nest_path_:* entityType:*\'}address_q:vancouver AND {!parent which = \'-_nest_path_:* entityType:*\'}address_q:bc AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedBN_q:123 AND {!parent which = \'-_nest_path_:* entityType:*\'}relatedEmail_q:123@email.com AND ({!parent which = \'-_nest_path_:* entityType:*\'}related_q:"0012345" AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:"S") AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:name)', '{!parent which = \'-_nest_path_:* entityType:*\'}addressCity:"North Vancouver" OR addressCity: "Victoria"', '{!parent which = \'-_nest_path_:* entityType:*\'}relatedState:"ACTIVE"', "{!parent which = '-_nest_path_:* entityType:*'}(start:[* TO *] OR (active:* AND NOT start:*)) AND (end:[2022-03-21 TO *] OR (active:* AND NOT end:*))"],
     'queries': {'parents': 'entityType:*', 'parentFilters': '(identifier_q:"12345" AND identifier_q:"BC") AND legalName_single_term_q:Test'},
     'facet': {'relatedEntityType': {'type': 'terms', 'field': 'relatedEntityType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedLegalType': {'type': 'terms', 'field': 'relatedLegalType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedState': {'type': 'terms', 'field': 'relatedState', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'roleType': {'type': 'terms', 'field': 'roleType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
-    'fields': ['email', 'entityAddresses', 'entityType', 'legalName', 'roles', 'score', '[child]', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'relatedBN', 'relatedEmail', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleDates', 'roleType', 'relatedLegalType', 'active', 'start', 'end', 'alternateName', 'birthDate', 'email', 'isPermanentResident', 'nationalities', 'externalInfluence', 'taxNumber', 'taxResidencies', 'relatedAddresses', 'relatedInterests', 'details', 'directOrIndirect', 'otherReason', 'sharesExact', 'sharesMax', 'sharesMin', 'interestType']}
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType', 'entityAddresses', 'relatedEmail', 'roleDates', 'addressCity', 'addressCountry', 'addressRegion', 'addressType', 'postalCode', 'streetAddress', 'streetAdditional', 'locationDescription', 'active', 'start', 'end', 'alternateName', 'email', 'isPermanentResident', 'externalInfluence', 'taxNumber', 'taxResidencies', 'relatedAddresses', 'relatedInterests', 'details', 'directOrIndirect', 'otherReason', 'sharesExact', 'sharesMax', 'sharesMin', 'interestType']}
+
+COMPLEX_PAYLOAD_PUBLIC = {
+    'query': '(legalName_q:name1^2 OR legalName_q:name1~1 OR legalName_stem_agro_q:name1^2 OR legalName_stem_agro_q:name1~1 OR legalName_single_term_q:name1^2 OR legalName_single_term_q:name1~1 OR legalName_xtra_q:name1^2) AND ' +
+             '(legalName_q:name2^2 OR legalName_q:name2~1 OR legalName_stem_agro_q:name2^2 OR legalName_stem_agro_q:name2~1 OR legalName_single_term_q:name2^2 OR legalName_single_term_q:name2~1 OR legalName_xtra_q:name2^2) AND ' +
+             '(legalName_q:name3^2 OR legalName_q:name3~1 OR legalName_stem_agro_q:name3^2 OR legalName_stem_agro_q:name3~1 OR legalName_single_term_q:name3^2 OR legalName_single_term_q:name3~1 OR legalName_xtra_q:name3^2) OR ' +
+             '(legalName_q:"name1 name2 name3"~5^5) OR (legalName_stem_agro_q:"name1 name2 name3"~10^3) OR (legalName_synonym_q:"name1 name2 name3"~10^3) OR (legalName_stem_agro_q:"name1"^2)',
+    "filter":['(identifier_q:"12345" AND identifier_q:"BC")', 'legalName_single_term_q:Test', 'state:("ACTIVE" OR "HISTORICAL")', 'entityType:("PERSON" OR "BUSINESS")', '({!parent which = \'-_nest_path_:* entityType:*\'}relatedBN_q:123 AND ({!parent which = \'-_nest_path_:* entityType:*\'}related_q:"0012345" AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:"S") AND {!parent which = \'-_nest_path_:* entityType:*\'}related_q:name)', '{!parent which = \'-_nest_path_:* entityType:*\'}relatedState:"ACTIVE"'],
+    'queries': {'parents': 'entityType:*', 'parentFilters': '(identifier_q:"12345" AND identifier_q:"BC") AND legalName_single_term_q:Test'},
+    'facet': {'relatedEntityType': {'type': 'terms', 'field': 'relatedEntityType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedLegalType': {'type': 'terms', 'field': 'relatedLegalType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'relatedState': {'type': 'terms', 'field': 'relatedState', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}, 'roleType': {'type': 'terms', 'field': 'roleType', 'domain': {'blockChildren': '{!v=$parents}'}, 'facet': {'by_parent': 'uniqueBlock({!v=$parents})'}}},
+    'fields': ['birthDate', 'entityType', 'legalName', 'nationalities', 'roles', 'score', '[child]', 'relatedBN', 'relatedEntityType', 'relatedIdentifier', 'relatedName', 'relatedState', 'roleType', 'relatedLegalType']}
 
 
 def test_add_category_filters():
@@ -152,7 +186,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
                           child_query=child_query,
                           child_categories=child_categories,
                           child_date_ranges=child_date_ranges,
-                          fields=solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields,
+                          fields=get_search_field_group(SearchAccessLevel.LIMITED),
                           query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
                                               EntityField.LEGAL_NAME_AGRO_Q: 2,
                                               EntityField.LEGAL_NAME_SINGLE_Q: 2,
@@ -189,7 +223,7 @@ def test_entities_search(app, session, requests_mock, test_name, query, categori
 ])
 @mock.patch('bor_api.services.solr.query')
 def test_entities_search_deep(mocked, session, test_name, query, categories,
-                         child_query, child_categories, child_date_ranges, expected):
+                              child_query, child_categories, child_date_ranges, expected):
     """Assert that the entity_search function parses params correctly."""
     def mock_solr(*args, **kwargs):
         return []
@@ -202,7 +236,7 @@ def test_entities_search_deep(mocked, session, test_name, query, categories,
                           child_query=child_query,
                           child_categories=child_categories,
                           child_date_ranges=child_date_ranges,
-                          fields=solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields,
+                          fields=get_search_field_group(SearchAccessLevel.LIMITED),
                           query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
                                               EntityField.LEGAL_NAME_AGRO_Q: 2,
                                               EntityField.LEGAL_NAME_SINGLE_Q: 2,
@@ -239,16 +273,12 @@ def test_entities_search_deep(mocked, session, test_name, query, categories,
 ])
 @mock.patch('bor_api.services.solr.query')
 def test_entities_search_deep_extended(mocked, session, test_name, query, categories,
-                         child_query, child_categories, child_date_ranges, expected):
+                                       child_query, child_categories, child_date_ranges, expected):
     """Assert that the entity_search function parses params correctly."""
     def mock_solr(*args, **kwargs):
         return []
     mocked.side_effect = mock_solr
-    # call select
-    base_access_fields = \
-        solr.entity_fields + solr.address_fields + solr.entity_role_fields + solr.date_fields
-    extended_access_fields = \
-        solr.entity_extended_fields + solr.entity_role_extended_fields + solr.interest_fields
+    # call selecct
     params = SearchParams(query=query,
                               rows=10,
                               start=0,
@@ -256,7 +286,7 @@ def test_entities_search_deep_extended(mocked, session, test_name, query, catego
                               child_query=child_query,
                               child_categories=child_categories,
                               child_date_ranges=child_date_ranges,
-                              fields=base_access_fields + extended_access_fields,
+                              fields=get_search_field_group(SearchAccessLevel.EXTENDED),
                               query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
                                                   EntityField.LEGAL_NAME_AGRO_Q: 2,
                                                   EntityField.LEGAL_NAME_SINGLE_Q: 2,
@@ -289,6 +319,51 @@ def test_entities_search_deep_extended(mocked, session, test_name, query, catego
                               query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent',
                                                     EntityField.ALT_NAME_SYN_Q: 'parent',
                                                     AddressField.ADDRESS_SYN_Q: 'child'})
+    results = entities_search(params, solr)
+    # test it returned the mock successfully
+    assert results == []
+    # test it created the correct payload
+    mocked.assert_called_with(expected,0,10)
+
+
+@pytest.mark.parametrize('test_name,query,categories,child_query,child_categories,expected', [
+    ('test_basic', {'value': 'name'}, {}, {}, {}, BASIC_PAYLOAD_PUBLIC),
+    ('test_complex',
+     {'value': 'name1 name2 name3', EntityField.IDENTIFIER_Q.value: 'BC12345', EntityField.LEGAL_NAME_SINGLE_Q.value: 'Test'},
+     {EntityField.STATE: ['ACTIVE', 'HISTORICAL'], EntityField.ENTITY_TYPE: ['PERSON','BUSINESS']},
+     {EntityRoleField.RELATED_BN_Q.value: '123', EntityRoleField.RELATED_Q.value: 'S0012345 name'},
+     {EntityRoleField.RELATED_STATE: ['ACTIVE']},
+     COMPLEX_PAYLOAD_PUBLIC)
+])
+@mock.patch('bor_api.services.solr.query')
+def test_entities_search_deep_public(mocked, session, test_name, query, categories,
+                                     child_query, child_categories, expected):
+    """Assert that the entity_search function parses params correctly."""
+    def mock_solr(*args, **kwargs):
+        return []
+    mocked.side_effect = mock_solr
+    # call select
+    params = SearchParams(query=query,
+                          rows=10,
+                          start=0,
+                          categories=categories,
+                          child_query=child_query,
+                          child_categories=child_categories,
+                          child_date_ranges=None,
+                          fields=get_search_field_group(SearchAccessLevel.PUBLIC),
+                          query_boost_fields={EntityField.LEGAL_NAME_Q: 2,
+                                              EntityField.LEGAL_NAME_AGRO_Q: 2,
+                                              EntityField.LEGAL_NAME_SINGLE_Q: 2,
+                                              EntityField.LEGAL_NAME_XTRA_Q: 2},
+                          query_fields={EntityField.LEGAL_NAME_Q: 'parent',
+                                        EntityField.LEGAL_NAME_AGRO_Q: 'parent',
+                                        EntityField.LEGAL_NAME_SINGLE_Q: 'parent',
+                                        EntityField.LEGAL_NAME_XTRA_Q: 'parent'},
+                          query_fuzzy_fields={EntityField.LEGAL_NAME_Q: {'short': 1, 'long': 2},
+                                              EntityField.LEGAL_NAME_AGRO_Q: {'short': 1, 'long': 2},
+                                              EntityField.LEGAL_NAME_SINGLE_Q: {'short': 1, 'long': 2}},
+                          query_synonym_fields={EntityField.LEGAL_NAME_SYN_Q: 'parent'})
+
     results = entities_search(params, solr)
     # test it returned the mock successfully
     assert results == []

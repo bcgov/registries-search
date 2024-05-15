@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Version of this service in PEP440.
+"""Enum for search access level."""
+from enum import auto
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
+from .base import BaseEnum
 
-__version__ = '2.0.0a1.dev1'  # pylint: disable=invalid-name
+
+class SearchAccessLevel(BaseEnum):
+    """Enum of the search access levels."""
+
+    PUBLIC = auto()
+    LIMITED = auto()
+    EXTENDED = auto()

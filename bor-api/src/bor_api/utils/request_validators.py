@@ -14,15 +14,17 @@
 """The class manages methods to validate a request."""
 from flask import current_app, request
 
+from bor_api.enums import SearchAccessLevel
 from bor_api.exceptions import AuthorizationException
 from bor_api.models import User
 from bor_api.services import jwt, flags
 from bor_api.services.authz import account_products
+from bor_api.services.bor_solr.utils import get_search_field_group
 
 from .util import get_str
 
 
-def validate_search_request(user: User, access_flag_name: str, access_code: str) -> tuple[dict, bool, list[dict]]:
+def _validate_search_request() -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
@@ -32,16 +34,50 @@ def validate_search_request(user: User, access_flag_name: str, access_code: str)
     if not value or not isinstance(value, str):
         errors.append({'Invalid payload': "Expected a string for 'value'."})
 
+    try:
+        int(request_json.get('start', 0))
+        int(request_json.get('rows', 0))
+    except ValueError:  # catch invalid start/row entry
+        errors.append({'Invalid payload': "Expected integer for params: 'start', 'rows'"})
+
+    accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+    if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
+        msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
+        errors.append({'Invalid header': msg})
+
+    return request_json, errors
+
+
+def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -> tuple[bool, list[dict]]:
+    """Validate the search access level for the user."""
+    if access_level == SearchAccessLevel.PUBLIC:
+        # never any access errors for public level access
+        return False, []
+
+    errors = []
+
     account_id = request.headers.get('Account-Id', None)
     if not request.headers.get('Account-Id', None):
-        errors.append([{'Missing header': 'Account-Id'}])
+        errors.append({'Missing header': 'Account-Id'})
 
     # check access
     current_app.logger.debug('Checking user access...')
-    has_individual_access = jwt.contains_role(['system']) or flags.value(access_flag_name, {'key': user.sub})
-    if not has_individual_access:
-        # individual flag not enabled for user. Check account has product subscription
-        current_app.logger.debug('Individual access denied, checking account access...')
+    access_flag_name = None
+    access_code = None
+    if access_level == SearchAccessLevel.EXTENDED:
+        access_flag_name = 'enable-comp-auth-search'
+        access_code = 'CA_SEARCH'
+    elif access_level == SearchAccessLevel.LIMITED:
+        access_flag_name = 'enable-director-search'
+        access_code = 'NDS'
+    else:
+        current_app.logger.error('Unhandled access level: %s', access_level)
+        errors.append({'Error evaluating search access.'})
+
+    has_direct_access = jwt.contains_role(['system']) or flags.value(access_flag_name, {'key': user.sub})
+    if not has_direct_access:
+        # Direct access not enabled for user so check if account has the product subscription.
+        current_app.logger.debug('Direct access denied, checking account access...')
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
         if not isinstance(products, list):
             current_app.logger.debug(products)
@@ -50,12 +86,15 @@ def validate_search_request(user: User, access_flag_name: str, access_code: str)
             raise AuthorizationException('This account is not authorized for this level of search.')
     current_app.logger.debug('Access granted.')
 
-    accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-    if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
-        msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
-        errors.append({'Invalid header': msg})
+    return has_direct_access, errors
 
-    return request_json, has_individual_access, errors
+
+def validate_search(user: User, access_level: SearchAccessLevel) -> tuple[dict, list[str], bool, list[dict]]:
+    """Validate the search request and user access."""
+    request_json, request_errors = _validate_search_request()
+    has_direct_access, access_errors = _validate_search_access_level(user, access_level)
+
+    return request_json, get_search_field_group(access_level), has_direct_access, request_errors + access_errors
 
 
 def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches,too-many-statements

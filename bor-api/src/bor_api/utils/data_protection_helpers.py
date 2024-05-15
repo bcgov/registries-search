@@ -20,9 +20,9 @@ from bor_api.services.bor_solr.fields import EntityRoleField
 from bor_api.services.bor_solr.utils import SearchParams
 
 
-def add_prod_protection_params(params: SearchParams, user: User, has_individual_access: bool) -> SearchParams:
+def add_prod_protection_params(params: SearchParams, user: User, has_direct_access: bool) -> SearchParams:
     """Return updated SearchParams for users in dev/test environments to prevent visibility of old PROD data."""
-    is_trusted_tester = has_individual_access or user.idp_userid in current_app.config['TRUSTED_TESTER_IDS']
+    is_trusted_tester = has_direct_access or user.idp_userid in current_app.config['TRUSTED_TESTER_IDS']
     is_prod = current_app.config['POD_NAMESPACE'] not in ['dev', 'test']
     if is_prod or is_trusted_tester:
         return params
