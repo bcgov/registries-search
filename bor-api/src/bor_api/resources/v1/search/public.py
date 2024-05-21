@@ -55,7 +55,7 @@ def public_search():
         value = query_json.get('value', None)
         query = {
             'value': prep_query_str_adv(value),
-            EntityField.LEGAL_NAME_Q.value: prep_query_str_adv(query_json.get(EntityField.LEGAL_NAME.value, ''))
+            EntityField.LEGAL_NAME_SINGLE_Q.value: prep_query_str_adv(query_json.get(EntityField.LEGAL_NAME.value, ''))
         }
         # set faceted category params
         categories_json: dict = request_json.get('categories', {})
@@ -144,7 +144,7 @@ def public_search():
                     },
                     'query': {
                         'value': query['value'],
-                        EntityField.LEGAL_NAME.value: query[EntityField.LEGAL_NAME_Q.value],
+                        EntityField.LEGAL_NAME.value: query[EntityField.LEGAL_NAME_SINGLE_Q.value],
                         EntityField.ROLES.value: {
                             EntityRoleField.RELATED_BN.value: child_query[EntityRoleField.RELATED_BN_Q.value],
                             EntityRoleField.RELATED_IDENTIFIER.value:
