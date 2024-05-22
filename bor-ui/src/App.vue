@@ -5,7 +5,7 @@
       attach="#appHeader"
       :display="errorDisplay"
       :options="errorInfo"
-      @close="errorDisplay = false; errorInfo = null"
+      @close="clearDialog"
     >
       <template v-if="errorContactInfo" #extra-content>
         <p class="font-normal mt-7">
@@ -32,37 +32,20 @@ const errorInfo: Ref<DialogOptionsI | null> = ref(null)
 
 const account = useBcrosAccount()
 const { accountErrors } = storeToRefs(account)
-const { isExtended, searchError } = storeToRefs(useBcrosSearch())
+const search = useBcrosSearch()
+const { searchError } = storeToRefs(search)
 
 onMounted(async () => {
   appLoading.value = true
-  // load account products
-  console.info('Loading active products...')
-  await account.setActiveProducts()
-  if (accountErrors.value?.length > 0) { return }
-  console.info('Verifying user access to search...')
-  const ldarkly = useBcrosLaunchdarkly()
-  const hasIndividualAccess = await (
-    await ldarkly.getStoredFlag('enable-director-search') ||
-    await ldarkly.getStoredFlag('enable-comp-auth-search')
-  )
-  const hasProductAccess = (
-    account.hasProductAccess(ProductCodeE.NDS) ||
-    account.hasProductAccess(ProductCodeE.CA_SEARCH)
-  )
-  if (!hasProductAccess && !hasIndividualAccess) {
-    handleError({
-      category: ErrorCategoryE.ACCOUNT_ACCESS,
-      message: 'This account does not have access to Person Search',
-      statusCode: StatusCodes.UNAUTHORIZED,
-      type: ErrorCodeE.AUTH_PRODUCTS_ERROR
-    })
-    return
+  if (account.currentAccount?.id) {
+    // load account products
+    console.info('Loading active products...', account.currentAccount)
+    await account.setActiveProducts()
+    if (accountErrors.value?.length > 0) { return }
   }
-  // set extended if user has access to comp auth search
-  if (account.hasProductAccess(ProductCodeE.CA_SEARCH) || await ldarkly.getStoredFlag('enable-comp-auth-search')) {
-    isExtended.value = true
-  }
+  // set search access
+  await search.setUserAccessLevel()
+
   console.info('App ready.')
   appLoading.value = false
 })
@@ -107,6 +90,12 @@ const handleError = (error: ErrorI) => {
       errorDisplay.value = true
       // Sentry.captureException(error)
   }
+}
+
+const clearDialog = () => {
+  errorDisplay.value = false
+  errorContactInfo.value = false
+  errorInfo.value = null
 }
 
 // watchers for errors

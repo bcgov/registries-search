@@ -1,7 +1,6 @@
 /** Return the table headers for the entity table. */
-export const getPersonHeaders = (): BaseTableHeaderI[] => {
+export const getPersonHeadersLimited = (): BaseTableHeaderI[] => {
   const { facetItems, filterSearch, highlightMatch } = useBcrosSearch()
-  const capFirstLetter = (val: string) => val.charAt(0).toUpperCase() + val.toLocaleLowerCase().slice(1)
 
   return [
     {
@@ -42,7 +41,7 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
         filterApiFn: (filterVal: string[]) => {
           return filterSearch(['categories', 'roles', 'roleType'], filterVal)
         },
-        label: 'Roles',
+        label: 'All',
         itemValue: 'value',
         itemsFn: facetItems,
         itemsFnVal: 'roleType',
@@ -52,10 +51,8 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (val.roles) { return capFirstLetter(`${val.roles[0].roleType}`) }
-        return 'N/A'
-      },
+      itemColspan: 5,
+      slotId: 'roles',
       value: 'Roles',
       width: '9%'
     },
@@ -63,6 +60,8 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       col: 'roles',
       hasFilter: false,
       hasSort: false,
+      itemColspan: 0,
+      itemHidden: true,
       slotId: 'date',
       value: 'Effective Dates',
       width: '9%'
@@ -78,7 +77,8 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      slotId: 'details',
+      itemColspan: 0,
+      itemHidden: true,
       value: 'Business Details',
       width: '15%'
     },
@@ -87,7 +87,7 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       filter: {
         clearable: true,
         filterApiFn: (filterVal: string) => filterSearch(['categories', 'roles', 'relatedState'], filterVal),
-        label: 'Status',
+        label: 'All',
         itemValue: 'value',
         itemsFn: facetItems,
         itemsFnVal: 'relatedState',
@@ -97,10 +97,8 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (val.roles) { return capFirstLetter(`${val.roles[0].relatedState}`) }
-        return 'N/A'
-      },
+      itemColspan: 0,
+      itemHidden: true,
       value: 'Business Status',
       width: '9%'
     },
@@ -115,11 +113,8 @@ export const getPersonHeaders = (): BaseTableHeaderI[] => {
       },
       hasFilter: true,
       hasSort: false,
-      itemFn: (val: SearchResultI) => {
-        if (val.roles) { return `${val.roles[0].relatedEmail || ''}` }
-        return 'N/A'
-      },
-      slotId: 'email',
+      itemColspan: 0,
+      itemHidden: true,
       value: 'Business Email',
       width: '13%'
     },

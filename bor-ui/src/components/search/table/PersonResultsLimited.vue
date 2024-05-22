@@ -39,13 +39,38 @@
       />
       <span v-else>N/A</span>
     </template>
-    <template #item-slot-date="{ item } : { item: SearchResultI }">
-      <CommonItemsEffectiveDates v-if="item.roles" :role="item.roles[0]" />
-      <span v-else>N/A</span>
-    </template>
-    <template #item-slot-details="{ item } : { item: SearchResultI }">
-      <CommonItemsBusinessDetails v-if="item.roles" :role="item.roles[0]" />
-      <span v-else>N/A</span>
+    <template #item-slot-roles="{ item } : { item: SearchResultI }">
+      <div v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
+        <div class="inner-row-div flex w-full">
+          <div class="inner-col-div pl-3" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+            {{ capFirstLetter(`${role.roleType}`) }}
+          </div>
+          <div
+            class="inner-col-div pl-3 mr-0"
+            :style="{ width: getChildHeaderWidth(headers, 'Effective Dates', childHeaders) }"
+          >
+            <CommonItemsEffectiveDates :role="role" />
+          </div>
+          <div
+            class="inner-col-div pl-3"
+            :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
+          >
+            <CommonItemsBusinessDetails :role="role" />
+          </div>
+          <div
+            class="inner-col-div pl-3"
+            :style="{ width: getChildHeaderWidth(headers, 'Business Status', childHeaders) }"
+          >
+            {{ capFirstLetter(`${role.relatedState}`) }}
+          </div>
+          <div
+            class="inner-col-div pl-3"
+            :style="{ width: getChildHeaderWidth(headers, 'Business Email', childHeaders) }"
+          >
+            {{ role.relatedEmail || '' }}
+          </div>
+        </div>
+      </div>
     </template>
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
@@ -63,7 +88,6 @@ import {
   CommonHeadersActionFilter, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
   CommonItemsEffectiveDates, CommonItemsName, CommonTitleExport
 } from './common'
-import { getPersonHeaders } from '@/utils'
 
 const props = defineProps<{
   resultsDesc: string,
@@ -82,7 +106,8 @@ const {
 } = storeToRefs(search)
 
 // search table config (headers)
-const headers = getPersonHeaders()
+const headers = getPersonHeadersLimited()
+const childHeaders = ['Roles', 'Effective Dates', 'Business Details', 'Business Status', 'Business Email']
 // set table filters to session saved ones
 onMounted(() => { props.updateTableHeaderFilters(headers) })
 

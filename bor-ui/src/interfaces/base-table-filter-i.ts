@@ -1,5 +1,6 @@
 export interface BaseTableFilterI {
   clearable: boolean
+  disabled: boolean
   hasItemSlot?: boolean
   hasSelectedSlot?: boolean
   itemValue?: string

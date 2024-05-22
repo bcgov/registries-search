@@ -27,6 +27,16 @@ export default defineNuxtConfig({
     dirs: ['enums', 'interfaces', 'stores']
   },
   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noImplicitAny: false,
+        strictNullChecks: false,
+        strict: true
+      }
+    },
+    typeCheck: false
+  },
   runtimeConfig: {
     public: {
       // Keys within public, will be also exposed to the client-side
@@ -46,6 +56,7 @@ export default defineNuxtConfig({
       bcolURL: process.env.VUE_APP_BCONLINE_URL || '',
       businessSearchURL: process.env.VUE_APP_REGISTRIES_SEARCH_URL || '',
       appEnv: `${process.env.VUE_APP_POD_NAMESPACE || 'unknown'}`,
+      requireLogin: process.env.VUE_APP_REQUIRE_LOGIN === 'true' || false,
       searchRows: `${process.env.VUE_APP_SEARCH_ROWS || ''}`,
       version: process.env.npm_package_version || ''
     }

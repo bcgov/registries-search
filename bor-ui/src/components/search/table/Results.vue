@@ -1,12 +1,18 @@
 <template>
   <div data-cy="search-results-table">
-    <PersonResults
-      v-if="!isExtended"
+    <PersonResultsLimited
+      v-if="hasLimitedAccess"
       class="search-table"
       :results-desc="resultsDesc"
       :update-table-header-filters="updateTableHeaderFilters"
     />
     <PersonResultsExtended
+      v-else-if="hasExtendedAccess"
+      class="search-table"
+      :results-desc="resultsDesc"
+      :update-table-header-filters="updateTableHeaderFilters"
+    />
+    <PersonResultsPublic
       v-else
       class="search-table"
       :results-desc="resultsDesc"
@@ -29,11 +35,12 @@
 
 <script setup lang="ts">
 import _ from 'lodash'
-import PersonResults from './PersonResults.vue'
 import PersonResultsExtended from './PersonResultsExtended.vue'
+import PersonResultsLimited from './PersonResultsLimited.vue'
+import PersonResultsPublic from './PersonResultsPublic.vue'
 
 const search = useBcrosSearch()
-const { totalResults, hasMoreResults, isExtended, loadingNext } = storeToRefs(search)
+const { totalResults, hasMoreResults, loadingNext, hasExtendedAccess, hasLimitedAccess } = storeToRefs(search)
 
 // text functions
 const resultsDesc = computed(() => {
@@ -98,8 +105,8 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
     }
   }
 
-  .effective-date-header {
-    padding-right: 8px;
+  tr .base-table__header__item:last-child {
+    padding-right: 12px;
   }
 
   .actions-col {

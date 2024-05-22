@@ -1,8 +1,10 @@
 import Axios from 'axios'
 import { StatusCodes } from 'http-status-codes'
+// internal
 import { getSearchConfig, parseGatewayError } from './search-api-utils'
 import { addAxiosInterceptors } from '@/utils/axios'
-// internal
+import { SearchAccessE } from '#imports'
+import type { SearchAccessE as SearchAccessType, SearchResponseI } from '#imports'
 
 const axios = addAxiosInterceptors(Axios.create())
 // eslint-disable-next-line
@@ -12,7 +14,7 @@ export async function searchEntities (
   rows: number,
   start: number,
   exportSearch = false,
-  extended = false
+  accessLevel: SearchAccessType
 ): Promise<SearchResponseI | undefined> {
   if (!searchValue) { return }
   // set payload
@@ -24,7 +26,22 @@ export async function searchEntities (
   payload.query.value = searchValue
   // add search-api config stuff
   const config = getSearchConfig(exportSearch)
-  return axios.post<SearchResponseI>(`search${extended ? '/extended' : ''}`, payload, config)
+  let accessPath = null
+  switch (accessLevel) {
+    case SearchAccessE.PUBLIC:
+      accessPath = '/public'
+      break
+    case SearchAccessE.LIMITED:
+      accessPath = ''
+      break
+    case SearchAccessE.EXTENDED:
+      accessPath = '/extended'
+      break
+    default:
+      console.error('Invalid access level specified: ', accessLevel)
+      return
+  }
+  return axios.post<SearchResponseI>('search' + accessPath, payload, config)
     .then((response) => {
       const data: SearchResponseI = response?.data
       if (!data) { throw new Error('Invalid API response') }
@@ -38,9 +55,9 @@ export async function searchEntities (
       let category = ErrorCategoryE.SEARCH
       if (exportSearch) { category = ErrorCategoryE.SEARCH_EXPORT }
       return {
-        facets: null,
-        searchResults: null,
+        facets: {},
+        searchResults: {},
         error: parseGatewayError(category, StatusCodes.INTERNAL_SERVER_ERROR, error)
-      }
+      } as SearchResponseI
     })
 }

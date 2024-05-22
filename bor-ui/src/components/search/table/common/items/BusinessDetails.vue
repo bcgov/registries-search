@@ -13,9 +13,9 @@
     <BcrosAddressDisplay
       v-if="role.relatedAddresses"
       :address="role.relatedAddresses[0]"
-      class="mt-2"
+      class="my-2"
     />
-    <div class="mt-2">
+    <div>
       {{ role.relatedIdentifier }}
     </div>
     <div>

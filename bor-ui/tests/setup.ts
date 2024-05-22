@@ -3,7 +3,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-import { testAccount, testProducts, testUser } from './test-utils'
+import { testAccount, testUser } from './test-utils'
 
 export const vuetify = createVuetify({
   components,
@@ -37,14 +37,14 @@ mockNuxtImport('useBcrosAccount', () => {
     return {
       currentAccount: ref({ ...testAccount }),
       currentAccountName: ref(testAccount.label),
-      activeProducts: ref(testProducts),
-      userAccounts: ref(testProducts),
+      activeProducts: ref([]),
+      userAccounts: ref([{ ...testAccount }]),
       userFirstName,
       userLastName,
       userFullName: ref(`${userFirstName.value} ${userLastName.value}`),
       accountErrors: ref([]),
       getAuthUserProfile: () => null,
-      hasProductAccess: () => true,
+      hasProductAccess: () => false,
       setActiveProducts: (val: any) => console.info(val)
     }
   }

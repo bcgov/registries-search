@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { StatusCodes } from 'http-status-codes'
+import type { ProductCodeE } from '#imports'
 
 /** Manages bcros account data */
 export const useBcrosAccount = defineStore('bcros/account', () => {
@@ -102,9 +103,7 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
   /** Check if the current account has the product. */
   function hasProductAccess (code: ProductCodeE) {
     // check if product code in activeProducts
-    const product = activeProducts.value?.find(product => product.code === code)
-    if (!product) { return false }
-    return true
+    return !!activeProducts.value?.find(product => product.code === code)
   }
 
   /** Set the active products for the current account. */
@@ -158,6 +157,7 @@ export const useBcrosAccount = defineStore('bcros/account', () => {
     userAccounts,
     userFullName,
     accountErrors,
+    activeProducts,
     updateAuthUserInfo,
     setUserName,
     setAccountInfo,

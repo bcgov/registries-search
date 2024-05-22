@@ -13,7 +13,7 @@ describe('App tests', () => {
   expect(useBcrosKeycloak().kcUser).toEqual(testUser)
   // '.value' is due to mocked implementation of stores in .setup
   expect(useBcrosAccount().currentAccount.value).toEqual(testAccount)
-  expect(useBcrosAccount().hasProductAccess(ProductCodeE.NDS)).toBe(true)
+  expect(useBcrosAccount().hasProductAccess(ProductCodeE.NDS)).toBe(false)
 
   it('mounts App with expected child components', async () => {
     // TODO: uncomment below once import is resolving in CI

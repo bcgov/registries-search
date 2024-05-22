@@ -5,7 +5,7 @@
       ref="datePickerRef"
       :default-end-date="dateRangeEnd"
       :default-start-date="dateRangeStart"
-      :offset-left="search.isExtended ? '284px' : '0px'"
+      :offset-left="search.hasExtendedAccess ? '284px' : '0px'"
       :reset="dateRangeResetTrigger"
       @submit="updateDateRange($event)"
     />

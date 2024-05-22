@@ -1,5 +1,6 @@
 export default defineNuxtRouteMiddleware(() => {
-  if (!useBcrosKeycloak().kc.authenticated) {
+  const { requireLogin } = useRuntimeConfig().public
+  if (requireLogin && !useBcrosKeycloak().kc.authenticated) {
     const { goToBcrosDashboard } = useBcrosNavigate()
     goToBcrosDashboard()
   }

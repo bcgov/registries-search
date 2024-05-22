@@ -15,7 +15,7 @@
       @keyup="submitSearch()"
       @keyup.enter="toggleErrorMsg()"
     />
-    <v-row v-if="isExtended" class="mt-5 search-radios" no-gutters>
+    <v-row v-if="hasExtendedAccess" class="mt-5 search-radios" no-gutters>
       <v-col cols="auto">
         <v-radio
           v-model="facets.entityType.business"
@@ -40,34 +40,35 @@
 <script setup lang="ts">
 import _ from 'lodash'
 
-// Composables
 const search = useBcrosSearch()
-const { isExtended } = storeToRefs(search)
+const { accessLevel, hasExtendedAccess } = storeToRefs(search)
+const searchErrorMsg = ref('')
+const searchHint = ref('')
+const searchLabel = ref('')
 
-// search field stuff
-const searchErrorMsg = computed(() => {
-  if (isExtended.value) {
-    return 'Enter a name, address, SIN/TTN/ITN, and/or email address'
-  }
-  return 'Enter a name, address, and/or email address'
-})
-const searchHint = computed(() => {
-  if (isExtended.value) {
-    return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba", "000 000 000"'
-  }
-  return 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
-})
-const searchLabel = computed(() => {
-  if (isExtended.value) {
-    return 'Person Name, Address, SIN/TTN/ITN, and/or Email Address'
-  }
-  return 'Director Name, Address, and/or Email Address'
-})
-
-// search value stuff
 const searchVal = ref('')
 
-onMounted(() => { searchVal.value = search.searchValue })
+onMounted(() => {
+  switch (accessLevel.value) {
+    case SearchAccessE.EXTENDED:
+      searchErrorMsg.value = 'Enter a name, address, SIN/TTN/ITN, and/or email address'
+      searchHint.value = ('Example: "John Smith", "123 Main St", ' +
+        '"V1V 1V1", "John Smith Victoria", "j.smith@123.aba", "000 000 000"')
+      searchLabel.value = 'Person Name, Address, SIN/TTN/ITN, and/or Email Address'
+      break
+    case SearchAccessE.LIMITED:
+      searchErrorMsg.value = 'Enter a name, address, and/or business email address'
+      searchHint.value = 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
+      searchLabel.value = 'Person Name, Address, and/or Business Email Address'
+      break
+    default: // SearchAccessE.PUBLIC
+      searchErrorMsg.value = 'Enter a name'
+      searchHint.value = 'Example: "John Smith"'
+      searchLabel.value = 'Person Name'
+  }
+
+  searchVal.value = search.searchValue
+})
 
 const submitSearch = _.debounce(async () => {
   await search.getSearchResults(searchVal.value)

@@ -5,7 +5,7 @@
         <h1>{{ searchTitleText }}</h1>
       </v-col>
     </v-row>
-    <v-row class="mt-1 pt-2" justify="start" no-gutters>
+    <v-row v-if="currentAccount?.id" class="mt-1 pt-2" justify="start" no-gutters>
       <v-col class="account-label pr-5" cols="auto">
         <span v-if="currentAccount.accountType === AccountTypeE.STAFF">BC Registries Staff</span>
         <span v-else>{{ currentAccountName }}</span>
@@ -34,16 +34,26 @@
           <h3 class="mt-6">
             Search
           </h3>
-          <p v-if="!isExtended" class="mt-6">
-            The Beta version of Director Search returns results for people
+          <p class="mt-6">
+            The Person Search returns results for people
             associated with all businesses in British Columbia.
           </p>
-          <p class="mt-6">
+          <p v-if="hasExtendedAccess" class="mt-6">
+            You can find people by searching for any part of the person's name, preferred name, address,
+            email, or SIN. Note that all searches prioritize name matches, so
+            searches for an address will list name matches first. For example,
+            searches for Parker Ave. will list matches for peoples' names containing Parker
+            above addresses containing Parker.
+          </p>
+          <p v-else-if="hasLimitedAccess" class="mt-6">
             You can find people by searching for any part of the person's name or address, or
             their business email address. Note that all searches prioritize name matches, so
             searches for an address will list name matches first. For example,
             searches for Parker Ave. will list matches for peoples' names containing Parker
             above addresses containing Parker.
+          </p>
+          <p v-else class="mt-6">
+            You can find people by searching for any part of the person's name.
           </p>
           <h3 class="mt-6">
             Business Information
@@ -102,22 +112,32 @@
 <script setup lang="ts">
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
-const { isExtended, results } = storeToRefs(useBcrosSearch())
+const { hasExtendedAccess, hasLimitedAccess, results } = storeToRefs(useBcrosSearch())
 
-const searchTitleText = computed(() => isExtended.value ? 'Business and Person Search' : 'Director Search')
+const searchTitleText = computed(() => hasLimitedAccess.value ? 'Director Search' : 'Business and Person Search')
 const searchInfoText = computed(() => {
-  if (isExtended.value) {
+  if (hasExtendedAccess.value) {
     // eslint-disable-next-line
     return 'Search for the names, addresses, SIN/TTN/ITN, and email addresses of people associated with businesses in B.C.'
   }
-  return 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
+  if (hasLimitedAccess.value) {
+    return 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
+  }
+  return 'Search for the names of people associated with businesses in B.C.'
 })
 
 const bcOnlineURL = useRuntimeConfig().public.bcolURL
 const searchGuideURL = computed(() => {
-  if (isExtended.value) { return '' }
-  // eslint-disable-next-line
-  return 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
+  if (hasExtendedAccess.value) {
+    // TODO: extended search link tbd
+    return ''
+  }
+  if (hasLimitedAccess.value) {
+    // eslint-disable-next-line
+    return 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
+  }
+  // TODO: public search link tbd
+  return ''
 })
 const showDocHelp = ref(false)
 const tab = ref('0')

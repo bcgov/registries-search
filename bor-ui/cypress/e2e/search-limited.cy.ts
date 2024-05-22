@@ -1,6 +1,8 @@
-context('Search basic', () => {
+import { SearchResultRoleI } from '../../src/interfaces/search-i'
+
+context('Search limited', () => {
   beforeEach(() => {
-    cy.visitSearch()
+    cy.visitSearchLimited()
   })
   it('should display expected search bar', () => {
     // info text
@@ -14,7 +16,7 @@ context('Search basic', () => {
     cy.get('[data-cy="search-input"]')
       .find('#search-bar-field')
       .siblings()
-      .contains('Director Name, Address, and/or Email Address')
+      .contains('Person Name, Address, and/or Business Email Address')
       .should('exist')
     // hint text
     cy.get('[data-cy="search-input"]')
@@ -28,7 +30,7 @@ context('Search basic', () => {
       .type('test')
     cy.wait('@getSearchResults')
     cy.get('[data-cy="search-results-table"]').should('exist')
-    cy.fixture('searchResultsBasic.json').then((searchResponse) => {
+    cy.fixture('searchResultsLimited.json').then((searchResponse) => {
       const results = searchResponse.searchResults.results
       const totalResults = searchResponse.searchResults.totalResults
       // title
@@ -72,7 +74,8 @@ context('Search basic', () => {
       cy.get('@rows').should('have.length', results.length)
       for (const i in results) {
         cy.get('@rows').eq(Number(i)).find('td').then((cols) => {
-          expect(cols, '8 columns').to.have.length(8)
+          // NB: roles, effective dates, business details, status, email are combined into a single column
+          expect(cols, '4 columns').to.have.length(4)
           // name
           expect(cols.eq(0), 'Name column').to.have.text(results[i].legalName)
           // address
@@ -82,34 +85,71 @@ context('Search basic', () => {
           expect(cols.eq(1), 'Address column - region').to.include.text(address.addressRegion)
           expect(cols.eq(1), 'Address column - postal code').to.include.text(address.postalCode)
           expect(cols.eq(1), 'Address column - country').to.include.text(address.addressCountry)
-          // role
-          const role = results[i].roles[0]
-          expect(cols.eq(2).text().toLowerCase(), 'Roles column').to.equal(role.roleType.toLowerCase())
-          // dates
-          const date = role.roleDates[0]
-          if (role.roleType === 'INCORPORATOR') {
-            expect(cols.eq(3), 'Effective Dates column - start').to.have.text(
-              date.start ? date.start.substring(0, 10) : 'Unknown')
-          } else {
-            expect(cols.eq(3), 'Effective Dates column - start').to.include.text(
-              date.start ? date.start.substring(0, 10) : 'Unknown')
-            expect(cols.eq(3), 'Effective Dates column - end').to.include.text(
-              date.end ? date.end.substring(0, 10) : 'Current')
+          // role column spans across all role data columns
+          for (const roleIdx in results[i].roles) {
+            const role: SearchResultRoleI = results[i].roles[roleIdx]
+            const roleDivs = cols.eq(2).find('.inner-row-div').eq(Number(roleIdx)).find('.inner-col-div')
+            // role
+            expect(roleDivs.eq(0).text().toLowerCase(), 'Roles column').to.equal(role.roleType.toLowerCase())
+            // dates
+            for (const date of role.roleDates) {
+              if (role.roleType === 'INCORPORATOR') {
+                expect(roleDivs.eq(1), 'Effective Dates column - incorp').to.have.text(
+                  date.start ? date.start.substring(0, 10) : 'Unknown')
+              } else {
+                expect(roleDivs.eq(1), 'Effective Dates column - start').to.include.text(
+                  date.start ? date.start.substring(0, 10) : 'Unknown')
+                expect(roleDivs.eq(1), 'Effective Dates column - end').to.include.text(
+                  date.end ? date.end.substring(0, 10) : 'Current')
+              }
+            }
+            // business details
+            expect(roleDivs.eq(2), 'Business Details column - identifier')
+              .to.include.text(role.relatedIdentifier)
+            expect(roleDivs.eq(2), 'Business Details column - name').to.include.text(role.relatedName)
+            if (role.relatedBN) {
+              expect(roleDivs.eq(2), 'Business Details column - bn').to.include.text(role.relatedBN)
+            }
+            // business status
+            expect(roleDivs.eq(3).text().toLowerCase(), 'Business Status column')
+              .to.equal(role.relatedState.toLowerCase())
+            // business email
+            expect(roleDivs.eq(4).text().toLowerCase(), 'Business Email column')
+              .to.equal((role.relatedEmail || '').toLowerCase())
           }
-          // business
-          expect(cols.eq(4), 'Business Details column - identifier').to.include.text(role.relatedIdentifier)
-          expect(cols.eq(4), 'Business Details column - name').to.include.text(role.relatedName)
-          if (role.relatedBN) {
-            expect(cols.eq(4), 'Business Details column - bn').to.include.text(role.relatedBN)
-          }
-          // business status
-          expect(cols.eq(5).text().toLowerCase(), 'Business Status column').to.equal(role.relatedState.toLowerCase())
-          // business email
-          expect(cols.eq(6), 'Business Email column').to.have.text(role.relatedEmail || '')
           // actions
-          expect(cols.eq(7), 'Actions column').to.have.text('')
+          expect(cols.eq(3), 'Actions column').to.have.text('')
         })
       }
     })
+  })
+
+  it('table columns should have the same width as their headers', () => {
+    cy.get('[data-cy="search-input"]')
+      .find('#search-bar-field')
+      .type('test')
+    cy.wait('@getSearchResults')
+
+    cy.get('.base-table__header').find('tr').first().as('headers')
+    cy.get('.base-table__body').find('tr').first().as('firstRow')
+
+    for (let i = 0; i < 8; i++) {
+      cy.get('@headers').find('th').eq(Number(i)).invoke('outerWidth').then((headerWidth) => {
+        if (i < 2) {
+          cy.get('@firstRow').find('td').eq(Number(i)).invoke('outerWidth').then((bodyWidth) => {
+            expect(headerWidth).to.equal(bodyWidth)
+          })
+        } else if (i === 7) {
+          cy.get('@firstRow').find('td').eq(3).invoke('outerWidth').then((bodyWidth) => {
+            expect(headerWidth).to.equal(bodyWidth)
+          })
+        } else {
+          cy.get('@firstRow').find('td').eq(2).find('.inner-row-div').eq(0).find('.inner-col-div').eq(Number(i) - 2)
+            .invoke('outerWidth').then((bodyWidth) => {
+              expect(headerWidth).to.be.closeTo(bodyWidth, 0.5)
+            })
+        }
+      })
+    }
   })
 })

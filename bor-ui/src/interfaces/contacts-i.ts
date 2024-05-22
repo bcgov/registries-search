@@ -6,7 +6,8 @@ export interface ContactI {
 
 export interface ContactsBusinessResponseI {
   businessIdentifier: string
-  contacts: ContactI[]
+  contacts: ContactI[],
+  folioNumber?: string
 }
 
 export interface ContactBusinessI extends ContactI {

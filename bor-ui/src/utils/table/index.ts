@@ -1,3 +1,5 @@
-export * from './person-headers'
-export * from './person-headers-extended'
 export * from './detail-box-icons'
+export * from './multi-role-helpers'
+export * from './person-headers-extended'
+export * from './person-headers-limited'
+export * from './person-headers-public'

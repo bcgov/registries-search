@@ -1,6 +1,6 @@
-context('Accessibility -> Search extended', () => {
+context('Accessibility -> Search public', () => {
   beforeEach(() => {
-    cy.visitSearchExtended()
+    cy.visitSearchPublic()
   })
 
   it('check page passes accessibility before a search', () => {

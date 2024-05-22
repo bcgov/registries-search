@@ -1,0 +1,225 @@
+{
+    "facets": {
+        "fields": {
+            "relatedLegalType": [
+                {
+                    "count": 2,
+                    "parentCount": 4,
+                    "value": "BEN"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "BC"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "CP"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "GP"
+                }
+            ],
+            "relatedState": [
+                {
+                    "count": 11,
+                    "parentCount": 11,
+                    "value": "ACTIVE"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "HISTORICAL"
+                }
+            ],
+            "roleType": [
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "DIRECTOR"
+                },
+                {
+                    "count": 2,
+                    "parentCount": 2,
+                    "value": "SIGNIFICANT INDIVIDUAL"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "COMPLETING PARTY"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "INCORPORATOR"
+                },
+                {
+                    "count": 1,
+                    "parentCount": 1,
+                    "value": "PARTNER"
+                }
+            ]
+        }
+    },
+    "searchResults": {
+        "queryInfo": {
+            "categories": {
+                "entityAddresses": {
+                    "addressCity": null,
+                    "addressCountry": null,
+                    "addressRegion": null
+                },
+                "entityType": [
+                    "PERSON"
+                ],
+                "legalType": null,
+                "roles": {
+                    "relatedEntityType": null,
+                    "relatedState": null,
+                    "roleType": null
+                },
+                "state": null
+            },
+            "query": {
+                "bn": "",
+                "entityAddresses": "",
+                "identifier": "",
+                "name": "",
+                "info": "",
+                "roles": {
+                    "relatedBN": "",
+                    "relatedEmail": "",
+                    "relatedIdentifier": "",
+                    "relatedName": "",
+                    "roleDates": {},
+                    "value": ""
+                },
+                "value": "kial jinnah"
+            },
+            "rows": 50,
+            "start": 0
+        },
+        "results": [
+            {
+                "birthDate": "1993-03-10",
+                "email": "test@email.com",
+                "entityType": "PERSON",
+                "legalName": "Kial Jinnah",
+                "nationalities": [
+                    "CA"
+                ],
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871427",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871427 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
+                    },
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871428",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871428 B.C. LTD.",
+                        "relatedState": "ACTIVE",
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleType": "INCORPORATOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC1230075",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "KIAL'S TESTING COMPANY CORP.",
+                        "relatedState": "ACTIVE",
+                        "roleType": "COMPLETING PARTY",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC0871416",
+                        "relatedLegalType": "BEN",
+                        "relatedName": "0871416 B.C. LTD.",
+                        "relatedState": "HISTORICAL",
+                        "roleType": "DIRECTOR",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "entityType": "PERSON",
+                "legalName": "KIAL JINNAH",
+                "roles": [
+                    {
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "FM1060265",
+                        "relatedLegalType": "GP",
+                        "relatedName": "BTR'S GENERAL PARTNERSHIP",
+                        "relatedState": "ACTIVE",
+                        "roleType": "PARTNER",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            },
+            {
+                "birthDate": "1997-02-05",
+                "entityType": "PERSON",
+                "legalName": "Kial Jinnah",
+                "nationalities": [
+                    "US",
+                    "FR"
+                ],
+                "roles": [
+                    {
+                        "relatedBN": "123456788BC001",
+                        "relatedEntityType": "BUSINESS",
+                        "relatedIdentifier": "BC9999991",
+                        "relatedLegalType": "BC",
+                        "relatedName": "EFGH TEST BUSINESS",
+                        "relatedState": "ACTIVE",
+                        "roleType": "SIGNIFICANT INDIVIDUAL",
+                        "score": 0.0
+                    }
+                ],
+                "score": 273.68854
+            }
+        ],
+        "totalResults": 6
+    }
+}

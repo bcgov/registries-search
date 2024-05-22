@@ -1,15 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
 import BaseTable from '../../../src/components/base/table/Index.vue'
 import BcrosDateRangePicker from '../../../src/components/bcros/DateRangePicker.vue'
 import BcrosErrorRetry from '../../../src/components/bcros/ErrorRetry.vue'
-import SearchTablePersonResults from '../../../src/components/search/table/PersonResults.vue'
 import SearchTablePersonResultsExtended from '../../../src/components/search/table/PersonResultsExtended.vue'
+import SearchTablePersonResultsLimited from '../../../src/components/search/table/PersonResultsLimited.vue'
+import SearchTablePersonResultsPublic from '../../../src/components/search/table/PersonResultsPublic.vue'
 import SearchTableResults from '../../../src/components/search/table/Results.vue'
 
 import { testSearchResults } from '../../test-utils'
 import { vuetify } from '../../setup'
+import { SearchAccessE, type BaseTableHeaderI } from '#imports'
 
 const verifyAddress = (text: string, address: Partial<AddressI>) => {
   expect(text).toContain(address?.addressCity || '')
@@ -29,38 +31,42 @@ describe('SearchResults tests', () => {
 
   const search = useBcrosSearch()
   const {
-    isExtended,
+    accessLevel,
+    hasExtendedAccess,
+    hasLimitedAccess,
+    hasPublicAccess,
     results,
     totalResults,
     searchError
   } = storeToRefs(search)
 
-  const basicHeaders = getPersonHeaders()
+  const publicHeaders = getPersonHeadersPublic()
+  const limitedHeaders = getPersonHeadersLimited()
   const extendedHeaders = getPersonHeadersExtended()
 
-  const verifyDefaultSearchResultsTable = (extended: boolean) => {
-    expect(isExtended.value).toBe(extended)
+  const verifyDefaultSearchResultsTable = (headerConfig: BaseTableHeaderI[]) => {
     // search table is there
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)
     expect(table.findComponent(BaseTable).exists()).toBe(true)
 
-    // should be extended table NOT basic
-    expect(wrapper.findComponent(SearchTablePersonResults).exists()).toBe(!extended)
-    expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(extended)
+    expect(wrapper.findComponent(SearchTablePersonResultsLimited).exists()).toBe(hasLimitedAccess.value)
+    expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(hasExtendedAccess.value)
+    expect(wrapper.findComponent(SearchTablePersonResultsPublic).exists()).toBe(hasPublicAccess.value)
 
     // renders title
     expect(wrapper.find('.table-title').exists()).toBe(true)
     expect(wrapper.find('.table-title').text()).toContain('Search Results  (0 People)')
 
     // renders export excel stuff
-    expect(wrapper.find('.search-table__export-select').exists()).toBe(true)
-    expect(wrapper.find('.search-table__export-select').find('label').text()).toContain('Maximum results to export')
-    expect(wrapper.find('.search-table__export-select').text()).toContain('1000')
-    expect(wrapper.find('.search-table__export-rows-btn').exists()).toBe(true)
-    expect(wrapper.find('.search-table__export-rows-btn').text()).toContain('Export to .xlsx')
+    if (!hasPublicAccess.value) {
+      expect(wrapper.find('.search-table__export-select').exists()).toBe(true)
+      expect(wrapper.find('.search-table__export-select').find('label').text()).toContain('Maximum results to export')
+      expect(wrapper.find('.search-table__export-select').text()).toContain('1000')
+      expect(wrapper.find('.search-table__export-rows-btn').exists()).toBe(true)
+      expect(wrapper.find('.search-table__export-rows-btn').text()).toContain('Export to .xlsx')
+    }
 
-    const headerConfig = extended ? extendedHeaders : basicHeaders
     // renders all the headers
     const headers = wrapper.findAll('.base-table__header__item__title')
     for (const i in headers) {
@@ -89,15 +95,19 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').text()).toBe('No results found')
 
     // does not show error retry
-    expect(searchError.value).toBe(null)
+    expect(searchError.value).toBeUndefined()
     expect(table.findComponent(BcrosErrorRetry).exists()).toBe(false)
     // does not show load more results btn
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
-    // does not show datepicker
-    expect(wrapper.findComponent(BcrosDateRangePicker).attributes('style')).toContain('display: none;')
+    if (hasPublicAccess.value) {
+      expect(wrapper.findComponent(BcrosDateRangePicker).exists()).toBe(false)
+    } else {
+      // does not show datepicker
+      expect(wrapper.findComponent(BcrosDateRangePicker).attributes('style')).toContain('display: none;')
+    }
   }
 
-  const verifyTableResults = (extended: boolean) => {
+  const verifyTableResults = (headerConfig: BaseTableHeaderI[]) => {
     // renders results in table
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)
@@ -105,15 +115,14 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').exists()).toBe(false)
 
     // verify each row
-    const headerConfig = extended ? extendedHeaders : basicHeaders
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(testSearchResults.length)
     for (const rowIndx in rows) {
       // verify each item
       const items = rows[rowIndx].findAll('.base-table__body__row__item')
-      expect(items.length).toBe(headerConfig.filter(val => !val.itemHidden).length)
+      const nonChildHeaders = headerConfig.filter(val => !val.itemHidden)
+      expect(items.length).toBe(nonChildHeaders.length)
       for (const itemIndx in items) {
-        const itemFn = headerConfig[itemIndx].itemFn
         const record = testSearchResults[rowIndx]
         const taxNumber = record.taxNumber
         const email = record.email
@@ -135,15 +144,17 @@ describe('SearchResults tests', () => {
           'with other individuals',
           'Direct control'
         ]
-        switch (headerConfig[itemIndx].value) {
+        switch (nonChildHeaders[itemIndx].value) {
           case 'Name':
             expect(items[itemIndx].text()).toContain(record.legalName)
-            if (extended) {
+            if (hasExtendedAccess.value) {
               expect(items[itemIndx].text()).toContain(record.alternateName || '')
               expect(items[itemIndx].text()).toContain(record.birthDate || '')
               if (record.alternateName) {
                 expect(items[itemIndx].text()).toContain('Preferred Name')
               }
+            } else if (hasPublicAccess.value) {
+              expect(items[itemIndx].text()).toContain(record.birthDate || '')
             }
             break
           case 'Address':
@@ -158,45 +169,39 @@ describe('SearchResults tests', () => {
             }
             break
           case 'Citizenship':
-            for (const i in countries) {
-              const code = countries[i]
-              const flag = items[itemIndx].findAll('span').filter(span =>
-                span.text() === code)
+            for (const code of countries) {
+              const flag = items[itemIndx].findAll('span').filter(span => span.text() === code)
               expect(flag.length).toEqual(1)
             }
             break
           case 'Business Details':
-            for (const i in roles) {
-              const role = roles[i]
+            expect(hasExtendedAccess.value || hasPublicAccess.value).toBe(true)
+            for (const role of roles) {
               const roleAddress = role.relatedAddresses ? role.relatedAddresses[0] : undefined
               verifyAddress(items[itemIndx].text(), roleAddress)
               expect(items[itemIndx].text()).toContain(role.relatedBN || '')
               expect(items[itemIndx].text()).toContain(role.relatedIdentifier || '')
               expect(items[itemIndx].text()).toContain(role.relatedName || '')
-              if (!extended) {
-                break
-              }
-            }
-            break
-          case 'Details':
-            imgs = items[itemIndx].findAll('img')
-            for (const img of imgs) {
-              expect(allAltTexts.find(altText => altText === img.attributes().alt)).not.toBe(-1)
-            }
-            break
-          case 'Effective Dates':
-            for (const i in roles) {
-              const role = roles[i]
-              if (role.roleDates && role.roleDates.length > 0) {
-                for (const date of role.roleDates) {
-                  const start = toDateStr(date.start)
-                  const end = toDateStr(date.end as Date)
-                  expect(items[itemIndx].text()).toContain(start || 'Unknown')
-                  expect(items[itemIndx].text()).toContain(end || 'Current')
+              if (hasExtendedAccess.value) {
+                // contains roles, control, effective dates as well
+                // roles
+                expect(items[itemIndx].text().toUpperCase()).toContain(role.roleType.toUpperCase())
+                // control
+                imgs = items[itemIndx].findAll('img')
+                for (const img of imgs) {
+                  expect(allAltTexts.find(altText => altText === img.attributes().alt)).not.toBe(-1)
                 }
-              }
-              if (!extended) {
-                break
+                // effective dates
+                for (const role of roles) {
+                  if (role.roleDates && role.roleDates.length > 0) {
+                    for (const date of role.roleDates) {
+                      const start = toDateStr(date.start)
+                      const end = toDateStr(date.end as Date)
+                      expect(items[itemIndx].text()).toContain(start || 'Unknown')
+                      expect(items[itemIndx].text()).toContain(end || 'Current')
+                    }
+                  }
+                }
               }
             }
             break
@@ -206,10 +211,44 @@ describe('SearchResults tests', () => {
           case 'Actions':
             expect(items[itemIndx].find('.v-btn').exists()).toBe(true)
             break
-          default: // Roles, Effective Dates, Business Status, Business Email
-            expect(['Roles', 'Effective Dates', 'Business Status', 'Business Email'])
-              .toContain(headerConfig[itemIndx].value)
-            expect(items[itemIndx].text()).toContain(itemFn(record))
+          case 'Roles':
+            expect(hasLimitedAccess.value).toBe(true)
+            for (const role of roles) {
+              expect(items[itemIndx].text().toUpperCase()).toContain(role.roleType.toUpperCase())
+              // contains effective dates, business details, business status, business email as well
+              // effective dates
+              for (const role of roles) {
+                if (role.roleDates && role.roleDates.length > 0) {
+                  for (const date of role.roleDates) {
+                    const start = toDateStr(date.start)
+                    const end = toDateStr(date.end as Date)
+                    expect(items[itemIndx].text()).toContain(start || 'Unknown')
+                    expect(items[itemIndx].text()).toContain(end || 'Current')
+                  }
+                }
+              }
+              // business details
+              expect(items[itemIndx].text()).toContain(role.relatedBN || '')
+              expect(items[itemIndx].text()).toContain(role.relatedIdentifier || '')
+              expect(items[itemIndx].text()).toContain(role.relatedName || '')
+              // business status
+              expect(items[itemIndx].text().toUpperCase()).toContain(role.relatedState.toUpperCase())
+              // business email
+              expect(items[itemIndx].text().toUpperCase()).toContain((role.relatedEmail || '').toUpperCase())
+            }
+            break
+          default: // Roles, Business Status, Business Email
+            expect(['Roles', 'Business Status', 'Business Email'])
+              .toContain(nonChildHeaders[itemIndx].value)
+            for (const role of roles) {
+              const roleDataMap = {
+                Roles: role.roleType,
+                'Business Status': role.relatedState,
+                'Business Email': role.relatedEmail
+              }
+              expect(items[itemIndx].text().toUpperCase())
+                .toContain(roleDataMap[nonChildHeaders[itemIndx].value].toUpperCase())
+            }
         }
       }
     }
@@ -223,6 +262,7 @@ describe('SearchResults tests', () => {
   beforeEach(async () => {
     totalResults.value = 0
     results.value = []
+    accessLevel.value = SearchAccessE.PUBLIC
     wrapper = mount(
       SearchTableResults, {
         global: {
@@ -236,24 +276,35 @@ describe('SearchResults tests', () => {
     await flushPromises()
   })
   afterEach(() => {
+    wrapper.unmount()
     search.resetSearch()
   })
 
-  it('Basic Search: Renders and displays expected default content', () => {
+  it('Public Search: Renders and displays expected default content', () => {
+    expect(search.results).toEqual([])
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    verifyDefaultSearchResultsTable(false)
+    verifyDefaultSearchResultsTable(publicHeaders)
+  })
+
+  it('Limited Search: Renders and displays expected default content', async () => {
+    accessLevel.value = SearchAccessE.LIMITED
+    await flushPromises()
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
+    verifyDefaultSearchResultsTable(limitedHeaders)
   })
 
   it('Extended Search: Renders and displays expected default content', async () => {
-    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    isExtended.value = true
+    accessLevel.value = SearchAccessE.EXTENDED
     await flushPromises()
-    verifyDefaultSearchResultsTable(true)
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
+    // await flushPromises()
+    verifyDefaultSearchResultsTable(extendedHeaders)
   })
 
-  it('Basic Search: Renders and displays results', async () => {
+  it('limited Search: Renders and displays results', async () => {
+    accessLevel.value = SearchAccessE.LIMITED
+    await flushPromises()
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    isExtended.value = false
     results.value = testSearchResults
     await flushPromises()
     // renders results in table
@@ -263,12 +314,12 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').exists()).toBe(false)
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(testSearchResults.length)
-    verifyTableResults(false)
+    verifyTableResults(limitedHeaders)
   })
 
   it('Extended Search: Renders and displays results', async () => {
+    accessLevel.value = SearchAccessE.EXTENDED
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    isExtended.value = true
     results.value = testSearchResults
     await flushPromises()
     // renders results in table
@@ -278,6 +329,6 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').exists()).toBe(false)
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(testSearchResults.length)
-    verifyTableResults(true)
+    verifyTableResults(extendedHeaders)
   })
 })

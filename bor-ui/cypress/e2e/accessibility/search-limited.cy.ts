@@ -1,10 +1,10 @@
-context('Accessibility -> Search basic', () => {
+context('Accessibility -> Search limited', () => {
   beforeEach(() => {
-    cy.visitSearch()
+    cy.visitSearchLimited()
   })
 
   it('check page passes accessibility before a search', () => {
-    // TO-DO: resolve accessibility issues in a future ticket
+    // TO-DO: resolve accessibility issues in a future ticket: #20860
     cy.checkA11y('[data-cy="search-page"]', {
       rules: {
         'aria-input-field-name': { enabled: false },
@@ -19,7 +19,7 @@ context('Accessibility -> Search basic', () => {
       .type('test')
     cy.wait('@getSearchResults')
 
-    // TO-DO: resolve accessibility issues in a future ticket
+    // TO-DO: resolve accessibility issues in a future ticket: #20859
     /* eslint-disable quote-props */
     cy.checkA11y('[data-cy="search-results-table"]', {
       rules: {

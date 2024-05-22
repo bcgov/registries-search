@@ -1,4 +1,5 @@
-import { initialize, LDClient, LDFlagSet, LDOptions, LDMultiKindContext } from 'launchdarkly-js-client-sdk'
+import { initialize } from 'launchdarkly-js-client-sdk'
+import type { LDClient, LDFlagSet, LDOptions, LDMultiKindContext } from 'launchdarkly-js-client-sdk'
 
 export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
   const keycloak = useBcrosKeycloak()
@@ -61,8 +62,7 @@ export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
     return ldClient.value ? ldClient.value.variation(name) : null
   }
 
-  async function getStoredFlag (name: string): Promise<any> {
-    await ldClient.value?.waitUntilReady()
+  function getStoredFlag (name: string): any {
     if (!ldInitialized) {
       console.warn('Accessing ldarkly flag, but ldarkly was not initialized.')
     }

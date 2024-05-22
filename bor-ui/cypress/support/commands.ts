@@ -1,4 +1,4 @@
-Cypress.Commands.add('visitSearchNoAccess', () => {
+Cypress.Commands.add('visitSearchPublic', () => {
   sessionStorage.setItem('FAKE_CYPRESS_LOGIN', 'true')
   cy.intercept('GET', '**/api/v1/users/**/settings', { fixture: 'settings.json' }).as('getSettings')
   cy.intercept(
@@ -7,11 +7,13 @@ Cypress.Commands.add('visitSearchNoAccess', () => {
     { fixture: 'ldarklyContext.json' }
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsNone.json' }).as('getProducts')
+  cy.interceptSearch('/public', 'searchResultsPublic.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
+  cy.injectAxe()
 })
 
-Cypress.Commands.add('visitSearch', () => {
+Cypress.Commands.add('visitSearchLimited', () => {
   sessionStorage.setItem('FAKE_CYPRESS_LOGIN', 'true')
   cy.intercept('GET', '**/api/v1/users/**/settings', { fixture: 'settings.json' }).as('getSettings')
   cy.intercept(
@@ -20,7 +22,7 @@ Cypress.Commands.add('visitSearch', () => {
     { fixture: 'ldarklyContext.json' }
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsBasic.json' }).as('getProducts')
-  cy.interceptSearch('', 'searchResultsBasic.json')
+  cy.interceptSearch('', 'searchResultsLimited.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
   cy.injectAxe()

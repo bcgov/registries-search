@@ -73,6 +73,7 @@
                       :class="[filterClass, 'base-table__header__item__filter']"
                       clear-icon="mdi-close"
                       density="compact"
+                      :disabled="header.filter.disabled"
                       hide-details
                       hide-no-data
                       :items="header.filter.items || header.filter.itemsFn(header.filter.itemsFnVal)"
@@ -88,7 +89,7 @@
                       </template>
                       <template v-else #selection="{ item, index }">
                         <span v-if="index == 0" style="font-size: 0.825rem;">
-                          <span v-if="header.filter.value.length == 1">
+                          <span v-if="header.filter?.value?.length == 1">
                             {{ capFirstLetter(item.title) }}
                           </span>
                           <span v-else>
@@ -105,6 +106,7 @@
                       v-model="header.filter.value"
                       :class="[filterClass, 'base-table__header__item__filter', header.filter.value ? 'active' : '']"
                       density="compact"
+                      :disabled="header.filter.disabled"
                       hide-details
                       :placeholder="!header.filter.value ? header.filter.label || '' : ''"
                       @update:model-value="filter(header)"
@@ -159,7 +161,7 @@
               </td>
             </slot>
           </tr>
-          <tr v-if="sortedItems.length === 0" class="base-table__body__empty">
+          <tr v-if="sortedItems?.length === 0" class="base-table__body__empty">
             <td colspan="12">
               <slot name="body-empty">
                 <v-row class="my-15" justify="center" no-gutters>
@@ -205,8 +207,7 @@ const localProps = defineProps<{
 const emit = defineEmits<{(e: 'filterActive', value: boolean): void }>()
 
 const headers = reactive(_.cloneDeep(localProps.setHeaders) as BaseTableHeaderI[])
-const displayItemHeaders = headers.filter(header => !header.itemHidden)
-
+const displayItemHeaders = headers?.filter(header => !header.itemHidden)
 const sortedItems = ref([...localProps.setItems])
 
 const emptyText = computed(() => localProps.noResultsText || 'No results found')

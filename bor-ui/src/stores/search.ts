@@ -14,12 +14,36 @@ const DEFAULT_SEARCH_ROWS = 50
 
 /** Manages bcros search data */
 export const useBcrosSearch = defineStore('bcros/search', () => {
-  const searchError: Ref<ErrorI> = ref(null)
+  const searchError: Ref<ErrorI> = ref(undefined)
   // states
   const loading = ref(false)
   const loadingNext = ref(false)
   const isFilteringActive = ref(false)
-  const isExtended = ref(false)
+  // access
+  const accessLevel = ref(SearchAccessE.PUBLIC)
+  const hasExtendedAccess = computed(() => accessLevel.value === SearchAccessE.EXTENDED)
+  const hasLimitedAccess = computed(() => accessLevel.value === SearchAccessE.LIMITED)
+  const hasPublicAccess = computed(() => accessLevel.value === SearchAccessE.PUBLIC)
+  /** Set access level of based on available user / account information. */
+  const setUserAccessLevel = async () => {
+    console.info('Setting user access to search...')
+    const ldarkly = useBcrosLaunchdarkly()
+    // NOTE: if it is possible ldarkly was not initialized successfully (i.e. blank/incorrect key)
+    await ldarkly.ldClient?.waitUntilReady()
+    const account = useBcrosAccount()
+
+    if (ldarkly.getStoredFlag('enable-comp-auth-search') || account.hasProductAccess(ProductCodeE.CA_SEARCH)) {
+      // set search as competent authority search
+      accessLevel.value = SearchAccessE.EXTENDED
+      console.info('Set to Competent Authority Search.')
+    } else if (ldarkly.getStoredFlag('enable-director-search') || account.hasProductAccess(ProductCodeE.NDS)) {
+      // set search as director search
+      accessLevel.value = SearchAccessE.LIMITED
+      console.info('Set to Director Search.')
+    } else {
+      console.info('Set to Public Search.')
+    }
+  }
   // search values
   const searchValue = ref('')
   const start = ref(0)
@@ -84,7 +108,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   /** Export search to file for download. */
   const exportSearch = async () => {
     const searchResp = await searchEntities(
-      searchValue.value, filters.value, exportRows.value, 0, true, isExtended.value)
+      searchValue.value, filters.value, exportRows.value, 0, true, accessLevel.value)
     if (searchResp && searchResp.error) {
       _searchErrorHandler(searchResp)
     }
@@ -119,7 +143,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     loadingNext.value = true
     // search
     const searchResp = await searchEntities(
-      searchValue.value, filters.value, rows, start.value + 1, false, isExtended.value)
+      searchValue.value, filters.value, rows, start.value + 1, false, accessLevel.value)
     if (searchResp) {
       if (!searchResp.error) {
         // success
@@ -144,7 +168,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     // special case for query/roles/value
     isFilteringActive.value = hasActiveFilter() || !!filters.value?.query?.roles?.value
     if (results.value === null) { results.value = [] }
-    const searchResp = await searchEntities(val, filters.value, rows, 0, false, isExtended.value)
+    const searchResp = await searchEntities(val, filters.value, rows, 0, false, accessLevel.value)
     if (searchResp) {
       if (searchResp.error) {
         _searchErrorHandler(searchResp)
@@ -185,7 +209,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     filters.value = _.cloneDeep(STARTING_FILTERS)
     results.value = null
     totalResults.value = null
-    searchError.value = null
+    searchError.value = undefined
     isFilteringActive.value = false
     loading.value = false
     start.value = 0
@@ -194,9 +218,12 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   return {
     searchError,
+    accessLevel,
+    hasExtendedAccess,
+    hasLimitedAccess,
+    hasPublicAccess,
     loading,
     loadingNext,
-    isExtended,
     isFilteringActive,
     searchValue,
     start,
@@ -213,6 +240,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     getNextResults,
     getSearchResults,
     highlightMatch,
-    resetSearch
+    resetSearch,
+    setUserAccessLevel
   }
 })

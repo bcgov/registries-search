@@ -1,4 +1,5 @@
-import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions } from 'keycloak-js'
+import Keycloak from 'keycloak-js'
+import type { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions } from 'keycloak-js'
 
 /** Default interval (seconds) for checking if the user token needs to be refreshed. */
 const DEFAULT_REFRESH_CHECK_INTERVAL = 60
