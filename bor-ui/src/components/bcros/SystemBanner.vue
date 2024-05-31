@@ -1,54 +1,26 @@
 <template>
-  <!-- NB: set icon="null" to prevent v-alert default icon + vue complains if set to "" -->
-  <v-alert
-    v-model="show"
-    class="py-2"
-    :type="type"
-    icon="null"
-    :dismissible="dismissible"
-    data-cy="bcros-banner"
+  <UAlert
+    v-show="!!message && !close"
+    class="border-b-2 border-yellow-400"
+    color="yellow"
+    :description="message"
+    variant="solid"
+    :close-button="{ class: 'pr-2 text-gray-900' }"
+    :ui="{ rounded: 'rounded-none', padding: 'p-0' }"
+    @close="close = true"
   >
-    <div class="container px-4 ma-auto">
-      <v-icon v-if="icon !== ''" class="mr-2" size="34">
-        {{ icon }}
-      </v-icon>
-      <span v-html="message" />
-    </div>
-  </v-alert>
+    <template #icon>
+      <!-- NB: needed due to icon sizing via app.config / ui config for alert is not getting applied -->
+      <UIcon class="ml-[-2px] text-[34px]" :name="icon" />
+    </template>
+  </UAlert>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   dismissible: { type: Boolean, default: false },
-  icon: { type: String, default: 'mdi-information' }, // See https://material.io/resources/icons/?style=baseline for accepted values
-  message: { type: String, default: '' },
-  setShow: { type: Boolean, default: false },
-  type: { type: String, default: 'warning' }
+  icon: { type: String, default: 'i-mdi-information' },
+  message: { type: String, default: '' }
 })
-
-const show = computed(() => props.setShow)
+const close = ref(false)
 </script>
-
-<style lang="scss" scoped>
-.v-alert {
-  display: flex;
-  border-radius: 0;
-  padding: 0;
-  max-height: 48px;
-}
-:deep(.v-alert__prepend) {
-  height: 0;
-  width: 0;
-  margin-inline-end: 0;
-}
-
-.v-alert :deep(.v-alert__wrapper) {
-  margin: 0;
-  overflow: hidden;
-}
-
-:deep(.v-alert__content) {
-  max-width: 1360px;  // should match sbc header / breadcrumb max widths
-  width: 100%;
-}
-</style>

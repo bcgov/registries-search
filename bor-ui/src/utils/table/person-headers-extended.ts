@@ -43,7 +43,6 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         filterApiFn: (filterVal: string) => filterSearch(
           ['categories', 'nationalities'], filterVal ? [getCode(filterVal)] : null),
         hasSelectedSlot: true,
-        itemValue: 'value',
         items: ['Canada', 'United States of America'].concat(
           (getNames()).filter(country => !['Canada', 'United States of America'].includes(country))),
         label: 'All',
@@ -86,7 +85,7 @@ export const getPersonHeadersExtended = (): BaseTableHeaderI[] => {
         itemsFnVal: 'roleType',
         multiple: true,
         type: 'select',
-        value: null
+        value: []
       },
       hasFilter: true,
       hasSort: false,

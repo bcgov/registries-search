@@ -8,7 +8,7 @@ export function getDefaultError (): DialogOptionsI {
       }
     ],
     onClose: useBcrosNavigate().goToBcrosDashboard,
-    text: 'The Director Search application is currently unavailable. Please try again later.',
-    title: 'Director Search Unavailable'
+    text: 'The Business and Person Search application is currently unavailable. Please try again later.',
+    title: 'Business and Person Search Unavailable'
   }
 }

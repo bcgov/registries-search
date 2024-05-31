@@ -10,35 +10,42 @@
       @submit="updateDateRange($event)"
     />
   </Teleport>
-  <v-text-field
-    v-model="dateFilterText"
-    class="search-table__date-picker-filter active mb-5"
-    append-inner-icon="mdi-calendar"
-    density="compact"
-    hide-details
+  <UInput
+    class="font-normal mb-5"
+    autocomplete="off"
+    :color="dateFilterText ? 'primary' : 'gray'"
+    size="sm"
     placeholder="Date"
     readonly
+    :value="dateFilterText"
+    :ui="{ icon: { trailing: { pointer: '' }}, base: 'cursor-pointer text-left'}"
     @click="scrollToDatePicker()"
     @click:append-inner="scrollToDatePicker()"
-  />
-  <BaseTableFilterClearButton
-    v-if="dateFilterText"
-    right="40px"
-    @click="dateRangeResetTrigger = !dateRangeResetTrigger"
-  />
+  >
+    <template #trailing>
+      <div class="flex">
+        <UIcon class="text-xl" name="i-mdi-calendar" />
+        <UButton
+          v-show="dateFilterText !== ''"
+          color="primary"
+          variant="link"
+          icon="i-heroicons-x-mark-20-solid"
+          :padded="false"
+          @click="dateRangeResetTrigger = !dateRangeResetTrigger"
+        />
+      </div>
+    </template>
+  </UInput>
 </template>
 <script setup lang="ts">
+
 const search = useBcrosSearch()
 
 const datePickerRef = ref(null)
 const dateRangeStart = ref(null)
 const dateRangeEnd = ref(null)
-const dateRangeSelected = computed(() => (dateRangeStart.value && dateRangeEnd.value) || false)
-const dateFilterText = computed(() => {
-  if (!dateRangeSelected.value) { return '' }
-  const roleDates = search.filters?.query?.roles?.roleDates
-  return `${roleDates.start}, ...`
-})
+const dateRangeSelected = computed(() => !!dateRangeStart.value && !!dateRangeEnd.value)
+const dateFilterText = computed(() => dateRangeSelected.value ? '...' : '')
 const showDatePicker = ref(false)
 const scrollToDatePicker = async () => {
   showDatePicker.value = true
@@ -73,15 +80,3 @@ watch(() => props.dateRangeReset, () => {
 // for teleport behaviour in tests
 const isVitestRunning = !!process.env.VITEST_WORKER_ID
 </script>
-<style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
-
-:deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {
-  cursor: pointer;
-}
-
-// NOTE: below should match base table styling
-:deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
-  background-color: $blueSelected !important;
-}
-</style>

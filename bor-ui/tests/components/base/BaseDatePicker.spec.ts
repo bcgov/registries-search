@@ -4,90 +4,25 @@ import { nextTick } from 'vue'
 
 import BaseDatePicker from '../../../src/components/base/datePicker/Index.vue'
 
-import { vuetify } from '../../setup'
-
 describe('BaseDatePicker tests', () => {
   let wrapper: VueWrapper<any>
 
-  beforeEach(() => {
-    wrapper = mount(BaseDatePicker, { global: { plugins: [vuetify] } })
-  })
-  it('renders BaseDatePicker', () => {
+  beforeEach(() => { wrapper = mount(BaseDatePicker) })
+  afterEach(() => { wrapper.unmount() })
+
+  it('renders DatePicker', () => {
     // test everything renders
     expect(wrapper.findComponent(BaseDatePicker).exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__header').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__header__year').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__header__year').text()).toBe(`${(new Date()).getFullYear()}`)
-    expect(wrapper.find('.base-date-picker__header__date').exists()).toBe(false)
-    expect(wrapper.find('.base-date-picker__month-year').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__month-year__prev-btn').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__month-year__date-btn').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__month-year__next-btn').exists()).toBe(true)
-    // month / year selections are not open
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
-    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
+    expect(wrapper.find('.bcros-date-picker').exists()).toBe(true)
+    expect(wrapper.find('.bcros-date-picker__calendar').exists()).toBe(true)
+    expect(wrapper.find('.bcros-date-picker__calendar__day').exists()).toBe(true)
+    expect(wrapper.find('.dp__instance_calendar').exists()).toBe(true)
+    expect(wrapper.vm.selectedDate).toBe(null)
+    expect(wrapper.find('.dp__active_date').exists()).toBe(false)
   })
-
-  it('allows year selection from header', async () => {
-    wrapper.find('.base-date-picker__header__year').trigger('click')
-    await flushPromises()
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(true)
-    // list of buttons is there
-    const yearBtnList = wrapper.findAll('.base-date-picker__select__year__btn')
-    expect(yearBtnList.length).toBe(201)
-    // default selection is current year
-    expect(wrapper.find('.base-date-picker__select__year__btn.selected').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__select__year__btn.selected').text()).toBe(`${(new Date()).getFullYear()}`)
-    // click different year
-    yearBtnList[0].trigger('click')
-    await flushPromises()
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
-    expect(wrapper.find('.base-date-picker__header__year').text()).toBe(`${yearBtnList[0].text()}`)
-    expect(wrapper.find('.base-date-picker__month-year').text()).toContain(`${yearBtnList[0].text()}`)
-  })
-
-  it('allows month/year prev/next/selection from month-year menu', async () => {
-    const startingMonth = wrapper.vm.selectedMonth
-    // click prev
-    wrapper.find('.base-date-picker__month-year__prev-btn').trigger('click')
-    await flushPromises()
-    expect(wrapper.vm.selectedMonth).not.toBe(startingMonth)
-    // click next
-    wrapper.find('.base-date-picker__month-year__next-btn').trigger('click')
-    await flushPromises()
-    expect(wrapper.vm.selectedMonth).toBe(startingMonth)
-    // click date
-    wrapper.find('.base-date-picker__month-year__date-btn').trigger('click')
-    await flushPromises()
-    // month menu should be open
-    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
-    const monthBtns = wrapper.findAll('.base-date-picker__select__month__btn')
-    expect(monthBtns.length).toBe(12)
-    expect(monthBtns[startingMonth].classes()).toContain('selected')
-    const selectedMonth = startingMonth < 11 ? 11 : 3
-    monthBtns[selectedMonth].trigger('click')
-    await flushPromises()
-    expect(wrapper.vm.selectedMonth).toBe(selectedMonth)
-    // year picker should be open
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(true)
-    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
-    const yearBtnList = wrapper.findAll('.base-date-picker__select__year__btn')
-    expect(yearBtnList.length).toBe(201)
-    // select new year
-    yearBtnList[0].trigger('click')
-    await flushPromises()
-    // menus should be closed, selected year/month should be shown
-    expect(wrapper.find('.base-date-picker__select__year').exists()).toBe(false)
-    expect(wrapper.find('.base-date-picker__select__month').exists()).toBe(false)
-    expect(wrapper.find('.base-date-picker__month-year__date-btn').text()).toContain(monthBtns[selectedMonth].text())
-    expect(wrapper.find('.base-date-picker__month-year__date-btn').text()).toContain(yearBtnList[0].text())
-  })
-
-  it('selects and emits date and resets', async () => {
-    const days = wrapper.findAll('.base-date-picker__calendar__day')
-    expect(days.length >= 30).toBe(true)
+  it('selects and emits date selection', async () => {
+    const days = wrapper.findAll('.bcros-date-picker__calendar__day')
+    expect(days.length >= 28).toBe(true)
     expect(wrapper.vm.selectedDate).toBe(null)
     expect(wrapper.emitted('selectedDate')).toBeUndefined()
     // click day (NB: make sure it is not a day from previous/next month)
@@ -96,43 +31,24 @@ describe('BaseDatePicker tests', () => {
     // should have selected / emitted
     expect(wrapper.vm.selectedDate).not.toBe(null)
     expect(wrapper.emitted('selectedDate')?.length).toBe(1)
-    // reset
-    wrapper.setProps({ resetTrigger: true })
-    await flushPromises()
-    // selected date should be null / emitted
-    expect(wrapper.vm.selectedDate).toBe(null)
-    expect(wrapper.emitted('selectedDate')?.length).toBe(2)
-    // ts-ignore
-    expect(wrapper.emitted('selectedDate')[1]).toEqual([null])
+    expect(wrapper.find('.dp__active_date').exists()).toBe(true)
   })
-
-  it('sets defaults correctly', async () => {
+  it('sets default date correctly', async () => {
     const newDate = new Date('2013-04-24T12:30:00')
     wrapper = mount(BaseDatePicker, {
-      props: {
-        defaultSelectedDate: newDate
-      }
+      props: { defaultSelectedDate: newDate }
     })
     await flushPromises()
     expect(wrapper.vm.selectedDate).toBe(newDate)
-    expect(wrapper.vm.selectedMonth).toBe(newDate.getMonth())
-    expect(wrapper.vm.selectedYear).toBe(newDate.getFullYear())
-    expect(wrapper.find('.base-date-picker__header__year').text()).toBe(`${newDate.getFullYear()}`)
-    expect(wrapper.find('.base-date-picker__header__date').exists()).toBe(true)
+    expect(wrapper.find('.dp__active_date').exists()).toBe(true)
+    expect(wrapper.find('.dp__active_date').text()).toContain(newDate.getDate())
     // changing date and clearing should put the date back to default
-    const days = wrapper.findAll('.base-date-picker__calendar__day')
-    expect(days.length >= 30).toBe(true)
-    days[1].trigger('click')
+    const days = wrapper.findAll('.bcros-date-picker__calendar__day')
+    expect(days.length >= 28).toBe(true)
+    days[7].trigger('click')
     await flushPromises()
     // confirm date changed
     expect(wrapper.vm.selectedDate).not.toBe(newDate)
-    // reset
-    wrapper.setProps({ resetTrigger: true })
-    await flushPromises()
-    // check it went back to original defaults
-    expect(wrapper.vm.selectedDate).toBe(newDate)
-    expect(wrapper.vm.selectedMonth).toBe(newDate.getMonth())
-    expect(wrapper.vm.selectedYear).toBe(newDate.getFullYear())
   })
   it('sets max/min correctly', async () => {
     // set min/max
@@ -145,7 +61,7 @@ describe('BaseDatePicker tests', () => {
     wrapper.setProps({ setMinDate: minDate, setMaxDate: maxDate })
     await nextTick()
     // days 1-4 and 11-* should be disabled
-    const days = wrapper.findAll('.base-date-picker__calendar__day')
+    const days = wrapper.findAll('.bcros-date-picker__calendar__day')
     expect(days.length >= 28).toBe(true)
     for (const i in days) {
       if (days[i].classes().includes('dp__cell_offset')) {
@@ -163,10 +79,10 @@ describe('BaseDatePicker tests', () => {
     // dynamically adds error
     wrapper.setProps({ error: true })
     await nextTick()
-    expect(wrapper.find('.base-date-picker').classes()).toContain('base-date-picker__err')
+    expect(wrapper.find('.bcros-date-picker').classes()).toContain('bcros-date-picker__err')
     // dynamically clears error
     wrapper.setProps({ error: false })
     await nextTick()
-    expect(wrapper.find('.base-date-picker').classes()).not.toContain('base-date-picker__err')
+    expect(wrapper.find('.bcros-date-picker').classes()).not.toContain('bcros-date-picker__err')
   })
 })

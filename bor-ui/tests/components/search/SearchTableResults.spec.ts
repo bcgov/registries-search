@@ -10,7 +10,7 @@ import SearchTablePersonResultsPublic from '../../../src/components/search/table
 import SearchTableResults from '../../../src/components/search/table/Results.vue'
 
 import { testSearchResults } from '../../test-utils'
-import { vuetify } from '../../setup'
+
 import { SearchAccessE, type BaseTableHeaderI } from '#imports'
 
 const verifyAddress = (text: string, address: Partial<AddressI>) => {
@@ -53,18 +53,15 @@ describe('SearchResults tests', () => {
     expect(wrapper.findComponent(SearchTablePersonResultsLimited).exists()).toBe(hasLimitedAccess.value)
     expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(hasExtendedAccess.value)
     expect(wrapper.findComponent(SearchTablePersonResultsPublic).exists()).toBe(hasPublicAccess.value)
-
     // renders title
     expect(wrapper.find('.table-title').exists()).toBe(true)
-    expect(wrapper.find('.table-title').text()).toContain('Search Results  (0 People)')
-
+    expect(wrapper.find('.table-title').find('h2').text()).toContain('Search Results  (0 People)')
     // renders export excel stuff
     if (!hasPublicAccess.value) {
-      expect(wrapper.find('.search-table__export-select').exists()).toBe(true)
-      expect(wrapper.find('.search-table__export-select').find('label').text()).toContain('Maximum results to export')
-      expect(wrapper.find('.search-table__export-select').text()).toContain('1000')
-      expect(wrapper.find('.search-table__export-rows-btn').exists()).toBe(true)
-      expect(wrapper.find('.search-table__export-rows-btn').text()).toContain('Export to .xlsx')
+      expect(wrapper.find('[data-cy=table-export-select]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy=table-export-select]').text()).toContain('1000')
+      expect(wrapper.find('[data-cy=table-export-btn]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy=table-export-btn]').text()).toContain('Export to .xlsx')
     }
 
     // renders all the headers
@@ -82,7 +79,7 @@ describe('SearchResults tests', () => {
       const header = headerConfig[i]
       // check filter type
       if (header.filter.type === 'select') {
-        expect(filters[filterIndex].find('label').text()).toBe(header.filter.label)
+        expect(filters[filterIndex].text()).toBe(header.filter.label)
       } else {
         expect(filters[filterIndex].find('input').attributes('placeholder')).toBe(header.filter.label)
       }
@@ -93,7 +90,6 @@ describe('SearchResults tests', () => {
     expect(results.value).toEqual([])
     expect(table.find('.base-table__body__empty').exists()).toBe(true)
     expect(table.find('.base-table__body__empty').text()).toBe('No results found')
-
     // does not show error retry
     expect(searchError.value).toBeUndefined()
     expect(table.findComponent(BcrosErrorRetry).exists()).toBe(false)
@@ -208,9 +204,9 @@ describe('SearchResults tests', () => {
           case '': // Actions for basic should be empty
             expect(items[itemIndx].text()).toBe('')
             break
-          case 'Actions':
-            expect(items[itemIndx].find('.v-btn').exists()).toBe(true)
-            break
+          // case 'Actions':
+          //   expect(items[itemIndx].find('button').exists()).toBe(true)
+          //   break
           case 'Roles':
             expect(hasLimitedAccess.value).toBe(true)
             for (const role of roles) {
@@ -266,7 +262,6 @@ describe('SearchResults tests', () => {
     wrapper = mount(
       SearchTableResults, {
         global: {
-          plugins: [vuetify],
           components: {
             CountryFlag: MockCountryFlag
           }

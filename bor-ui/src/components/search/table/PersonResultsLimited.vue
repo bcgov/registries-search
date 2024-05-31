@@ -1,6 +1,6 @@
 <template>
   <base-table
-    class="person-results rounded-top"
+    class="person-results rounded-t relative"
     height="100%"
     :item-key="'legalName'"
     :loading="loading"
@@ -19,16 +19,16 @@
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
     </template>
-    <template #header-filter-slot-actions>
+    <!-- <template #header-filter-slot-actions>
       <CommonHeadersActionFilter
         v-if="isFilteringActive"
         :outer-class="'h-[60px] pt-1'"
         @clear="clearFilters()"
       />
-    </template>
+    </template> -->
     <template #item-slot-name="{ item }">
       <CommonItemsName
-        :icon="item.entityType.toUpperCase() === EntityTypeE.PERSON ? 'mdi-account' : 'mdi-domain'"
+        :icon="item.entityType.toUpperCase() === EntityTypeE.PERSON ? 'i-mdi-account' : 'i-mdi-domain'"
         :item="item"
       />
     </template>
@@ -42,29 +42,31 @@
     <template #item-slot-roles="{ item } : { item: SearchResultI }">
       <div v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
         <div class="inner-row-div flex w-full">
-          <div class="inner-col-div pl-3" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
-            {{ capFirstLetter(`${role.roleType}`) }}
+          <div class="inner-col-div" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+            <div>
+              {{ capFirstLetter(`${role.roleType}`) }}
+            </div>
           </div>
           <div
-            class="inner-col-div pl-3 mr-0"
+            class="inner-col-div pl-2 mr-0"
             :style="{ width: getChildHeaderWidth(headers, 'Effective Dates', childHeaders) }"
           >
             <CommonItemsEffectiveDates :role="role" />
           </div>
           <div
-            class="inner-col-div pl-3"
+            class="inner-col-div pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
           >
             <CommonItemsBusinessDetails :role="role" />
           </div>
           <div
-            class="inner-col-div pl-3"
+            class="inner-col-div pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Status', childHeaders) }"
           >
             {{ capFirstLetter(`${role.relatedState}`) }}
           </div>
           <div
-            class="inner-col-div pl-3"
+            class="inner-col-div pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Email', childHeaders) }"
           >
             {{ role.relatedEmail || '' }}
@@ -85,7 +87,7 @@
 
 <script setup lang="ts">
 import {
-  CommonHeadersActionFilter, CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
+  CommonItemsBusinessDetails, CommonHeadersDateRangeFilter,
   CommonItemsEffectiveDates, CommonItemsName, CommonTitleExport
 } from './common'
 
@@ -97,7 +99,6 @@ const props = defineProps<{
 // composables
 const search = useBcrosSearch()
 const {
-  isFilteringActive,
   loading,
   results,
   totalResults,
@@ -114,18 +115,10 @@ onMounted(() => { props.updateTableHeaderFilters(headers) })
 // filter clearing
 const resetFiltersTrigger = ref(false)
 const dateRangeReset = ref(false)
-const clearFilters = () => {
-  resetFiltersTrigger.value = !resetFiltersTrigger.value
-  dateRangeReset.value = !dateRangeReset.value
-  // search on reset filters
-  search.filterSearch(null, null, true)
-}
+// const clearFilters = () => {
+//   resetFiltersTrigger.value = !resetFiltersTrigger.value
+//   dateRangeReset.value = !dateRangeReset.value
+//   // search on reset filters
+//   search.filterSearch(null, null, true)
+// }
 </script>
-<style>
-/* for stacked headers on smaller displays, increase the header height */
-@media (max-width: 1160px) {
-  :deep(.base-table__header__item__title.v-btn.v-btn--density-default) {
-    height: 60px;
-  }
-}
-</style>

@@ -9,6 +9,6 @@ export function getAuthAccessError (): DialogOptionsI {
     ],
     onClose: useBcrosNavigate().goToBcrosDashboard,
     text: '',
-    title: 'Director Search Access Denied'
+    title: 'Business and Person Search Access Denied'
   }
 }

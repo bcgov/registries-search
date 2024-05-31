@@ -1,0 +1,36 @@
+{
+  "breadcrumbs": {
+    "beneficialOwnerChange": "Significant Individual Change",
+    "businessDashboard": "My Business Registry",
+    "myRegDetails": "My BC Registries Details",
+    "registryDashboard": "BC Registries Dashboard"
+  },
+  "labels": {
+    "services": {
+      "bcsc": "BC Services Card",
+      "bceid": "BCeID",
+      "idir": "IDIR"
+    }
+  },
+  "header": {
+    "title": "BC Registry and Online Services",
+    "buttons": {
+      "createAccount": "Create account"
+    },
+    "menus": {
+      "headers": {
+        "accountSettings": "Account Settings",
+        "selectLogin": "Select log in method",
+        "switchAccount": "Switch Account"
+      },
+      "labels": {
+        "accountInfo": "Account Info",
+        "createAccount": "Create Account",
+        "editProfile": "Edit Profile",
+        "logOut": "Log Out",
+        "teamMembers": "Team Members",
+        "transactions": "Transactions"
+      }
+    }
+  }
+}

@@ -3,13 +3,11 @@ import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
 import SearchInput from '../../../src/components/search/Input.vue'
 
-import { vuetify } from '../../setup'
-
 describe('SearchBar tests', () => {
   let wrapper: VueWrapper<any>
 
   const search = useBcrosSearch()
-  const { accessLevel, hasExtendedAccess, totalResults } = storeToRefs(search)
+  const { accessLevel, hasLimitedAccess, totalResults } = storeToRefs(search)
 
   afterEach(() => {
     search.resetSearch()
@@ -32,47 +30,44 @@ describe('SearchBar tests', () => {
     ]
     for (const option of uiOptions) {
       accessLevel.value = option.access
-      wrapper = mount(SearchInput, { global: { plugins: [vuetify] } })
+      wrapper = mount(SearchInput)
       await flushPromises()
       expect(wrapper.findComponent(SearchInput).exists()).toBe(true)
+      expect(wrapper.find('[data-cy="search-input"]').exists()).toBe(true)
 
       // search text field is there with expected label
-      const label = wrapper.find('label')
-      expect(label.exists()).toBe(true)
-      expect(label.text()).toBe(option.label)
+      const input = wrapper.find('[data-cy="search-input"]').find('input')
+      expect(input.exists()).toBe(true)
+      expect(input.attributes('placeholder')).toBe(option.label)
 
       // search bar hint
-      const message = wrapper.find('.v-messages__message')
+      const message = wrapper.find('p')
       expect(message.text()).toBe(option.hint)
 
       // radios should only show for extended search
-      if (!hasExtendedAccess.value) {
-        expect(wrapper.find('.search-radios').exists()).toBe(false)
+      if (hasLimitedAccess.value) {
+        expect(wrapper.find('[data-cy=search-radios]').exists()).toBe(false)
       } else {
         // update to extended and verify radios
-        const radiosWrapper = wrapper.find('.search-radios')
+        const radiosWrapper = wrapper.find('[data-cy=search-radios]')
         expect(radiosWrapper.exists()).toBe(true)
 
-        const radios = radiosWrapper.findAll('.v-radio')
-        expect(radios.length).toBe(2)
+        const radioLabels = radiosWrapper.findAll('label')
+        expect(radioLabels.length).toBe(2)
+        const radioInputs = radiosWrapper.findAll('input')
+        expect(radioInputs.length).toBe(2)
 
         // person
-        expect(radios[1].find('label').text()).toBe('Search People')
-        // selected
-        expect(radios[1].find('input').attributes().type).toBe('radio')
-        // have to do it by class since vuetify doesn't update the inner input value
-        expect(radios[1].find('i').attributes().class).toContain('mdi-radiobox-marked mdi')
-        // not disabled
-        expect(radios[1].find('input').attributes().disabled).toBeUndefined()
+        expect(radioLabels[1].text()).toBe('Search People')
+        expect(radioInputs[1].attributes().type).toBe('radio')
+        expect(radioInputs[1].attributes().value).toBe('person')
+        expect(radioInputs[1].attributes().disabled).toBeUndefined()
 
         // business
-        expect(radios[0].find('label').text()).toBe('Search Businesses')
-        // not selected
-        expect(radios[0].find('input').attributes().type).toBe('radio')
-        // have to do it by class since vuetify doesn't update the inner input value
-        expect(radios[0].find('i').attributes().class).toContain('mdi-radiobox-blank')
-        // disabled (temporary)
-        expect(radios[0].find('input').attributes().disabled).toBeDefined()
+        expect(radioLabels[0].text()).toBe('Search Businesses')
+        expect(radioInputs[0].attributes().type).toBe('radio')
+        expect(radioInputs[0].attributes().value).toBe('business')
+        expect(radioInputs[0].attributes().disabled).toBeUndefined()
       }
     }
   })
@@ -84,13 +79,13 @@ describe('SearchBar tests', () => {
     ]
     for (const options of uiOptions) {
       accessLevel.value = options.access
-      wrapper = mount(SearchInput, { global: { plugins: [vuetify] } })
-      const searchTextField = wrapper.find('#search-bar-field')
+      wrapper = mount(SearchInput)
+      const searchTextField = wrapper.find('[data-cy="search-textfield"]')
       searchTextField.trigger('keyup.enter')
       await flushPromises()
 
       // validation message shows
-      const message = wrapper.find('.v-messages__message')
+      const message = wrapper.find('p')
       expect(message.text()).toBe(options.msg)
 
       // search was not triggered

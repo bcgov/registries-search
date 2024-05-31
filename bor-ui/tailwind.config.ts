@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 export default <Partial<Config>>{
+  // content: ['./src/*.{html,ts,js,vue}'],
   theme: {
     extend: {
       boxShadow: {
@@ -8,7 +9,11 @@ export default <Partial<Config>>{
         'action-col-item': '-1px 0 4px 0 #adb5bd'
       },
       colors: {
-        gray: {
+        // used color generator recommended by tailwind docs: https://uicolors.app/create
+        bcGovColor: {
+          darkBlue: '#003366'
+        },
+        bcGovGray: {
           50: '#f8f9fa',
           100: '#f1f3f5',
           200: '#e9ecef',
@@ -22,8 +27,9 @@ export default <Partial<Config>>{
           950: '#232529'
         },
         blue: {
-          50: '#e0e7ed',
-          100: '#b3c2d1',
+          50: '#e4edf7',
+          100: '#e0e7ed',
+          150: '#b3c2d1',
           200: '#8099b3',
           300: '#4d7094',
           350: '#38598a',
@@ -36,17 +42,30 @@ export default <Partial<Config>>{
           950: '#001438'
         },
         red: {
-          50: '#FAE5E6',
-          100: '#F2BEC0',
-          200: '#E99396',
-          300: '#E0686B',
-          400: '#DA474C',
-          500: '#D3272C',
-          600: '#CE2327',
-          700: '#C81D21',
-          800: '#C2171B',
-          900: '#B70E10',
-          950: '#961E21'
+          50: '#fef2f2',
+          100: '#fde3e4',
+          200: '#fdcbcc',
+          300: '#faa7a9',
+          400: '#f57478',
+          500: '#eb484d',
+          600: '#d3272c',
+          700: '#b52024',
+          800: '#961e21',
+          900: '#7d1f22',
+          950: '#440b0d'
+        },
+        yellow: {
+          50: '#fffbeb',
+          100: '#fef2c7',
+          200: '#fee589',
+          300: '#fdd14c',
+          400: '#fcba19',
+          500: '#f69b0a',
+          600: '#da7505',
+          700: '#b55108',
+          800: '#933e0d',
+          900: '#79340e',
+          950: '#451903'
         }
       }
     }

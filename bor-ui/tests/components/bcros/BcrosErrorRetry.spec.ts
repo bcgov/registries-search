@@ -4,8 +4,6 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import ContactInfo from '../../../src/components/bcros/ContactInfo.vue'
 import ErrorRetry from '../../../src/components/bcros/ErrorRetry.vue'
 
-import { vuetify } from '../../setup'
-
 describe('ErrorRetry tests', () => {
   let wrapper: VueWrapper<any>
 
@@ -18,8 +16,7 @@ describe('ErrorRetry tests', () => {
         action: (var1: number, var2: number) => (testVar = var1 + var2),
         actionArgs: [1, 2],
         message: customMsg
-      },
-      global: { plugins: [vuetify] }
+      }
     })
   })
   it('renders ErrorRetry', () => {

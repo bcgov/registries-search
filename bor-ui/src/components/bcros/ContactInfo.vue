@@ -1,11 +1,16 @@
 <template>
   <ul class="contacts pl-0">
     <li v-for="contact, i in contacts" :key="'contact-' + i" class="contacts__item">
-      <v-icon v-if="contact.icon" color="darkBlue" class="contacts__item__icon" size="18px">
-        {{ contact.icon }}
-      </v-icon>
-      <label class="px-2">{{ contact.label }}:</label>
-      <a :href="contact.href" class="contacts__item__value contacts__item__link">{{ contact.value }}</a>
+      <!-- NB: *weird bug* - the UIcon is not rendering unless there is a comment below containing the name for it -->
+      <!-- <UIcon name="i-mdi-phone" /> -->
+      <!-- <UIcon name="i-mdi-email" /> -->
+      <UIcon
+        class="text-[18px] text-primary-600"
+        :name="contact.icon"
+        data-cy="contact-icon"
+      />
+      <label class="px-2" data-cy="contact-label">{{ contact.label }}:</label>
+      <a :href="contact.href" data-cy="contact-value">{{ contact.value }}</a>
     </li>
   </ul>
 </template>
@@ -15,8 +20,6 @@ defineProps<{ contacts: ContactInfoI[] }>()
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
-
 .contacts {
   text-align: start;
   width: fit-content;
@@ -29,7 +32,7 @@ defineProps<{ contacts: ContactInfoI[] }>()
     }
 
     &__link {
-      color: $app-blue
+      color: theme('colors.blue.500')
     }
   }
 }

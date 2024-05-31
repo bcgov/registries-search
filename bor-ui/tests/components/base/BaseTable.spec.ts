@@ -4,8 +4,6 @@ import { nextTick } from 'vue'
 
 import BaseTable from '../../../src/components/base/table/Index.vue'
 
-import { vuetify } from '../../setup'
-
 const headers: BaseTableHeaderI[] = [
   {
     col: 'field1',
@@ -49,8 +47,7 @@ describe('BaseTable tests', () => {
         itemKey: 'key',
         setHeaders: headers,
         setItems: items
-      },
-      global: { plugins: [vuetify] }
+      }
     })
   })
   it('renders BaseTable with expected data', () => {

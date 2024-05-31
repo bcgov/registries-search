@@ -1,23 +1,31 @@
 <template>
-  <NuxtLayout>
-    <base-dialog
-      id="error-dialog"
-      attach="#appHeader"
-      :display="errorDisplay"
-      :options="errorInfo"
-      @close="clearDialog"
-    >
-      <template v-if="errorContactInfo" #extra-content>
-        <p class="font-normal mt-7">
-          If this issue persists, please contact us.
-        </p>
-        <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
-      </template>
-    </base-dialog>
-    <!-- TODO: use nuxt loading screen -->
-    <bcros-loading-screen v-if="appLoading" :is-loading="appLoading" />
-    <NuxtPage v-else />
-  </NuxtLayout>
+  <div class="bg-bcGovGray-100">
+    <NuxtLayout>
+      <base-dialog
+        id="error-dialog"
+        attach="#appHeader"
+        :display="errorDisplay"
+        :options="errorInfo"
+        @close="clearDialog"
+      >
+        <template v-if="errorContactInfo" #extra-content>
+          <p class="font-normal mt-7">
+            If this issue persists, please contact us.
+          </p>
+          <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
+        </template>
+      </base-dialog>
+      <!-- TODO: figure out nuxt loading indicator while middleware processes -->
+      <div v-if="appLoading">
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="animate-spin text-[50px] text-gray-700 absolute top-60 left-[50%]"
+        />
+      </div>
+      <NuxtPage v-else />
+      <UNotifications />
+    </NuxtLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -37,6 +45,9 @@ const { searchError } = storeToRefs(search)
 
 onMounted(async () => {
   appLoading.value = true
+  if (accountErrors.value?.length > 0) {
+    handleError(accountErrors.value[0])
+  }
   if (account.currentAccount?.id) {
     // load account products
     console.info('Loading active products...', account.currentAccount)
@@ -52,7 +63,7 @@ onMounted(async () => {
 
 const handleError = (error: ErrorI) => {
   console.info(error)
-  switch (error.category) {
+  switch (error?.category) {
     case ErrorCategoryE.ACCOUNT_ACCESS:
       errorInfo.value = getAuthAccessError()
       if (error.statusCode === StatusCodes.UNAUTHORIZED) {

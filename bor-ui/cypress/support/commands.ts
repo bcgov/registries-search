@@ -43,6 +43,19 @@ Cypress.Commands.add('visitSearchExtended', () => {
   cy.injectAxe()
 })
 
+Cypress.Commands.add('visitSearchAuthError', () => {
+  sessionStorage.setItem('FAKE_CYPRESS_LOGIN', 'true')
+  cy.intercept('GET', '**/api/v1/users/**/settings', { statusCode: 500, body: {} }).as('getSettingsError')
+  cy.intercept(
+    'REPORT',
+    'https://app.launchdarkly.com/sdk/evalx/**/context',
+    { fixture: 'ldarklyContext.json' }
+  ).as('getLdarklyContext')
+  cy.visit('')
+  cy.wait(['@getSettingsError'])
+  cy.injectAxe()
+})
+
 Cypress.Commands.add('interceptSearch', (path: string, fixtureFileName: string) => {
   cy.intercept('POST', '**/api/v1/search' + path, { fixture: fixtureFileName }).as('getSearchResults')
 })

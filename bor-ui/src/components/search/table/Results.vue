@@ -18,17 +18,18 @@
       :results-desc="resultsDesc"
       :update-table-header-filters="updateTableHeaderFilters"
     />
-    <div id="load-more-results" style="text-align: center;">
-      <v-btn
-        v-if="hasMoreResults"
-        class="mt-30px"
+    <div id="load-more-results" class="flex justify-center">
+      <UButton
+        v-show="hasMoreResults"
+        class="p-4 mt-[30px]"
+        icon="i-mdi-plus"
+        label="Load More Results"
         :loading="loadingNext"
-        color="primary"
-        variant="outlined"
+        loading-icon="i-mdi-loading"
+        trailing
+        variant="outline"
         @click="getNextSearches()"
-      >
-        Load More Results
-      </v-btn>
+      />
     </div>
   </div>
 </template>
@@ -64,49 +65,20 @@ const getNextSearches = _.debounce(async () => (await search.getNextResults()), 
 </script>
 
 <style lang="scss">
-@import '@/assets/styles/theme.scss';
 .search-table {
-  border: solid 1px $gray2;
+  border: solid 1px theme('colors.gray.200');
 
   a {
-    color: $app-blue;
+    color: theme('colors.blue.500');
     text-decoration: underline;
-  }
-
-  &__clear {
-    font-size: 14px !important;
-    height: 36px;
-    padding: 0 12px !important;
-    min-width: 108px;
-    width: 90%;
-
-    .v-btn__append {
-      margin-left: 4px;
-      margin-top: 2px;
-    }
-
-    .v-btn__content {
-      white-space: nowrap;
-    }
-  }
-
-  &__export-select {
-    background-color: white;
-    .v-input__control .v-field.v-field--active:not(.v-field--error) .v-field__outline .v-label.v-field-label--floating {
-      color: $gray7;
-      margin-left: 9px;
-    }
-    .v-input__control .v-field__append-inner {
-      margin-right: 12px;
-    }
-    .v-input__control .v-field .v-field__field .v-field__input .v-select__selection {
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
   }
 
   tr .base-table__header__item:last-child {
     padding-right: 12px;
+  }
+
+  .inner-col-div {
+    overflow-wrap: break-word;
   }
 
   .actions-col {

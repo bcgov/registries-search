@@ -2,12 +2,11 @@
   <div>
     <a :href="getItemDetailsLink(role)" target="_blank">
       {{ role.relatedName }}
-      <v-icon
+      <UIcon
         v-if="!isModernized(role)"
-        class="mb-1"
+        class="text-base align-text-bottom"
         color="primary"
-        icon="mdi-open-in-new"
-        size="small"
+        name="i-mdi-open-in-new"
       />
     </a>
     <BcrosAddressDisplay

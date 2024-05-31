@@ -4,18 +4,16 @@
     <p class="error-retry__base-msg">
       If this issue persists please contact us.
     </p>
-    <v-btn
-      class="error-retry__btn btn-basic-outlined mx-auto mt-5"
+    <UButton
+      class="error-retry__btn btn-basic-outlined mx-auto mt-5 p-3"
       color="primary"
+      icon="i-mdi-reload"
+      label="Retry"
       :loading="loading"
-      variant="outlined"
+      trailing
+      variant="outline"
       @click="handleRetry()"
-    >
-      <v-icon color="primary" size="18">
-        mdi-reload
-      </v-icon>
-      <span>Retry</span>
-    </v-btn>
+    />
     <bcros-contact-info class="mx-auto mt-5" :contacts="HelpdeskInfo" />
   </div>
 </template>

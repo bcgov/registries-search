@@ -1,14 +1,6 @@
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
 
 import { testAccount, testUser } from './test-utils'
-
-export const vuetify = createVuetify({
-  components,
-  directives
-})
 
 mockNuxtImport('useBcrosNavigate', () => {
   return () => {

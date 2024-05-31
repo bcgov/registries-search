@@ -6,5 +6,6 @@ export enum PersonControlTypeE {
   DirectorsDirectControl = 'controlType.directors.directControl',
   DirectorsInConcertControl = 'controlType.directors.inConcertControl',
   DirectorsIndirectControl = 'controlType.directors.indirectControl',
-  DirectorsSignificantInfluence = 'controlType.directors.significantInfluence'
+  DirectorsSignificantInfluence = 'controlType.directors.significantInfluence',
+  Other = 'other'
 }

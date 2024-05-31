@@ -72,7 +72,7 @@ export const getPersonHeadersPublic = (): BaseTableHeaderI[] => {
         itemsFnVal: 'roleType',
         multiple: true,
         type: 'select',
-        value: null
+        value: []
       },
       hasFilter: true,
       hasSort: false,

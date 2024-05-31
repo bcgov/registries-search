@@ -1,13 +1,12 @@
 <!-- Copied from PPR. Move into sbc-common or bcrs-shared after vue 3 upgrade -->
 <template>
-  <v-card
+  <div
     ref="datePicker"
-    class="date-selection registration-date"
-    elevation="6"
+    class="date-selection shadow-[0px_3px_6px_2px_#0003] py-8"
     :style="{'margin-top': offsetTop ? offsetTop : '264px', 'margin-left': offsetLeft ? offsetLeft : '0px'}"
   >
-    <v-row no-gutters>
-      <v-col>
+    <div class="flex space-x-5 justify-center">
+      <div>
         <b class="date-selection__heading" :class="{ 'picker-err': startDate === null && datePickerErr }">
           Select Start Date:
         </b>
@@ -18,8 +17,8 @@
           :set-max-date="endDate"
           @selected-date="startDate = $event"
         />
-      </v-col>
-      <v-col class="pl-4">
+      </div>
+      <div class="pl-4">
         <b class="date-selection__heading" :class="{ 'picker-err': endDate === null && datePickerErr }">
           Select End Date:
         </b>
@@ -30,31 +29,27 @@
           :set-min-date="startDate"
           @selected-date="endDate = $event"
         />
-      </v-col>
-    </v-row>
-    <v-row class="pt-2 pr-2" no-gutters justify="end">
-      <v-col cols="auto">
-        <v-btn
-          class="date-selection-btn bold"
-          color="primary"
-          small
-          variant="text"
-          @click="submitDateRange()"
-        >
-          <b>OK</b>
-        </v-btn>
-        <v-btn
-          class="date-selection-btn ml-4"
-          color="primary"
-          small
-          variant="text"
-          @click="resetDateRange()"
-        >
-          Cancel
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-card>
+        <div class="flex space-x-4 justify-end pt-4">
+          <UButton
+            class="font-bold hover:bg-inherit"
+            label="OK"
+            color="primary"
+            variant="ghost"
+            data-cy="date-selection-btn"
+            @click="submitDateRange()"
+          />
+          <UButton
+            class="font-normal hover:bg-inherit"
+            label="Cancel"
+            color="primary"
+            variant="ghost"
+            data-cy="date-selection-btn"
+            @click="resetDateRange()"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -90,20 +85,18 @@ const submitDateRange = (): void => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
 .date-selection {
   border-radius: 5px;
-  z-index: 1001;
+  z-index: 99;
   left: 50%;
   overflow: auto;
-  padding: 20px 10px 8px 30px;
   position: absolute;
   transform: translate(-50%, 0);
   background-color: white;
   width: 700px;
 
   &__heading.picker-err {
-    color: $error;
+    color: theme('colors.red.500');
   }
 }
 </style>

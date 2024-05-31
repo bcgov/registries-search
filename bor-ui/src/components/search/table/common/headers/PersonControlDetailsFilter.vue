@@ -1,131 +1,58 @@
 <template>
-  <v-menu
-    :close-on-content-click="false"
-  >
-    <template #activator="{ isActive, props }">
-      <div class="pb-5 cursor-pointer" data-cy="details-filter">
-        <v-text-field
-          v-model="detailsFilterDisplay"
-          density="compact"
-          hide-details
-          v-bind="props"
-          :append-inner-icon="isActive ? 'mdi-menu-up' : 'mdi-menu-down' "
-          placeholder="Details"
-          data-cy="details-filter-textbox"
-          :class="['base-table__header__item__filter', detailsFilterDisplay!='' ? 'active' : '']"
-        />
-        <BaseTableFilterClearButton v-if="detailsFilterDisplay!=''" right="25px" @click="selectedDetailsFilters=[]" />
-      </div>
-    </template>
-    <v-expansion-panels
-      variant="accordion"
-      multiple
-      style="width: 370px"
+  <UPopover class="mb-5" :popper="{ placement: 'bottom-start', locked: true }">
+    <UInput
+      v-model="detailsFilterDisplay"
+      class="font-normal"
+      placeholder="Details"
+      size="sm"
+      trailing
+      :ui="{ icon: { trailing: { pointer: '' }}, base: 'cursor-pointer text-left'}"
+      data-cy="control-filter"
     >
-      <v-expansion-panel data-cy="details-filter-shares-votes" class="w-52 max-w-52">
-        <v-expansion-panel-title class="font-bold">
-          Control of Shares/Votes
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-checkbox
+      <template #trailing>
+        <UButton
+          v-if="detailsFilterDisplay"
+          color="primary"
+          variant="link"
+          icon="i-heroicons-x-mark-20-solid"
+          :padded="false"
+          @click="selectedDetailsFilters = []"
+        />
+        <UIcon class="text-xl text-gray-700" name="i-mdi-chevron-down" />
+      </template>
+    </UInput>
+    <template #panel>
+      <UAccordion
+        :items="options"
+        multiple
+        data-cy="control-filter-accordion"
+      >
+        <template #item="{ item }">
+          <UCheckbox
+            v-for="option in item.subOptions"
+            :key="option.value"
             v-model="selectedDetailsFilters"
-            label="Registered Owner"
-            :value="PersonControlTypeE.SharesOrVotesRegisteredOwner"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-200 hover:text-blue-500"
-            data-cy="details-filter-shares-votes-registered-owner"
+            class="px-3 py-2"
+            :label="option.label"
+            :value="option.value"
+            :data-cy="'control-filter-checkbox-' + option.value"
           />
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Beneficial Owner"
-            :value="PersonControlTypeE.SharesOrVotesBeneficialOwner"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-          />
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Indirect Control"
-            :value="PersonControlTypeE.SharesOrVotesIndirectControl"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-          />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <v-expansion-panel data-cy="details-filter-directors" class="w-52 max-w-52">
-        <v-expansion-panel-title class="font-bold">
-          Control of Directors
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Indirect Control of directors"
-            :value="PersonControlTypeE.DirectorsIndirectControl"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-          />
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Direct Control"
-            :value="PersonControlTypeE.DirectorsDirectControl"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500 color:primary"
-            data-cy="details-filter-directors-direct-control"
-          />
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Control Majority of Directors"
-            :value="PersonControlTypeE.DirectorsInConcertControl"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-          />
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Significant Influence Control"
-            :value="PersonControlTypeE.DirectorsSignificantInfluence"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-          />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-      <v-expansion-panel data-cy="details-filter-other" class="w-52 max-w-52">
-        <v-expansion-panel-title class="font-bold">
-          Other
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-checkbox
-            v-model="selectedDetailsFilters"
-            label="Other"
-            value="other"
-            density="comfortable"
-            hide-details
-            class="uppercase px-3 hover:bg-gray-300 hover:text-blue-500"
-            data-cy="details-filter-other-other"
-          />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-menu>
+        </template>
+      </UAccordion>
+    </template>
+  </UPopover>
 </template>
 
 <script setup lang="ts">
-const search = useBcrosSearch()
 const selectedDetailsFilters: Ref<string[]> = ref([])
 
-// for clear filters
-const localProps = defineProps<{ clearFilter?: boolean }>()
-watch(() => localProps.clearFilter, () => {
+const props = defineProps<{ clearFilter?: boolean }>()
+watch(() => props.clearFilter, () => {
   selectedDetailsFilters.value = []
 })
 
 const detailsFilterDisplay = computed(() => {
+  // return selectedDetailsFilters.value
   if (selectedDetailsFilters.value.length === 0) {
     return ''
   }
@@ -141,6 +68,33 @@ const detailsFilterDisplay = computed(() => {
   return 'Multiple'
 })
 
+const options = [
+  {
+    label: 'Control of Shares/Votes',
+    subOptions: [
+      { label: 'Registered Owner', value: PersonControlTypeE.SharesOrVotesRegisteredOwner },
+      { label: 'Beneficial Owner', value: PersonControlTypeE.SharesOrVotesBeneficialOwner },
+      { label: 'Indirect Control', value: PersonControlTypeE.SharesOrVotesIndirectControl }
+    ]
+  },
+  {
+    label: 'Control of Directors',
+    subOptions: [
+      { label: 'Indirect Control', value: PersonControlTypeE.DirectorsIndirectControl },
+      { label: 'Direct Control', value: PersonControlTypeE.DirectorsDirectControl },
+      { label: 'Majority Control', value: PersonControlTypeE.DirectorsInConcertControl },
+      { label: 'Significant Influence Control', value: PersonControlTypeE.DirectorsSignificantInfluence }
+    ]
+  },
+  {
+    label: 'Other',
+    subOptions: [
+      { label: 'Other', value: PersonControlTypeE.Other }
+    ]
+  }
+]
+
+const search = useBcrosSearch()
 watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
   if (oldList.length === 0 && newList.length === 0) {
     return
@@ -151,19 +105,4 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
-:deep(.v-expansion-panel-text__wrapper) {
-  padding: 0;
-  background-color: transparent !important;
-}
-
-// NOTE: to match other selects
-:deep(.v-field__input), :deep(.v-field__append-inner), :deep(.v-field) {
-  cursor: pointer;
-}
-
-// NOTE: below should match base table styling
-:deep(.v-input__control .v-field--active.v-field--dirty .v-field__overlay) {
-  background-color: $blueSelected !important;
-}
 </style>

@@ -4,13 +4,11 @@ import { describe, expect, it } from 'vitest'
 import BaseDatePicker from '../../../src/components/base/datePicker/Index.vue'
 import DateRangePicker from '../../../src/components/bcros/DateRangePicker.vue'
 
-import { vuetify } from '../../setup'
-
 describe('BC Reg Date Range Picker tests', () => {
   let wrapper: VueWrapper<any>
 
   it('renders and displays the date range picker', () => {
-    wrapper = mount(DateRangePicker, { global: { plugins: [vuetify] } })
+    wrapper = mount(DateRangePicker)
     expect(wrapper.findComponent(DateRangePicker).exists()).toBe(true)
     // headers
     expect(wrapper.findAll('.date-selection__heading').length).toBe(2)
@@ -19,9 +17,9 @@ describe('BC Reg Date Range Picker tests', () => {
     // calendars
     expect(wrapper.findAllComponents(BaseDatePicker).length).toBe(2)
     // buttons
-    expect(wrapper.findAll('.date-selection-btn').length).toBe(2)
-    expect(wrapper.findAll('.date-selection-btn')[0].text()).toBe('OK')
-    expect(wrapper.findAll('.date-selection-btn')[1].text()).toBe('Cancel')
+    expect(wrapper.findAll('[data-cy="date-selection-btn"]').length).toBe(2)
+    expect(wrapper.findAll('[data-cy="date-selection-btn"]')[0].text()).toBe('OK')
+    expect(wrapper.findAll('[data-cy="date-selection-btn"]')[1].text()).toBe('Cancel')
     // no error validations
     expect(wrapper.vm.datePickerErr).toBe(false)
     expect(wrapper.findAll('.date-selection__heading.picker-err').length).toBe(0)
@@ -32,7 +30,7 @@ describe('BC Reg Date Range Picker tests', () => {
   it('Validates and submits the date range selections', async () => {
     wrapper = mount(DateRangePicker)
     // click okay + test validation
-    let submitButtons = wrapper.findAll('.date-selection-btn')
+    let submitButtons = wrapper.findAll('[data-cy="date-selection-btn"]')
     submitButtons[0].trigger('click')
     await flushPromises()
     expect(wrapper.vm.datePickerErr).toBe(true)
@@ -46,7 +44,7 @@ describe('BC Reg Date Range Picker tests', () => {
     // set start date only + test validation
     const startDate = new Date('2021-10-22')
     wrapper = mount(DateRangePicker, { props: { defaultStartDate: startDate } })
-    submitButtons = wrapper.findAll('.date-selection-btn')
+    submitButtons = wrapper.findAll('[data-cy="date-selection-btn"]')
     expect(wrapper.vm.startDate).toBe(startDate)
     // // should still trigger validation err
     submitButtons[0].trigger('click')
@@ -61,7 +59,7 @@ describe('BC Reg Date Range Picker tests', () => {
     // select end date and submit should emit values
     const endDate = new Date('2021-10-23')
     wrapper = mount(DateRangePicker, { props: { defaultStartDate: startDate, defaultEndDate: endDate } })
-    submitButtons = wrapper.findAll('.date-selection-btn')
+    submitButtons = wrapper.findAll('[data-cy="date-selection-btn"]')
     expect(wrapper.vm.startDate).toBe(startDate)
     expect(wrapper.vm.endDate).toBe(endDate)
     submitButtons[0].trigger('click')

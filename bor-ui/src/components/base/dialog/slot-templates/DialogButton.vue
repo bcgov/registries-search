@@ -1,12 +1,10 @@
 <template>
-  <v-btn
-    :class="[button.outlined ? 'btn-basic-outlined' : 'btn-basic', button.class || '']"
-    :color="button.color ? button.color : ''"
-    :variant="button.outlined ? 'outlined' : null"
+  <UButton
+    :class="['px-10 py-2', button.class || '']"
+    :color="button.color ? button.color : 'primary'"
+    :label="button.text"
     @click="handleClick()"
-  >
-    {{ button.text }}
-  </v-btn>
+  />
 </template>
 
 <script setup lang="ts">
@@ -23,7 +21,3 @@ const handleClick = () => {
   if (props.button.onClickClose) { emit('close') }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
-</style>

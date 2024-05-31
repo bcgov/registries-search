@@ -19,6 +19,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   const loading = ref(false)
   const loadingNext = ref(false)
   const isFilteringActive = ref(false)
+  const searchType = ref(SearchTypeE.PERSON)
   // access
   const accessLevel = ref(SearchAccessE.PUBLIC)
   const hasExtendedAccess = computed(() => accessLevel.value === SearchAccessE.EXTENDED)
@@ -47,7 +48,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   // search values
   const searchValue = ref('')
   const start = ref(0)
-  const exportRows = ref(1000)
+  const exportRows = ref('1000')
   const filters: Ref<SearchPayloadI> = ref(_.cloneDeep(STARTING_FILTERS))
   // search results
   const facetsResult: Ref<FacetsResultI> = ref({})
@@ -108,7 +109,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   /** Export search to file for download. */
   const exportSearch = async () => {
     const searchResp = await searchEntities(
-      searchValue.value, filters.value, exportRows.value, 0, true, accessLevel.value)
+      searchValue.value, filters.value, Number(exportRows.value), 0, true, accessLevel.value)
     if (searchResp && searchResp.error) {
       _searchErrorHandler(searchResp)
     }
@@ -225,6 +226,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     loading,
     loadingNext,
     isFilteringActive,
+    searchType,
     searchValue,
     start,
     exportRows,

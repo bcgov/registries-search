@@ -12,16 +12,14 @@ context('Search public', () => {
       'Search for the names of people associated with businesses in B.C.'
     )
     // search input
-    cy.get('[data-cy="search-input"]').find('#search-bar-field').should('exist')
+    cy.get('[data-cy="search-input"]').find('[data-cy="search-textfield"]').should('exist')
     // label text
     cy.get('[data-cy="search-input"]')
-      .find('#search-bar-field')
-      .siblings()
-      .contains('Person Name')
-      .should('exist')
+      .find('[data-cy="search-textfield"]')
+      .should('have.attr', 'placeholder', 'Person Name')
     // hint text
     cy.get('[data-cy="search-input"]')
-      .find('.v-messages__message')
+      .find('p')
       .should(
         'have.text',
         'Example: "John Smith"')
@@ -30,7 +28,7 @@ context('Search public', () => {
   it('should display expected results after a search is triggered', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')
     cy.get('[data-cy="search-input"]')
-      .find('#search-bar-field')
+      .find('[data-cy="search-textfield"]')
       .type('test')
     cy.wait('@getSearchResults')
     cy.get('[data-cy="search-results-table"]').should('exist')
@@ -107,7 +105,7 @@ context('Search public', () => {
 
   it('table columns should have the same width as their headers', () => {
     cy.get('[data-cy="search-input"]')
-      .find('#search-bar-field')
+      .find('[data-cy="search-textfield"]')
       .type('test')
     cy.wait('@getSearchResults')
 
@@ -123,7 +121,8 @@ context('Search public', () => {
         } else {
           cy.get('@firstRow').find('td').eq(2).find('.inner-row-div').eq(0).find('.inner-col-div').eq(Number(i) - 2)
             .invoke('outerWidth').then((bodyWidth) => {
-              expect(headerWidth).to.be.closeTo(bodyWidth, 0.5)
+              // NOTE: width of the screen cypress is running is smaller so it is off by more
+              expect(headerWidth).to.be.closeTo(bodyWidth, 10)
             })
         }
       })

@@ -2,31 +2,25 @@ export default defineNuxtConfig({
   app: {
     buildAssetsDir: '/src/',
     head: {
-      htmlAttrs: { dir: 'rtl', lang: 'fa' },
+      htmlAttrs: { dir: 'ltr' },
       link: [{ rel: 'icon', type: 'image/ico', href: '/src/assets/images/favicon.ico' }]
     }
   },
   devtools: { enabled: true },
   srcDir: 'src/',
   css: [
-    'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.css',
     '@/assets/styles/base.scss',
-    '@/assets/styles/layout.scss',
-    '@/assets/styles/overrides.scss'
+    '@/assets/styles/layout.scss'
   ],
-  // FUTURE: uncomment when adding in nuxtUI
-  // ui: {
-  //   safelistColors: ['gray', 'red', 'blue']
-  // },
-  build: {
-    transpile: ['vuetify']
+  ui: {
+    icons: ['mdi']
   },
   ssr: false,
   imports: {
     dirs: ['enums', 'interfaces', 'stores']
   },
-  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
+  modules: ['@nuxt/ui', '@nuxtjs/i18n', '@pinia/nuxt', '@nuxtjs/tailwindcss'],
   typescript: {
     tsConfig: {
       compilerOptions: {
@@ -35,7 +29,16 @@ export default defineNuxtConfig({
         strict: true
       }
     },
+    // NOTE: https://github.com/vuejs/language-tools/issues/3969
     typeCheck: false
+  },
+  i18n: {
+    lazy: true,
+    defaultLocale: 'en',
+    langDir: './lang',
+    locales: [
+      { code: 'en', file: 'en.json' }
+    ]
   },
   runtimeConfig: {
     public: {

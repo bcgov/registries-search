@@ -2,22 +2,20 @@ import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 import ContactInfo from '../../../src/components/bcros/ContactInfo.vue'
-
-import { vuetify } from '../../setup'
 import { RegistriesInfo } from '@/resources/contact-info'
 
 describe('ContactInfo tests', () => {
   it('Displays expected content', () => {
-    const wrapper = mount(ContactInfo, { props: { contacts: RegistriesInfo, global: { plugins: [vuetify] } } })
+    const wrapper = mount(ContactInfo, { props: { contacts: RegistriesInfo } })
 
     // verify content
     expect(wrapper.find('.contacts').exists()).toBe(true)
     const contacts = wrapper.findAll('.contacts__item')
     expect(contacts.length).toBe(RegistriesInfo.length)
     for (const i in contacts) {
-      expect(contacts[i].find('.contacts__item__icon').text()).toContain(RegistriesInfo[i].icon)
+      expect(contacts[i].find('[data-cy="contact-icon"]').attributes().class).toContain(RegistriesInfo[i].icon)
       expect(contacts[i].find('label').text()).toContain(RegistriesInfo[i].label)
-      expect(contacts[i].find('.contacts__item__value').text()).toContain(RegistriesInfo[i].value)
+      expect(contacts[i].find('[data-cy="contact-value"]').text()).toContain(RegistriesInfo[i].value)
     }
 
     wrapper.unmount()

@@ -5,7 +5,7 @@ context('filters extended - info', () => {
   it('should trigger a search with the expected payload when updating the filter', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')
     cy.get('[data-cy="search-input"]')
-      .find('#search-bar-field')
+      .find('[data-cy="search-textfield"]')
       .type('test')
     cy.wait('@getSearchResults')
     cy.get('[data-cy="search-results-table"]').should('exist')

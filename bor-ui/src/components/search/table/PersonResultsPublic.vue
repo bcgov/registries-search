@@ -41,11 +41,11 @@
         </div>
       </div>
     </template>
-    <template #item-slot-actions="{ item } : { item: SearchResultI }">
+    <!-- <template #item-slot-actions="{ item } : { item: SearchResultI }">
       <div class="h-full w-full px-3 pt-3 shadow-action-col-item">
         <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
       </div>
-    </template>
+    </template> -->
     <template v-if="searchError" #body-empty>
       <bcros-error-retry
         class="my-5"
@@ -59,8 +59,7 @@
 
 <script setup lang="ts">
 import {
-  CommonItemsAction, CommonItemsBusinessDetails,
-  CommonItemsName, CommonItemsCitizenship
+  CommonItemsBusinessDetails, CommonItemsName, CommonItemsCitizenship
 } from './common'
 
 const props = defineProps<{
@@ -88,9 +87,8 @@ onMounted(() => { props.updateTableHeaderFilters(headers) })
 const resetFiltersTrigger = ref(false)
 </script>
 <style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
 .child-row-item:not(:first-child) .inner-row-div {
-  border-top: 1px solid $gray3;
+  border-top: 1px solid theme('colors.gray.300');
   margin-top: 20px;
   padding-top: 20px;
 }

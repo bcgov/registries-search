@@ -1,15 +1,14 @@
 <template>
   <div>
-    <div v-if="icons" class="detail-icons-container">
-      <div v-for="icon in icons" :key="icon.src" class="detail-icon">
-        <v-tooltip
+    <div v-if="icons" class="flex space-x-1" data-cy="control-icons-container">
+      <div v-for="icon in icons" :key="icon.src">
+        <UTooltip
           :text="icon.tooltip"
+          :popper="{ placement: 'top' }"
           location="top"
         >
-          <template #activator="{ props }">
-            <img v-bind="props" :src="icon.src" :alt="icon.alt">
-          </template>
-        </v-tooltip>
+          <img :src="icon.src" :alt="icon.alt">
+        </UTooltip>
       </div>
     </div>
     <BaseDetailsInfoBox v-if="shares" :title="shares.title" :content="shares.content" />
@@ -65,14 +64,3 @@ if (localProps.role.relatedInterests) {
 }
 
 </script>
-
-<style lang="scss" scoped>
-.detail-icons-container {
-  display: flex;
-  flex-flow: wrap;
-}
-
-.detail-icon {
-  padding: 1px;
-}
-</style>

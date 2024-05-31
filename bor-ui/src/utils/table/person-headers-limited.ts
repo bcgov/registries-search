@@ -47,14 +47,14 @@ export const getPersonHeadersLimited = (): BaseTableHeaderI[] => {
         itemsFnVal: 'roleType',
         multiple: true,
         type: 'select',
-        value: null
+        value: []
       },
       hasFilter: true,
       hasSort: false,
       itemColspan: 5,
       slotId: 'roles',
       value: 'Roles',
-      width: '9%'
+      width: '17%'
     },
     {
       col: 'roles',
@@ -93,14 +93,14 @@ export const getPersonHeadersLimited = (): BaseTableHeaderI[] => {
         itemsFnVal: 'relatedState',
         multiple: true,
         type: 'select',
-        value: null
+        value: []
       },
       hasFilter: true,
       hasSort: false,
       itemColspan: 0,
       itemHidden: true,
       value: 'Business Status',
-      width: '9%'
+      width: '11%'
     },
     {
       col: 'roles',
@@ -117,14 +117,14 @@ export const getPersonHeadersLimited = (): BaseTableHeaderI[] => {
       itemHidden: true,
       value: 'Business Email',
       width: '13%'
-    },
-    {
-      col: '',
-      hasFilter: false,
-      hasSort: false,
-      slotId: 'actions',
-      value: '',
-      width: '10%'
     }
+    // {
+    //   col: '',
+    //   hasFilter: false,
+    //   hasSort: false,
+    //   slotId: 'actions',
+    //   value: '',
+    //   width: '10%'
+    // }
   ]
 }

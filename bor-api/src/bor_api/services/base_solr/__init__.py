@@ -111,6 +111,8 @@ class Solr:
                 headers = {'Content-Type': 'application/xml'}
                 response = session.post(url=url, data=xml_data, headers=headers, timeout=timeout)
             else:
+                current_app.logger.debug(
+                    f'Invalid function params: {method}, {query}, {params}, {json_data}, {xml_data}')
                 raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
             # check for error
             if response.status_code != HTTPStatus.OK:

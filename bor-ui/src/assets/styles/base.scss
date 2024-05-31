@@ -1,13 +1,4 @@
-@import 'theme.scss';
 @tailwind base;
-
-@layer base {
-  *,
-  ::before,
-  ::after {
-    @apply border-gray-700;
-  }
-}
 
 @font-face {
   font-family: 'BCSans';
@@ -52,334 +43,58 @@
 html,
 body {
   min-height: 100vh;
-}
-
-html {
-  font-family: "BCSans", Verdana, Arial, sans-serif !important;
-  // default font size (14px)
+  font-family: 'BCSans', Verdana, Arial, sans-serif;
   font-size: 0.875rem;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (min-width: 960px) {
-  html {
+  html,
+  body {
     // default font size (16px)
     font-size: 1rem;
   }
 }
 
-body {
-  font-size: 1rem;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  color: $gray9;
-}
-
-h1,
-h2 {
-  font-weight: 700;
-}
-
-h1 {
-  font-size: 2rem;
-  line-height: 2.25rem;
-}
-
-h2 {
-  font-size: 1.125rem;
-  letter-spacing: 0.25px;
-}
-
-h3 {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 2.25rem;
-}
-
-p {
-  font-weight: 400;
-}
-
-// application defaults
-.v-application {
-  font-family: 'BCSans', Verdana, Arial, sans-serif; // BC Government Font
-}
-
-.v-theme--bcgov.v-application {
-  background-color: $gray1;
-  color: $gray7;
-}
-
-// forms
-.form-input {
-  display: flex;
-  border: 1px solid $gray5;
-  width: 10rem;
-
-  .prefix {
-    flex: 0 0 auto;
-    width: 2.5rem;
-    padding: 0.5rem;
-    background-color: $gray1;
-    border-right: 1px solid $gray5;
-    text-align: center;
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-bcGovGray-900
   }
 
-  input,
-  select {
-    padding-left: 0.5rem;
-    height: 36px;
+  h1,
+  h2,
+  h3 {
+    @apply font-bold
   }
 
-  input {
-    flex: 1 1 auto;
-    width: 100%;
+  h1,
+  h2 {
+    @apply leading-9
   }
 
-  select {
-    flex: 1 1 auto;
-  }
-}
-
-// alignment helpers
-.no-wrap {
-  white-space: nowrap;
-}
-
-.pre-wrap {
-  white-space: pre-wrap;
-}
-
-.pre-line {
-  white-space: pre-line;
-}
-
-.align-center {
-  text-align: center !important;
-}
-
-.align-left {
-  text-align: left !important;
-}
-
-.align-right {
-  text-align: right !important;
-}
-
-// common border styles
-.border-btm {
-  border-bottom: 1px solid $gray3;
-}
-
-.border-tp {
-  border-top: 1px solid $gray3;
-}
-
-.rounded {
-  border-radius: 4px 4px 4px 4px;
-}
-
-.rounded-bottom {
-  border-radius: 0px 0px 4px 4px;
-}
-
-.rounded-top {
-  border-radius: 4px 4px 0px 0px;
-}
-
-// fade animations
-.fade-out {
-  animation: fadeOut 2s forwards;
-}
-
-// NB: 'fade enter' looks better without transition
-// .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-// .fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
+  h1 {
+    @apply text-3xl
   }
 
-  80% {
-    opacity: 1;
-    display: block;
+  h2 {
+    @apply text-lg
   }
 
-  100% {
-    opacity: 0;
-    display: none;
-    z-index: -5;
-  }
-}
-
-// Hides an element to all devices except screen readers
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
-// Vue Affix
-.vue-affix {
-  width: 282px;
-}
-
-// common error styles
-.v-application div.invalid-message {
-  border-left: 3px solid $error;
-}
-
-span.invalid-message {
-  color: $error;
-}
-
-// common tooltip styles
-.tooltip {
-
-  &__beta-version {
-    min-height: 0px !important;
-    padding: 0 !important;
-    top: 178px !important;
-    width: 475px !important;
+  h3 {
+    @apply text-base
   }
 
-  &__footer {
-    padding: 10px !important;
-    text-align: center;
-    width: 175px !important;
-  }
-}
-
-// common table header classes
-.min-column-lg {
-  min-width: 15.5rem;
-  width: 100%;
-}
-
-.min-column-md {
-  min-width: 13rem;
-  width: 100%;
-}
-
-.min-column-mdl {
-  min-width: 14rem;
-  width: 100%;
-}
-
-.min-column-mds {
-  min-width: 13rem;
-  width: 100%;
-  max-width: 13rem;
-}
-
-.min-column-mdxs {
-  min-width: 9rem;
-  width: 100%;
-}
-
-.min-column-sm {
-  max-width: 6rem;
-  min-width: 6rem;
-  width: 100%;
-}
-
-// vertical pipe for separating strings
-.vert-pipe {
-  margin-top: 0.1rem;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  height: 1rem;
-  border-left: 1px solid $gray6;
-}
-
-.app-blue {
-  color: $app-blue  !important;
-}
-
-.app-red {
-  color: $app-red  !important;
-}
-
-// class to auto-hide loading containers after 2 seconds
-.auto-fade-out {
-  animation: fadeOut 2s forwards;
-}
-
-// keyframes for auto-fade-out animation
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
+  p {
+    @apply font-normal;
   }
 
-  80% {
-    opacity: 1;
-    display: block;
+  // tables
+  td,
+  th {
+    @apply text-gray-900 text-sm
   }
-
-  100% {
-    opacity: 0;
-    display: none;
-    z-index: -5;
-  }
-}
-
-// font
-.font-16 {
-  font-size: $px-16;
-}
-
-.font-14 {
-  font-size: $px-14;
-}
-
-.font-normal {
-  color: $gray7;
-  font-weight: normal;
-}
-
-// buttons
-.btn-basic,
-.btn-basic:hover,
-.btn-basic-outlined,
-.btn-basic-outlined:hover {
-  font-weight: normal !important;
-  box-shadow: none;
-}
-
-.btn-basic {
-  background-color: $app-blue;
-  color: white;
-}
-.btn-basic:hover {
-  opacity: 0.9;
-}
-
-.btn-basic-outlined {
-  background-color: white;
-  border: 1px solid $app-blue;
-  color: $app-blue;
-}
-.btn-basic-outlined:hover {
-  background-color: $gray0 !important;
-}
-
-// lists
-.basic-list {
-  list-style: none;
 }

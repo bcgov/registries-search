@@ -1,39 +1,27 @@
 <template>
   <div class="rounded" data-cy="search-input">
-    <v-text-field
-      id="search-bar-field"
-      v-model="searchVal"
-      class="pt-2"
-      :append-inner-icon="'mdi-magnify'"
-      autocomplete="off"
-      :error-messages="showErrors ? searchErrorMsg : ''"
-      filled
-      :label="searchLabel"
-      :hint="searchHint"
-      persistent-hint
-      :rules="[v => (v || '' ).length <= 150 || 'Maximum 150 characters']"
-      @keyup="submitSearch()"
-      @keyup.enter="toggleErrorMsg()"
+    <UFormGroup :error="showErrors && searchErrorMsg" :help="searchHint">
+      <UInput
+        v-model="searchVal"
+        class="border-b-[1px]"
+        autocomplete="off"
+        :color="searchVal ? 'primary' : 'gray'"
+        :placeholder="searchLabel"
+        trailing
+        trailing-icon="i-mdi-magnify"
+        data-cy="search-textfield"
+        @keyup="submitSearch()"
+        @keyup.enter="toggleErrorMsg()"
+      />
+    </UFormGroup>
+    <URadioGroup
+      v-if="hasExtendedAccess || hasPublicAccess"
+      v-model="searchType"
+      class="mt-5 flex"
+      :options="searchTypeOptions"
+      :ui="{ fieldset: 'flex space-x-3' }"
+      data-cy="search-radios"
     />
-    <v-row v-if="hasExtendedAccess" class="mt-5 search-radios" no-gutters>
-      <v-col cols="auto">
-        <v-radio
-          v-model="facets.entityType.business"
-          color="primary"
-          density="compact"
-          disabled
-          label="Search Businesses"
-        />
-      </v-col>
-      <v-col class="ml-3" cols="auto">
-        <v-radio
-          v-model="facets.entityType.person"
-          color="primary"
-          density="compact"
-          label="Search People"
-        />
-      </v-col>
-    </v-row>
   </div>
 </template>
 
@@ -41,10 +29,14 @@
 import _ from 'lodash'
 
 const search = useBcrosSearch()
-const { accessLevel, hasExtendedAccess } = storeToRefs(search)
+const { accessLevel, hasExtendedAccess, hasPublicAccess, searchType } = storeToRefs(search)
 const searchErrorMsg = ref('')
 const searchHint = ref('')
 const searchLabel = ref('')
+const searchTypeOptions = [
+  { value: SearchTypeE.BUSINESS, label: 'Search Businesses' },
+  { value: SearchTypeE.PERSON, label: 'Search People' }
+]
 
 const searchVal = ref('')
 
@@ -83,54 +75,4 @@ watch(() => searchVal.value, () => {
 const toggleErrorMsg = () => {
   if (!searchVal.value.trim()) { showErrors.value = true }
 }
-
-// facets / checkbox stuff
-const facets = reactive({
-  entityType: {
-    business: false,
-    person: true
-  }
-})
-
-// use below if facet counts move to checkboxes
-// const checkboxLabelBusiness = computed(() => {
-//   if ((facets.entityType.business || !facets.entityType.person)) {
-//     return `Business (${facetCount('entityType', 'BUSINESS')})`
-//   }
-//   return 'Business'
-// })
-
-// const checkboxLabelPerson = computed(() => {
-//   if ((facets.entityType.person || !facets.entityType.business)) {
-//     return `Person (${facetCount('entityType', 'PERSON')})`
-//   }
-//   return 'Person'
-// })
-
-watch(() => facets.entityType, (val) => {
-  if (searchVal.value) { showErrors.value = false }
-
-  // not currently supporting searching both at once
-  if (val.business) {
-    search.filterSearch(['categories', 'entityType'], ['BUSINESS'])
-    return
-  }
-  // if (val.person)
-  search.filterSearch(['categories', 'entityType'], ['PERSON'])
-}, { deep: true })
 </script>
-
-<style lang="scss" scoped>
-@import '@/assets/styles/theme.scss';
-.search-radios {
-  height: 34px;
-  width: 385px;
-
-  :deep(.v-label) {
-    color: $gray7 !important;
-    font-size: 1rem;
-    font-weight: normal;
-    opacity: 1;
-  }
-}
-</style>

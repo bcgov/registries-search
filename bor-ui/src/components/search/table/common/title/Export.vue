@@ -1,38 +1,26 @@
 <template>
-  <v-row class="mt-3" no-gutters justify="end">
-    <v-col align-self="center" cols="auto">
-      <v-select
-        v-model="exportRows"
-        class="search-table__export-select pt-1 rounded-top"
-        density="default"
-        hide-details
-        :items="[50,100,250,500,1000,2000]"
-        label="Maximum results to export"
-        style="width: 225px;"
-        variant="underlined"
-      />
-    </v-col>
-    <v-col align-self="center" cols="auto">
-      <v-btn
-        class="search-table__export-rows-btn"
-        color="primary"
-        density="compact"
-        :loading="exportLoading"
-        prepend-icon="mdi-table-arrow-down"
-        :ripple="false"
-        variant="text"
-        @click="exportToXlsx()"
-      >
-        Export to .xlsx
-      </v-btn>
-    </v-col>
-  </v-row>
-  <v-snackbar :model-value="showExportSnack">
-    Search results successfully exported in the order displayed in the table.
-    <template #actions>
-      <v-btn icon="mdi-window-close" @click="showExportSnack = false" />
-    </template>
-  </v-snackbar>
+  <div class="flex mt-3">
+    <USelectMenu
+      v-model="exportRows"
+      color="primary"
+      :options="['50','100','250','500','1000','2000']"
+      place-holder="Maximum results to export"
+      :popper="{ offsetDistance: 0 }"
+      style="width: 225px;"
+      variant="none"
+      data-cy="table-export-select"
+    />
+    <UButton
+      class="px-4 hover:bg-inherit"
+      icon="i-mdi-table-arrow-down"
+      label="Export to .xlsx"
+      :loading="exportLoading"
+      loading-icon="i-mdi-loading"
+      variant="ghost"
+      data-cy="table-export-btn"
+      @click="exportToXlsx()"
+    />
+  </div>
 </template>
 <script setup lang="ts">
 import _ from 'lodash'
@@ -41,13 +29,17 @@ const search = useBcrosSearch()
 const { exportRows, searchError } = storeToRefs(search)
 
 const exportLoading = ref(false)
-const showExportSnack = ref(false)
+const toast = useToast()
 
 /** Export search results into an .xlsx download file. */
 const exportToXlsx = _.debounce(async () => {
   exportLoading.value = true
   await search.exportSearch()
   exportLoading.value = false
-  if (!searchError.value) { showExportSnack.value = true }
+  if (!searchError.value) {
+    toast.add({
+      title: 'Search results successfully exported in the order displayed in the table.'
+    })
+  }
 }, 50, { leading: true, trailing: false })
 </script>
