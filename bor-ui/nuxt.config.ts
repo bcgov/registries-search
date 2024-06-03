@@ -6,6 +6,9 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', type: 'image/ico', href: '/src/assets/images/favicon.ico' }]
     }
   },
+  colorMode: {
+    preference: 'light'
+  },
   devtools: { enabled: true },
   srcDir: 'src/',
   css: [
