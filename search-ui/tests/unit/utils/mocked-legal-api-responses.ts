@@ -12,6 +12,7 @@ export const mockedBusinessResp: LegalApiBusinessI = {
   goodStanding: true,
   hasRestrictions: false,
   identifier: 'CP1234567',
+  inDissolution: false,
   lastAddressChangeDate: '',
   lastAnnualGeneralMeetingDate: '',
   lastAnnualReportDate: '',

@@ -48,6 +48,7 @@ describe('Entity Factory tests', () => {
       legalType: null,
       name: '',
       goodStanding: true,
+      inDissolution: false,
       status: null,
       _error: null,
       _loading: false
