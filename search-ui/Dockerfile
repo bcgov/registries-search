@@ -1,4 +1,4 @@
-FROM node:16-buster as build-stage
+FROM node:20-buster as build-stage
 
 ARG VCS_REF="missing"
 ARG BUILD_DATE="missing"
