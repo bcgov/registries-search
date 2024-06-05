@@ -6,7 +6,6 @@ on:
     paths:
       - "search-ui/**"
 
-
 defaults:
   run:
     shell: bash
@@ -28,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.14.2]
+        node-version: [20.6.1]
 
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +48,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.14.2]
+        node-version: [20.6.1]
 
     steps:
       - uses: actions/checkout@v3
