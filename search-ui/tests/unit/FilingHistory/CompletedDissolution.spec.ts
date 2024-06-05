@@ -10,7 +10,8 @@ const bc_entity: EntityI = {
     legalType: BusinessTypes.BENEFIT_COMPANY,
     name: 'MY COMPANY',
     status: BusinessStatuses.ACTIVE,
-    goodStanding: true
+    goodStanding: true,
+    inDissolution: false
 }
 
 const cp_entity: EntityI = {
@@ -18,7 +19,8 @@ const cp_entity: EntityI = {
     legalType: BusinessTypes.COOPERATIVE_ASSOCIATION,
     name: 'MY COMPANY',
     status: BusinessStatuses.ACTIVE,
-    goodStanding: true
+    goodStanding: true,
+    inDissolution: false
 }
 
 

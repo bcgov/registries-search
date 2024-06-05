@@ -28,6 +28,7 @@ export const useEntity = () => {
     entity._error = null
     entity._loading = false
     entity.goodStanding = true
+    entity.inDissolution = false
   }
   const loadEntity = async (identifier: string) => {
     entity._loading = true
@@ -57,7 +58,8 @@ export const useEntity = () => {
       legalType: entityInfo.business.legalType,
       name: entityInfo.business.legalName,
       status: entityInfo.business.state,
-      goodStanding: entityInfo.business.goodStanding
+      goodStanding: entityInfo.business.goodStanding,
+      inDissolution: entityInfo.business.inDissolution
     }
     return resp_entity
   }
@@ -69,6 +71,7 @@ export const useEntity = () => {
     entity.name = newEntity.name
     entity.status = newEntity.status
     entity.goodStanding = newEntity.goodStanding
+    entity.inDissolution = newEntity.inDissolution
   }
 
   const isActive = computed(() => {
@@ -123,6 +126,9 @@ export const useEntity = () => {
 
   const warnings = computed(() => {
     const warnings = []
+    if (entity.inDissolution) {
+      warnings.push('INVOLUNTARY_DISSOLUTION')
+    }
     if (!entity.goodStanding) {
       warnings.push('NOT_IN_GOOD_STANDING')
     }

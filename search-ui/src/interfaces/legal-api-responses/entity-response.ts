@@ -11,6 +11,7 @@ export interface LegalApiBusinessI {
   goodStanding: boolean
   hasRestrictions: boolean
   identifier: string
+  inDissolution: boolean
   lastAddressChangeDate: string  // i.e. "2020-09-30"
   lastAnnualGeneralMeetingDate: string  // i.e. "2020-09-30"
   lastAnnualReportDate: string  // i.e. "2020-09-30"

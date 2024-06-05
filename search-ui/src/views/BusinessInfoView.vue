@@ -27,8 +27,29 @@
         <div v-if="warnings.length > 0">
           <span class="section-header">Alerts <span class="warnings-count">({{warnings.length}})</span></span>
           <div class="mt-4">
-            <v-expansion-panels class="warnings-list  pt-2 pb-2">
+            <v-expansion-panels class="warnings-list pt-2 pb-2">
               <v-expansion-panel v-for="(warning, index) in warnings" :key="index" class="expansion-panel">
+                <div v-if="warning == 'INVOLUNTARY_DISSOLUTION'">
+                  <v-expansion-panel-title class="expansion-panel__header">
+                    <template v-slot:actions="{ expanded }">
+                      <span class="expansion-panel-btn-text">View Details</span>
+                      <v-icon color="#1669BB" :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'">
+                      </v-icon>
+                    </template>
+                    <span>
+                      <v-icon color="#D3272C">mdi-alert</v-icon>
+                    </span>
+                    <span class="ml-2">This business is in the process of being dissolved</span>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text class="expansion-panel__text">
+                    This means that the business will be struck from the Corporate Registry in the near future.
+                    Furtuher action <strong>may</strong> be necessary by the business.
+                    <div class="expansion-panel-txt mt-2">
+                      For assistance, please contact BC Registries staff:
+                      <ContactInfo class="mt-2" :contacts="RegistriesInfo" />
+                    </div>
+                  </v-expansion-panel-text>
+                </div>
                 <div v-if="warning == 'NOT_IN_GOOD_STANDING'">
                   <v-expansion-panel-title class="expansion-panel__header">
                     <template v-slot:actions="{ expanded }">
@@ -518,6 +539,11 @@ const toggleFee = (event: any, item: any) => {
 
 :deep(.v-expansion-panel-title__overlay) {
   background-color: white;
+}
+
+// Keep the divider shown when one of two alerts is expanded (only if there's more than one)
+.v-expansion-panel--active:not(:first-child)::after, .v-expansion-panel--active + .v-expansion-panel::after {
+  opacity: 1;
 }
 
 .expansion-panel-btn-text {
