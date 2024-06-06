@@ -4,7 +4,7 @@ const webpack = require('webpack')
 process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = defineConfig({
-  transpileDependencies: true,
+  transpileDependencies: ['vuetify'],
   // configureWebpack: {
   //   performance: {
   //     hints: false
