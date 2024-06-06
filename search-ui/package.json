@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@mdi/font": "^6.1.95",
+    "@mdi/font": "6.1.95",
     "@sentry/tracing": "7.50.0",
     "@sentry/vue": "7.50.0",
     "axios": "0.26.1",
@@ -18,9 +18,9 @@
     "moment": "^2.29.3",
     "roboto-fontface": "*",
     "sbc-common-components": "^3.0.5",
-    "vue": "^3.2.13",
+    "vue": "3.2.13",
     "vue-hotjar": "^1.4.0",
-    "vue-router": "^4.0.3",
+    "vue-router": "4.0.3",
     "vuetify": "3.1.8",
     "vuex": "4.0.0",
     "vuex-composition-helpers": "2.0.3",
