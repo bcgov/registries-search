@@ -1,3 +1,4 @@
+export * from './bcrs-shared-corp-type-module'
 export * from './config-helper'
 export * from './jwt-helper'
 export * from './launchdarkly'

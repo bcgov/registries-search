@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref, watch, Ref, nextTick } from 'vue'
-import { FormIF } from '@bcrs-shared-components/interfaces'
+import { FormIF } from '@/interfaces'
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },

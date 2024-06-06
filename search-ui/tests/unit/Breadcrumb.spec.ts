@@ -1,7 +1,7 @@
 // external
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { Router } from 'vue-router'
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+import { BreadcrumbIF } from '@/interfaces'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // local
 import { RouteNames } from '@/enums'

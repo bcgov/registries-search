@@ -1,4 +1,4 @@
-import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+import { StaffPaymentIF } from '@/interfaces'
 import { ActionComps, FeeEntities } from '@/enums'
 import { FeeCodes } from '@/enums/fee-codes'
 import { ErrorI } from '@/interfaces'

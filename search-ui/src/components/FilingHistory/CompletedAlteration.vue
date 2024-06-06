@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import DateTooltip from '@/components/common/DateTooltip.vue'
 import { FilingHistoryItem } from '@/types'
-import { GetCorpFullDescription } from '@bcrs-shared-components/corp-type-module'
+import { GetCorpFullDescription } from '@/utils'
 import { computed } from '@vue/reactivity'
 
 

@@ -9,14 +9,11 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@bcrs-shared-components/breadcrumb": "^2.0.1",
-    "@bcrs-shared-components/corp-type-module": "1.0.6",
-    "@bcrs-shared-components/interfaces": "1.0.28",
     "@mdi/font": "^6.1.95",
-    "@sentry/tracing": "^7.50.0",
-    "@sentry/vue": "^7.50.0",
-    "axios": "^0.26.1",
-    "core-js": "^3.8.3",
+    "@sentry/tracing": "7.50.0",
+    "@sentry/vue": "7.50.0",
+    "axios": "0.26.1",
+    "core-js": "3.8.3",
     "http-status-codes": "^2.1.4",
     "moment": "^2.29.3",
     "roboto-fontface": "*",
@@ -24,10 +21,10 @@
     "vue": "^3.2.13",
     "vue-hotjar": "^1.4.0",
     "vue-router": "^4.0.3",
-    "vuetify": "^3.1.8",
-    "vuex": "^4.0.0",
-    "vuex-composition-helpers": "^2.0.3",
-    "vuex-module-decorators": "^2.0.0",
+    "vuetify": "3.1.8",
+    "vuex": "4.0.0",
+    "vuex-composition-helpers": "2.0.3",
+    "vuex-module-decorators": "2.0.0",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

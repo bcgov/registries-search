@@ -1,4 +1,4 @@
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+import { BreadcrumbIF } from '@/interfaces'
 import { RouteNames } from '@/enums'
 
 export const SearchHomeBreadCrumb: BreadcrumbIF = {
