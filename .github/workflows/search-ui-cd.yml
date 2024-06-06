@@ -13,10 +13,10 @@ on:
         required: true
         type: choice
         options:
-        - dev
-        - test
-        - sandbox
-        - prod
+          - dev
+          - test
+          - sandbox
+          - prod
       tagname:
         description: "Specify a previous version (git tag) to deploy"
         required: false
@@ -24,7 +24,7 @@ on:
 
 jobs:
   search-ui-cd:
-    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
+    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd-node20.yaml@main
     with:
       environment: ${{ inputs.environment }}
       tagname: ${{ inputs.tagname }}

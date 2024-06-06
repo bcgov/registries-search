@@ -20,7 +20,7 @@ module.exports = {
       'warn',
       { code: 120, ignoreRegExpLiterals: true, ignoreTrailingComments: true },
     ],
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    "no-console": ["error", { "allow": ["warn", "error", "info"] }],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     // 'prettier/prettier': [
