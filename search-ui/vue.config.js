@@ -20,21 +20,22 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
       })
     ],
-    rules: [
-      {
-        use: [
-          {
-            loader: 'thread-loader'
-          },
-          {
-            loader: 'ts-loader',
-            options: {
-              happyPackMode: true
+    module: {
+      rules: [
+        {
+          use: [
+            {
+              loader: 'thread-loader'
+            },
+            {
+              loader: 'ts-loader',
+              options: {
+                happyPackMode: true
+              }
             }
-          }
-        ]
-      },
-    ],
+          ]
+        },
+      ],
   },
   pluginOptions: {
     vuetify: {
