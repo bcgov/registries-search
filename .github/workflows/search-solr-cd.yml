@@ -35,7 +35,7 @@ jobs:
       name: "dev"
 
     env:
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID_SOLR }}
       NEW_VERSION: ${{ github.run_id }}${{ github.run_attempt }}
       ZONE: northamerica-northeast1-a
       SEARCH_API_URL: ${{ secrets.SEARCH_API_URL }}
@@ -52,7 +52,7 @@ jobs:
           create_credentials_file: true
           activate_credentials_file: true
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_SOLR }}
           access_token_lifetime: "3600s"
 
       - name: Setup - gcloud / gsutil
@@ -140,7 +140,7 @@ jobs:
       name: "${{ github.event.inputs.environment }}"
 
     env:
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID_SOLR }}
       NEW_VERSION: ${{ github.run_id }}${{ github.run_attempt }}
       SEARCH_API_URL: ${{ secrets.SEARCH_API_URL }}
       ZONE: northamerica-northeast1-a
@@ -161,7 +161,7 @@ jobs:
           create_credentials_file: true
           activate_credentials_file: true
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_ID }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_SOLR }}
           access_token_lifetime: "3600s"
 
       - name: Setup - gcloud / gsutil
