@@ -18,7 +18,7 @@ jobs:
     if: github.repository == 'bcgov/registries-search'
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: "true"
 
   linting:
@@ -27,55 +27,60 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.6.1]
+        node-version: [20]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: |
-          make setup
-      - name: Linting
-        run: |
-          make lint
+          node-version: ${{ matrix.node }}
 
-  testing-coverage:
+      - name: Install dependencies
+      - run: npm install
+
+      - name: Lint
+      - run: npm run lint
+
+  unit-testing:
     needs: setup-job
     runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        node-version: [20.6.1]
+        node-version: [20]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: |
-          make setup
-      - name: Test with Jest
-        id: test
-        run: |
-          make test
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     name: codecov-search-ui
-      #     fail_ci_if_error: true
+      steps:
+        - uses: actions/checkout@v4
+        - name: Setup node
+          uses: actions/setup-node@v4
+          with:
+            node-version: ${{ matrix.node }}
+
+        - name: Install dependencies
+        - run: npm install
+
+        - name: Test
+        - run: npm run test:unit
 
   build-check:
     needs: setup-job
     runs-on: ubuntu-20.04
 
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
-      - uses: actions/checkout@v3
-      - name: build to check strictness
-        id: build
-        run: |
-          make build-nc
+      - uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+      - run: npm install
+
+      - name: Build
+      - run: npm run build

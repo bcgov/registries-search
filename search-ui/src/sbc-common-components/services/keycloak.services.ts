@@ -232,11 +232,11 @@ class KeyCloakService {
     let refreshInMilliSeconds = (expiresIn * 1000) - refreshEarlyTimeinMilliseconds // in milliseconds
     console.info('[TokenServices] Token Refresh Scheduled in %s Seconds', (refreshInMilliSeconds / 1000))
     this.timerId = setTimeout(() => {
-      console.log('[TokenServices] Refreshing Token Attempt: %s ', ++this.counter)
+      console.info('[TokenServices] Refreshing Token Attempt: %s ', ++this.counter)
       this.kc!.updateToken(-1)
         .then(refreshed => {
           if (refreshed) {
-            console.log('Token successfully refreshed')
+            console.info('Token successfully refreshed')
             this.syncSessionStorage()
             this.scheduleRefreshToken(refreshEarlyTimeinMilliseconds)
           }

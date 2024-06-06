@@ -72,10 +72,10 @@ kcInit
           userInfo?.loginSource !== LoginSource.IDIR &&
           !currentUser?.userTerms?.isTermsOfUseAccepted
         ) {
-          console.log('[SignIn.vue]Redirecting. TOS not accepted')
+          console.info('[SignIn.vue]Redirecting. TOS not accepted')
           //redirectToPath(props.inAuth, Pages.USER_PROFILE_TERMS)
         } else if (isRedirectToCreateAccount) {
-          console.log('[SignIn.vue]Redirecting. No Valid Role')
+          console.info('[SignIn.vue]Redirecting. No Valid Role')
           switch (userInfo.loginSource) {
             case LoginSource.BCSC:
               redirectToPath(props.inAuth, Pages.CREATE_ACCOUNT)

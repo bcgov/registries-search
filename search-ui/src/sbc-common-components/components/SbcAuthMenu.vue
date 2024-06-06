@@ -136,7 +136,7 @@ const login = (idpHint: string) => {
 
         // if not from the sbc-auth, do the checks and redirect to sbc-auth
         if (!props.inAuth) {
-          console.log('[SignIn.vue]Not from sbc-auth. Checking account status')
+          console.info('[SignIn.vue]Not from sbc-auth. Checking account status')
           // redirect to create account page if the user has no 'account holder' role
           const isRedirectToCreateAccount = (
             userInfo.roles.includes(Role.PublicUser) && !userInfo.roles.includes(Role.AccountHolder))
@@ -144,10 +144,10 @@ const login = (idpHint: string) => {
           const currentUser = await getCurrentUserProfile(props.inAuth)
 
           if ((userInfo?.loginSource !== LoginSource.IDIR) && !(currentUser?.userTerms?.isTermsOfUseAccepted)) {
-            console.log('[SignIn.vue]Redirecting. TOS not accepted')
+            console.info('[SignIn.vue]Redirecting. TOS not accepted')
             redirectToPath(props.inAuth, Pages.USER_PROFILE_TERMS)
           } else if (isRedirectToCreateAccount) {
-            console.log('[SignIn.vue]Redirecting. No Valid Role')
+            console.info('[SignIn.vue]Redirecting. No Valid Role')
             switch (userInfo.loginSource) {
               case LoginSource.BCSC:
                 redirectToPath(props.inAuth, Pages.CREATE_ACCOUNT)
