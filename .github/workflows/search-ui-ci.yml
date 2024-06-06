@@ -37,10 +37,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-      - run: npm install
+        run: npm install
 
       - name: Lint
-      - run: npm run lint
+        run: npm run lint
 
   unit-testing:
     needs: setup-job
@@ -58,10 +58,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-      - run: npm install
+        run: npm install
 
       - name: Test
-      - run: npm run test:unit
+        run: npm run test:unit
 
   build-check:
     needs: setup-job
@@ -79,7 +79,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-      - run: npm install
+        run: npm install
 
       - name: Build
-      - run: npm run build
+        run: npm run build
