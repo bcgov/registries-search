@@ -1,6 +1,7 @@
 export * from './account-status'
 export * from './account-types'
 export * from './action-comps'
+export * from './bcrs-shared-enums'
 export * from './corp-type'
 export * from './corp-class'
 export * from './errorCategories'

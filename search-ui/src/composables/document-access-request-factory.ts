@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 
 import { DocumentType } from '@/enums'
-import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+import { StaffPaymentIF } from '@/interfaces'
 import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
 import { EntityI } from '@/interfaces/entity'
 import { getActiveAccessRequests, createDocumentAccessRequest, getDocument, fetchFilingDocument } from '@/requests'

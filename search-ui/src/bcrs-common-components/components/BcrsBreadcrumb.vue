@@ -38,7 +38,7 @@
 // External
 import { PropType } from 'vue'
 import { useRouter } from 'vue-router'
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+import { BreadcrumbIF } from '@/interfaces'
 
 const props = defineProps({
   breadcrumbs: { type: Array as PropType<BreadcrumbIF[]> }

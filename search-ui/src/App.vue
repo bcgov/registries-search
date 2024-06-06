@@ -58,7 +58,7 @@ import { StatusCodes } from 'http-status-codes'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { LoadingScreen, SbcFooter, SbcHeader } from '@/sbc-common-components'
 // Bcrs shared components
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+import { BreadcrumbIF } from '@/interfaces'
 // Local
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
 import { DialogOptionsI, ErrorI } from '@/interfaces'

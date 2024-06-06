@@ -8,7 +8,7 @@ import {
     GetCorpFullDescription,
     GetCorpInfoObject,
     GetCorpNumberedDescription
-} from '@bcrs-shared-components/corp-type-module'
+} from '@/utils'
 
 
 /** Returns True if item status is Cancelled. */

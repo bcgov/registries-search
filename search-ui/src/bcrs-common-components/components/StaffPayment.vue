@@ -100,7 +100,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref, watch, Ref } from 'vue'
-import { FormIF } from '@bcrs-shared-components/interfaces'
+import { FormIF } from '@/interfaces'
 import { StaffPaymentIF } from '../interfaces'
 import { StaffPaymentOptions } from '../enums'
 // local

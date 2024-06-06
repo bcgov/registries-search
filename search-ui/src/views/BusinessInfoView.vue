@@ -183,7 +183,7 @@
 import { onMounted, ref, Ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 // bcregistry
-import { StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+import { StaffPaymentIF } from '@/interfaces'
 // local
 import { StaffPayment } from '@/bcrs-common-components'
 import { BaseFeeCalculator, BaseDialog, ContactInfo } from '@/components'

@@ -3,7 +3,7 @@ import { RouteLocationNormalized } from 'vue-router'
 // External
 import { createRouter, createWebHistory, Router } from 'vue-router'
 // BC registry
-import { BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+import { BreadcrumbIF } from '@/interfaces'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { RouteNames } from '@/enums'
