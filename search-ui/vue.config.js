@@ -36,6 +36,7 @@ module.exports = defineConfig({
           ]
         },
       ],
+    }
   },
   pluginOptions: {
     vuetify: {
