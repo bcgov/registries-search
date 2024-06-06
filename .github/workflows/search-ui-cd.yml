@@ -29,7 +29,7 @@ jobs:
       target: ${{ inputs.environment }}
       node_version: "18.16.0"
       app_name: "registries-search-ui"
-      working_directory: "/search-ui"
+      working_directory: "search-ui"
     secrets:
       WORKLOAD_IDENTIFY_POOLS_PROVIDER: ${{ secrets.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
