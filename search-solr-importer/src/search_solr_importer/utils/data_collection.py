@@ -18,12 +18,20 @@ from flask import current_app
 from search_solr_importer import oracle_db
 
 
+def _get_stringified_list_for_sql(config_value: str) -> str:
+    """Return the values from the config in a format usable for the execute statement."""
+    if items := current_app.config.get(config_value, []):
+        return ','.join([f"'{x}'" for x in items]).replace(')', '')
+
+    return ''
+
+
 def collect_colin_data():
     """Collect data from COLIN."""
     current_app.logger.debug('Connecting to Oracle instance...')
     cursor = oracle_db.connection.cursor()
     current_app.logger.debug('Collecting COLIN data...')
-    cursor.execute("""
+    cursor.execute(f"""
         SELECT c.corp_num as identifier, c.corp_typ_cd as legal_type, c.bn_15 as tax_id,
             c.last_ar_filed_dt as last_ar_date, c.recognition_dts as founding_date, c.transition_dt,
             cn.corp_nme as legal_name, cp.business_nme as organization_name, cp.first_nme as first_name,
@@ -46,7 +54,7 @@ def collect_colin_data():
                 from corp_party
                 where end_event_id is null and party_typ_cd in ('FIO','FBO')
             ) cp on cp.corp_num = c.corp_num
-        WHERE c.corp_typ_cd not in ('BEN','CP','GP','SP')
+        WHERE c.corp_typ_cd not in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
             and cs.end_event_id is null
             and cn.end_event_id is null
             and cn.corp_name_typ_cd in ('CO', 'NB')
@@ -67,7 +75,7 @@ def collect_lear_data():
                             password=current_app.config.get('DB_PASSWORD'))
     cur = conn.cursor()
     current_app.logger.debug('Collecting LEAR data...')
-    cur.execute("""
+    cur.execute(f"""
         SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id,b.last_ar_date,
             b.founding_date,b.restoration_expiry_date,pr.role,
             p.first_name,p.middle_initial,p.last_name,p.organization_name,p.party_type,p.id as party_id,
@@ -76,7 +84,7 @@ def collect_lear_data():
             LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
                        AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
             LEFT JOIN parties p on p.id = pr.party_id
-        WHERE b.legal_type in ('BEN', 'CP', 'SP', 'GP')
+        WHERE b.legal_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
         """)
     return cur
 
@@ -91,7 +99,7 @@ def _collect_lear_data_gcp():
                             password=current_app.config.get('DB_PASSWORD'))
     cur = conn.cursor()
     current_app.logger.debug('Collecting LEAR data...')
-    cur.execute("""
+    cur.execute(f"""
         SELECT le.identifier,le.legal_name,le.entity_type as legal_type,le.founding_date,
             le.restoration_expiry_date,le.last_ar_date,alt.name as legal_name_alt,
             er.role_type as role,er.appointment_date,
@@ -122,7 +130,7 @@ def _collect_lear_data_gcp():
                     AND rle_alt.name_type = 'OPERATING'
                     AND rle_alt.end_date IS NULL
             LEFT JOIN colin_entities rle_colin ON rle_colin.id = er.related_colin_entity_id
-        WHERE le.entity_type in ('BEN', 'CP', 'SP', 'GP')
+        WHERE le.entity_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
             AND er.cessation_date IS NULL
         """)
     return cur
