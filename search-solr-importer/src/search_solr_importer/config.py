@@ -54,6 +54,8 @@ class Config():  # pylint: disable=too-few-public-methods
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
     PRELOADER_JOB = os.getenv('PRELOADER_JOB', 'False') == 'True'
 
+    MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
+
     # ORACLE - CDEV/CTST/CPRD
     ORACLE_USER = os.getenv('ORACLE_USER', '')
     ORACLE_PASSWORD = os.getenv('ORACLE_PASSWORD', '')
