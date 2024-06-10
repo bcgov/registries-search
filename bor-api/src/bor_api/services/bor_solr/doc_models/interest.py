@@ -17,6 +17,8 @@ from dataclasses import dataclass
 
 from bor_api.enums import InterestDetails
 
+from .interest_party import InterestParty
+
 
 @dataclass
 class Interest:
@@ -26,6 +28,7 @@ class Interest:
     directOrIndirect: str = None
     interestType: str = None
     otherReason: str = None
+    relatedParties: list[InterestParty] = None
     sharesExact: float = None
     sharesMax: float = None
     sharesMin: float = None

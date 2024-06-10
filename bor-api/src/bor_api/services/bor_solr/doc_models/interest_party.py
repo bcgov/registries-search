@@ -1,4 +1,4 @@
-# Copyright © 2023 Province of British Columbia
+# Copyright © 2024 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,10 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module manages the solr doc models."""
-from .address import Address
-from .date_range import DateRange
-from .entity import Entity
-from .entity_role import EntityRole
-from .interest import Interest
-from .interest_party import InterestParty
+# pylint: disable=invalid-name
+"""Manages dataclass for the solr interest party doc."""
+from dataclasses import dataclass
+
+
+@dataclass
+class InterestParty:
+    """Class representation for a solr interest party doc."""
+
+    interestPartyID: str  # maps to person uuid in BTR
+    interestPartyName: str = None

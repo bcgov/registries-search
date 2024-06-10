@@ -40,6 +40,7 @@ class Entity:
     externalInfluence: str = None  # enum (either influences another or is influenced by another)
     isPermanentResident: bool = None
     nationalities: list[str] = None
+    phoneNumber: str = None
     taxNumber: str = None
     taxResidencies: list[str] = None
     name_q: str = None

@@ -47,6 +47,7 @@ class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
     LEGAL_NAME = 'legalName'
     LEGAL_TYPE = 'legalType'
     NATIONALITIES = 'nationalities'
+    PHONE_NUMBER = 'phoneNumber'
     ROLES = 'roles'
     STATE = 'state'
     TAX_NUMBER = 'taxNumber'

@@ -25,6 +25,7 @@ idna==3.4
 itsdangerous==2.1.2
 launchdarkly-server-sdk==8.1.4
 packaging==23.1
+phonenumbers==8.13.38
 psycopg2-binary==2.9.6
 pyRFC3339==1.1
 pyasn1==0.5.0

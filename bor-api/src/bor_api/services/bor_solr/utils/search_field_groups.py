@@ -13,7 +13,9 @@
 # limitations under the License.
 """Manages Solr field groupings for a search."""
 from bor_api.enums import SearchAccessLevel
-from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
+from bor_api.services.bor_solr.fields import (AddressField, DateRangeField,
+                                              EntityField, EntityRoleField,
+                                              InterestField, InterestPartyField)
 
 
 ENTITY_PUBLIC: list[str] = [
@@ -23,8 +25,8 @@ ENTITY_PUBLIC: list[str] = [
 ]
 ENTITY_LIMITED: list[str] = [EntityField.ENTITY_ADDRESSES.value]
 ENTITY_EXTENDED: list[str] = [
-    EntityField.ALT_NAME.value, EntityField.EMAIL.value,
-    EntityField.IS_PR.value, EntityField.EXTERNAL_INFLUENCE.value,
+    EntityField.ALT_NAME.value, EntityField.EMAIL.value, EntityField.IS_PR.value,
+    EntityField.EXTERNAL_INFLUENCE.value, EntityField.PHONE_NUMBER.value,
     EntityField.TAX_NUMBER.value, EntityField.TAX_RESIDENCIES.value
 ]
 
@@ -47,8 +49,10 @@ DATE_RANGE: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value
 INTEREST: list[str] = [
     InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value,
     InterestField.OTHER_REASON.value, InterestField.SHARE_EXACT.value,
-    InterestField.SHARE_MAX.value, InterestField.SHARE_MIN.value, InterestField.TYPE.value
+    InterestField.SHARE_MAX.value, InterestField.SHARE_MIN.value,
+    InterestField.TYPE.value, InterestField.RELATED_PARTIES.value
 ]
+INTEREST_PARTY: list[str] = [InterestPartyField.UUID.value, InterestPartyField.NAME.value]
 
 
 def get_search_field_group(access_level: SearchAccessLevel) -> list[str]:
@@ -63,6 +67,6 @@ def get_search_field_group(access_level: SearchAccessLevel) -> list[str]:
     if access_level == SearchAccessLevel.EXTENDED:
         return ENTITY_PUBLIC + ROLE_PUBLIC \
             + ENTITY_LIMITED + ROLE_LIMITED + ADDRESS + DATE_RANGE \
-            + ENTITY_EXTENDED + ROLE_EXTENDED + INTEREST
+            + ENTITY_EXTENDED + ROLE_EXTENDED + INTEREST + INTEREST_PARTY
 
     return []

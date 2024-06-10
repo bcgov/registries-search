@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests to assure the Solr Services."""
-from bor_api.services.bor_solr.doc_models import Address, EntityRole, DateRange, Interest
+from bor_api.services.bor_solr.doc_models import Address, EntityRole, DateRange, Interest, InterestParty
 
 from .solr_helpers import create_entity
 
@@ -182,6 +182,7 @@ TEST_PERSONS = [
     create_entity(name='person nine',
                   alternate_name='significant individual alt',
                   email='nine@si9.com',
+                  phone_number='+1 (778) 445 7843',
                   tax_number='705 362 853',
                   entity_id='SI9',
                   nationalities=['CA', 'US', 'FR'],
@@ -201,7 +202,10 @@ TEST_PERSONS = [
                                     relatedState=TEST_BUSINESSES[6].state,
                                     roleType='SIGNIFICANT INDIVIDUAL',
                                     roleDates=[DateRange(start='2019-03-09T00:03:54Z')],
-                                    relatedInterests=[Interest(details='controlType.sharesOrVotes.registeredOwner', directOrIndirect='direct', interestType='shareholding', sharesMax=50, sharesMin=25)])],
+                                    relatedInterests=[
+                                        Interest(details='controlType.shares.registeredOwner', directOrIndirect='direct', interestType='shareholding', sharesMax=50, sharesMin=25),
+                                        Interest(details='controlType.shares.actingJointly', directOrIndirect='direct', interestType='shareholding', sharesMax=50, sharesMin=25, relatedParties=[InterestParty('1111', 'PartyName 1')]),
+                                        Interest(details='controlType.shares.inConcertControl', directOrIndirect='direct', interestType='shareholding', sharesMax=50, sharesMin=25, relatedParties=[InterestParty('2222', 'PartyName 2')])])],
                   addresses=[Address(addressCity='Vancouver',
                                      addressCountry='Canada',
                                      addressRegion='BC',
@@ -211,6 +215,7 @@ TEST_PERSONS = [
     create_entity(name='person ten y.z. xk',
                   alternate_name='s.i. rm',
                   email='ten@si.com',
+                  phone_number='+44 020 4750 3344',
                   tax_number='104 342 350',
                   entity_id='SI10',
                   nationalities=['CA'],
@@ -230,7 +235,9 @@ TEST_PERSONS = [
                                     relatedState=TEST_BUSINESSES[7].state,
                                     roleType='SIGNIFICANT INDIVIDUAL',
                                     roleDates=[DateRange(start='2020-11-09T00:03:54Z')],
-                                    relatedInterests=[Interest(details='controlType.sharesOrVotes.beneficialOwner', directOrIndirect='direct', interestType='voting', sharesMax=75, sharesMin=50)])],
+                                    relatedInterests=[
+                                        Interest(details='controlType.votes.beneficialOwner', directOrIndirect='direct', interestType='votingRights', sharesMax=75, sharesMin=50),
+                                        Interest(details='bla bla other reason', directOrIndirect='unknown', interestType='otherInfluenceOrControl')])],
                   addresses=[Address(addressCity='Victoria',
                                      addressCountry='Canada',
                                      addressRegion='BC',
@@ -241,6 +248,7 @@ TEST_PERSONS = [
     create_entity(name='p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./',
                   alternate_name='#special"char`',
                   email='eleven@si11.com',
+                  phone_number='+1 (250) 245 9804',
                   tax_number='111 442 356',
                   entity_id='SI11',
                   nationalities=['CA'],
@@ -254,7 +262,9 @@ TEST_PERSONS = [
                                     relatedState=TEST_BUSINESSES[7].state,
                                     roleType='SIGNIFICANT INDIVIDUAL',
                                     roleDates=[DateRange(start='2021-01-19T00:05:54Z')],
-                                    relatedInterests=[Interest(details='controlType.sharesOrVotes.beneficialOwner', directOrIndirect='direct', interestType='voting', sharesMax=50, sharesMin=25)])],
+                                    relatedInterests=[
+                                        Interest(details='controlType.votes.beneficialOwner', directOrIndirect='direct', interestType='votingRights', sharesMax=50, sharesMin=25),
+                                        Interest(details='controlType.directors.inConcertControl', directOrIndirect='direct', interestType='appointmentOfBoard', sharesMax=50, sharesMin=25, relatedParties=[InterestParty('3333', 'PartyName 3')])])],
                   addresses=[Address(addressCity='Vancouver',
                                      addressCountry='Canada',
                                      addressRegion='BC',

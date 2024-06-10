@@ -8,6 +8,7 @@ dpath
 flask-jwt-oidc
 gunicorn
 launchdarkly-server-sdk
+phonenumbers
 psycopg2-binary
 pycountry
 python-dotenv

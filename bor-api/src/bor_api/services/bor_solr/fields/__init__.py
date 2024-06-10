@@ -30,3 +30,4 @@ from .date_range import DateRangeField
 from .entity_role import EntityRoleField
 from .entity import EntityField
 from .interest import InterestField
+from .interest_party import InterestPartyField

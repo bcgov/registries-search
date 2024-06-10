@@ -159,7 +159,6 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
                         "schemeName": "ITN"
                     }
                 ],
-                "isComponent": False,
                 "isPermanentResidentCa": False,
                 "missingInfoReason": "",
                 "names": [
@@ -178,7 +177,12 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
                         "name": "Canada"
                     }
                 ],
-                "personType": "knownPerson",
+                "phoneNumber": {
+                    "countryCallingCode": "44",
+                    "countryCode2letterIso": "GB",
+                    "number": "2004567890",
+                    "extension": "123"
+                },
                 "placeOfResidence": {
                     "city": "Kelowna",
                     "country": {
@@ -190,25 +194,6 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
                     "locationDescription": "",
                     "postalCode": "V4V 1R8",
                     "region": "BC"
-                },
-                "publicationDetails": {
-                    "bodsVersion": "0.3",
-                    "publicationDate": "2024-02-23",
-                    "publisher": {
-                        "name": "BCROS - BC Registries and Online Services",
-                        "url": "https://www.bcregistry.gov.bc.ca/"
-                    }
-                },
-                "source": {
-                    "assertedBy": [
-                        {
-                            "name": "Hrvoje Fekete"
-                        }
-                    ],
-                    "description": "Using Gov BC - BTR - Web UI",
-                    "type": [
-                        "selfDeclaration"
-                    ]
                 },
                 "statementDate": "2024-02-07",
                 "statementID": "7f0511ba-9621-4134-8363-462c61b9162a",
@@ -222,43 +207,91 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
             },
             "interests": [
                 {
-                    "details": "controlType.sharesOrVotes.registeredOwner",
+                    "details": "controlType.directors.directControl",
+                    "directOrIndirect": "direct",
+                    "startDate": "2024-02-07",
+                    "type": "appointmentOfBoard"
+                },
+                {
+                    "details": "controlType.directors.inConcertControl",
+                    "directOrIndirect": "direct",
+                    "startDate": "2024-02-07",
+                    "type": "appointmentOfBoard",
+                    "connectedIndividuals": [{ "uuid": "111-feknfvn-3432dgg", "legalName": "Name One" }],
+                },
+                {
+                    "details": "controlType.directors.actingJointly",
+                    "directOrIndirect": "direct",
+                    "startDate": "2024-02-07",
+                    "type": "appointmentOfBoard",
+                    "connectedIndividuals": [{ "uuid": "222-feknfvn-3432dgg", "legalName": "Name Two" }],
+                },
+                {
+                    "details": "controlType.votes.registeredOwner",
                     "directOrIndirect": "direct",
                     "share": {
                         "exclusiveMaximum": False,
-                        "maximum": 45
+                        "maximum": 50,
+                        "minimum": 25
                     },
                     "startDate": "2024-02-07",
                     "type": "votingRights"
                 },
                 {
-                    "details": "controlType.sharesOrVotes.registeredOwner",
+                    "details": "controlType.votes.indirectControl",
+                    "directOrIndirect": "indirect",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 50,
+                        "minimum": 25
+                    },
+                    "startDate": "2024-02-07",
+                    "type": "votingRights"
+                },
+                {
+                    "details": "controlType.votes.inConcertControl",
                     "directOrIndirect": "direct",
                     "share": {
                         "exclusiveMaximum": False,
-                        "maximum": 33
+                        "maximum": 50,
+                        "minimum": 25
+                    },
+                    "startDate": "2024-02-07",
+                    "connectedIndividuals": [{ "uuid": "333-feknfvn-3432dgg", "legalName": "Name Three" }],
+                    "type": "votingRights"
+                },
+                {
+                    "details": "controlType.shares.registeredOwner",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 75,
+                        "minimum": 50
                     },
                     "startDate": "2024-02-07",
                     "type": "shareholding"
                 },
                 {
-                    "details": "controlType.sharesOrVotes.indirectControl",
+                    "details": "controlType.shares.indirectControl",
                     "directOrIndirect": "indirect",
                     "share": {
                         "exclusiveMaximum": False,
-                        "maximum": 45
+                        "maximum": 75,
+                        "minimum": 50
                     },
                     "startDate": "2024-02-07",
-                    "type": "votingRights"
+                    "type": "shareholding"
                 },
                 {
-                    "details": "controlType.sharesOrVotes.indirectControl",
-                    "directOrIndirect": "indirect",
+                    "details": "controlType.shares.actingJointly",
+                    "directOrIndirect": "direct",
                     "share": {
                         "exclusiveMaximum": False,
-                        "maximum": 33
+                        "maximum": 75,
+                        "minimum": 50
                     },
                     "startDate": "2024-02-07",
+                    "connectedIndividuals": [{ "uuid": "444-feknfvn-3432dgg", "legalName": "Name Four" }],
                     "type": "shareholding"
                 },
                 {

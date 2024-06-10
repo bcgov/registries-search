@@ -12,12 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Data conversion methods for party."""
-from bor_api.services.bor_solr.doc_models import DateRange, Entity, EntityRole, Interest
+from flask import current_app
+from phonenumbers import PhoneNumberFormat, parse, format_number
+
+from bor_api.services.bor_solr.doc_models import DateRange, Entity, EntityRole, Interest, InterestParty
 
 from .address import get_btr_address, get_lear_addresses
 
 
-def get_lear_party_name(officer: dict[str, str]) -> str:
+def _get_btr_phone_number(party: dict[str, dict | str]) -> str:
+    """Return the stringified formatted phone number from the BTR phone dict."""
+    if (phone_info := party.get('phoneNumber')) and (number := phone_info.get('number')):
+        if country_number := phone_info.get('countryCallingCode', ''):
+            country_number = f'+{country_number}'.replace('++', '+')
+        if extension := phone_info.get('extension', ''):
+            extension = f'#{extension}'.replace('##', '#')
+
+        if (country_iso := phone_info.get('countryCode2letterIso') or None) or country_number:
+            try:
+                phone_number_obj = parse(country_number+number, country_iso)
+                # NOTE: this will return an unformatted string if the area code is invalid for the country
+                number = format_number(phone_number_obj, PhoneNumberFormat.NATIONAL)
+
+            except Exception as err:  # noqa: B902
+                current_app.logger.debug('phone_info: %s', phone_info)
+                current_app.logger.warning('Failed to parse phone number: %s', err)
+
+        return f'{country_number} {number} {extension}'.strip()
+
+    return None
+
+
+def _get_lear_party_name(officer: dict[str, str]) -> str:
     """Return the parsed name of the party from LEAR party officer format."""
     if officer.get('organizationName'):
         return officer['organizationName'].strip()
@@ -37,7 +63,7 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
     if delivery_address_info := party_info.get('deliveryAddress'):
         addresses = get_lear_addresses([delivery_address_info], 'DELIVERY')
 
-    name = get_lear_party_name(party_info['officer'])
+    name = _get_lear_party_name(party_info['officer'])
     # NOTE: business parties are being ignored for now
     entity_type = 'PERSON' if party_info['officer']['partyType'] == 'person' else 'BUSINESS'
 
@@ -72,13 +98,19 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
     return entities
 
 
-def get_btr_owner(owner_info: dict, business: Entity):
+def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
     """Return the owner info as an Entity."""
     interests = []
     for interest_info in owner_info.get('interests', []):
-        interests.append(Interest(details=interest_info.get('details'),
+        interest_parties = [
+            InterestParty(interestPartyID=x['uuid'], interestPartyName=x.get('legalName') or None)
+            for x in interest_info.get('connectedIndividuals', [])
+        ]
+
+        interests.append(Interest(details=interest_info.get('details') or None,
                                   directOrIndirect=interest_info.get('directOrIndirect') or None,
                                   interestType=interest_info.get('type') or None,
+                                  relatedParties=interest_parties or None,
                                   sharesExact=interest_info.get('share', {}).get('exact') or None,
                                   sharesMax=interest_info.get('share', {}).get('maximum') or None,
                                   sharesMin=interest_info.get('share', {}).get('minimum') or None))
@@ -110,6 +142,7 @@ def get_btr_owner(owner_info: dict, business: Entity):
                   birthDate=party.get('birthDate'),
                   isPermanentResident=party.get('isPermanentResidentCa'),
                   nationalities=[country.get('code') for country in party.get('nationalities', [])],
+                  phoneNumber=_get_btr_phone_number(party),
                   taxNumber=tax_number,
                   taxResidencies=[country.get('code') for country in party.get('taxResidencies', [])],
                   email=party.get('email'),

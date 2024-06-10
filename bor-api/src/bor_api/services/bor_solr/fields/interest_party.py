@@ -24,23 +24,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Manages interest doc fields for BOR solr."""
+"""Manages interest party doc fields for BOR solr."""
 from bor_api.enums.base import BaseEnum
 
 
-class InterestField(BaseEnum):  # pylint: disable=too-few-public-methods
-    """Enum of the interest fields available in the BOR solr search core."""
+class InterestPartyField(BaseEnum):  # pylint: disable=too-few-public-methods
+    """Enum of the interest party fields available in the BOR solr search core."""
 
     # unique key for all docs
     UNIQUE_KEY = 'id'
-    # interest doc stored fields
-    TYPE = 'interestType'
-    DETAILS = 'details'
-    DIRECT_INDIRECT = 'directOrIndirect'
-    OTHER_REASON = 'otherReason'
-    RELATED_PARTIES = 'relatedParties'
-    SHARE_EXACT = 'sharesExact'
-    SHARE_MAX = 'sharesMax'
-    SHARE_MIN = 'sharesMin'
+    # interest party doc stored fields
+    UUID = 'interestPartyID'
+    NAME = 'interestPartyName'
     # common built in across docs
     SCORE = 'score'
