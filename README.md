@@ -1,4 +1,4 @@
-# Registries Search
+# Registries Search [![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](<Redirect-URL>)
 BC Registry's business search service
 ## search-ui
 UI portion for registries search. Contains user facing registries searching and results components.
