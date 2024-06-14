@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { searchEntities } from '@/requests'
 
 const STARTING_FILTERS = {
   query: { roles: { roleDates: {} } },
@@ -108,7 +107,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   /** Export search to file for download. */
   const exportSearch = async () => {
-    const searchResp = await searchEntities(
+    const searchResp = await useSearchApi().searchEntities(
       searchValue.value, filters.value, Number(exportRows.value), 0, true, accessLevel.value)
     if (searchResp && searchResp.error) {
       _searchErrorHandler(searchResp)
@@ -135,7 +134,9 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
       filters.value[path[0]][path[1]][path[2]] = val
     }
 
-    if (searchValue.value) { await getSearchResults(searchValue.value, increasingScope) }
+    if (searchValue.value) {
+      await getSearchResults(searchValue.value, increasingScope)
+    }
   }
 
   /** Get next batch of results from the api and update the results. */
@@ -143,7 +144,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     if (!hasMoreResults.value) { return }
     loadingNext.value = true
     // search
-    const searchResp = await searchEntities(
+    const searchResp = await useSearchApi().searchEntities(
       searchValue.value, filters.value, rows, start.value + 1, false, accessLevel.value)
     if (searchResp) {
       if (!searchResp.error) {
@@ -169,7 +170,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     // special case for query/roles/value
     isFilteringActive.value = hasActiveFilter() || !!filters.value?.query?.roles?.value
     if (results.value === null) { results.value = [] }
-    const searchResp = await searchEntities(val, filters.value, rows, 0, false, accessLevel.value)
+    const searchResp = await useSearchApi().searchEntities(val, filters.value, rows, 0, false, accessLevel.value)
     if (searchResp) {
       if (searchResp.error) {
         _searchErrorHandler(searchResp)

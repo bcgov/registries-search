@@ -1,9 +1,12 @@
 export default defineNuxtConfig({
+  extends: [
+    ['github:bcgov/business-dashboard-ui#main', { install: true }]
+  ],
   app: {
     buildAssetsDir: '/src/',
     head: {
       htmlAttrs: { dir: 'ltr' },
-      link: [{ rel: 'icon', type: 'image/ico', href: '/src/assets/images/favicon.ico' }]
+      link: [{ rel: 'icon', type: 'image/ico', href: '/favicon.ico' }]
     }
   },
   colorMode: {
@@ -64,7 +67,9 @@ export default defineNuxtConfig({
       appEnv: `${process.env.VUE_APP_POD_NAMESPACE || 'unknown'}`,
       requireLogin: process.env.VUE_APP_REQUIRE_LOGIN === 'true' || false,
       searchRows: `${process.env.VUE_APP_SEARCH_ROWS || ''}`,
-      version: process.env.npm_package_version || ''
+      version: process.env.npm_package_version || '',
+      appName: process.env.npm_package_name || '',
+      appNameDisplay: 'BCROS Search'
     }
   }
 })

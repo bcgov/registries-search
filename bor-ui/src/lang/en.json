@@ -1,36 +1,45 @@
 {
-  "breadcrumbs": {
-    "beneficialOwnerChange": "Significant Individual Change",
-    "businessDashboard": "My Business Registry",
-    "myRegDetails": "My BC Registries Details",
-    "registryDashboard": "BC Registries Dashboard"
-  },
-  "labels": {
-    "services": {
-      "bcsc": "BC Services Card",
-      "bceid": "BCeID",
-      "idir": "IDIR"
+  "label": {
+    "control": {
+      "actingJointly": "Acting jointly",
+      "beneficialOwner": "Beneficial Owner",
+      "directControl": "Direct Control",
+      "directorControl": "Control of Directors",
+      "directors": "Directors",
+      "inConcert": "Acting in concert",
+      "indirectControl": "Indirect Control",
+      "other": "Other",
+      "registeredOwner": "Registered Owner",
+      "shareControl": "Control of Shares",
+      "shares": "Shares",
+      "significantInfluence": "Significant Influence",
+      "voteControl": "Control of Votes",
+      "votes": "Votes",
+      "icon": {
+        "beneficialOwner": "Beneficial owner of shares or votes",
+        "directControl": "Direct control of directors",
+        "indirectControl": "Indirect control of shares or votes",
+        "indirectControlDir": "Indirect control of directors",
+        "registeredOwner": "Registered owner of shares or votes",
+        "significantInfluence": "Significant influence of directors"
+      }
     }
   },
-  "header": {
-    "title": "BC Registry and Online Services",
-    "buttons": {
-      "createAccount": "Create account"
-    },
-    "menus": {
-      "headers": {
-        "accountSettings": "Account Settings",
-        "selectLogin": "Select log in method",
-        "switchAccount": "Switch Account"
-      },
-      "labels": {
-        "accountInfo": "Account Info",
-        "createAccount": "Create Account",
-        "editProfile": "Edit Profile",
-        "logOut": "Log Out",
-        "teamMembers": "Team Members",
-        "transactions": "Transactions"
+  "text": {
+    "control": {
+      "percentage": "At least {min}% and up to {max}%",
+      "icon": {
+        "beneficialOwner": "Beneficial owner (e.g., through a trust)",
+        "directControl": "Direct control",
+        "indirectControl": "Indirect control (e.g., through another business)",
+        "other": "Any other reason(s) this individual is a significant individual",
+        "registeredOwner": "Registered owner",
+        "significantInfluence": "Significant influence control"
       }
+    },
+    "table": {
+      "defaultSelected": "1 Selected",
+      "multiple": "Multiple"
     }
   }
 }

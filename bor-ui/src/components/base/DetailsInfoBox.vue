@@ -1,11 +1,13 @@
 <template>
   <div>
-    <p v-if="title" class="title">
+    <strong v-if="title" class="title">
       {{ title }}
-    </p>
-    <p v-if="content" data-cy="content">
-      {{ content }}
-    </p>
+    </strong>
+    <slot name="content">
+      <p v-if="content" data-cy="content">
+        {{ content }}
+      </p>
+    </slot>
   </div>
 </template>
 
@@ -18,9 +20,6 @@ defineProps<{
 
 <style lang="scss" scoped>
 .title {
-  letter-spacing: 0.05rem;
-  font-weight: bold;
-  font-size: smaller;
-  font-style: italic;
+  @apply tracking-wider font-bold text-[smaller] italic;
 }
 </style>

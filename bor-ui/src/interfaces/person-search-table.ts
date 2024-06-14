@@ -1,13 +1,14 @@
-import { SearchIconsE } from '@/enums/search-icons-e'
-
 export interface ControlColumnIconI {
-  src: SearchIconsE
+  src: string
   alt: string
   tooltip: string
   displayName: string
 }
 
 export interface ControlColumnDetailsInfoBoxI {
-  title: string,
-  content: string
+  title: string
+  icons: ControlColumnIconI[]
+  content?: string
+  actingJointlyNames?: string[]
+  inConcertNames?: string[]
 }

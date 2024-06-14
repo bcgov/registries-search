@@ -60,19 +60,19 @@
       <div v-for="role, i in item.roles" :key="'child-role-' + i" class="child-row-item">
         <div class="inner-row-div flex w-full">
           <div
-            class="inner-col-div pl-3"
+            class="inner-col-div"
             :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
           >
             <CommonItemsBusinessDetails :role="role" />
           </div>
-          <div class="inner-col-div pl-3" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+          <div class="inner-col-div pl-1" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
             {{ capFirstLetter(`${role.roleType}`) }}
           </div>
-          <div class="inner-col-div pl-3" :style="{ width: getChildHeaderWidth(headers, 'Details', childHeaders) }">
+          <div class="inner-col-div pl-2" :style="{ width: getChildHeaderWidth(headers, 'Details', childHeaders) }">
             <CommonItemsPersonControl :role="role" />
           </div>
           <div
-            class="inner-col-div pl-3 mr-0"
+            class="inner-col-div mr-0"
             :style="{ width: getChildHeaderWidth(headers, 'Effective Dates', childHeaders) }"
           >
             <CommonItemsEffectiveDates :role="role" />

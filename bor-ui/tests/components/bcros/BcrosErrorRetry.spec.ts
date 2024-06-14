@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 
-import ContactInfo from '../../../src/components/bcros/ContactInfo.vue'
-import ErrorRetry from '../../../src/components/bcros/ErrorRetry.vue'
+import { BcrosContactInfo, BcrosErrorRetry } from '#components'
 
 describe('ErrorRetry tests', () => {
   let wrapper: VueWrapper<any>
@@ -11,7 +10,7 @@ describe('ErrorRetry tests', () => {
   const customMsg = 'test msg'
 
   beforeEach(() => {
-    wrapper = mount(ErrorRetry, {
+    wrapper = mount(BcrosErrorRetry, {
       props: {
         action: (var1: number, var2: number) => (testVar = var1 + var2),
         actionArgs: [1, 2],
@@ -20,20 +19,20 @@ describe('ErrorRetry tests', () => {
     })
   })
   it('renders ErrorRetry', () => {
-    expect(wrapper.find('.error-retry').exists()).toBe(true)
-    expect(wrapper.find('.error-retry__custom-msg').exists()).toBe(true)
-    expect(wrapper.find('.error-retry__base-msg').exists()).toBe(true)
-    expect(wrapper.find('.error-retry__btn').exists()).toBe(true)
-    expect(wrapper.findComponent(ContactInfo).exists()).toBe(true)
+    expect(wrapper.find('[data-cy="error-retry"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="error-retry-custom-msg"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="error-retry-base-msg"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="error-retry-btn"]').exists()).toBe(true)
+    expect(wrapper.findComponent(BcrosContactInfo).exists()).toBe(true)
   })
 
   it('sets given options', () => {
-    expect(wrapper.find('.error-retry__custom-msg').text()).toContain(customMsg)
+    expect(wrapper.find('[data-cy="error-retry-custom-msg"]').text()).toContain(customMsg)
   })
 
   it('given button action works as expected', async () => {
     expect(testVar).toBe(0)
-    wrapper.find('.error-retry__btn').trigger('click')
+    wrapper.find('[data-cy="error-retry-btn"]').trigger('click')
     await new Promise(resolve => setTimeout(resolve, 2000))
     expect(testVar).toBe(3)
   })

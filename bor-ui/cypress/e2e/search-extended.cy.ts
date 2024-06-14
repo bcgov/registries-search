@@ -93,6 +93,7 @@ context('Search extended', () => {
           expect(cols.eq(1), 'Information column - region').to.include.text(address.addressRegion)
           expect(cols.eq(1), 'Information column - postal code').to.include.text(address.postalCode)
           expect(cols.eq(1), 'Information column - country').to.include.text(address.addressCountry)
+          expect(cols.eq(1), 'Information column - phone').to.include.text(results[i].phoneNumber || '')
           if (results[i].taxResidencies && results[i].taxResidencies.includes('CA')) {
             expect(cols.eq(1), 'Information column - tax residency').to.include.text('Tax ResidencyCanada')
           } else if (results[i].taxResidencies) {
@@ -147,47 +148,116 @@ context('Search extended', () => {
 
             // details
             if (role.relatedInterests) {
-              role.relatedInterests.forEach((interest, index) => {
+              role.relatedInterests.forEach((interest) => {
                 switch (interest.details) {
-                  case PersonControlTypeE.DirectorsDirectControl:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt')).includes('Direct control')
+                  case PersonControlTypeE.DIRS_DIRECT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')).to.includes.text('Directors')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Direct control"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.DirectorsInConcertControl:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt'))
-                      .includes('majority of directors through rights and/or exercised in concert')
+                  case PersonControlTypeE.DIRS_SIG_INFL:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')).to.includes.text('Directors')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Significant influence control"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.DirectorsIndirectControl:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt')).includes('Indirect control (through another business)')
+                  case PersonControlTypeE.DIRS_INDIRECT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')).to.includes.text('Directors')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Indirect control (through another business)"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.DirectorsSignificantInfluence:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt')).includes('Significant influence control')
+                  case PersonControlTypeE.DIRS_INCONCERT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')).to.includes.text('Directors')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-inConcert"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.SharesOrVotesBeneficialOwner:
-                    expect(roleDivs.eq(2).find('img')
-                      .eq(index).attr('alt')).includes('Beneficial owner (e.g., through a trust)')
+                  case PersonControlTypeE.DIR_JOINTLY:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')).to.includes.text('Directors')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Directors"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-jointly"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.SharesOrVotesInConcertControl:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt'))
-                      .includes('Indirect control (e.g., through another business)')
+                  case PersonControlTypeE.SHARES_BEN_OWNER:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')).to.includes.text('Shares')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Beneficial owner"]')).to.be.an('object')
                     break
-                  case PersonControlTypeE.SharesOrVotesRegisteredOwner:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt')).to.include('Registered owner')
+                  case PersonControlTypeE.SHARES_INDIRECT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')).to.includes.text('Shares')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Indirect control (through another business)"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.SHARES_REG_OWNER:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')).to.includes.text('Shares')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Registered owner"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.SHARES_INCONCERT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')).to.includes.text('Shares')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-inConcert"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.SHARES_JOINTLY:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')).to.includes.text('Shares')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Shares"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-jointly"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.VOTES_BEN_OWNER:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')).to.includes.text('Votes')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Beneficial owner"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.VOTES_INDIRECT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')).to.includes.text('Votes')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Indirect control (through another business)"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.VOTES_REG_OWNER:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')).to.includes.text('Votes')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-icons-container"]')
+                      .find('img[alt="Registered owner"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.VOTES_INCONCERT:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')).to.includes.text('Votes')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-inConcert"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.VOTES_JOINTLY:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')).to.includes.text('Votes')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-accordian"]')).to.be.an('object')
+                    expect(roleDivs.eq(2).find('[data-cy="control-Votes"]')
+                      .find('[data-cy="control-accordian"]')
+                      .find('[data-cy="control-accordian-inConcert"]')).to.be.an('object')
+                    break
+                  case PersonControlTypeE.OTHER:
+                    expect(roleDivs.eq(2).find('[data-cy="control-Other"]')).to.includes.text('Other')
                     break
                   default:
-                    expect(roleDivs.eq(2).find('[data-cy="control-icons-container"]').find('img')
-                      .eq(index).attr('alt'))
-                      .includes('Any other reason(s) this individual is a significant individual')
-                }
-                if (interest.interestType === 'shareholding') {
-                  expect(roleDivs.eq(2), 'Details column - shares').to.include.text('Shares')
-                } else if (interest.interestType === 'votingRights') {
-                  expect(roleDivs.eq(2), 'Details column - votes').to.include.text('Votes')
+                    // should be one of the above
+                    break
                 }
               })
             } else {

@@ -1,78 +1,71 @@
-import { PersonControlTypeE } from '@/enums/person-control-type-e'
-import { SearchIconsE } from '@/enums/search-icons-e'
-import type { ControlColumnIconI } from '@/interfaces/person-search-table'
+import { type ControlColumnIconI, PersonControlTypeE } from '#imports'
 
 export const convertDetailsToIcon = (details: string): ControlColumnIconI => {
+  const t = useNuxtApp().$i18n.t
   switch (details) {
-    case PersonControlTypeE.SharesOrVotesBeneficialOwner: {
+    case PersonControlTypeE.SHARES_BEN_OWNER:
+    case PersonControlTypeE.VOTES_BEN_OWNER: {
       return {
-        src: SearchIconsE.SHARES_VOTES_BENEFICIAL_OWNER,
-        alt: 'Beneficial owner (e.g., through a trust)',
-        tooltip: 'Beneficial owner (e.g., through a trust)',
-        displayName: 'Beneficial Owner of Shares or votes'
+        src: '/icons/shares-votes/beneficial-owner.svg',
+        alt: t('text.control.icon.beneficialOwner'),
+        tooltip: t('text.control.icon.beneficialOwner'),
+        displayName: t('label.control.icon.beneficialOwner')
       }
     }
-    case PersonControlTypeE.SharesOrVotesIndirectControl:
-    case PersonControlTypeE.SharesOrVotesInConcertControl: {
+    case PersonControlTypeE.SHARES_INDIRECT:
+    case PersonControlTypeE.VOTES_INDIRECT: {
       return {
-        src: SearchIconsE.SHARES_VOTES_INDIRECT_CONTROL,
-        alt: 'Indirect control (e.g., through another business)',
-        tooltip: 'Indirect control (e.g., through another business)',
-        displayName: 'Indirect control of Shares or votes'
+        src: '/icons/shares-votes/indirect-control.svg',
+        alt: t('text.control.icon.indirectControl'),
+        tooltip: t('text.control.icon.indirectControl'),
+        displayName: t('label.control.icon.indirectControl')
       }
     }
-    case PersonControlTypeE.SharesOrVotesRegisteredOwner: {
+    case PersonControlTypeE.SHARES_REG_OWNER:
+    case PersonControlTypeE.VOTES_REG_OWNER: {
       return {
-        src: SearchIconsE.SHARES_VOTES_REGISTERED_OWNER,
-        alt: 'Registered owner',
-        tooltip: 'Registered owner',
-        displayName: 'Registered owner of Shares or votes'
+        src: '/icons/shares-votes/registered-owner.svg',
+        alt: t('text.control.icon.registeredOwner'),
+        tooltip: t('text.control.icon.registeredOwner'),
+        displayName: t('label.control.icon.registeredOwner')
       }
     }
     // directors control
-    case PersonControlTypeE.DirectorsDirectControl: {
+    case PersonControlTypeE.DIRS_DIRECT: {
       return {
-        src: SearchIconsE.DIRECTORS_DIRECT_CONTROL,
-        alt: 'Direct control',
-        tooltip: 'Direct control',
-        displayName: 'Direct control of Directors'
+        src: '/icons/directors/direct-control.svg',
+        alt: t('text.control.icon.directControl'),
+        tooltip: t('text.control.icon.directControl'),
+        displayName: t('label.control.icon.directControl')
       }
     }
-    case PersonControlTypeE.DirectorsInConcertControl: {
+    case PersonControlTypeE.DIRS_INDIRECT: {
       return {
-        src: SearchIconsE.DIRECTORS_CONTROL_MAJORITY_OF_DIRECTORS,
-        alt: 'This individual has control of the majority of directors through rights and/or exercised in concert ' +
-          'with other individuals',
-        tooltip: 'This individual has control of the majority of directors through rights and/or exercised in ' +
-          'concert with other individuals',
-        displayName: 'Control of Majority of Directors'
+        src: '/icons/directors/indirect-control.svg',
+        alt: t('text.control.icon.indirectControl'),
+        tooltip: t('text.control.icon.indirectControl'),
+        displayName: t('label.control.icon.indirectControl')
       }
     }
-    case PersonControlTypeE.DirectorsIndirectControl: {
+    case PersonControlTypeE.DIRS_SIG_INFL: {
       return {
-        src: SearchIconsE.DIRECTORS_INDIRECT_CONTROL,
-        alt: 'Indirect control (through another business)',
-        tooltip: 'Indirect control (through another business)',
-        displayName: 'Indirect Control of Directors'
+        src: '/icons/directors/significant-influence.svg',
+        alt: t('text.control.icon.significantInfluence'),
+        tooltip: t('text.control.icon.significantInfluence'),
+        displayName: t('label.control.icon.significantInfluence')
       }
     }
-    case PersonControlTypeE.DirectorsSignificantInfluence: {
+    case PersonControlTypeE.OTHER: {
       return {
-        src: SearchIconsE.DIRECTORS_SIGNIFICANT_INFLUENCE_CONTROL,
-        alt: 'Significant influence control',
-        tooltip: 'Significant influence control',
-        displayName: 'Indirect Control of Directors'
+        src: '/icons/other.svg',
+        alt: t('text.control.icon.other'),
+        tooltip: t('text.control.icon.other'),
+        displayName: t('label.control.other')
       }
     }
+
     default: {
       return null
     }
   }
-}
-
-export const OtherControlIcon = {
-  src: SearchIconsE.OTHER,
-  alt: 'Any other reason(s) this individual is a significant individual',
-  tooltip: 'Any other reason(s) this individual is a significant individual',
-  displayName: 'Other'
 }

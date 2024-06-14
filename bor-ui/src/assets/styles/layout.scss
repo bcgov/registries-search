@@ -1,14 +1,12 @@
 // layout helper classes
 .app-container {
-  background-color: theme('colors.gray.100');
-  color: theme('colors.gray.700');
-  min-height: 100vh;
+  @apply bg-gray-100 text-gray-700 min-h-[100vh] flex flex-col;
+}
+
+.app-inner-container {
+  @apply max-w-[1360px] w-[100vw] mx-auto px-4;
 }
 
 .app-body {
-  margin: 0 auto;
-  padding: 0 16px;
-  max-width: 1360px; // should match auth-web, etc
-  position: relative;
-  width: 100vw;
+  @apply grow relative;
 }

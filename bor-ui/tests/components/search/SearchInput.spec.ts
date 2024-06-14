@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
-import SearchInput from '../../../src/components/search/Input.vue'
+import { SearchInput } from '#components'
 
 describe('SearchBar tests', () => {
   let wrapper: VueWrapper<any>

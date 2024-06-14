@@ -142,7 +142,7 @@
                         "relatedIdentifier": "BC0871427",
                         "relatedInterests": [
                             {
-                              "details": "controlType.sharesOrVotes.registeredOwner",
+                              "details": "controlType.shares.registeredOwner",
                               "directOrIndirect": "direct",
                               "interestType": "shareholding",
                               "score": 0.0,
@@ -150,7 +150,7 @@
                               "sharesMin": 50.0
                             },
                             {
-                              "details": "controlType.sharesOrVotes.beneficialOwner",
+                              "details": "controlType.votes.beneficialOwner",
                               "directOrIndirect": "unknown",
                               "interestType": "votingRights",
                               "score": 0.0,
@@ -187,7 +187,7 @@
                         "relatedIdentifier": "BC0871428",
                         "relatedInterests": [
                             {
-                              "details": "controlType.sharesOrVotes.registeredOwner",
+                              "details": "controlType.shares.registeredOwner",
                               "directOrIndirect": "direct",
                               "interestType": "shareholding",
                               "score": 0.0,
@@ -434,6 +434,7 @@
                     "US",
                     "FR"
                 ],
+                "phoneNumber": "+1 (778) 123-4567",
                 "roles": [
                     {
                         "relatedBN": "123456788BC001",
@@ -451,7 +452,7 @@
                             "score": 0.0
                           },
                           {
-                            "details": "controlType.sharesOrVotes.registeredOwner",
+                            "details": "controlType.shares.registeredOwner",
                             "directOrIndirect": "direct",
                             "interestType": "shareholding",
                             "score": 0.0,
@@ -459,7 +460,37 @@
                             "sharesMin": 75.0
                           },
                           {
-                            "details": "controlType.sharesOrVotes.beneficialOwner",
+                            "details": "controlType.shares.beneficialOwner",
+                            "directOrIndirect": "direct",
+                            "interestType": "shareholding",
+                            "score": 0.0,
+                            "sharesMax": 100.0,
+                            "sharesMin": 75.0
+                          },
+                          {
+                            "details": "controlType.shares.indirectControl",
+                            "directOrIndirect": "direct",
+                            "interestType": "shareholding",
+                            "score": 0.0,
+                            "sharesMax": 100.0,
+                            "sharesMin": 75.0
+                          },
+                          {
+                            "details": "controlType.shares.actingJointly",
+                            "directOrIndirect": "unknown",
+                            "interestType": "shareholding",
+                            "relatedParties": [{ "interestPartyID": "3", "interestPartyName": "Master Chief" }, { "interestPartyID": "4", "interestPartyName": "Arbiter" }],
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.shares.inConcertControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "shareholding",
+                            "relatedParties": [{ "interestPartyID": "5", "interestPartyName": "Billy Bob" }],
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.votes.beneficialOwner",
                             "directOrIndirect": "unknown",
                             "interestType": "votingRights",
                             "score": 0.0,
@@ -467,9 +498,65 @@
                             "sharesMin": 0.0
                           },
                           {
+                            "details": "controlType.votes.registeredOwner",
+                            "directOrIndirect": "unknown",
+                            "interestType": "votingRights",
+                            "score": 0.0,
+                            "sharesMax": 25.0,
+                            "sharesMin": 0.0
+                          },
+                          {
+                            "details": "controlType.votes.indirectControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "votingRights",
+                            "score": 0.0,
+                            "sharesMax": 25.0,
+                            "sharesMin": 0.0
+                          },
+                          {
+                            "details": "controlType.votes.actingJointly",
+                            "directOrIndirect": "unknown",
+                            "interestType": "votingRights",
+                            "relatedParties": [{ "interestPartyID": "6", "interestPartyName": "Me myself" }],
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.votes.inConcertControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "votingRights",
+                            "relatedParties": [{ "interestPartyID": "7", "interestPartyName": "Bippity Bop" }],
+                            "score": 0.0
+                          },
+                          {
                             "details": "controlType.directors.directControl",
                             "directOrIndirect": "unknown",
                             "interestType": "appointmentOfBoard",
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.directors.indirectControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "appointmentOfBoard",
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.directors.significantInfluence",
+                            "directOrIndirect": "unknown",
+                            "interestType": "appointmentOfBoard",
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.directors.actingJointly",
+                            "directOrIndirect": "unknown",
+                            "interestType": "appointmentOfBoard",
+                            "relatedParties": [{ "interestPartyID": "1", "interestPartyName": "Bob Joe" }],
+                            "score": 0.0
+                          },
+                          {
+                            "details": "controlType.directors.inConcertControl",
+                            "directOrIndirect": "unknown",
+                            "interestType": "appointmentOfBoard",
+                            "relatedParties": [{ "interestPartyID": "1", "interestPartyName": "Bob Joe" }, { "interestPartyID": "2", "interestPartyName": "John Snow" }],
                             "score": 0.0
                           }
                         ],

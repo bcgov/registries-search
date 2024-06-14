@@ -1,20 +1,21 @@
 <template>
-  <div class="error-retry">
-    <p class="error-retry__custom-msg" v-html="message" />
-    <p class="error-retry__base-msg">
+  <div class="bg-transparent text-center" data-cy="error-retry">
+    <p data-cy="error-retry-custom-msg" v-html="message" />
+    <p data-cy="error-retry-base-msg">
       If this issue persists please contact us.
     </p>
     <UButton
-      class="error-retry__btn btn-basic-outlined mx-auto mt-5 p-3"
+      class="mx-auto mt-5 p-3"
       color="primary"
       icon="i-mdi-reload"
       label="Retry"
       :loading="loading"
       trailing
       variant="outline"
+      data-cy="error-retry-btn"
       @click="handleRetry()"
     />
-    <bcros-contact-info class="mx-auto mt-5" :contacts="HelpdeskInfo" />
+    <bcros-contact-info class="max-w-[310px] mx-auto mt-5" :contacts="HelpdeskInfo" />
   </div>
 </template>
 <script setup lang="ts">
@@ -40,9 +41,3 @@ const handleRetry = _.debounce(async () => {
   loading.value = false
 }, 300)
 </script>
-<style lang="scss" scoped>
-.error-retry {
-  background-color: transparent;
-  text-align: center;
-}
-</style>

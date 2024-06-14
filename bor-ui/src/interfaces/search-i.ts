@@ -1,3 +1,17 @@
+import type { BusinessStateE, CorpTypeCdE, EntityTypeE, PersonControlCategoryE, RoleTypeE } from '#imports'
+
+export interface SearchResultRoleInterestI {
+  details: string
+  endDate?: string
+  interestType: PersonControlCategoryE
+  otherReason?: string
+  relatedParties?: { interestPartyID: string, interestPartyName: string }[]
+  sharesExact?: number
+  sharesMax?: number
+  sharesMin?: number
+  startDate: string
+}
+
 export interface SearchResultRoleI {
   active: boolean
   relatedAddresses?: Partial<AddressI>[]
@@ -6,13 +20,7 @@ export interface SearchResultRoleI {
   relatedEntityType: 'BUSINESS' | 'PERSON'
   relatedIdentifier: string
   relatedLegalType: CorpTypeCdE
-  relatedInterests?: {
-    details: string
-    interestType: string
-    sharesExact?: number
-    sharesMax?: number
-    sharesMin?: number
-  }[]
+  relatedInterests?: SearchResultRoleInterestI[]
   relatedName: string
   relatedState: BusinessStateE
   roleDates: { end?: Date, start: Date }[]
@@ -31,6 +39,7 @@ export interface SearchResultI {
   legalType?: CorpTypeCdE
   identifier?: string,
   nationalities?: string[]
+  phoneNumber?: string
   roles: SearchResultRoleI[],
   state?: BusinessStateE,
   taxNumber?: string,

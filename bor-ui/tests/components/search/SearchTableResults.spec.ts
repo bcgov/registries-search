@@ -1,15 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
-import BaseTable from '../../../src/components/base/table/Index.vue'
-import BcrosDateRangePicker from '../../../src/components/bcros/DateRangePicker.vue'
-import BcrosErrorRetry from '../../../src/components/bcros/ErrorRetry.vue'
-import SearchTablePersonResultsExtended from '../../../src/components/search/table/PersonResultsExtended.vue'
-import SearchTablePersonResultsLimited from '../../../src/components/search/table/PersonResultsLimited.vue'
-import SearchTablePersonResultsPublic from '../../../src/components/search/table/PersonResultsPublic.vue'
-import SearchTableResults from '../../../src/components/search/table/Results.vue'
-
 import { testSearchResults } from '../../test-utils'
+
+import {
+  BaseTable,
+  BcrosDateRangePicker,
+  BcrosErrorRetry,
+  SearchTablePersonResultsExtended,
+  SearchTablePersonResultsLimited,
+  SearchTablePersonResultsPublic,
+  SearchTableResults
+} from '#components'
 
 import { SearchAccessE, type BaseTableHeaderI } from '#imports'
 

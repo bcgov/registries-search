@@ -1,7 +1,7 @@
 <template>
   <div class="bg-bcGovGray-100">
     <NuxtLayout>
-      <base-dialog
+      <bcros-dialog
         id="error-dialog"
         attach="#appHeader"
         :display="errorDisplay"
@@ -14,7 +14,7 @@
           </p>
           <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
         </template>
-      </base-dialog>
+      </bcros-dialog>
       <!-- TODO: figure out nuxt loading indicator while middleware processes -->
       <div v-if="appLoading">
         <UIcon

@@ -9,16 +9,24 @@
         name="i-mdi-open-in-new"
       />
     </a>
-    <BcrosAddressDisplay
-      v-if="role.relatedAddresses"
-      :address="role.relatedAddresses[0]"
-      class="my-2"
-    />
-    <div>
-      {{ role.relatedIdentifier }}
+    <div v-if="role.relatedAddresses" class="flex mt-3">
+      <div>
+        <UIcon class="text-[20px]" name="i-mdi-truck-outline" />
+      </div>
+      <div class="ml-1">
+        <BcrosAddressDisplay
+          :address="role.relatedAddresses[0]"
+        />
+      </div>
     </div>
-    <div>
-      {{ role.relatedBN }}
+    <div class="flex mt-3">
+      <div>
+        <UIcon class="text-[20px]" name="i-mdi-pound" />
+      </div>
+      <div class="ml-1 flex flex-col">
+        <span>{{ role.relatedIdentifier }}</span>
+        <span>{{ role.relatedBN }}</span>
+      </div>
     </div>
   </div>
 </template>
