@@ -2,6 +2,7 @@ import { BusinessStatuses, BusinessTypes, CorpTypeCd } from '@/enums'
 import { ErrorI } from '@/interfaces';
 
 export interface EntityI {
+  alternateNames?: { name: string, identifier: string }[]
   bn?: string,
   identifier: string,
   incorporationDate?: string,

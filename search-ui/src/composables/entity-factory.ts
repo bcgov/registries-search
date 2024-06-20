@@ -44,6 +44,14 @@ export const useEntity = () => {
     const item = CorpInfoArray.find(obj => (entityType === obj.corpTypeCd))
     return (item && item.fullDesc) || ''
   }
+  const getEntityName = (entity: EntityI) => {
+    // return entity.name
+    if (!['GP', 'SP'].includes(entity.legalType)) {
+      return entity.name
+    }
+    const primaryName = entity.alternateNames?.find(val => val.identifier === entity.identifier)
+    return primaryName?.name || entity.name
+  }
   const getEntityInfo = async (identifier: string) => {
     // call legal api for entity data
     const entityInfo = await getEntity(identifier)
@@ -52,6 +60,7 @@ export const useEntity = () => {
       return null
     }
     const resp_entity: EntityI = {
+      alternateNames: entityInfo.business.alternateNames,
       bn: entityInfo.business.taxId || '',
       identifier: entityInfo.business.identifier,
       incorporationDate: entityInfo.business.foundingDate,
@@ -68,7 +77,7 @@ export const useEntity = () => {
     entity.identifier = newEntity.identifier
     entity.incorporationDate = newEntity.incorporationDate || ''
     entity.legalType = newEntity.legalType
-    entity.name = newEntity.name
+    entity.name = getEntityName(newEntity)
     entity.status = newEntity.status
     entity.goodStanding = newEntity.goodStanding
     entity.inDissolution = newEntity.inDissolution
