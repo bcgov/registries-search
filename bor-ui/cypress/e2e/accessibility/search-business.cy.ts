@@ -1,8 +1,6 @@
-context('Accessibility -> Search extended', () => {
+context('Accessibility -> Search public', () => {
   beforeEach(() => {
-    cy.visitSearchExtended()
-    // click 'search people' radio
-    cy.get('[data-cy="search-radios"]').find('label').eq(1).click()
+    cy.visitSearchPublic()
   })
 
   it('check page passes accessibility before a search', () => {
@@ -14,15 +12,13 @@ context('Accessibility -> Search extended', () => {
     cy.get('[data-cy="search-input"]')
       .find('[data-cy="search-textfield"]')
       .type('test')
-    cy.wait('@getSearchResults')
+    cy.wait('@getBusinessSearchResults')
 
     // TO-DO: resolve accessibility issues in a future ticket: #20859
     // nuxt/ui nested-interactive issue: https://github.com/nuxt/ui/issues/1428
-    /* eslint-disable quote-props */
     cy.checkA11y('[data-cy="search-results-table"]', {
       rules: {
-        'color-contrast': { enabled: false },
-        'tabindex': { enabled: false },
+        'empty-table-header': { enabled: false },
         'nested-interactive': { enabled: false }
       }
     })

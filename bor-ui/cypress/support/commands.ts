@@ -8,6 +8,7 @@ Cypress.Commands.add('visitSearchPublic', () => {
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsNone.json' }).as('getProducts')
   cy.interceptSearch('/public', 'searchResultsPublic.json')
+  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
   cy.injectAxe()
@@ -23,6 +24,7 @@ Cypress.Commands.add('visitSearchLimited', () => {
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsBasic.json' }).as('getProducts')
   cy.interceptSearch('', 'searchResultsLimited.json')
+  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
   cy.injectAxe()
@@ -38,6 +40,7 @@ Cypress.Commands.add('visitSearchExtended', () => {
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsExtended.json' }).as('getProducts')
   cy.interceptSearch('/extended', 'searchResultsExtended.json')
+  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts'])
   cy.injectAxe()
@@ -58,4 +61,11 @@ Cypress.Commands.add('visitSearchAuthError', () => {
 
 Cypress.Commands.add('interceptSearch', (path: string, fixtureFileName: string) => {
   cy.intercept('POST', '**/api/v1/search' + path, { fixture: fixtureFileName }).as('getSearchResults')
+})
+
+Cypress.Commands.add('interceptBusinessSearch', (path: string, fixtureFileName: string) => {
+  cy.intercept(
+    'GET',
+    `**/api/v1/businesses/search/${path}?**`,
+    { fixture: fixtureFileName }).as('getBusinessSearchResults')
 })

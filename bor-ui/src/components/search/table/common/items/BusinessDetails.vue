@@ -37,10 +37,10 @@ defineProps<{ role: SearchResultRoleI }>()
 const config = useRuntimeConfig().public
 const isModernized = (role: SearchResultRoleI) => {
   const modernizedTypes = [
-    CorpTypeCdE.BENEFIT_COMPANY,
-    CorpTypeCdE.COOP,
-    CorpTypeCdE.SOLE_PROP,
-    CorpTypeCdE.PARTNERSHIP
+    BusinessTypeE.BENEFIT_COMPANY,
+    BusinessTypeE.COOP,
+    BusinessTypeE.SOLE_PROP,
+    BusinessTypeE.PARTNERSHIP
   ]
   return modernizedTypes.includes(role.relatedLegalType)
 }

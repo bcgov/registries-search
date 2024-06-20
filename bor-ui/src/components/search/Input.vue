@@ -6,7 +6,7 @@
         class="border-b-[1px]"
         autocomplete="off"
         :color="searchVal ? 'primary' : 'gray'"
-        :placeholder="searchLabel"
+        :placeholder="searchPlaceholder"
         trailing
         trailing-icon="i-mdi-magnify"
         data-cy="search-textfield"
@@ -15,54 +15,49 @@
       />
     </UFormGroup>
     <URadioGroup
-      v-if="hasExtendedAccess || hasPublicAccess"
       v-model="searchType"
       class="mt-5 flex"
       :options="searchTypeOptions"
-      :ui="{ fieldset: 'flex space-x-3' }"
+      :ui="{ fieldset: 'flex space-x-4' }"
       data-cy="search-radios"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash'
+import { useDebounceFn } from '@vueuse/core'
 
 const search = useBcrosSearch()
-const { accessLevel, hasExtendedAccess, hasPublicAccess, searchType } = storeToRefs(search)
-const searchErrorMsg = ref('')
-const searchHint = ref('')
-const searchLabel = ref('')
-const searchTypeOptions = [
-  { value: SearchTypeE.BUSINESS, label: 'Search Businesses' },
-  { value: SearchTypeE.PERSON, label: 'Search People' }
-]
+const { searchType, activeSearch } = storeToRefs(search)
+const { accessLevel, hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
 
 const searchVal = ref('')
+watch(() => searchType.value, () => { searchVal.value = activeSearch.value.val })
+
+const { t } = useNuxtApp().$i18n
+
+const searchErrorMsg = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.error`))
+const searchHint = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.hint`))
+const searchPlaceholder = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.placeholder`))
+
+const searchTypeOptions = ref([
+  { value: SearchTypeE.BUSINESS, label: t('label.search.searchBusinesses') },
+  {
+    value: SearchTypeE.PERSON,
+    label: hasExtendedAccess.value ? t('label.search.searchPeople') : t('label.search.searchOwners')
+  }
+])
 
 onMounted(() => {
-  switch (accessLevel.value) {
-    case SearchAccessE.EXTENDED:
-      searchErrorMsg.value = 'Enter a name, address, SIN/TTN/ITN, and/or email address'
-      searchHint.value = ('Example: "John Smith", "123 Main St", ' +
-        '"V1V 1V1", "John Smith Victoria", "j.smith@123.aba", "000 000 000"')
-      searchLabel.value = 'Person Name, Address, SIN/TTN/ITN, and/or Email Address'
-      break
-    case SearchAccessE.LIMITED:
-      searchErrorMsg.value = 'Enter a name, address, and/or business email address'
-      searchHint.value = 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
-      searchLabel.value = 'Person Name, Address, and/or Business Email Address'
-      break
-    default: // SearchAccessE.PUBLIC
-      searchErrorMsg.value = 'Enter a name'
-      searchHint.value = 'Example: "John Smith"'
-      searchLabel.value = 'Person Name'
+  if (hasExtendedAccess.value || hasLimitedAccess.value) {
+    searchTypeOptions.value.push({
+      value: SearchTypeE.DIRECTOR,
+      label: t('label.search.searchDirectors')
+    })
   }
-
-  searchVal.value = search.searchValue
 })
 
-const submitSearch = _.debounce(async () => {
+const submitSearch = useDebounceFn(async () => {
   await search.getSearchResults(searchVal.value)
 }, 500)
 

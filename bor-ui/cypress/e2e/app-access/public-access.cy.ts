@@ -6,5 +6,8 @@ context('App access - public', () => {
     cy.get('[data-cy="search-page"]').find('[data-cy=user-name]').should('have.text', 'TestFirst TestLast')
     cy.get('[data-cy="search-page"]').find('[data-cy="search-help-btn"]')
       .should('have.text', 'Help with Business and Person Search')
+    cy.get('[data-cy="search-radios"]').find('label').should('have.length', 2)
+    cy.get('[data-cy="search-radios"]').find('label').eq(0).should('have.text', 'Search Businesses')
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).should('have.text', 'Search Owners')
   })
 })

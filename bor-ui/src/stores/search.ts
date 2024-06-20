@@ -1,68 +1,66 @@
-import _ from 'lodash'
+import { SearchTypeE, type FacetsResultI, type RegSearchResultI, type SearchPayloadI } from '#imports'
+
+const DEFAULT_SEARCH_ROWS = 50
 
 const STARTING_FILTERS = {
   query: { roles: { roleDates: {} } },
   categories: {
     entityAddresses: {},
-    entityType: [EntityTypeE.PERSON],
     roles: {}
   }
 }
 
-const DEFAULT_SEARCH_ROWS = 50
-
 /** Manages bcros search data */
 export const useBcrosSearch = defineStore('bcros/search', () => {
-  const searchError: Ref<ErrorI> = ref(undefined)
-  // states
-  const loading = ref(false)
-  const loadingNext = ref(false)
-  const isFilteringActive = ref(false)
-  const searchType = ref(SearchTypeE.PERSON)
-  // access
-  const accessLevel = ref(SearchAccessE.PUBLIC)
-  const hasExtendedAccess = computed(() => accessLevel.value === SearchAccessE.EXTENDED)
-  const hasLimitedAccess = computed(() => accessLevel.value === SearchAccessE.LIMITED)
-  const hasPublicAccess = computed(() => accessLevel.value === SearchAccessE.PUBLIC)
-  /** Set access level of based on available user / account information. */
-  const setUserAccessLevel = async () => {
-    console.info('Setting user access to search...')
-    const ldarkly = useBcrosLaunchdarkly()
-    // NOTE: if it is possible ldarkly was not initialized successfully (i.e. blank/incorrect key)
-    await ldarkly.ldClient?.waitUntilReady()
-    const account = useBcrosAccount()
+  const searchType = ref(SearchTypeE.BUSINESS)
+  // when searchType changes trigger search on new selection with current search input
+  watch(searchType, (_, oldVal) => getSearchResults(searches[oldVal].value.val))
 
-    if (ldarkly.getStoredFlag('enable-comp-auth-search') || account.hasProductAccess(ProductCodeE.CA_SEARCH)) {
-      // set search as competent authority search
-      accessLevel.value = SearchAccessE.EXTENDED
-      console.info('Set to Competent Authority Search.')
-    } else if (ldarkly.getStoredFlag('enable-director-search') || account.hasProductAccess(ProductCodeE.NDS)) {
-      // set search as director search
-      accessLevel.value = SearchAccessE.LIMITED
-      console.info('Set to Director Search.')
-    } else {
-      console.info('Set to Public Search.')
-    }
-  }
-  // search values
-  const searchValue = ref('')
-  const start = ref(0)
-  const exportRows = ref('1000')
-  const filters: Ref<SearchPayloadI> = ref(_.cloneDeep(STARTING_FILTERS))
-  // search results
-  const facetsResult: Ref<FacetsResultI> = ref({})
-  const results: Ref<SearchResultI[]> = ref(null)
-  const totalResults: Ref<number> = ref(null)
+  const { searchRows } = useRuntimeConfig().public
 
-  const _searchErrorHandler = (searchResp: SearchResponseI) => {
-    results.value = []
-    totalResults.value = null
-    searchError.value = searchResp.error
+  /** Return an initialized search object based on the type. */
+  const _initSearch = (type: SearchTypeE) => {
+    const filters = type === SearchTypeE.BUSINESS
+      ? {} as Partial<RegSearchFilterI>
+      : structuredClone(STARTING_FILTERS) as Partial<SearchPayloadI>
+
+    const results = type === SearchTypeE.BUSINESS
+      ? [] as RegSearchResultI[]
+      : [] as SearchResultI[]
+
+    return ref({
+      error: undefined,
+      exportRows: '1000',
+      loading: false,
+      loadingNext: false,
+      filterActive: false,
+      filters,
+      resultFacets: undefined as FacetsResultI,
+      results,
+      resultsTotal: undefined,
+      rows: parseInt(searchRows) || DEFAULT_SEARCH_ROWS,
+      start: 0,
+      val: ''
+    })
   }
 
-  const config = useRuntimeConfig().public
-  /** The amount of results to return in each search batch. */
-  const rows = parseInt(config.searchRows) || DEFAULT_SEARCH_ROWS
+  const searchBusiness = _initSearch(SearchTypeE.BUSINESS)
+  const searchPerson = _initSearch(SearchTypeE.PERSON)
+  const searchDirector = _initSearch(SearchTypeE.DIRECTOR)
+
+  const searches = {
+    [SearchTypeE.BUSINESS]: searchBusiness,
+    [SearchTypeE.PERSON]: searchPerson,
+    [SearchTypeE.DIRECTOR]: searchDirector
+  }
+
+  const activeSearch = computed(() => searches[searchType.value].value)
+
+  /** Returns true there are more results to be returned from the api. */
+  const hasMoreResults = computed(() => {
+    return (activeSearch.value.resultsTotal &&
+      activeSearch.value.results.length < activeSearch.value.resultsTotal)
+  })
 
   /** Returns true if any filter has a value. */
   const hasActiveFilter = () => {
@@ -77,18 +75,128 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
       }
       return false
     }
-    return findActiveInObject(filters.value)
+    return findActiveInObject(activeSearch.value.filters)
   }
 
-  /** Returns true there are more results to be returned from the api. */
-  const hasMoreResults = computed(() => {
-    return totalResults.value && results.value?.length < totalResults.value
-  })
+  /** Call the appropriate search api based on the current state and return the response. */
+  const callSearch = async (exporting = false, rows = undefined) => {
+    return (searchType.value === SearchTypeE.BUSINESS
+      ? await useRegSearchApi()
+        .searchBusiness(
+          activeSearch.value.val,
+          activeSearch.value.filters as RegSearchFilterI,
+          activeSearch.value.rows,
+          activeSearch.value.start)
+      : await useBorSearchApi()
+        .searchEntities(
+          activeSearch.value.val,
+          activeSearch.value.filters as SearchPayloadI,
+          rows || activeSearch.value.rows,
+          exporting ? 0 : activeSearch.value.start,
+          exporting,
+          useBcrosSearchAccess().accessLevel)
+    )
+  }
+
+  /** Export search to file for download. */
+  const exportSearch = async () => {
+    const searchResp = await callSearch(true, activeSearch.value.exportRows)
+    if (searchResp && searchResp.error) {
+      searchErrorHandler(searchResp.error)
+    }
+  }
+
+  /** Apply filter and get results set. */
+  const filterSearch = async (path: string[], val: any, reset = false) => {
+    if (reset) {
+      activeSearch.value.filters = searchType.value === SearchTypeE.BUSINESS
+        ? {}
+        : structuredClone(STARTING_FILTERS)
+      await getSearchResults(activeSearch.value.val, true)
+      return
+    }
+    const increasingScope = !val
+    // path will have length of 3 at most
+    if (path.length === 1) {
+      // i.e. search.filters['start'] = val
+      activeSearch.value.filters[path[0]] = val
+    } else if (path.length === 2) {
+      // i.e. search.filters['query']['bn'] = val
+      activeSearch.value.filters[path[0]][path[1]] = val
+    } else {
+      // i.e. search.filters['query']['roles']['relatedBN'] = val
+      activeSearch.value.filters[path[0]][path[1]][path[2]] = val
+    }
+
+    if (activeSearch.value.val) {
+      await getSearchResults(activeSearch.value.val, increasingScope)
+    }
+  }
+
+  /** Get next batch of results from the api and update the results. */
+  const getNextResults = async () => {
+    if (!hasMoreResults.value) { return }
+    activeSearch.value.loadingNext = true
+    activeSearch.value.start += 1
+    // search
+    const searchResp = await callSearch()
+    if (searchResp) {
+      if (!searchResp.error) {
+        // success
+        activeSearch.value.results = [
+          ...activeSearch.value.results,
+          ...searchResp.searchResults.results
+        ] as SearchResultI[] | RegSearchResultI[]
+        activeSearch.value.error = undefined
+      } else {
+        activeSearch.value.start -= 1
+        searchErrorHandler(searchResp.error)
+      }
+    } else { console.error('Error getting getNextSearchResults') } // should never get here
+    activeSearch.value.loadingNext = false
+  }
+
+  /** Get the first batch of results from the api and set the results. */
+  const getSearchResults = async (val: string, updateFacets = true) => {
+    if (!val) {
+      reset(searchType.value)
+      return
+    }
+    activeSearch.value.loading = true
+    activeSearch.value.start = 0
+    activeSearch.value.val = val
+    // special case for query/roles/value
+    // @ts-ignore
+    activeSearch.value.filterActive = hasActiveFilter() || !!activeSearch.value.filters?.query?.roles?.value
+    const searchResp = await callSearch()
+    if (searchResp) {
+      if (searchResp.error) {
+        searchErrorHandler(searchResp.error)
+      } else {
+        // success
+        if (val !== activeSearch.value.val) { return } // user updated the search value after this search was triggered
+
+        if (updateFacets) {
+          activeSearch.value.resultFacets = searchResp?.facets
+        }
+
+        activeSearch.value.error = undefined
+        activeSearch.value.results = searchResp.searchResults.results
+        activeSearch.value.resultsTotal = searchResp.searchResults.totalResults
+      }
+    } else {
+      // unhandled response error (should never get here)
+      activeSearch.value.results = []
+      activeSearch.value.resultsTotal = undefined
+      console.error('Nothing returned from search request fn.')
+    }
+    activeSearch.value.loading = false
+  }
 
   /** Return the count of the facet value. */
   const facetCount = (facet: string, value: string) => {
-    if (facetsResult.value.fields) {
-      const facetItems = facetsResult.value.fields[facet] as FacetI[]
+    if (activeSearch.value.resultFacets?.fields) {
+      const facetItems = activeSearch.value.resultFacets?.fields[facet] as FacetI[]
       if (facetItems) {
         const facetItem = facetItems.find(facetItem => facetItem.value.toLowerCase() === value.toLowerCase())
         if (facetItem) { return facetItem.parentCount || facetItem.count }
@@ -99,151 +207,49 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   /** Return the list of facet items of the facet field. */
   const facetItems = (facet: string) => {
-    if (facetsResult.value.fields) {
-      return facetsResult.value.fields[facet] as FacetI[] || []
+    if (activeSearch.value.resultFacets?.fields) {
+      return activeSearch.value.resultFacets?.fields[facet] as FacetI[] || []
     }
     return []
   }
 
-  /** Export search to file for download. */
-  const exportSearch = async () => {
-    const searchResp = await useSearchApi().searchEntities(
-      searchValue.value, filters.value, Number(exportRows.value), 0, true, accessLevel.value)
-    if (searchResp && searchResp.error) {
-      _searchErrorHandler(searchResp)
-    }
-  }
-
-  /** Apply filter and get results set. */
-  const filterSearch = async (path: string[], val: any, resetFilters = false) => {
-    if (resetFilters) {
-      filters.value = _.cloneDeep(STARTING_FILTERS)
-      await getSearchResults(searchValue.value, true)
-      return
-    }
-    const increasingScope = !val
-    // path will have length of 3 at most
-    if (path.length === 1) {
-      // i.e. search.filters['start'] = val
-      filters.value[path[0]] = val
-    } else if (path.length === 2) {
-      // i.e. search.filters['query']['bn'] = val
-      filters.value[path[0]][path[1]] = val
-    } else {
-      // i.e. search.filters['query']['roles']['relatedBN'] = val
-      filters.value[path[0]][path[1]][path[2]] = val
-    }
-
-    if (searchValue.value) {
-      await getSearchResults(searchValue.value, increasingScope)
-    }
-  }
-
-  /** Get next batch of results from the api and update the results. */
-  const getNextResults = async () => {
-    if (!hasMoreResults.value) { return }
-    loadingNext.value = true
-    // search
-    const searchResp = await useSearchApi().searchEntities(
-      searchValue.value, filters.value, rows, start.value + 1, false, accessLevel.value)
-    if (searchResp) {
-      if (!searchResp.error) {
-        // success
-        start.value += 1
-        results.value = [...results.value, ...searchResp.searchResults.results]
-        searchError.value = null
-      } else { _searchErrorHandler(searchResp) }
-    } else { console.error('Error getting getNextSearchResults') } // should never get here
-    loadingNext.value = false
-  }
-
-  /** Get the first batch of results from the api and set the results. */
-  const getSearchResults = async (val: string, updateFacets = true) => {
-    if (!val) {
-      resetSearch()
-      return
-    }
-    totalResults.value = null
-    start.value = 0
-    loading.value = true
-    searchValue.value = val
-    // special case for query/roles/value
-    isFilteringActive.value = hasActiveFilter() || !!filters.value?.query?.roles?.value
-    if (results.value === null) { results.value = [] }
-    const searchResp = await useSearchApi().searchEntities(val, filters.value, rows, 0, false, accessLevel.value)
-    if (searchResp) {
-      if (searchResp.error) {
-        _searchErrorHandler(searchResp)
-      } else {
-        // success
-        if (val !== searchValue.value) { return } // user updated the search value after this search was triggered
-        // this is the search the user is waiting on
-        if (updateFacets) {
-          facetsResult.value = searchResp.facets
-        } else {
-          // always update entityType facets since overall counts are based off them
-          facetsResult.value.fields.entityType = searchResp.facets.fields.entityType
-        }
-
-        searchError.value = null
-        results.value = searchResp.searchResults.results
-        totalResults.value = searchResp.searchResults.totalResults
-      }
-    } else {
-      // unhandled response error (should never get here)
-      facetsResult.value = {}
-      results.value = []
-      totalResults.value = null
-      console.error('Nothing returned from search request fn.')
-    }
-    loading.value = false
-  }
-
   /** Return the highlighted search value within the match */
   const highlightMatch = (match: string) => {
-    if (!searchValue.value) { return match }
+    if (!activeSearch.value.val) { return match }
     if (!match) { return '' }
-    return match.replaceAll(searchValue.value.toUpperCase(), `<b>${searchValue.value.toUpperCase()}</b>`)
+    return match.replaceAll(activeSearch.value.val.toUpperCase(), `<b>${activeSearch.value.val.toUpperCase()}</b>`)
   }
 
-  const resetSearch = () => {
-    facetsResult.value = {}
-    filters.value = _.cloneDeep(STARTING_FILTERS)
-    results.value = null
-    totalResults.value = null
-    searchError.value = undefined
-    isFilteringActive.value = false
-    loading.value = false
-    start.value = 0
-    searchValue.value = ''
+  const searchErrorHandler = (error: ErrorI) => {
+    activeSearch.value.resultsTotal = undefined
+    activeSearch.value.error = error
+  }
+
+  const reset = (type: SearchTypeE) => {
+    searches[type].value.val = ''
+    searches[type].value.filters = type === SearchTypeE.BUSINESS ? {} : structuredClone(STARTING_FILTERS)
+    searches[type].value.results = []
+    searches[type].value.resultsTotal = undefined
+    searches[type].value.error = undefined
+    searches[type].value.loading = false
+    searches[type].value.loadingNext = false
   }
 
   return {
-    searchError,
-    accessLevel,
-    hasExtendedAccess,
-    hasLimitedAccess,
-    hasPublicAccess,
-    loading,
-    loadingNext,
-    isFilteringActive,
+    activeSearch,
     searchType,
-    searchValue,
-    start,
-    exportRows,
-    filters,
-    facetsResult,
-    results,
-    totalResults,
+    searchBusiness,
+    searchDirector,
+    searchPerson,
     hasMoreResults,
-    facetCount,
-    facetItems,
     exportSearch,
     filterSearch,
     getNextResults,
     getSearchResults,
+    facetCount,
+    facetItems,
     highlightMatch,
-    resetSearch,
-    setUserAccessLevel
+    reset,
+    searchErrorHandler
   }
 })

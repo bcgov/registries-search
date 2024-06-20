@@ -23,8 +23,9 @@ export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
       console.info('No launchdarkly sdk variable set. Aborting launchdarkly setup.')
       return
     }
-    let user: any = { key: 'anonymous' }
-    let org: any = { key: 'anonymous' }
+    const appName = useRuntimeConfig().public.appName
+    let user: any = { key: 'anonymous', appSource: appName }
+    let org: any = { key: 'anonymous', appName }
     if (keycloak.kc.authenticated) {
       user = {
         key: keycloak.kcUser.keycloakGuid,
@@ -32,7 +33,8 @@ export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
         lastName: keycloak.kcUser.lastName,
         email: keycloak.kcUser.email,
         roles: keycloak.kcUser.roles,
-        loginSource: keycloak.kcUser.loginSource
+        loginSource: keycloak.kcUser.loginSource,
+        appSource: appName
       }
     }
     if (account.currentAccount.id) {
@@ -41,13 +43,14 @@ export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
         accountType: account.currentAccount.accountType,
         accountStatus: account.currentAccount.accountStatus,
         type: account.currentAccount.type,
-        label: account.currentAccount.label
+        label: account.currentAccount.label,
+        appSource: appName
       }
     }
     ldContext.value = { kind: 'multi', org, user }
     const options: LDOptions = {
-      streaming: true,
-      useReport: true,
+      streaming: false,
+      useReport: false,
       diagnosticOptOut: true
     }
     ldClient.value = initialize(ldClientId, ldContext.value, options)
@@ -64,7 +67,7 @@ export const useBcrosLaunchdarkly = defineStore('bcros/launchdarkly', () => {
 
   function getStoredFlag (name: string): any {
     if (!ldInitialized) {
-      console.warn('Accessing ldarkly flag, but ldarkly was not initialized.')
+      console.warn('Accessing ldarkly stored flag, but ldarkly is not initialized.')
     }
     return ldFlagSet.value[name]
   }

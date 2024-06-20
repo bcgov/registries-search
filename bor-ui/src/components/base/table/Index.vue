@@ -78,6 +78,9 @@
                               <span v-if="!header.filter.value || header.filter?.value.length === 0">
                                 {{ header.filter.label }}
                               </span>
+                              <span v-else-if="!header.filter.multiple">
+                                {{ header.filter.value }}
+                              </span>
                               <span v-else-if="header.filter?.value.length == 1">
                                 {{ capFirstLetter(header.filter.value[0]) }}
                               </span>
@@ -114,7 +117,7 @@
                     >
                       <template #trailing>
                         <UButton
-                          v-show="header.filter.value !== ''"
+                          v-show="!!header.filter.value"
                           color="primary"
                           variant="link"
                           icon="i-heroicons-x-mark-20-solid"
@@ -184,8 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash'
-// local
+import { useDebounceFn } from '@vueuse/core'
 import { CommonTitle } from './common'
 import { BaseSelectFilter, BaseTextFilter } from './resources'
 
@@ -212,7 +214,7 @@ const localProps = defineProps<{
 
 const emit = defineEmits<{(e: 'filterActive', value: boolean): void }>()
 
-const headers = reactive(_.cloneDeep(localProps.setHeaders) as BaseTableHeaderI[])
+const headers = reactive(([...localProps.setHeaders]) as BaseTableHeaderI[])
 const displayItemHeaders = headers?.filter(header => !header.itemHidden)
 const sortedItems = ref([...localProps.setItems])
 
@@ -285,7 +287,7 @@ const clearFilter = (header: BaseTableHeaderI) => {
   }
   filter(header)
 }
-const filter = _.debounce(async (header: BaseTableHeaderI) => {
+const filter = useDebounceFn(async (header: BaseTableHeaderI) => {
   if (resettingFilters.value) { return }
   // rely on custom filterApiFn to alter result set if given (meant for server side isFilteringActive)
   if (!header.filter.value || header.filter.value.length === 0) {

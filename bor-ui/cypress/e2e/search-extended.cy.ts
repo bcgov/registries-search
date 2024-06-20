@@ -4,6 +4,7 @@ import { PersonControlTypeE } from '../../src/enums/person-control-type-e'
 context('Search extended', () => {
   beforeEach(() => {
     cy.visitSearchExtended()
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).click()
   })
 
   it('should display expected search bar', () => {

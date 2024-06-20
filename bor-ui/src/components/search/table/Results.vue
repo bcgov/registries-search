@@ -1,18 +1,26 @@
 <template>
   <div data-cy="search-results-table">
+    <div v-if="searchType === SearchTypeE.PERSON">
+      <PersonResultsExtended
+        v-if="hasExtendedAccess"
+        class="search-table"
+        :results-desc="resultsDesc"
+        :update-table-header-filters="updateTableHeaderFilters"
+      />
+      <PersonResultsPublic
+        v-else
+        class="search-table"
+        :results-desc="resultsDesc"
+        :update-table-header-filters="updateTableHeaderFilters"
+      />
+    </div>
     <PersonResultsLimited
-      v-if="hasLimitedAccess"
+      v-else-if="searchType === SearchTypeE.DIRECTOR"
       class="search-table"
       :results-desc="resultsDesc"
       :update-table-header-filters="updateTableHeaderFilters"
     />
-    <PersonResultsExtended
-      v-else-if="hasExtendedAccess"
-      class="search-table"
-      :results-desc="resultsDesc"
-      :update-table-header-filters="updateTableHeaderFilters"
-    />
-    <PersonResultsPublic
+    <BusinessResults
       v-else
       class="search-table"
       :results-desc="resultsDesc"
@@ -24,7 +32,7 @@
         class="p-4 mt-[30px]"
         icon="i-mdi-plus"
         label="Load More Results"
-        :loading="loadingNext"
+        :loading="activeSearch.loadingNext"
         loading-icon="i-mdi-loading"
         trailing
         variant="outline"
@@ -35,33 +43,41 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
+import BusinessResults from './BusinessResults.vue'
 import PersonResultsExtended from './PersonResultsExtended.vue'
 import PersonResultsLimited from './PersonResultsLimited.vue'
 import PersonResultsPublic from './PersonResultsPublic.vue'
+import { SearchTypeE } from '#imports'
 
 const search = useBcrosSearch()
-const { totalResults, hasMoreResults, loadingNext, hasExtendedAccess, hasLimitedAccess } = storeToRefs(search)
+const { activeSearch, hasMoreResults, searchType } = storeToRefs(search)
+const { hasExtendedAccess } = storeToRefs(useBcrosSearchAccess())
 
 // text functions
 const resultsDesc = computed(() => {
-  return `${totalResults.value} ${totalResults.value === 1 ? 'Person' : 'People'}`
+  if (searchType.value === SearchTypeE.BUSINESS) {
+    return `${activeSearch.value.resultsTotal} ${activeSearch.value.resultsTotal === 1 ? 'Business' : 'Businesses'}`
+  }
+  return `${activeSearch.value.resultsTotal} ${activeSearch.value.resultsTotal === 1 ? 'Person' : 'People'}`
 })
 
 /** Update the base table header filters to display what the current filters are.
  * (needed when leaving and coming back to the component)
  */
 const updateTableHeaderFilters = (headers: BaseTableHeaderI[]) => {
-  const activeFilters = Object.keys(search.filters)
+  const activeFilters = Object.keys(activeSearch.value.filters)
   for (const i in activeFilters) {
     // find header filter
     const header = headers.find(item => item.col === activeFilters[i])
-    // update filter value to match search composable
-    if (header) { header.filter.value = search.filters[activeFilters[i]] }
+    // update filter value to match search store
+    if (header) { header.filter.value = activeSearch.value.filters[activeFilters[i]] }
   }
 }
 
-const getNextSearches = _.debounce(async () => (await search.getNextResults()), 50)
+const getNextSearches = useThrottleFn(async () => {
+  await search.getNextResults()
+}, 1000)
 </script>
 
 <style lang="scss">

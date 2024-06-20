@@ -6,7 +6,7 @@ export function getBcrosHomeBreadCrumb (): BreadcrumbI {
 }
 
 export function getPersonSearchBreadcrumb (): BreadcrumbI {
-  const { hasLimitedAccess } = storeToRefs(useBcrosSearch())
+  const { hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
   return {
     text: computed(() => hasLimitedAccess.value ? 'Director Search' : 'Business and Person Search'),
     to: { name: RouteNameE.SEARCH },

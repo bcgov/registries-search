@@ -12,7 +12,7 @@
           <p class="font-normal mt-7">
             If this issue persists, please contact us.
           </p>
-          <bcros-contact-info class="font-normal font-16 mt-4" :contacts="RegistriesInfo" />
+          <bcros-contact-info class="font-normal font-16 mt-4" :contacts="getContactInfo('registries')" />
         </template>
       </bcros-dialog>
       <!-- TODO: figure out nuxt loading indicator while middleware processes -->
@@ -30,7 +30,6 @@
 
 <script setup lang="ts">
 import { StatusCodes } from 'http-status-codes'
-import { RegistriesInfo } from '@/resources/contact-info'
 
 const appLoading = ref(false)
 // // errors
@@ -40,8 +39,8 @@ const errorInfo: Ref<DialogOptionsI | null> = ref(null)
 
 const account = useBcrosAccount()
 const { accountErrors } = storeToRefs(account)
-const search = useBcrosSearch()
-const { searchError } = storeToRefs(search)
+const { setUserAccessLevel } = useBcrosSearchAccess()
+const { activeSearch } = storeToRefs(useBcrosSearch())
 
 onMounted(async () => {
   appLoading.value = true
@@ -55,7 +54,7 @@ onMounted(async () => {
     if (accountErrors.value?.length > 0) { return }
   }
   // set search access
-  await search.setUserAccessLevel()
+  await setUserAccessLevel()
 
   console.info('App ready.')
   appLoading.value = false
@@ -111,5 +110,5 @@ const clearDialog = () => {
 
 // watchers for errors
 watch(accountErrors.value, (val) => { if (val && val.length > 0) { handleError(val[0]) } })
-watch(() => searchError.value, (val) => { if (val) { handleError(val) } })
+watch(() => activeSearch.value.error, (val) => { if (val) { handleError(val) } })
 </script>

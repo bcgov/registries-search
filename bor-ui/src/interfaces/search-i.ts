@@ -1,4 +1,4 @@
-import type { BusinessStateE, CorpTypeCdE, EntityTypeE, PersonControlCategoryE, RoleTypeE } from '#imports'
+import type { BusinessStateE, BusinessTypeE, PersonControlCategoryE, RoleTypeE } from '#imports'
 
 export interface SearchResultRoleInterestI {
   details: string
@@ -19,7 +19,7 @@ export interface SearchResultRoleI {
   relatedEmail?: string
   relatedEntityType: 'BUSINESS' | 'PERSON'
   relatedIdentifier: string
-  relatedLegalType: CorpTypeCdE
+  relatedLegalType: BusinessTypeE
   relatedInterests?: SearchResultRoleInterestI[]
   relatedName: string
   relatedState: BusinessStateE
@@ -36,7 +36,7 @@ export interface SearchResultI {
   entityType: 'BUSINESS' | 'PERSON'
   isPR?: boolean
   legalName: string
-  legalType?: CorpTypeCdE
+  legalType?: BusinessTypeE
   identifier?: string,
   nationalities?: string[]
   phoneNumber?: string
@@ -65,10 +65,10 @@ export interface SearchPayloadI {
     value?: string
   }
   categories: {
-    entityType?: EntityTypeE[]
-    legalType?: CorpTypeCdE[]
+    entityType?: BusinessTypeE[]
+    legalType?: BusinessTypeE[]
     roles: {
-      relatedEntityType?: EntityTypeE[]
+      relatedEntityType?: BusinessTypeE[]
       relatedState?: BusinessStateE[]
       roleType?: RoleTypeE[]
     }

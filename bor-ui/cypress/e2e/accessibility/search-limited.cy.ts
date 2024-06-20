@@ -1,6 +1,8 @@
 context('Accessibility -> Search limited', () => {
   beforeEach(() => {
     cy.visitSearchLimited()
+    // click 'search directors' radio
+    cy.get('[data-cy="search-radios"]').find('label').eq(2).click()
   })
 
   it('check page passes accessibility before a search', () => {

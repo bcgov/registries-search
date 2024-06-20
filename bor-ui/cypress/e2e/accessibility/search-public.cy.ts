@@ -1,6 +1,8 @@
 context('Accessibility -> Search public', () => {
   beforeEach(() => {
     cy.visitSearchPublic()
+    // click 'search owners' radio
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).click()
   })
 
   it('check page passes accessibility before a search', () => {

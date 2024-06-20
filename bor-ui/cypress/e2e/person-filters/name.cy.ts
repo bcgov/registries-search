@@ -1,6 +1,7 @@
 context('filters extended - name', () => {
   beforeEach(() => {
     cy.visitSearchExtended()
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).click()
   })
   it('should trigger a search with the expected payload when updating the filter', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')

@@ -1,25 +1,33 @@
 <template>
   <div class="flex space-x-2">
-    <UIcon v-if="icon" class="text-xl" :name="icon" />
-    <span v-html="legalName" />
+    <div>
+      <UIcon v-if="icon" class="text-xl" :name="icon" />
+    </div>
+    <div class="flex flex-col">
+      <span v-html="legalName" />
+      <BaseDetailsInfoBox
+        v-if="item.alternateName"
+        class="info-section"
+        title="Preferred Name"
+        :content="item.alternateName"
+      />
+      <BaseDetailsInfoBox
+        v-if="item.birthDate"
+        class="info-section"
+        title="Born"
+        :content="item.birthDate"
+      />
+    </div>
   </div>
-  <BaseDetailsInfoBox
-    v-if="item.alternateName"
-    class="info-section"
-    title="Preferred Name"
-    :content="item.alternateName"
-  />
-  <BaseDetailsInfoBox
-    v-if="item.birthDate"
-    class="info-section"
-    title="Born"
-    :content="item.birthDate"
-  />
 </template>
 
 <script setup lang="ts">
-
-const prop = defineProps<{ icon?: string, item: SearchResultI }>()
+type NameInfoT = {
+  legalName: string
+  alternateName?: string
+  birthDate?: string
+}
+const prop = defineProps<{ icon?: string, item: NameInfoT }>()
 const { highlightMatch } = useBcrosSearch()
 
 const legalName = highlightMatch(prop.item.legalName.toUpperCase())

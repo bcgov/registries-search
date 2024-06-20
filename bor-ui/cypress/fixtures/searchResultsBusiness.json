@@ -1,0 +1,495 @@
+{
+    "facets": {
+        "fields": {
+            "legalType": [
+                {
+                    "count": 332,
+                    "value": "BC"
+                },
+                {
+                    "count": 122,
+                    "value": "SP"
+                },
+                {
+                    "count": 95,
+                    "value": "A"
+                },
+                {
+                    "count": 92,
+                    "value": "CP"
+                },
+                {
+                    "count": 69,
+                    "value": "S"
+                },
+                {
+                    "count": 61,
+                    "value": "BEN"
+                },
+                {
+                    "count": 32,
+                    "value": "XP"
+                },
+                {
+                    "count": 28,
+                    "value": "GP"
+                },
+                {
+                    "count": 23,
+                    "value": "XS"
+                },
+                {
+                    "count": 22,
+                    "value": "LP"
+                }
+            ],
+            "status": [
+                {
+                    "count": 601,
+                    "value": "ACTIVE"
+                },
+                {
+                    "count": 333,
+                    "value": "HISTORICAL"
+                }
+            ]
+        }
+    },
+    "searchResults": {
+        "queryInfo": {
+            "categories": {
+                "legalType": "",
+                "status": ""
+            },
+            "query": {
+                "bn": "",
+                "identifier": "",
+                "name": "",
+                "value": "test"
+            },
+            "rows": 50,
+            "start": 0
+        },
+        "results": [
+            {
+                "identifier": "FM1000026",
+                "legalType": "SP",
+                "name": "TEST TEST RITVICK",
+                "score": 252.72418,
+                "status": "HISTORICAL"
+            },
+            {
+                "identifier": "XS1000621",
+                "legalType": "XS",
+                "name": "TEST",
+                "score": 247.30763,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0058169",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000106",
+                "legalType": "S",
+                "name": "TEST NCDSS1",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870320",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "identifier": "S1000248",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000208",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870309",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "A0005182",
+                "legalType": "A",
+                "name": "TEST 0406",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000198",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000200",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870327",
+                "legalType": "BC",
+                "name": "TEST GGGG",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870307",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870312",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870334",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870323",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "A0079047",
+                "legalType": "A",
+                "name": "TEST CHG97585271",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "BC0870318",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "HISTORICAL"
+            },
+            {
+                "bn": "123",
+                "identifier": "BC0870335",
+                "legalType": "CC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "HISTORICAL"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870321",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870090",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "A0000713",
+                "legalType": "A",
+                "name": "TEST NAME",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870339",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "A0079086",
+                "legalType": "A",
+                "name": "TEST NAME",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0010537",
+                "legalType": "BC",
+                "name": "TEST GGGG",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000199",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "C0870325",
+                "legalType": "C",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "A0004140",
+                "legalType": "A",
+                "name": "TEST FD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870316",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0587470",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870324",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0057184",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "A0051213",
+                "legalType": "A",
+                "name": "TEST FDAAAAA",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "A0079083",
+                "legalType": "A",
+                "name": "TEST NAME",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "identifier": "S1000249",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000207",
+                "legalType": "S",
+                "name": "Test 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "identifier": "S1000287",
+                "legalType": "S",
+                "name": "TEST NR1",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870328",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000205",
+                "legalType": "S",
+                "name": "TEST NR1",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0495014",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000107",
+                "legalType": "S",
+                "name": "TEST 123",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "A0003328",
+                "legalType": "A",
+                "name": "TEST FD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "S1000074",
+                "legalType": "S",
+                "name": "TEST SOC000238IETY",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870317",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "identifier": "XS1000709",
+                "legalType": "XS",
+                "name": "TEST REINSTATEMENT",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "identifier": "CP1002397",
+                "legalType": "CP",
+                "name": "TEST COOP",
+                "score": 217.08148,
+                "status": "HISTORICAL"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "BC0870308",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            },
+            {
+                "bn": "123",
+                "identifier": "BC0870332",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "HISTORICAL"
+            },
+            {
+                "bn": "123",
+                "identifier": "BC0870333",
+                "legalType": "BC",
+                "name": "TEST LTD",
+                "score": 217.08148,
+                "status": "HISTORICAL"
+            },
+            {
+                "bn": "123",
+                "goodStanding": false,
+                "identifier": "A0078917",
+                "legalType": "A",
+                "name": "TEST CHG9758527",
+                "score": 217.08148,
+                "status": "ACTIVE"
+            }
+        ],
+        "totalResults": 934
+    }
+}

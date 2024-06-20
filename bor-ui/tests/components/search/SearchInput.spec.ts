@@ -7,28 +7,41 @@ describe('SearchBar tests', () => {
   let wrapper: VueWrapper<any>
 
   const search = useBcrosSearch()
-  const { accessLevel, hasLimitedAccess, totalResults } = storeToRefs(search)
+  const { searchType, activeSearch } = storeToRefs(search)
+  const searchAccess = useBcrosSearchAccess()
+  const { accessLevel, hasExtendedAccess, hasLimitedAccess } = storeToRefs(searchAccess)
 
   afterEach(() => {
-    search.resetSearch()
+    search.reset(SearchTypeE.BUSINESS)
+    search.reset(SearchTypeE.PERSON)
+    search.reset(SearchTypeE.DIRECTOR)
     accessLevel.value = SearchAccessE.PUBLIC
     wrapper?.unmount()
   })
   it('Renders and displays expected content search', async () => {
     const uiOptions = [
-      { access: SearchAccessE.PUBLIC, label: 'Person Name', hint: 'Example: "John Smith"' },
       {
+        type: SearchTypeE.BUSINESS,
+        access: SearchAccessE.PUBLIC,
+        label: 'Business Name or Incorporation/Registration Number or CRA Business Number',
+        hint: 'Example: "Test Construction Inc.", "BC0000123", "987654321BC001"'
+      },
+      { type: SearchTypeE.PERSON, access: SearchAccessE.PUBLIC, label: 'Owner Name', hint: 'Example: "John Smith"' },
+      {
+        type: SearchTypeE.DIRECTOR,
         access: SearchAccessE.LIMITED,
         label: 'Person Name, Address, and/or Business Email Address',
-        hint: 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"'
+        hint: 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.corp@123.aba"'
       },
       {
+        type: SearchTypeE.PERSON,
         access: SearchAccessE.EXTENDED,
         label: 'Person Name, Address, SIN/TTN/ITN, and/or Email Address',
         hint: 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba", "000 000 000"'
       }
     ]
     for (const option of uiOptions) {
+      searchType.value = option.type
       accessLevel.value = option.access
       wrapper = mount(SearchInput)
       await flushPromises()
@@ -44,40 +57,58 @@ describe('SearchBar tests', () => {
       const message = wrapper.find('p')
       expect(message.text()).toBe(option.hint)
 
-      // radios should only show for extended search
-      if (hasLimitedAccess.value) {
-        expect(wrapper.find('[data-cy=search-radios]').exists()).toBe(false)
-      } else {
-        // update to extended and verify radios
-        const radiosWrapper = wrapper.find('[data-cy=search-radios]')
-        expect(radiosWrapper.exists()).toBe(true)
+      // verify radios
+      const radiosWrapper = wrapper.find('[data-cy=search-radios]')
+      expect(radiosWrapper.exists()).toBe(true)
 
-        const radioLabels = radiosWrapper.findAll('label')
-        expect(radioLabels.length).toBe(2)
-        const radioInputs = radiosWrapper.findAll('input')
-        expect(radioInputs.length).toBe(2)
+      const expectedRadioNum = hasLimitedAccess.value || hasExtendedAccess.value ? 3 : 2
+      const radioLabels = radiosWrapper.findAll('label')
+      expect(radioLabels.length).toBe(expectedRadioNum)
+      const radioInputs = radiosWrapper.findAll('input')
+      expect(radioInputs.length).toBe(expectedRadioNum)
 
-        // person
+      // business
+      expect(radioLabels[0].text()).toBe('Search Businesses')
+      expect(radioInputs[0].attributes().type).toBe('radio')
+      expect(radioInputs[0].attributes().value).toBe('business')
+      expect(radioInputs[0].attributes().disabled).toBeUndefined()
+
+      // person
+      if (hasExtendedAccess.value) {
         expect(radioLabels[1].text()).toBe('Search People')
-        expect(radioInputs[1].attributes().type).toBe('radio')
-        expect(radioInputs[1].attributes().value).toBe('person')
-        expect(radioInputs[1].attributes().disabled).toBeUndefined()
+      } else {
+        expect(radioLabels[1].text()).toBe('Search Owners')
+      }
+      expect(radioInputs[1].attributes().type).toBe('radio')
+      expect(radioInputs[1].attributes().value).toBe('person')
+      expect(radioInputs[1].attributes().disabled).toBeUndefined()
 
-        // business
-        expect(radioLabels[0].text()).toBe('Search Businesses')
-        expect(radioInputs[0].attributes().type).toBe('radio')
-        expect(radioInputs[0].attributes().value).toBe('business')
-        expect(radioInputs[0].attributes().disabled).toBeUndefined()
+      // Directors
+      if (hasLimitedAccess.value || hasExtendedAccess.value) {
+        expect(radioLabels[2].text()).toBe('Search Directors')
+        expect(radioInputs[2].attributes().type).toBe('radio')
+        expect(radioInputs[2].attributes().value).toBe('director')
+        expect(radioInputs[2].attributes().disabled).toBeUndefined()
       }
     }
   })
   it('Validates input', async () => {
     const uiOptions = [
-      { access: SearchAccessE.PUBLIC, msg: 'Enter a name' },
-      { access: SearchAccessE.LIMITED, msg: 'Enter a name, address, and/or business email address' },
-      { access: SearchAccessE.EXTENDED, msg: 'Enter a name, address, SIN/TTN/ITN, and/or email address' }
+      { type: SearchTypeE.BUSINESS, access: SearchAccessE.PUBLIC, msg: 'Enter a business name or number' },
+      { type: SearchTypeE.PERSON, access: SearchAccessE.PUBLIC, msg: 'Enter an owner name' },
+      {
+        type: SearchTypeE.DIRECTOR,
+        access: SearchAccessE.LIMITED,
+        msg: 'Enter a name, address, and/or business email address'
+      },
+      {
+        type: SearchTypeE.PERSON,
+        access: SearchAccessE.EXTENDED,
+        msg: 'Enter a name, address, SIN/TTN/ITN, and/or email address'
+      }
     ]
     for (const options of uiOptions) {
+      searchType.value = options.type
       accessLevel.value = options.access
       wrapper = mount(SearchInput)
       const searchTextField = wrapper.find('[data-cy="search-textfield"]')
@@ -89,7 +120,7 @@ describe('SearchBar tests', () => {
       expect(message.text()).toBe(options.msg)
 
       // search was not triggered
-      expect(totalResults.value).toBe(null)
+      expect(activeSearch.value.resultsTotal).toBe(undefined)
       wrapper.unmount()
     }
   })

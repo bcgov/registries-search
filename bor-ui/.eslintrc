@@ -9,6 +9,7 @@
       { "code": 120, "ignoreRegExpLiterals": true, "ignoreTrailingComments": true }
     ],
     "no-console": ["error", { "allow": ["warn", "error", "info"] }],
+    "func-call-spacing": "off",
     "space-before-function-paren": "off",
     "vue/no-unused-vars": "warn",
     "vue/multi-word-component-names": "off",

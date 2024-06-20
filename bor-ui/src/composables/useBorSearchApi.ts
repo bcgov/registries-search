@@ -2,52 +2,12 @@ import { StatusCodes } from 'http-status-codes'
 // internal
 import { ErrorCategoryE, SearchAccessE } from '#imports'
 import type {
-  ErrorCategoryE as ErrCategoryType,
-  ErrorCodeE,
   SearchAccessE as SearchAccessType,
   SearchResponseI
 } from '#imports'
 
-export const useSearchApi = () => {
-  const _getSearchConfig = (exportSearch: boolean) => {
-    const { borApiURL, borApiKey } = useRuntimeConfig().public
-    if (!borApiURL) { console.error('Error: BOR_API_URL expected, but not found.') }
-    if (!borApiKey) { console.error('Error: BOR_API_KEY expected, but not found.') }
-
-    const config: any = { baseURL: borApiURL, headers: { 'x-apikey': borApiKey } }
-    if (exportSearch) {
-      config.headers.Accept = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      config.responseType = 'blob'
-    }
-    return config
-  }
-
-  const _parseGatewayError = (category: ErrCategoryType, defaultStatus: StatusCodes, error): ErrorI => {
-    const parseRootCause = (rootCause: string) => {
-      try {
-        let parsedRootCause = rootCause.replace('detail:', '"detail":"')
-          .replace('type:', '"type":"')
-          .replace('message:', '"message":"')
-          .replace('status_code:', '"statusCode":"')
-          .replaceAll(',', '",')
-        parsedRootCause = `{${parsedRootCause}"}`
-        return JSON.parse(parsedRootCause)
-      } catch (error) {
-        console.warn(error)
-        return null
-      }
-    }
-    // parse root cause
-    let rootCause = null
-    if (error.value?.data?.rootCause) { rootCause = parseRootCause(error.value.data.rootCause) }
-    return {
-      category,
-      detail: rootCause?.detail || error?.response?.data?.detail,
-      message: rootCause?.message || error?.response?.data?.message,
-      statusCode: rootCause?.statusCode || error?.response?.status || defaultStatus,
-      type: rootCause?.type?.trim() as ErrorCodeE
-    }
-  }
+export const useBorSearchApi = () => {
+  const { borApiURL, borApiKey } = useRuntimeConfig().public
 
   const searchEntities = async (
     searchValue: string,
@@ -66,7 +26,7 @@ export const useSearchApi = () => {
     }
     payload.query.value = searchValue
     // add search-api config stuff
-    const config = _getSearchConfig(exportSearch)
+    const config = getApiConfig(borApiURL, borApiKey, exportSearch)
     let accessPath = null
     switch (accessLevel) {
       case SearchAccessE.PUBLIC:
@@ -94,7 +54,7 @@ export const useSearchApi = () => {
           return {
             facets: {},
             searchResults: {},
-            error: _parseGatewayError(category, StatusCodes.INTERNAL_SERVER_ERROR, error)
+            error: parseGatewayError(category, StatusCodes.INTERNAL_SERVER_ERROR, error)
           } as SearchResponseI
         }
 

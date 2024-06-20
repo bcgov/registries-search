@@ -1,17 +1,17 @@
 <template>
   <base-table
-    class="person-results-public rounded-top"
+    class="person-results-public rounded-t"
     height="100%"
     :item-key="'legalName'"
-    :loading="loading"
+    :loading="searchPerson.loading"
     overflow="scroll"
     :reset-filters-trigger="resetFiltersTrigger"
     :results-description="resultsDesc"
     :set-headers="headers"
-    :set-items="results"
+    :set-items="searchPerson.results"
     title="Search Results"
     :title-extras="true"
-    :total-items="totalResults"
+    :total-items="searchPerson.resultsTotal"
   >
     <template #item-loading-slot-actions>
       <div class="h-[83px] pt-[26px] pb-4 px-3 shadow-action-col-item bg-white">
@@ -19,7 +19,7 @@
       </div>
     </template>
     <template #item-slot-name="{ item } : { item: SearchResultI }">
-      <CommonItemsName :item="item" />
+      <CommonItemsName :item="item" icon="i-mdi-account" />
     </template>
     <template #item-slot-citizenship="{ item } : { item: SearchResultI }">
       <div class="flex justify-center">
@@ -46,11 +46,11 @@
         <CommonItemsAction show-btn @action="console.info('clicked open on', item.legalName)" />
       </div>
     </template> -->
-    <template v-if="searchError" #body-empty>
+    <template v-if="searchPerson.error" #body-empty>
       <bcros-error-retry
         class="my-5"
         :action="search.getSearchResults"
-        :action-args="[searchValue]"
+        :action-args="[searchPerson.val]"
         message="We are unable to display your search results. Please try again later."
       />
     </template>
@@ -67,15 +67,8 @@ const props = defineProps<{
   updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
 }>()
 
-// composables
 const search = useBcrosSearch()
-const {
-  loading,
-  results,
-  totalResults,
-  searchError,
-  searchValue
-} = storeToRefs(search)
+const { searchPerson } = storeToRefs(search)
 
 // search table config (headers)
 const headers = getPersonHeadersPublic()

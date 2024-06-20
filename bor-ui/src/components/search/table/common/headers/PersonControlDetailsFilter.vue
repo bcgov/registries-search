@@ -6,7 +6,7 @@
       placeholder="Details"
       size="sm"
       trailing
-      :ui="{ icon: { trailing: { pointer: '' }}, base: 'cursor-pointer text-left'}"
+      :ui="{ icon: { trailing: { pointer: '' } }, base: 'cursor-pointer text-left', default: { class: 'bg-gray-100' } }"
       data-cy="control-filter"
     >
       <template #trailing>
@@ -104,12 +104,12 @@ const options = [
   }
 ]
 
-const search = useBcrosSearch()
+const { filterSearch } = useBcrosSearch()
 watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
   if (oldList.length === 0 && newList.length === 0) {
     return
   }
-  search.filterSearch(['categories', 'roles', 'relatedInterests'], newList)
+  filterSearch(['categories', 'roles', 'relatedInterests'], newList)
 })
 
 </script>

@@ -3,20 +3,21 @@ import { SearchResultI } from '../../src/interfaces/search-i'
 context('Search public', () => {
   beforeEach(() => {
     cy.visitSearchPublic()
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).click()
   })
 
   it('should display expected search bar', () => {
     // info text
     cy.get('[data-cy="search-input-info-text"]').should(
       'have.text',
-      'Search for the names of people associated with businesses in B.C.'
+      'Search for owners of businesses in B.C.'
     )
     // search input
     cy.get('[data-cy="search-input"]').find('[data-cy="search-textfield"]').should('exist')
     // label text
     cy.get('[data-cy="search-input"]')
       .find('[data-cy="search-textfield"]')
-      .should('have.attr', 'placeholder', 'Person Name')
+      .should('have.attr', 'placeholder', 'Owner Name')
     // hint text
     cy.get('[data-cy="search-input"]')
       .find('p')

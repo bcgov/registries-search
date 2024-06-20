@@ -23,23 +23,24 @@
   </div>
 </template>
 <script setup lang="ts">
-import _ from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
+const exportRows = defineModel('exportRows', { required: true, type: String, default: '1000' })
 
 const search = useBcrosSearch()
-const { exportRows, searchError } = storeToRefs(search)
+const { activeSearch } = storeToRefs(search)
 
 const exportLoading = ref(false)
 const toast = useToast()
 
 /** Export search results into an .xlsx download file. */
-const exportToXlsx = _.debounce(async () => {
+const exportToXlsx = useThrottleFn(async () => {
   exportLoading.value = true
   await search.exportSearch()
   exportLoading.value = false
-  if (!searchError.value) {
+  if (!activeSearch.value.error) {
     toast.add({
       title: 'Search results successfully exported in the order displayed in the table.'
     })
   }
-}, 50, { leading: true, trailing: false })
+}, 1000)
 </script>

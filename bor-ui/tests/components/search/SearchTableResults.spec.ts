@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
-import { testSearchResults } from '../../test-utils'
+import { mockedI18n, testSearchResults } from '~~/tests/test-utils'
 
 import {
   BaseTable,
   BcrosDateRangePicker,
   BcrosErrorRetry,
+  SearchTableBusinessResults,
   SearchTablePersonResultsExtended,
   SearchTablePersonResultsLimited,
   SearchTablePersonResultsPublic,
   SearchTableResults
 } from '#components'
-
 import { SearchAccessE, type BaseTableHeaderI } from '#imports'
 
 const verifyAddress = (text: string, address: Partial<AddressI>) => {
@@ -32,16 +32,16 @@ describe('SearchResults tests', () => {
   let wrapper: VueWrapper<any>
 
   const search = useBcrosSearch()
+  const { activeSearch, searchType, searchBusiness, searchDirector, searchPerson } = storeToRefs(search)
+  const searchAccess = useBcrosSearchAccess()
   const {
     accessLevel,
     hasExtendedAccess,
     hasLimitedAccess,
-    hasPublicAccess,
-    results,
-    totalResults,
-    searchError
-  } = storeToRefs(search)
+    hasPublicAccess
+  } = storeToRefs(searchAccess)
 
+  const businessHeaders = getBusinessHeaders()
   const publicHeaders = getPersonHeadersPublic()
   const limitedHeaders = getPersonHeadersLimited()
   const extendedHeaders = getPersonHeadersExtended()
@@ -52,12 +52,22 @@ describe('SearchResults tests', () => {
     expect(table.exists()).toBe(true)
     expect(table.findComponent(BaseTable).exists()).toBe(true)
 
-    expect(wrapper.findComponent(SearchTablePersonResultsLimited).exists()).toBe(hasLimitedAccess.value)
-    expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(hasExtendedAccess.value)
-    expect(wrapper.findComponent(SearchTablePersonResultsPublic).exists()).toBe(hasPublicAccess.value)
+    if (searchType.value === SearchTypeE.BUSINESS) {
+      expect(wrapper.findComponent(SearchTableBusinessResults).exists()).toBe(true)
+    } else if (searchType.value === SearchTypeE.DIRECTOR) {
+      expect(wrapper.findComponent(SearchTablePersonResultsLimited).exists()).toBe(true)
+    } else {
+      expect(wrapper.findComponent(SearchTablePersonResultsPublic).exists()).toBe(hasPublicAccess.value)
+      expect(wrapper.findComponent(SearchTablePersonResultsExtended).exists()).toBe(hasExtendedAccess.value)
+    }
     // renders title
     expect(wrapper.find('.table-title').exists()).toBe(true)
-    expect(wrapper.find('.table-title').find('h2').text()).toContain('Search Results  (0 People)')
+    expect(activeSearch.value.resultsTotal).toBe(0)
+    if (searchType.value === SearchTypeE.BUSINESS) {
+      expect(wrapper.find('.table-title').find('h2').text()).toContain('Search Results  (0 Businesses)')
+    } else {
+      expect(wrapper.find('.table-title').find('h2').text()).toContain('Search Results  (0 People)')
+    }
     // renders export excel stuff
     if (!hasPublicAccess.value) {
       expect(wrapper.find('[data-cy=table-export-select]').exists()).toBe(true)
@@ -89,15 +99,15 @@ describe('SearchResults tests', () => {
     }
 
     // renders no results found text
-    expect(results.value).toEqual([])
+    expect(activeSearch.value.results).toEqual([])
     expect(table.find('.base-table__body__empty').exists()).toBe(true)
     expect(table.find('.base-table__body__empty').text()).toBe('No results found')
     // does not show error retry
-    expect(searchError.value).toBeUndefined()
+    expect(activeSearch.value.error).toBeUndefined()
     expect(table.findComponent(BcrosErrorRetry).exists()).toBe(false)
     // does not show load more results btn
     expect(wrapper.find('#load-more-results').find('v-btn').exists()).toBe(false)
-    if (hasPublicAccess.value) {
+    if (searchType.value === SearchTypeE.BUSINESS || hasPublicAccess.value) {
       expect(wrapper.findComponent(BcrosDateRangePicker).exists()).toBe(false)
     } else {
       // does not show datepicker
@@ -105,7 +115,7 @@ describe('SearchResults tests', () => {
     }
   }
 
-  const verifyTableResults = (headerConfig: BaseTableHeaderI[]) => {
+  const verifyPersonTableResults = (headerConfig: BaseTableHeaderI[]) => {
     // renders results in table
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)
@@ -258,15 +268,15 @@ describe('SearchResults tests', () => {
   }
 
   beforeEach(async () => {
-    totalResults.value = 0
-    results.value = []
     accessLevel.value = SearchAccessE.PUBLIC
+    searchType.value = SearchTypeE.PERSON
     wrapper = mount(
       SearchTableResults, {
         global: {
           components: {
             CountryFlag: MockCountryFlag
-          }
+          },
+          plugins: [mockedI18n]
         }
       }
     )
@@ -274,35 +284,56 @@ describe('SearchResults tests', () => {
   })
   afterEach(() => {
     wrapper.unmount()
-    search.resetSearch()
+    search.reset(SearchTypeE.BUSINESS)
+    search.reset(SearchTypeE.PERSON)
+    search.reset(SearchTypeE.DIRECTOR)
   })
 
-  it('Public Search: Renders and displays expected default content', () => {
-    expect(search.results).toEqual([])
+  it('Public Search: Renders and displays expected default content', async () => {
+    expect(searchType.value).toEqual(SearchTypeE.PERSON)
+    searchPerson.value.resultsTotal = 0
+    await flushPromises()
+    expect(activeSearch.value.results).toEqual([])
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     verifyDefaultSearchResultsTable(publicHeaders)
   })
 
   it('Limited Search: Renders and displays expected default content', async () => {
     accessLevel.value = SearchAccessE.LIMITED
+    searchType.value = SearchTypeE.DIRECTOR
+    await flushPromises()
+    searchDirector.value.resultsTotal = 0
     await flushPromises()
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     verifyDefaultSearchResultsTable(limitedHeaders)
   })
 
   it('Extended Search: Renders and displays expected default content', async () => {
+    expect(searchType.value).toEqual(SearchTypeE.PERSON)
     accessLevel.value = SearchAccessE.EXTENDED
+    searchPerson.value.resultsTotal = 0
     await flushPromises()
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     // await flushPromises()
     verifyDefaultSearchResultsTable(extendedHeaders)
   })
 
+  it('Business Search: Renders and displays expected default content', async () => {
+    searchType.value = SearchTypeE.BUSINESS
+    await flushPromises()
+    searchBusiness.value.resultsTotal = 0
+    await flushPromises()
+    expect(activeSearch.value.results).toEqual([])
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
+    verifyDefaultSearchResultsTable(businessHeaders)
+  })
+
   it('limited Search: Renders and displays results', async () => {
     accessLevel.value = SearchAccessE.LIMITED
+    searchType.value = SearchTypeE.DIRECTOR
     await flushPromises()
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    results.value = testSearchResults
+    activeSearch.value.results = testSearchResults
     await flushPromises()
     // renders results in table
     const table = wrapper.find('.search-table')
@@ -311,13 +342,14 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').exists()).toBe(false)
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(testSearchResults.length)
-    verifyTableResults(limitedHeaders)
+    verifyPersonTableResults(limitedHeaders)
   })
 
   it('Extended Search: Renders and displays results', async () => {
+    expect(searchType.value).toEqual(SearchTypeE.PERSON)
     accessLevel.value = SearchAccessE.EXTENDED
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
-    results.value = testSearchResults
+    activeSearch.value.results = testSearchResults
     await flushPromises()
     // renders results in table
     const table = wrapper.find('.search-table')
@@ -326,6 +358,6 @@ describe('SearchResults tests', () => {
     expect(table.find('.base-table__body__empty').exists()).toBe(false)
     const rows = table.findAll('.base-table__body__row')
     expect(rows.length).toBe(testSearchResults.length)
-    verifyTableResults(extendedHeaders)
+    verifyPersonTableResults(extendedHeaders)
   })
 })

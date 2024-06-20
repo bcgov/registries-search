@@ -3,18 +3,18 @@
     class="person-results rounded-t relative"
     height="100%"
     :item-key="'legalName'"
-    :loading="loading"
+    :loading="searchDirector.loading"
     overflow="scroll"
     :reset-filters-trigger="resetFiltersTrigger"
     :results-description="resultsDesc"
     :set-headers="headers"
-    :set-items="results"
+    :set-items="searchDirector.results"
     title="Search Results"
     :title-extras="true"
-    :total-items="totalResults"
+    :total-items="searchDirector.resultsTotal"
   >
     <template #title-extras>
-      <CommonTitleExport />
+      <CommonTitleExport v-model:export-rows="searchDirector.exportRows" />
     </template>
     <template #header-filter-slot-date>
       <CommonHeadersDateRangeFilter :date-range-reset="dateRangeReset" />
@@ -28,7 +28,7 @@
     </template> -->
     <template #item-slot-name="{ item }">
       <CommonItemsName
-        :icon="item.entityType.toUpperCase() === EntityTypeE.PERSON ? 'i-mdi-account' : 'i-mdi-domain'"
+        icon="i-mdi-account"
         :item="item"
       />
     </template>
@@ -74,11 +74,11 @@
         </div>
       </div>
     </template>
-    <template v-if="searchError" #body-empty>
+    <template v-if="searchDirector.error" #body-empty>
       <bcros-error-retry
         class="my-5"
         :action="search.getSearchResults"
-        :action-args="[searchValue]"
+        :action-args="[searchDirector.val]"
         message="We are unable to display your search results. Please try again later."
       />
     </template>
@@ -96,15 +96,8 @@ const props = defineProps<{
   updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
 }>()
 
-// composables
 const search = useBcrosSearch()
-const {
-  loading,
-  results,
-  totalResults,
-  searchError,
-  searchValue
-} = storeToRefs(search)
+const { searchDirector } = storeToRefs(search)
 
 // search table config (headers)
 const headers = getPersonHeadersLimited()

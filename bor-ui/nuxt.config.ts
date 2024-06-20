@@ -49,7 +49,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // Keys within public, will be also exposed to the client-side
-      addressCompleteKey: process.env.VUE_APP_ADDRESS_COMPLETE_KEY,
       authApiURL: `${process.env.VUE_APP_AUTH_API_URL || ''}${process.env.VUE_APP_AUTH_API_VERSION || ''}`,
       authWebURL: process.env.VUE_APP_AUTH_WEB_URL || '',
       kcURL: process.env.VUE_APP_KEYCLOAK_AUTH_URL || '',
@@ -57,15 +56,16 @@ export default defineNuxtConfig({
       kcClient: process.env.VUE_APP_KEYCLOAK_CLIENTID || '',
       ldClientId: process.env.VUE_APP_BOR_LD_CLIENT_ID || '',
       legalApiURL: `${process.env.VUE_APP_LEGAL_API_URL || ''}${process.env.VUE_APP_LEGAL_API_VERSION_2 || ''}`,
-      payApiURL: `${process.env.VUE_APP_PAY_API_URL || ''}${process.env.VUE_APP_PAY_API_VERSION || ''}`,
-      btrApiURL: `${process.env.VUE_APP_BTR_API_URL || ''}${process.env.VUE_APP_BTR_API_VERSION || ''}`,
       borApiURL: `${process.env.VUE_APP_BOR_API_URL || ''}${process.env.VUE_APP_BOR_API_VERSION || ''}`,
       borApiKey: `${process.env.VUE_APP_BOR_API_KEY || ''}`,
+      regSearchApiURL: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_URL || ''}` +
+        `${process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION || ''}`,
+      regSearchApiKey: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY || ''}`,
       registryHomeURL: process.env.VUE_APP_REGISTRY_HOME_URL || '',
       bcolURL: process.env.VUE_APP_BCONLINE_URL || '',
       businessSearchURL: process.env.VUE_APP_REGISTRIES_SEARCH_URL || '',
       appEnv: `${process.env.VUE_APP_POD_NAMESPACE || 'unknown'}`,
-      requireLogin: process.env.VUE_APP_REQUIRE_LOGIN === 'true' || false,
+      requireLogin: true,
       searchRows: `${process.env.VUE_APP_SEARCH_ROWS || ''}`,
       version: process.env.npm_package_version || '',
       appName: process.env.npm_package_name || '',

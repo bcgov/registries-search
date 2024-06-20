@@ -1,4 +1,5 @@
 export enum SearchTypeE {
   BUSINESS = 'business',
-  PERSON = 'person'
+  PERSON = 'person',
+  DIRECTOR = 'director'
 }

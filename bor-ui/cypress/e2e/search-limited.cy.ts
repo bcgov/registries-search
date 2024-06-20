@@ -3,6 +3,7 @@ import { SearchResultRoleI } from '../../src/interfaces/search-i'
 context('Search limited', () => {
   beforeEach(() => {
     cy.visitSearchLimited()
+    cy.get('[data-cy="search-radios"]').find('label').eq(2).click()
   })
   it('should display expected search bar', () => {
     // info text
@@ -19,7 +20,7 @@ context('Search limited', () => {
     // hint text
     cy.get('[data-cy="search-input"]')
       .find('p')
-      .should('have.text', 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.smith@123.aba"')
+      .should('have.text', 'Example: "John Smith", "123 Main St", "V1V 1V1", "John Smith Victoria", "j.corp@123.aba"')
   })
   it('should display expected results after a search is triggered', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')

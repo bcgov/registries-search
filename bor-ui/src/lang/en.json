@@ -1,5 +1,12 @@
 {
+  "appHeader": "Business and Person Search",
   "label": {
+    "business": {
+      "status": {
+        "active": "Active",
+        "historical": "Historical"
+      }
+    },
     "control": {
       "actingJointly": "Acting jointly",
       "beneficialOwner": "Beneficial Owner",
@@ -23,6 +30,21 @@
         "registeredOwner": "Registered owner of shares or votes",
         "significantInfluence": "Significant influence of directors"
       }
+    },
+    "search": {
+      "searchBusinesses": "Search Businesses",
+      "searchDirectors": "Search Directors",
+      "searchOwners": "Search Owners",
+      "searchPeople": "Search People"
+    },
+    "table": {
+      "actions": "Actions",
+      "bn": "CRA Business Number",
+      "businessIdentifier": "Number",
+      "businessName": "Business Name",
+      "businessType": "Business Type",
+      "incorpRegNum": "Incorporation/ Registration Number",
+      "status": "Status"
     }
   },
   "text": {
@@ -35,6 +57,65 @@
         "other": "Any other reason(s) this individual is a significant individual",
         "registeredOwner": "Registered owner",
         "significantInfluence": "Significant influence control"
+      }
+    },
+    "search": {
+      "business": {
+        "general": {
+          "tooltip": "You can access this business through BC OnLine or by contacting BC Registries. See \"Help with Business and Person Search\" for details."
+        },
+        "extended": {
+          "error": "Enter a business name or number",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
+          "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
+        },
+        "limited": {
+          "error": "Enter a business name or number",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
+          "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
+        },
+        "public": {
+          "error": "Enter a business name or number",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
+          "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
+        }
+      },
+      "person": {
+        "extended": {
+          "error": "Enter a name, address, SIN/TTN/ITN, and/or email address",
+          "hint": "Example: \"John Smith\", \"123 Main St\", \"V1V 1V1\", \"John Smith Victoria\", \"j.smith{'@'}123.aba\", \"000 000 000\"",
+          "info": "Search for the names, addresses, SIN/TTN/ITN, and email addresses of people associated with businesses in B.C.",
+          "placeholder": "Person Name, Address, SIN/TTN/ITN, and/or Email Address"
+        },
+        "limited": {
+          "error": "Enter an owner name",
+          "hint": "Example: \"John Smith\"",
+          "info": "Search for owners of businesses in B.C.",
+          "placeholder": "Owner Name"
+        },
+        "public": {
+          "error": "Enter an owner name",
+          "hint": "Example: \"John Smith\"",
+          "info": "Search for owners of businesses in B.C.",
+          "placeholder": "Owner Name"
+        }
+      },
+      "director": {
+        "extended": {
+          "error": "Enter a name, address, and/or business email address",
+          "hint": "Example: \"John Smith\", \"123 Main St\", \"V1V 1V1\", \"John Smith Victoria\", \"j.corp{'@'}123.aba\"",
+          "info": "Search for the names, addresses, and business email addresses of people associated with businesses in B.C.",
+          "placeholder": "Person Name, Address, and/or Business Email Address"
+        },
+        "limited": {
+          "error": "Enter a name, address, and/or business email address",
+          "hint": "Example: \"John Smith\", \"123 Main St\", \"V1V 1V1\", \"John Smith Victoria\", \"j.corp{'@'}123.aba\"",
+          "info": "Search for the names, addresses, and business email addresses of people associated with businesses in B.C.",
+          "placeholder": "Person Name, Address, and/or Business Email Address"
+        }
       }
     },
     "table": {

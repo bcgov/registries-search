@@ -1,5 +1,7 @@
+export { default as CommonHeadersClearFilters } from './headers/ClearFilters.vue'
 export { default as CommonHeadersDateRangeFilter } from './headers/DateRangeFilter.vue'
 export { default as CommonHeadersPersonControlDetailsFilter } from './headers/PersonControlDetailsFilter.vue'
+export { default as CommonItemsAction } from './items/Action.vue'
 export { default as CommonItemsPersonControl } from './items/PersonControl.vue'
 export { default as CommonItemsBusinessDetails } from './items/BusinessDetails.vue'
 export { default as CommonItemsName } from './items/Name.vue'

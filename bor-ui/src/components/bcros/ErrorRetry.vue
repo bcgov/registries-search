@@ -15,15 +15,11 @@
       data-cy="error-retry-btn"
       @click="handleRetry()"
     />
-    <bcros-contact-info class="max-w-[310px] mx-auto mt-5" :contacts="HelpdeskInfo" />
+    <bcros-contact-info class="max-w-[310px] mx-auto mt-5" :contacts="getContactInfo('helpDesk')" />
   </div>
 </template>
 <script setup lang="ts">
-// external
-import { ref } from 'vue'
-import _ from 'lodash'
-// local
-import { HelpdeskInfo } from '@/resources/contact-info'
+import { useThrottleFn } from '@vueuse/core'
 
 const props = defineProps<{
   action:(...args: any[]) => any
@@ -33,11 +29,11 @@ const props = defineProps<{
 
 const loading = ref(false)
 
-const handleRetry = _.debounce(async () => {
+const handleRetry = useThrottleFn(async () => {
   loading.value = true
   // wait 1 sec (give loader time to be shown)
   await new Promise(resolve => setTimeout(resolve, 1000))
   if (props.actionArgs) { await props.action(...props.actionArgs) } else { await props.action() }
   loading.value = false
-}, 300)
+}, 1000)
 </script>

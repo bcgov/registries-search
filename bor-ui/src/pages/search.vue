@@ -106,10 +106,13 @@
       <p class="mb-7" data-cy="search-input-info-text">
         {{ searchInfoText }}
       </p>
-      <search-input />
+      <search-input v-model:searchType="searchType" />
       <!-- NOTE: below is what the date picker teleport attaches to -->
       <div id="date-range-filter-dest" />
-      <search-table-results v-if="results!=null" class="mt-[30px]" />
+      <search-table-results
+        v-if="activeSearch.resultsTotal != undefined || activeSearch.loading || activeSearch.error"
+        class="mt-[30px]"
+      />
     </div>
   </div>
 </template>
@@ -117,31 +120,22 @@
 <script setup lang="ts">
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
-const { hasExtendedAccess, hasLimitedAccess, results } = storeToRefs(useBcrosSearch())
+const { accessLevel, hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
 
-const searchTitleText = computed(() => hasLimitedAccess.value ? 'Director Search' : 'Business and Person Search')
-const searchInfoText = computed(() => {
-  if (hasExtendedAccess.value) {
-    // eslint-disable-next-line
-    return 'Search for the names, addresses, SIN/TTN/ITN, and email addresses of people associated with businesses in B.C.'
-  }
-  if (hasLimitedAccess.value) {
-    return 'Search for the names, addresses, and business email addresses of people associated with businesses in B.C.'
-  }
-  return 'Search for the names of people associated with businesses in B.C.'
-})
+const { searchType, activeSearch } = storeToRefs(useBcrosSearch())
+
+const { t } = useNuxtApp().$i18n
+
+const searchTitleText = t('appHeader')
+const searchInfoText = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.info`))
 
 const bcOnlineURL = useRuntimeConfig().public.bcolURL
 const searchGuideURL = computed(() => {
-  if (hasExtendedAccess.value) {
-    // TODO: extended search link tbd
-    return ''
-  }
-  if (hasLimitedAccess.value) {
+  // TODO: extended/public/business search link tbd
+  if (searchType.value === SearchTypeE.DIRECTOR) {
     // eslint-disable-next-line
     return 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
   }
-  // TODO: public search link tbd
   return ''
 })
 const showDocHelp = ref(false)
