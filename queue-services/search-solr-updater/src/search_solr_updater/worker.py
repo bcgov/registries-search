@@ -118,7 +118,16 @@ async def process_business_event(event_message: Dict[str, any]):  # pylint: disa
 
     # update solr via search-api
     try:
-        update_payload = {**business_resp.json(), 'parties': parties}
+        def convert_business(business: dict):
+            """Return the business info with the expected legal name."""
+            if business['legalType'] in ['SP', 'GP']:
+                for name in business.get('alternateNames', []):
+                    if name['identifier'] == business['identifier']:
+                        business['legalName'] = name['name']
+                        break
+            return business
+
+        update_payload = {'business': convert_business(business_resp.json()['business']), 'parties': parties}
         solr_update_url = f'{APP_CONFIG.SEARCH_API_URL}/internal/solr/update'
         update_resp = requests.put(url=solr_update_url, headers=headers, json=update_payload, timeout=30)
         if update_resp.status_code != HTTPStatus.OK:

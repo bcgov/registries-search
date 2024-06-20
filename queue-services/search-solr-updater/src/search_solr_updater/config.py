@@ -122,7 +122,9 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
 
     SENTRY_ENABLE = 'false'
     STAN_CLUSTER_NAME = 'test-cluster'
+    LEAR_SVC_URL = os.getenv('TEST_LEGAL_API_URL', 'http://legal_api_url.test')
     SEARCH_API_URL = os.getenv('TEST_REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://search_api_url.test')
+    KEYCLOAK_AUTH_TOKEN_URL = os.getenv('TEST_KEYCLOAK_AUTH_TOKEN_URL', 'http://kc_url.test')
 
 
 class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
