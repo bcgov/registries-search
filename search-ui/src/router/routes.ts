@@ -59,7 +59,7 @@ export const routes: RouteRecordRaw[] = [
     component: BusinessInfoView,
     props: true,
     meta: {
-      requiresAuth: true,
+      requiresAuth: false, // app.vue will still verify token after page init
       breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
     },
   },

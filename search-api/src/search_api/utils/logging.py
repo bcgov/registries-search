@@ -60,7 +60,7 @@ def get_logging_flag_name():
         return f'ops-{__name__}-log-level'
 
 
-def set_log_level_by_flag():
+def set_log_level_by_flag():  # pylint
     """Set the logging level if the FF has a different level than what is currently set."""
     try:
         flag_name = get_logging_flag_name()
@@ -69,7 +69,7 @@ def set_log_level_by_flag():
                 and flag_value != level_name:  # pylint: disable=E0601; linter hates the walrus
             set_logging_level(flag_value)
     except Exception:  # noqa: B902
-        return
+        pass
 
 
 def set_logging_level(level: Union(Level, str)):

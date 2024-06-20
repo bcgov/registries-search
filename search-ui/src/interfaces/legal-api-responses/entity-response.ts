@@ -3,6 +3,7 @@ import { ErrorI } from '@/interfaces/error'
 
 export interface LegalApiBusinessI {
   adminFreeze: boolean
+  alternateNames?: { name: string, identifier: string }[]
   arMaxDate: string  // i.e. "2021-11-29"
   arMinDate: string  // i.e. "2021-01-01"
   complianceWarnings: Array<any>

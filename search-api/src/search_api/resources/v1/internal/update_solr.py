@@ -113,16 +113,6 @@ def _prepare_data(request_json: Dict) -> BusinessDoc:
         # TODO: get legal types from shared enum
         return legal_type in ['BEN', 'BC', 'CC', 'ULC'] and re.search(numbers_only_rgx, identifier)
 
-    def get_business_name(business: Dict[str, str]) -> str:
-        """Return the parsed name of the business in the given doc info."""
-        alternate_name_types = ['SP', 'GP'] if current_app.config.get('ALTERNATE_NAMES_ACTIVE') else []
-        if (legal_name := business.get('legalName')) and business['legalType'] not in alternate_name_types:
-            return legal_name.strip()
-        alternate_names = business['alternateNames']
-        if len(alternate_names) > 1:
-            current_app.logger.error('Business has more than one operating name: %s', business['identifier'])
-        return alternate_names[0]['operatingName'].strip()
-
     def get_party_name(officer: Dict[str, str]) -> str:
         """Return the parsed name of the party in the given doc info."""
         if officer.get('organizationName'):
@@ -146,7 +136,7 @@ def _prepare_data(request_json: Dict) -> BusinessDoc:
         bn=business_info.get('taxId'),
         identifier=f'BC{identifier}' if needs_bc_prefix(identifier, legal_type) else identifier,
         legalType=legal_type,
-        name=get_business_name(business_info),
+        name=business_info['legalName'].strip(),
         status=business_info['state'],
         goodStanding=business_info.get('goodStanding'))
 
