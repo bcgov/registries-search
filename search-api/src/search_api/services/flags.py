@@ -61,7 +61,7 @@ class Flags():
 
         # with suppress(Exception):
         try:
-            if client and client.is_initialized():  # pylint: disable=E0601
+            if client and client.is_initialized():  # pylint: disable=E0601,E0606
                 app.extensions[Flags.COMPONENT_NAME] = client
                 app.teardown_appcontext(self.teardown)
         except Exception as err:  # noqa: B902
