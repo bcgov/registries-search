@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     }
   },
   colorMode: {
-    preference: 'light'
+    preference: 'light',
+    fallback: 'light',
+    storageKey: 'nuxt-color-mode'
   },
   devtools: { enabled: true },
   srcDir: 'src/',

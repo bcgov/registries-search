@@ -203,9 +203,113 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
                         "code": "CA",
                         "name": "Canada"
                     }
-                ]
+                ],
+                "uuid": "123xxx-456xxx"
             },
             "interests": [
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.directors.directControl",
+                    "directOrIndirect": "direct",
+                    "startDate": "2020-01-01",
+                    "type": "appointmentOfBoard"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.directors.inConcertControl",
+                    "directOrIndirect": "direct",
+                    "startDate": "2020-01-01",
+                    "type": "appointmentOfBoard",
+                    "connectedIndividuals": [{ "uuid": "111-feknfvn-3432dgg", "legalName": "Name One" }],
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.directors.actingJointly",
+                    "directOrIndirect": "direct",
+                    "startDate": "2020-01-01",
+                    "type": "appointmentOfBoard",
+                    "connectedIndividuals": [{ "uuid": "222-feknfvn-3432dgg", "legalName": "Name Two" }],
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.votes.registeredOwner",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 50,
+                        "minimum": 25
+                    },
+                    "startDate": "2020-01-01",
+                    "type": "votingRights"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.votes.indirectControl",
+                    "directOrIndirect": "indirect",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 50,
+                        "minimum": 25
+                    },
+                    "startDate": "2020-01-01",
+                    "type": "votingRights"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.votes.inConcertControl",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 50,
+                        "minimum": 25
+                    },
+                    "startDate": "2020-01-01",
+                    "connectedIndividuals": [{ "uuid": "333-feknfvn-3432dgg", "legalName": "Name Three" }],
+                    "type": "votingRights"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.shares.registeredOwner",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 75,
+                        "minimum": 50
+                    },
+                    "startDate": "2020-01-01",
+                    "type": "shareholding"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.shares.indirectControl",
+                    "directOrIndirect": "indirect",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 75,
+                        "minimum": 50
+                    },
+                    "startDate": "2020-01-01",
+                    "type": "shareholding"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "controlType.shares.actingJointly",
+                    "directOrIndirect": "direct",
+                    "share": {
+                        "exclusiveMaximum": False,
+                        "maximum": 75,
+                        "minimum": 50
+                    },
+                    "startDate": "2020-01-01",
+                    "connectedIndividuals": [{ "uuid": "444-feknfvn-3432dgg", "legalName": "Name Four" }],
+                    "type": "shareholding"
+                },
+                {
+                    "endDate": "2023-07-07",
+                    "details": "bla bla",
+                    "startDate": "2020-01-01",
+                    "type": "otherInfluenceOrControl"
+                },
                 {
                     "details": "controlType.directors.directControl",
                     "directOrIndirect": "direct",
@@ -296,6 +400,7 @@ SOLR_UPDATE_REQUEST_OWNER_TEMPLATE = {
                 },
                 {
                     "details": "bla bla",
+                    "startDate": "2024-02-07",
                     "type": "otherInfluenceOrControl"
                 }
             ]

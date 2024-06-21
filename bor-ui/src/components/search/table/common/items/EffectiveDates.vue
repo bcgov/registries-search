@@ -16,7 +16,7 @@ const getEffectiveDates = (role: SearchResultRoleI) => {
     const start = toDateStr(role.roleDates[i].start)
     const end = toDateStr(role.roleDates[i].end as Date)
     let dateRange = ''
-    if (role.roleType === RoleTypeE.INCORPORATOR) {
+    if (role.roleType === SearchRoleTypeE.INCORPORATOR) {
       dateRange += start
     } else {
       dateRange += `${start || 'Unknown'} To ${end || 'Current'}`

@@ -15,6 +15,7 @@
 from flask import current_app
 from phonenumbers import PhoneNumberFormat, parse, format_number
 
+from bor_api.enums import InterestDetails
 from bor_api.services.bor_solr.doc_models import DateRange, Entity, EntityRole, Interest, InterestParty
 
 from .address import get_btr_address, get_lear_addresses
@@ -100,20 +101,38 @@ def get_lear_party(party_info: dict, business: Entity) -> list[Entity]:
 
 def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
     """Return the owner info as an Entity."""
-    interests = []
+    date_ranges: list[DateRange] = []
+    interests: list[Interest] = []
     for interest_info in owner_info.get('interests', []):
         interest_parties = [
             InterestParty(interestPartyID=x['uuid'], interestPartyName=x.get('legalName') or None)
             for x in interest_info.get('connectedIndividuals', [])
         ]
 
-        interests.append(Interest(details=interest_info.get('details') or None,
-                                  directOrIndirect=interest_info.get('directOrIndirect') or None,
-                                  interestType=interest_info.get('type') or None,
-                                  relatedParties=interest_parties or None,
-                                  sharesExact=interest_info.get('share', {}).get('exact') or None,
-                                  sharesMax=interest_info.get('share', {}).get('maximum') or None,
-                                  sharesMin=interest_info.get('share', {}).get('minimum') or None))
+        # NOTE: BTR saves a new interest for each interest/details for each effective date range
+        start_date = interest_info.get('startDate')
+        end_date = interest_info.get('endDate')
+        # Only add 1 date range per unique interest effective start date
+        if not any(date for date in date_ranges if date.start == start_date):
+            date_ranges.append(DateRange(start=start_date or None,
+                                         end=end_date or None,
+                                         active=not end_date))
+
+        interest_details = interest_info.get('details') or None
+        # Only add 1 interest per unique interest details
+        interest_already_added = any(interest for interest in interests
+                                     if (interest.details == interest_details)
+                                     # 'other' interest details are transformed to the other reason on init
+                                     or (interest_details not in InterestDetails
+                                         and interest.interestType == 'otherInfluenceOrControl'))
+        if not interest_already_added:
+            interests.append(Interest(details=interest_details,
+                                      directOrIndirect=interest_info.get('directOrIndirect') or None,
+                                      interestType=interest_info.get('type') or None,
+                                      relatedParties=interest_parties or None,
+                                      sharesExact=interest_info.get('share', {}).get('exact') or None,
+                                      sharesMax=interest_info.get('share', {}).get('maximum') or None,
+                                      sharesMin=interest_info.get('share', {}).get('minimum') or None))
 
     party: dict = owner_info['interestedParty']
     names_dict = {}
@@ -131,7 +150,7 @@ def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
     if (addresses := party.get('addresses')) and len(addresses) > 0:
         address = get_btr_address(addresses[0], 'RESIDENCE')
 
-    entity_id = party['describedByPersonStatement']
+    entity_id = party['uuid']
     role_id = entity_id + business.identifier + 'SIGNIFICANT_INDIVIDUAL'
     return Entity(id=entity_id,
                   entityAddresses=[address] if address else None,
@@ -153,8 +172,7 @@ def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
                                     relatedLegalType=business.legalType or 'N/A',
                                     relatedName=business.legalName,
                                     relatedState=business.state or 'N/A',
-                                    roleDates=[DateRange(start=party['statementDate'],
-                                                         end=party.get('statementEndDate', None))],
+                                    roleDates=date_ranges,
                                     roleType='SIGNIFICANT INDIVIDUAL',
                                     relatedBN=business.bn,
                                     relatedEmail=business.email,

@@ -1,4 +1,4 @@
-export enum RoleTypeE {
+export enum SearchRoleTypeE {
   COMPLETING_PARTY = 'COMPLETING PARTY',
   DIRECTOR = 'DIRECTOR',
   INCORPORATOR = 'INCORPORATOR',

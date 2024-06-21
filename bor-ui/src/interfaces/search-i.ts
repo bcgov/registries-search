@@ -1,4 +1,4 @@
-import type { BusinessStateE, BusinessTypeE, PersonControlCategoryE, RoleTypeE } from '#imports'
+import type { BusinessStateE, BusinessTypeE, PersonControlCategoryE, SearchRoleTypeE } from '#imports'
 
 export interface SearchResultRoleInterestI {
   details: string
@@ -24,7 +24,7 @@ export interface SearchResultRoleI {
   relatedName: string
   relatedState: BusinessStateE
   roleDates: { end?: Date, start: Date }[]
-  roleType: RoleTypeE
+  roleType: SearchRoleTypeE
 }
 
 export interface SearchResultI {
@@ -70,7 +70,7 @@ export interface SearchPayloadI {
     roles: {
       relatedEntityType?: BusinessTypeE[]
       relatedState?: BusinessStateE[]
-      roleType?: RoleTypeE[]
+      roleType?: SearchRoleTypeE[]
     }
     state?: BusinessStateE[]
   }
