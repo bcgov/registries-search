@@ -69,7 +69,7 @@ const clearFilters = () => {
 
 const goToOpenBusiness = (identifier: string) => {
   const { businessSearchURL } = useRuntimeConfig().public
-  useBcrosNavigate().redirect(businessSearchURL + `open/${identifier}`)
+  useBcrosNavigate().redirect(businessSearchURL + `/open/${identifier}`)
 }
 
 // filter clearing
