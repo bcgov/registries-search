@@ -62,19 +62,12 @@ import {
   CommonItemsBusinessDetails, CommonItemsName, CommonItemsCitizenship
 } from './common'
 
-const props = defineProps<{
-  resultsDesc: string,
-  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
-}>()
+defineProps<{ headers: BaseTableHeaderI[], resultsDesc: string }>()
 
 const search = useBcrosSearch()
 const { searchPerson } = storeToRefs(search)
 
-// search table config (headers)
-const headers = getPersonHeadersPublic()
 const childHeaders: string[] = ['Business Details', 'Roles']
-// set table filters to session saved ones
-onMounted(() => { props.updateTableHeaderFilters(headers) })
 
 // filter clearing
 const resetFiltersTrigger = ref(false)

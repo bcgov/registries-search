@@ -53,7 +53,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'legalType',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['legalType'], getCorpCode(filterVal) || filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['legalType'], filterVal),
         items: SearchCorpTypes,
         label: t('label.table.businessType'),
         type: 'select',

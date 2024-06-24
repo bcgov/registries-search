@@ -15,21 +15,22 @@ const _getSearchBusFilters = (filters: Partial<RegSearchFilterI>) => {
   }
   // categories
   if (filters?.legalType) {
-    // group specific corp types together
-    if (filters.legalType === 'Other' as BusinessTypeE) {
+    let legalTypeCode = getCorpCode(filters.legalType) || filters.legalType
+    // group specific corp type codes together
+    if (legalTypeCode === 'Other' as BusinessTypeE) {
       // query by all 'other' corp types
-      filters.legalType = OtherCorpTypes.join(',') as BusinessTypeE
+      legalTypeCode = OtherCorpTypes.join(',') as BusinessTypeE
     } else {
       const corpGrps = [BCLimitedTypes, ULCTypes, SocietyTypes]
       for (const i in corpGrps) {
-        if (corpGrps[i].includes(filters.legalType as BusinessTypeE)) {
+        if (corpGrps[i].includes(legalTypeCode as BusinessTypeE)) {
           // query by all society corp types
-          filters.legalType = corpGrps[i].join(',') as BusinessTypeE
+          legalTypeCode = corpGrps[i].join(',') as BusinessTypeE
           break
         }
       }
     }
-    filterParams.categories += `legalType:${filters.legalType}`
+    filterParams.categories += `legalType:${legalTypeCode}`
   }
   if (filters?.status) {
     filterParams.categories += filters?.legalType ? '::' : ''

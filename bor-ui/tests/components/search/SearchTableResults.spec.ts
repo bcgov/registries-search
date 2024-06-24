@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 
 import { mockedI18n, testSearchResults } from '~~/tests/test-utils'
@@ -267,10 +267,8 @@ describe('SearchResults tests', () => {
     props: ['country', 'size']
   }
 
-  beforeEach(async () => {
-    accessLevel.value = SearchAccessE.PUBLIC
-    searchType.value = SearchTypeE.PERSON
-    wrapper = mount(
+  const mountResults = () => {
+    return mount(
       SearchTableResults, {
         global: {
           components: {
@@ -280,8 +278,7 @@ describe('SearchResults tests', () => {
         }
       }
     )
-    await flushPromises()
-  })
+  }
   afterEach(() => {
     wrapper.unmount()
     search.reset(SearchTypeE.BUSINESS)
@@ -290,7 +287,10 @@ describe('SearchResults tests', () => {
   })
 
   it('Public Search: Renders and displays expected default content', async () => {
-    expect(searchType.value).toEqual(SearchTypeE.PERSON)
+    accessLevel.value = SearchAccessE.PUBLIC
+    searchType.value = SearchTypeE.PERSON
+    wrapper = mountResults()
+    await flushPromises()
     searchPerson.value.resultsTotal = 0
     await flushPromises()
     expect(activeSearch.value.results).toEqual([])
@@ -301,6 +301,7 @@ describe('SearchResults tests', () => {
   it('Limited Search: Renders and displays expected default content', async () => {
     accessLevel.value = SearchAccessE.LIMITED
     searchType.value = SearchTypeE.DIRECTOR
+    wrapper = mountResults()
     await flushPromises()
     searchDirector.value.resultsTotal = 0
     await flushPromises()
@@ -309,8 +310,10 @@ describe('SearchResults tests', () => {
   })
 
   it('Extended Search: Renders and displays expected default content', async () => {
-    expect(searchType.value).toEqual(SearchTypeE.PERSON)
     accessLevel.value = SearchAccessE.EXTENDED
+    searchType.value = SearchTypeE.PERSON
+    wrapper = mountResults()
+    await flushPromises()
     searchPerson.value.resultsTotal = 0
     await flushPromises()
     expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
@@ -319,7 +322,9 @@ describe('SearchResults tests', () => {
   })
 
   it('Business Search: Renders and displays expected default content', async () => {
+    accessLevel.value = SearchAccessE.PUBLIC
     searchType.value = SearchTypeE.BUSINESS
+    wrapper = mountResults()
     await flushPromises()
     searchBusiness.value.resultsTotal = 0
     await flushPromises()
@@ -331,10 +336,11 @@ describe('SearchResults tests', () => {
   it('limited Search: Renders and displays results', async () => {
     accessLevel.value = SearchAccessE.LIMITED
     searchType.value = SearchTypeE.DIRECTOR
+    wrapper = mountResults()
     await flushPromises()
-    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     activeSearch.value.results = testSearchResults
     await flushPromises()
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     // renders results in table
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)
@@ -346,11 +352,13 @@ describe('SearchResults tests', () => {
   })
 
   it('Extended Search: Renders and displays results', async () => {
-    expect(searchType.value).toEqual(SearchTypeE.PERSON)
     accessLevel.value = SearchAccessE.EXTENDED
-    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
+    searchType.value = SearchTypeE.PERSON
+    wrapper = mountResults()
+    await flushPromises()
     activeSearch.value.results = testSearchResults
     await flushPromises()
+    expect(wrapper.findComponent(SearchTableResults).exists()).toBe(true)
     // renders results in table
     const table = wrapper.find('.search-table')
     expect(table.exists()).toBe(true)

@@ -48,18 +48,10 @@
 <script setup lang="ts">
 import { CommonHeadersClearFilters, CommonItemsAction, CommonItemsName } from './common'
 
-const props = defineProps<{
-  resultsDesc: string,
-  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
-}>()
+defineProps<{ headers: BaseTableHeaderI[], resultsDesc: string }>()
 
 const search = useBcrosSearch()
 const { searchBusiness } = storeToRefs(search)
-
-// search table config (headers)
-const headers = getBusinessHeaders()
-// set table filters to session saved ones
-onMounted(() => { props.updateTableHeaderFilters(headers) })
 
 const clearFilters = () => {
   resetFiltersTrigger.value = !resetFiltersTrigger.value

@@ -150,7 +150,7 @@
       </tbody>
       <tbody v-else class="base-table__body">
         <slot name="body" :headers="headers" :items="sortedItems">
-          <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row" :tabindex="i + 1">
+          <tr v-for="item, i in sortedItems" :key="item[itemKey] + i" class="base-table__body__row" tabindex="0">
             <slot name="body-row">
               <td
                 v-for="header in displayItemHeaders"
@@ -376,15 +376,10 @@ th {
     }
 
     &__row {
-      background-color: white;
+      @apply bg-white focus-visible:bg-primary-50 focus-visible:ring-primary-500 focus-visible:ring-1;
       transition: linear 0.5s;
 
-      &:focus-visible {
-        background-color: #EBEEF0;
-        outline: none;
-      }
-
-      &:hover {
+      &:hover, &:focus-visible {
 
         .base-table__body__row__item {
           background-color: theme('colors.blue.50') !important;
@@ -410,11 +405,6 @@ th {
         position: relative;
         vertical-align: top;
       }
-    }
-
-    &__row:focus-visible {
-      background-color: #EBEEF0;
-      outline: none;
     }
 
     &__row:hover {

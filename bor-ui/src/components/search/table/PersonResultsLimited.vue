@@ -91,19 +91,12 @@ import {
   CommonItemsEffectiveDates, CommonItemsName, CommonTitleExport
 } from './common'
 
-const props = defineProps<{
-  resultsDesc: string,
-  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
-}>()
+defineProps<{ headers: BaseTableHeaderI[], resultsDesc: string }>()
 
 const search = useBcrosSearch()
 const { searchDirector } = storeToRefs(search)
 
-// search table config (headers)
-const headers = getPersonHeadersLimited()
 const childHeaders = ['Roles', 'Effective Dates', 'Business Details', 'Business Status', 'Business Email']
-// set table filters to session saved ones
-onMounted(() => { props.updateTableHeaderFilters(headers) })
 
 // filter clearing
 const resetFiltersTrigger = ref(false)

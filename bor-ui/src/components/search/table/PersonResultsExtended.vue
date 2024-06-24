@@ -105,19 +105,11 @@ import {
   CommonItemsCitizenship
 } from './common'
 
-const props = defineProps<{
-  resultsDesc: string,
-  updateTableHeaderFilters:(val: BaseTableHeaderI[]) => void,
-}>()
+defineProps<{ headers: BaseTableHeaderI[], resultsDesc: string }>()
 
 // composables
 const search = useBcrosSearch()
 const { searchPerson } = storeToRefs(search)
-
-// search table config (headers)
-const headers = getPersonHeadersExtended()
-// set table filters to session saved ones
-onMounted(() => { props.updateTableHeaderFilters(headers) })
 
 // filter clearing
 const resetFiltersTrigger = ref(false)

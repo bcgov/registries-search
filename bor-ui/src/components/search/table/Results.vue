@@ -4,27 +4,27 @@
       <PersonResultsExtended
         v-if="hasExtendedAccess"
         class="search-table"
+        :headers="headers[SearchTypeE.PERSON]"
         :results-desc="resultsDesc"
-        :update-table-header-filters="updateTableHeaderFilters"
       />
       <PersonResultsPublic
         v-else
         class="search-table"
+        :headers="headers[SearchTypeE.PERSON]"
         :results-desc="resultsDesc"
-        :update-table-header-filters="updateTableHeaderFilters"
       />
     </div>
     <PersonResultsLimited
       v-else-if="searchType === SearchTypeE.DIRECTOR"
       class="search-table"
+      :headers="headers[SearchTypeE.DIRECTOR]"
       :results-desc="resultsDesc"
-      :update-table-header-filters="updateTableHeaderFilters"
     />
     <BusinessResults
       v-else
       class="search-table"
+      :headers="headers[SearchTypeE.BUSINESS]"
       :results-desc="resultsDesc"
-      :update-table-header-filters="updateTableHeaderFilters"
     />
     <div id="load-more-results" class="flex justify-center">
       <UButton
@@ -54,6 +54,13 @@ const search = useBcrosSearch()
 const { activeSearch, hasMoreResults, searchType } = storeToRefs(search)
 const { hasExtendedAccess } = storeToRefs(useBcrosSearchAccess())
 
+// table headers
+const headers = ref({
+  [SearchTypeE.BUSINESS]: getBusinessHeaders(),
+  [SearchTypeE.DIRECTOR]: getPersonHeadersLimited(),
+  [SearchTypeE.PERSON]: hasExtendedAccess.value ? getPersonHeadersExtended() : getPersonHeadersPublic()
+})
+
 // text functions
 const resultsDesc = computed(() => {
   if (searchType.value === SearchTypeE.BUSINESS) {
@@ -74,6 +81,9 @@ const updateTableHeaderFilters = (headers: BaseTableHeaderI[]) => {
     if (header) { header.filter.value = activeSearch.value.filters[activeFilters[i]] }
   }
 }
+watch(searchType, (val) => {
+  updateTableHeaderFilters(headers.value[val])
+}, { immediate: true })
 
 const getNextSearches = useThrottleFn(async () => {
   await search.getNextResults()

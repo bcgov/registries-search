@@ -6,7 +6,7 @@
       placeholder="Details"
       size="sm"
       trailing
-      :ui="{ icon: { trailing: { pointer: '' } }, base: 'cursor-pointer text-left', default: { class: 'bg-gray-100' } }"
+      :ui="{ icon: { trailing: { pointer: '' } }, base: 'cursor-pointer text-left' }"
       data-cy="control-filter"
     >
       <template #trailing>
@@ -24,6 +24,7 @@
     <template #panel>
       <UAccordion
         :items="options"
+        :ui="{ default: { class: 'm-0 p-3 text-gray-900 font-bold bg-gray-100 hover:bg-gray-200 rounded-none' } }"
         data-cy="control-filter-accordion"
       >
         <template #item="{ item }">

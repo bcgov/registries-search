@@ -14,7 +14,7 @@ const STARTING_FILTERS = {
 export const useBcrosSearch = defineStore('bcros/search', () => {
   const searchType = ref(SearchTypeE.BUSINESS)
   // when searchType changes trigger search on new selection with current search input
-  watch(searchType, (_, oldVal) => getSearchResults(searches[oldVal].value.val))
+  watch(searchType, (_, oldVal) => { getSearchResults(searches[oldVal].value.val) })
 
   const { searchRows } = useRuntimeConfig().public
 
@@ -84,13 +84,13 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
       ? await useRegSearchApi()
         .searchBusiness(
           activeSearch.value.val,
-          activeSearch.value.filters as RegSearchFilterI,
+          { ...activeSearch.value.filters } as RegSearchFilterI,
           activeSearch.value.rows,
           activeSearch.value.start)
       : await useBorSearchApi()
         .searchEntities(
           activeSearch.value.val,
-          activeSearch.value.filters as SearchPayloadI,
+          { ...activeSearch.value.filters } as SearchPayloadI,
           rows || activeSearch.value.rows,
           exporting ? 0 : activeSearch.value.start,
           exporting,
@@ -112,7 +112,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
       activeSearch.value.filters = searchType.value === SearchTypeE.BUSINESS
         ? {}
         : structuredClone(STARTING_FILTERS)
-      await getSearchResults(activeSearch.value.val, true)
+      await getSearchResults(activeSearch.value.val, true, true)
       return
     }
     const increasingScope = !val
@@ -129,7 +129,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
     }
 
     if (activeSearch.value.val) {
-      await getSearchResults(activeSearch.value.val, increasingScope)
+      await getSearchResults(activeSearch.value.val, increasingScope, true)
     }
   }
 
@@ -157,9 +157,13 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   }
 
   /** Get the first batch of results from the api and set the results. */
-  const getSearchResults = async (val: string, updateFacets = true) => {
+  const getSearchResults = async (val: string, updateFacets = true, force = false) => {
     if (!val) {
       reset(searchType.value)
+      return
+    }
+    if (!force && activeSearch.value.val === val) {
+      // search for this value has already been triggered
       return
     }
     activeSearch.value.loading = true
