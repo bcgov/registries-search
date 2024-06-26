@@ -4,7 +4,7 @@ export const testSearchResultInterest: SearchResultI[] = [
   {
     entityAddresses: [{
       addressCity: 'Oakville',
-      addressCountry: 'CA',
+      addressCountry: 'Canada',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
       streetAddress: '1232-1490 Pilgrims Way ',
@@ -108,7 +108,7 @@ export const testSearchResults: SearchResultI[] = [
     email: 'email@email.com',
     entityAddresses: [{
       addressCity: 'Vancouver',
-      addressCountry: 'CA',
+      addressCountry: 'Canada',
       addressRegion: 'BC',
       postalCode: 'V6L 4V9',
       streetAddress: '99 Waffles street',
@@ -122,7 +122,7 @@ export const testSearchResults: SearchResultI[] = [
       active: true,
       relatedAddresses: [{
         addressCity: 'Victoria',
-        addressCountry: 'CA',
+        addressCountry: 'Canada',
         addressRegion: 'BC',
         postalCode: 'V2M 7W0',
         streetAddress: '224 Sleepy Lane',
@@ -213,7 +213,7 @@ export const testSearchResults: SearchResultI[] = [
   {
     entityAddresses: [{
       addressCity: 'Oakville',
-      addressCountry: 'CA',
+      addressCountry: 'Canada',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
       streetAddress: '1232-1490 Pilgrims Way ',
@@ -237,7 +237,7 @@ export const testSearchResults: SearchResultI[] = [
   {
     entityAddresses: [{
       addressCity: 'Oakville',
-      addressCountry: 'CA',
+      addressCountry: 'Canada',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
       streetAddress: '1232-1490 Pilgrims Way ',
@@ -249,7 +249,7 @@ export const testSearchResults: SearchResultI[] = [
       active: true,
       relatedAddresses: [{
         addressCity: 'Victoria',
-        addressCountry: 'CA',
+        addressCountry: 'Canada',
         addressRegion: 'BC',
         postalCode: 'V2M 7W0',
         streetAddress: '123 Normal Street'
@@ -269,7 +269,7 @@ export const testSearchResults: SearchResultI[] = [
   {
     entityAddresses: [{
       addressCity: 'Oakville',
-      addressCountry: 'CA',
+      addressCountry: 'Canada',
       addressRegion: 'ON',
       postalCode: 'L6M 3G8',
       streetAddress: '1232-1490 Pilgrims Way ',

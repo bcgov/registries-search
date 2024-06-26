@@ -5,7 +5,7 @@
       <div>
         <UIcon class="text-[20px]" name="i-mdi-at" />
       </div>
-      <div class="ml-1">
+      <div class="ml-1 overflow-auto">
         {{ item.email }}
       </div>
     </div>
