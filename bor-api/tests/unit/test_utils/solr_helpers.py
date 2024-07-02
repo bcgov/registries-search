@@ -18,6 +18,7 @@ from bor_api.services.bor_solr.doc_models import Address, DateRange, Entity, Ent
 def create_entity(name: str,
                   alternate_name: str = None,
                   addresses: list[Address] = None,
+                  birthdate: str = None,
                   bn: str = None,
                   tax_number: str = None,
                   email: str = None,
@@ -31,6 +32,7 @@ def create_entity(name: str,
     """Create a base entity doc."""
     return Entity(
         alternateName=alternate_name,
+        birthDate=birthdate,
         bn=bn,
         taxNumber=tax_number,
         email=email,

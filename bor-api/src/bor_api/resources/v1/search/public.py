@@ -122,6 +122,8 @@ def public_search():
         for doc in docs:
             if 'CA' in doc.get(EntityField.NATIONALITIES.value, []):
                 doc[EntityField.NATIONALITIES.value] = ['CA']
+            if birth_date := doc.get(EntityField.BIRTH_DATE.value):
+                doc[EntityField.BIRTH_DATE.value] = birth_date[:4]
 
         # save search in the db
         SearchHistory(params=request_json,

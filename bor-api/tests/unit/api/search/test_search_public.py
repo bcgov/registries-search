@@ -122,67 +122,67 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic',  # NOTE: test setup checks for 'test_basic' on the first run
      {'value': 'person ten'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_partial_1',
      {'value': 'per ten'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_partial_2',
      {'value': 'erson te'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_partial_3',
      {'value': 'er ine'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1999', 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_spellcheck',
      {'value': 'pirson nane'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1999', 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_stem_1',
      {'value': 'persons ten'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_stem_2',
      {'value': 'personing ten'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_stem_3',
      {'value': 'personed ten'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_mix',
      {'value': 'ten person'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_mix_partial',
      {'value': 'te pers'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_mix_stem',
      {'value': 'ten persons'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_adv_chars',
      {'value': 'p*n t?n "ten"'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_spec_char',
      {'value': 'p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1988', 'entityType': 'PERSON', 'legalName': 'p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_and_and',
      {'value': 'person and'},
@@ -208,22 +208,22 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic_name_match_._1',
      {'value': 'person ten y.z.'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_._2',
      {'value': 'person ten yz'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_._3',
      {'value': 'person ten x.k.'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_._4',
      {'value': 'person ten xk'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_basic_historic_no_match', {'value': 'person eight'}, {}, []),
     ('test_basic_address_no_match', {'value': 'way walaby'}, {}, []),
@@ -235,22 +235,22 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_filters_person',
      {'value': 'person', EntityField.LEGAL_NAME.value: 'nine'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1999', 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_filters_alt_name_no_effect',
      {'value': 'person ten', 'name': 'alalalala ble blap zzzz ignored'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_filters_info_no_effect',
      {'value': 'person ten', 'info': 'nine@si9.com 705 362 853 zzzzz ignored'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_filters_tax_number_no_effect',
      {'value': 'person ten', EntityField.TAX_NUMBER.value: '705 362 853 zzzzzz ignored'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_filters_no_match',
      {'value': 'person', EntityField.LEGAL_NAME.value: 'name'},
@@ -297,12 +297,12 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ENTITY_ADDRESSES.value: 'victoria canada walaby way 1112 T3S 1E4'
      },
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_child_filters_related_email_no_effect',
      {'value': 'person ten', EntityField.ROLES.value: {EntityRoleField.RELATED_EMAIL.value:"5555"}},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_child_filters_role_dates_no_effect',
      {
@@ -312,7 +312,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         }
      },
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+     [{'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
     ),
     ('test_child_filters_no_match',
      {
@@ -451,7 +451,9 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
         # personal email should not be visible from this search
         assert not result.get(EntityField.EMAIL.value)
         # addresses should never be visible from this search
-        assert not result.get('entityAddresses')
+        assert not result.get(EntityField.ENTITY_ADDRESSES.value)
+        # birthdate should only show the year
+        assert not len(result.get(EntityField.BIRTH_DATE.value, '')) > 4
 
     assert results == expected
 
