@@ -93,8 +93,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
           { ...activeSearch.value.filters } as SearchPayloadI,
           rows || activeSearch.value.rows,
           exporting ? 0 : activeSearch.value.start,
-          exporting,
-          useBcrosSearchAccess().accessLevel)
+          exporting)
     )
   }
 
@@ -108,93 +107,96 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   /** Apply filter and get results set. */
   const filterSearch = async (path: string[], val: any, reset = false) => {
+    const search = searches[searchType.value]
     if (reset) {
-      activeSearch.value.filters = searchType.value === SearchTypeE.BUSINESS
+      search.value.filters = searchType.value === SearchTypeE.BUSINESS
         ? {}
         : structuredClone(STARTING_FILTERS)
-      await getSearchResults(activeSearch.value.val, true, true)
+      await getSearchResults(search.value.val, true, true)
       return
     }
-    const increasingScope = !val
     // path will have length of 3 at most
     if (path.length === 1) {
       // i.e. search.filters['start'] = val
-      activeSearch.value.filters[path[0]] = val
+      search.value.filters[path[0]] = val
     } else if (path.length === 2) {
       // i.e. search.filters['query']['bn'] = val
-      activeSearch.value.filters[path[0]][path[1]] = val
+      search.value.filters[path[0]][path[1]] = val
     } else {
       // i.e. search.filters['query']['roles']['relatedBN'] = val
-      activeSearch.value.filters[path[0]][path[1]][path[2]] = val
+      search.value.filters[path[0]][path[1]][path[2]] = val
     }
 
-    if (activeSearch.value.val) {
-      await getSearchResults(activeSearch.value.val, increasingScope, true)
+    if (search.value.val) {
+      const increasingScope = !hasActiveFilter()
+      await getSearchResults(search.value.val, increasingScope, true)
     }
   }
 
   /** Get next batch of results from the api and update the results. */
   const getNextResults = async () => {
+    const search = searches[searchType.value]
     if (!hasMoreResults.value) { return }
-    activeSearch.value.loadingNext = true
-    activeSearch.value.start += 1
+    search.value.loadingNext = true
+    search.value.start += 1
     // search
     const searchResp = await callSearch()
     if (searchResp) {
       if (!searchResp.error) {
         // success
-        activeSearch.value.results = [
-          ...activeSearch.value.results,
+        search.value.results = [
+          ...search.value.results,
           ...searchResp.searchResults.results
         ] as SearchResultI[] | RegSearchResultI[]
-        activeSearch.value.error = undefined
+        search.value.error = undefined
       } else {
-        activeSearch.value.start -= 1
+        search.value.start -= 1
         searchErrorHandler(searchResp.error)
       }
     } else { console.error('Error getting getNextSearchResults') } // should never get here
-    activeSearch.value.loadingNext = false
+    search.value.loadingNext = false
   }
 
   /** Get the first batch of results from the api and set the results. */
   const getSearchResults = async (val: string, updateFacets = true, force = false) => {
+    const search = searches[searchType.value]
     if (!val) {
       reset(searchType.value)
       return
     }
-    if (!force && activeSearch.value.val === val) {
+    if (!force && search.value.val === val) {
       // search for this value has already been triggered
       return
     }
-    activeSearch.value.loading = true
-    activeSearch.value.start = 0
-    activeSearch.value.val = val
+    search.value.loading = true
+    search.value.start = 0
+    search.value.val = val
     // special case for query/roles/value
     // @ts-ignore
-    activeSearch.value.filterActive = hasActiveFilter() || !!activeSearch.value.filters?.query?.roles?.value
+    search.value.filterActive = hasActiveFilter() || !!search.value.filters?.query?.roles?.value
     const searchResp = await callSearch()
     if (searchResp) {
       if (searchResp.error) {
         searchErrorHandler(searchResp.error)
       } else {
         // success
-        if (val !== activeSearch.value.val) { return } // user updated the search value after this search was triggered
+        if (val !== search.value.val) { return } // user updated the search value after this search was triggered
 
         if (updateFacets) {
-          activeSearch.value.resultFacets = searchResp?.facets
+          search.value.resultFacets = searchResp?.facets
         }
 
-        activeSearch.value.error = undefined
-        activeSearch.value.results = searchResp.searchResults.results
-        activeSearch.value.resultsTotal = searchResp.searchResults.totalResults
+        search.value.error = undefined
+        search.value.results = searchResp.searchResults.results
+        search.value.resultsTotal = searchResp.searchResults.totalResults
       }
     } else {
       // unhandled response error (should never get here)
-      activeSearch.value.results = []
-      activeSearch.value.resultsTotal = undefined
+      search.value.results = []
+      search.value.resultsTotal = undefined
       console.error('Nothing returned from search request fn.')
     }
-    activeSearch.value.loading = false
+    search.value.loading = false
   }
 
   /** Return the count of the facet value. */

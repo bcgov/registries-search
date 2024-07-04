@@ -1,14 +1,15 @@
 <template>
   <div>
-    <a :href="getItemDetailsLink(role)" target="_blank">
-      {{ role.relatedName }}
-      <UIcon
-        v-if="!isModernized(role)"
-        class="text-base align-text-bottom"
-        color="primary"
-        name="i-mdi-open-in-new"
-      />
-    </a>
+    <UButton
+      class="text-start underline"
+      color="primary"
+      :label="role.relatedName"
+      :icon="!isModernized(role) ? 'i-mdi-open-in-new' : ''"
+      trailing
+      variant="link"
+      :ui="{ inline: 'inline-block', icon: { base: 'align-bottom', size: { sm: 'h-4 w-4' } } }"
+      @click="openBusinessDetails(role)"
+    />
     <div v-if="role.relatedAddresses" class="flex mt-3">
       <div>
         <UIcon class="text-[20px]" name="i-mdi-truck-outline" />
@@ -44,10 +45,10 @@ const isModernized = (role: SearchResultRoleI) => {
   ]
   return modernizedTypes.includes(role.relatedLegalType)
 }
-const getItemDetailsLink = (role: SearchResultRoleI) => {
+const openBusinessDetails = (role: SearchResultRoleI) => {
   if (isModernized(role)) {
-    return `${config.businessSearchURL}?identifier=${role.relatedIdentifier}`
+    return goToOpenBusiness(role.relatedIdentifier)
   }
-  return config.bcolURL
+  return useBcrosNavigate().redirect(config.bcolURL, {}, '_blank')
 }
 </script>

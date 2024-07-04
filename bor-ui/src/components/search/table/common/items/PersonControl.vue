@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-2">
-    <BaseDetailsInfoBox
+    <BcrosDetailsInfoBox
       v-for="control in controls"
       :key="control.title"
       :title="control.title"
@@ -59,8 +59,8 @@
           </UAccordion>
         </div>
       </template>
-    </BaseDetailsInfoBox>
-    <BaseDetailsInfoBox
+    </BcrosDetailsInfoBox>
+    <BcrosDetailsInfoBox
       v-if="!!otherControl"
       title="Other"
       :content="otherControl"

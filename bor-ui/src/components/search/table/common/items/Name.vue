@@ -5,13 +5,13 @@
     </div>
     <div class="flex flex-col">
       <span v-html="legalName" />
-      <BaseDetailsInfoBox
+      <BcrosDetailsInfoBox
         v-if="item.alternateName"
         class="info-section"
         title="Preferred Name"
         :content="item.alternateName"
       />
-      <BaseDetailsInfoBox
+      <BcrosDetailsInfoBox
         v-if="item.birthDate"
         class="info-section"
         title="Born"

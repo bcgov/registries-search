@@ -11,7 +11,7 @@ export default <RouterConfig> {
       meta: {
         layout: 'default',
         title: 'Person Search',
-        breadcrumbs: [getBcrosHomeBreadCrumb, getPersonSearchBreadcrumb]
+        breadcrumbs: [getBcrosHomeCrumb, getSearchCrumb]
       }
     }
   ]

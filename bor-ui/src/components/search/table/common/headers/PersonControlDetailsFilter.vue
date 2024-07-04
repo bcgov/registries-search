@@ -3,10 +3,15 @@
     <UInput
       v-model="detailsFilterDisplay"
       class="font-normal"
+      :color="detailsFilterDisplay ? 'primary' : 'gray'"
       placeholder="Details"
       size="sm"
       trailing
-      :ui="{ icon: { trailing: { pointer: '' } }, base: 'cursor-pointer text-left' }"
+      :ui="{
+        base: 'cursor-pointer text-left text-ellipsis',
+        icon: { trailing: { pointer: '' } },
+        trailing: { padding: { sm: 'pe-11' }}
+      }"
       data-cy="control-filter"
     >
       <template #trailing>
@@ -18,7 +23,11 @@
           :padded="false"
           @click="selectedDetailsFilters = []"
         />
-        <UIcon class="text-xl text-gray-700" name="i-mdi-chevron-down" />
+        <UIcon
+          class="text-xl"
+          :class="detailsFilterDisplay ? 'text-primary-500' : 'text-gray-700'"
+          name="i-mdi-chevron-down"
+        />
       </template>
     </UInput>
     <template #panel>

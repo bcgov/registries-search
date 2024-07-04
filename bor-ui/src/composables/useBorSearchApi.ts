@@ -1,10 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 // internal
 import { ErrorCategoryE, SearchAccessE } from '#imports'
-import type {
-  SearchAccessE as SearchAccessType,
-  SearchResponseI
-} from '#imports'
+import type { SearchResponseI } from '#imports'
 
 export const useBorSearchApi = () => {
   const { borApiURL, borApiKey } = useRuntimeConfig().public
@@ -14,8 +11,7 @@ export const useBorSearchApi = () => {
     filters: SearchPayloadI,
     rows: number,
     start: number,
-    exportSearch = false,
-    accessLevel: SearchAccessType
+    exportSearch = false
   ): Promise<SearchResponseI | undefined> => {
     if (!searchValue) { return }
     // set payload
@@ -27,23 +23,31 @@ export const useBorSearchApi = () => {
     payload.query.value = searchValue
     // add search-api config stuff
     const config = getApiConfig(borApiURL, borApiKey, exportSearch)
-    let accessPath = null
-    switch (accessLevel) {
-      case SearchAccessE.PUBLIC:
-        accessPath = '/public'
-        break
-      case SearchAccessE.LIMITED:
-        accessPath = ''
-        break
-      case SearchAccessE.EXTENDED:
-        accessPath = '/extended'
-        break
-      default:
-        console.error('Invalid access level specified: ', accessLevel)
-        return
+    const { accessLevel } = useBcrosSearchAccess()
+    const { searchType } = useBcrosSearch()
+    let searchPath = null
+    if (searchType === SearchTypeE.DIRECTOR) {
+      searchPath = ''
+    } else if (searchType === SearchTypeE.PERSON) {
+      switch (accessLevel) {
+        case SearchAccessE.PUBLIC:
+          searchPath = '/public'
+          break
+        case SearchAccessE.LIMITED:
+          searchPath = '/public'
+          break
+        case SearchAccessE.EXTENDED:
+          searchPath = '/extended'
+          break
+        default:
+          console.error('Unexpected access level: ', accessLevel)
+          return
+      }
+    } else {
+      console.error('Unexpected search type for this API: ', searchType)
     }
     return await useBcrosFetch<SearchResponseI>(
-      'search' + accessPath,
+      'search' + searchPath,
       { method: 'POST', body: payload, ...config }
     )
       .then(({ data, error }) => {

@@ -28,7 +28,7 @@
         <UIcon class="text-[20px]" name="i-mdi-bank-outline" />
       </div>
       <div class="ml-1">
-        <BaseDetailsInfoBox
+        <BcrosDetailsInfoBox
           v-if="item.taxResidencies"
           class="mb-2"
           title="Tax Residency"

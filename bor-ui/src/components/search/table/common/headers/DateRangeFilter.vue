@@ -24,7 +24,6 @@
   >
     <template #trailing>
       <div class="flex">
-        <UIcon class="text-xl" name="i-mdi-calendar" />
         <UButton
           v-show="dateFilterText !== ''"
           color="primary"
@@ -33,6 +32,7 @@
           :padded="false"
           @click="dateRangeResetTrigger = !dateRangeResetTrigger"
         />
+        <UIcon class="text-xl" :class="dateFilterText ? 'text-primary-500' : ''" name="i-mdi-calendar" />
       </div>
     </template>
   </UInput>

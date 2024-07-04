@@ -66,29 +66,11 @@
                       :disabled="header.filter.disabled"
                       :multiple="!!header.filter.multiple"
                       size="sm"
+                      :ui-menu="{ option: { padding: 'pe-9', selectedIcon: { wrapper: 'hidden' } } }"
                       @update:model-value="filter(header)"
                     >
                       <template #label>
-                        <div class="flex text-sm">
-                          <div class="grow">
-                            <slot
-                              :name="'header-filter-selected-slot-' + header.slotId"
-                              :selected="header.filter.value"
-                            >
-                              <span v-if="!header.filter.value || header.filter?.value.length === 0">
-                                {{ header.filter.label }}
-                              </span>
-                              <span v-else-if="!header.filter.multiple">
-                                {{ header.filter.value }}
-                              </span>
-                              <span v-else-if="header.filter?.value.length == 1">
-                                {{ capFirstLetter(header.filter.value[0]) }}
-                              </span>
-                              <span v-else>
-                                Multiple
-                              </span>
-                            </slot>
-                          </div>
+                        <div class="text-sm flex flex-row-reverse">
                           <UButton
                             v-show="header.filter.value?.length"
                             color="primary"
@@ -97,10 +79,42 @@
                             :padded="false"
                             @click="clearFilter(header)"
                           />
+                          <div class="grow overflow-hidden whitespace-nowrap text-ellipsis">
+                            <slot
+                              :name="'header-filter-selected-slot-' + header.slotId"
+                              :selected="header.filter.value"
+                            >
+                              <span v-if="!header.filter.value || header.filter?.value.length === 0">
+                                {{ header.filter.label }}
+                              </span>
+                              <span v-else-if="!header.filter.multiple">
+                                {{ capFirstLetterAll(header.filter.value) }}
+                              </span>
+                              <span v-else-if="header.filter?.value.length == 1">
+                                {{ capFirstLetterAll(header.filter.value[0]) }}
+                              </span>
+                              <span v-else>
+                                Multiple
+                              </span>
+                            </slot>
+                          </div>
                         </div>
                       </template>
-                      <template v-if="header.filter.hasItemSlot" #option="{ option, selected }">
-                        <slot :name="'header-filter-item-slot-' + header.slotId" :item="option" :selected="selected" />
+                      <template
+                        v-if="header.filter.multiple || header.filter.hasItemSlot"
+                        #option="{ option, selected }"
+                      >
+                        <slot :name="'header-filter-item-slot-' + header.slotId" :item="option" :selected="selected">
+                          <div class="hover:cursor-pointer">
+                            <UCheckbox
+                              class="pointer-events-none"
+                              :label="capFirstLetterAll(
+                                header.filter.itemValue ? option[header.filter.itemValue] : option)"
+                              :model-value="selected"
+                              @click="header.filter.value.push(option.value)"
+                            />
+                          </div>
+                        </slot>
                       </template>
                     </USelectMenu>
                     <UInput
@@ -331,18 +345,12 @@ th {
 }
 .table-title {
   text-align: start;
-  position: sticky;
-  z-index: 99;
-  left: 0;
 }
 .base-table {
   border-spacing: 0px;
   table-layout: fixed;
 
   &__header {
-    position: sticky;
-    top: 0;
-    z-index: 98;
 
     &__item {
       background-color: white;
