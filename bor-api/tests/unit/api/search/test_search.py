@@ -751,8 +751,8 @@ def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, q
 
 
 @pytest.mark.parametrize('test_name,subscription,expected', [
-    ('test_authorized', {'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.OK),
-    ('test_wrong_product_CA_SEARCH', {'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
+    ('test_authorized_NDS', {'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.OK),
+    ('test_authorized_CA_SEARCH', {'code': 'CA_SEARCH', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.OK),
     ('test_wrong_product_BUSINESS', {'code': 'BUSINESS', 'subscriptionStatus': 'ACTIVE'}, HTTPStatus.UNAUTHORIZED),
     ('test_subscription_inactive', {'code': 'NDS', 'subscriptionStatus': 'INACTIVE'}, HTTPStatus.UNAUTHORIZED),
 ])

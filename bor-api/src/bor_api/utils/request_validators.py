@@ -63,13 +63,13 @@ def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -
     # check access
     current_app.logger.debug('Checking user access...')
     access_flag_name = None
-    access_code = None
+    access_codes = []
     if access_level == SearchAccessLevel.EXTENDED:
         access_flag_name = 'enable-comp-auth-search'
-        access_code = 'CA_SEARCH'
+        access_codes = ['CA_SEARCH']
     elif access_level == SearchAccessLevel.LIMITED:
         access_flag_name = 'enable-director-search'
-        access_code = 'NDS'
+        access_codes = ['NDS', 'CA_SEARCH']
     else:
         current_app.logger.error('Unhandled access level: %s', access_level)
         errors.append({'Error evaluating search access.'})
@@ -82,7 +82,7 @@ def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -
         if not isinstance(products, list):
             current_app.logger.debug(products)
             raise AuthorizationException(f'Error collecting information from Auth service. {products}')
-        if not any(p['code'] == access_code and p['subscriptionStatus'] == 'ACTIVE' for p in products):
+        if not any(p['code'] in access_codes and p['subscriptionStatus'] == 'ACTIVE' for p in products):
             raise AuthorizationException('This account is not authorized for this level of search.')
     current_app.logger.debug('Access granted.')
 
