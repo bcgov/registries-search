@@ -51,7 +51,7 @@ def sync_solr():
 
 @bp.get('/heartbeat')
 @cross_origin(origin='*')
-def sync_follower_heartbeat():
+def sync_follower_heartbeat():  # pylint: disable=too-many-branches,too-many-statements
     """Verify the solr follower instance is serving updated/synced records."""
     try:
         now = datetime.now(UTC)
@@ -98,6 +98,9 @@ def sync_follower_heartbeat():
                     current_app.logger.error(message)
                     return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
                 doc_obj_to_verify = SolrDoc.get_by_id(events_to_verify[1].solr_doc_id)
+                # if the second event pulled is also a business then skip (should happen very rarely)
+                if doc_obj_to_verify.doc['entityType'] == 'BUSINESS':
+                    current_app.logger.debug('Did not pull a person update event. Skipping verification.')
 
             most_recent_doc_for_entity = SolrDoc.find_most_recent_by_entity_id(doc_obj_to_verify.entity_id)
             if most_recent_doc_for_entity.id != doc_obj_to_verify.id:
