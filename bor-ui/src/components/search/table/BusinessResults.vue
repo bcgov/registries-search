@@ -31,7 +31,7 @@
         class="flex grow justify-center"
         :show-btn="ModernizedTypes.includes(item.legalType)"
         :tooltip-msg="tooltipMsg"
-        @action="goToOpenBusiness(item.identifier)"
+        @action="goToOpenBusiness(item.identifier, item.legalType)"
       />
     </template>
     <template v-if="searchBusiness.error" #body-empty>

@@ -65,6 +65,7 @@ export default defineNuxtConfig({
       regSearchApiKey: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY || ''}`,
       registryHomeURL: process.env.VUE_APP_REGISTRY_HOME_URL || '',
       bcolURL: process.env.VUE_APP_BCONLINE_URL || '',
+      businessDashURL: process.env.VUE_APP_BUSINESS_DASH_URL || '',
       businessSearchURL: process.env.VUE_APP_REGISTRIES_SEARCH_URL || '',
       appEnv: `${process.env.VUE_APP_POD_NAMESPACE || 'unknown'}`,
       requireLogin: true,
