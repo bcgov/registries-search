@@ -76,7 +76,7 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
         if business_response.status_code not in [HTTPStatus.OK]:
             return resource_utils.bad_request_response('Business not found.')
 
-        business_json = business_response.json().get('business')
+        business_json = business_response.json().get('business') or business_response.json()
 
         token = jwt.get_token_auth_header()
         request_json = request.get_json()
