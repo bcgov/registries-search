@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 from datedelta import datedelta
 from flask import current_app
-from search_api.services.solr.solr_docs import BusinessDoc, PartyDoc
+from search_api.services.business_solr.doc_fields import PartyField
 
 from search_solr_importer.enums import ColinPartyTypeCode
 
@@ -65,7 +65,7 @@ def _is_good_standing(item_dict: dict, source: str) -> bool:  # pylint: disable=
     return None
 
 
-def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: disable=too-many-branches, too-many-locals
+def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # pylint: disable=too-many-branches, too-many-locals
     """Return the list of BusinessDocs for the given raw db data."""
     prepped_data = {}
 
@@ -107,7 +107,7 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
         return 'unknown'
 
     for item in data:
-        item_dict = dict(zip([x[0].lower() for x in cur.description], item))
+        item_dict = dict(zip(data_descs, item))
         # NOTE: if a business has > 1 restoration filing it will have a record per restoration
         #  - code will ignore duplicates below (expects most relevant restoration to come first)
         base_doc_already_added = item_dict['identifier'] in prepped_data
@@ -147,17 +147,19 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
             prepped_data[identifier] = {
                 'goodStanding': _is_good_standing(item_dict, source),
                 'legalType': item_dict['legal_type'],
+                'id': identifier,
                 'identifier': identifier,
                 'name': get_business_name(item_dict),
                 'status': item_dict['state'],
-                'bn': item_dict['tax_id'],
-                'parties': {}
+                'bn': item_dict['tax_id']
             }
             if party_id:
                 # add party doc to base doc
                 prepped_data[identifier]['parties'] = {
                     party_id: {
+                        'id': f'{identifier}_{party_id}',
                         'parentBN': item_dict['tax_id'],
+                        'parentIdentifier': identifier,
                         'parentLegalType': item_dict['legal_type'],
                         'parentName': get_business_name(item_dict),
                         'parentStatus': item_dict['state'],
@@ -172,7 +174,43 @@ def prep_data(data: list, cur, source: str) -> list[BusinessDoc]:  # pylint: dis
         if base_doc.get('parties'):
             flattened_parties = []
             for party_key in base_doc['parties']:
-                flattened_parties.append(PartyDoc(**base_doc['parties'][party_key]))
-            base_doc['parties'] = flattened_parties
-        solr_docs.append(BusinessDoc(**base_doc))
+                if party := base_doc['parties'][party_key]:
+                    flattened_parties.append(party)
+            if flattened_parties:
+                base_doc['parties'] = flattened_parties
+        print(base_doc)
+        solr_docs.append(base_doc)
     return solr_docs
+
+
+def prep_data_btr(data: list[dict]) -> list[dict]:
+    """Return the list of partial business docs containing the SI party information."""
+    prepped_data: list[dict] = []
+
+    for item in data:
+        submission = item[0]
+        identifier = submission['businessIdentifier']
+
+        business = {'id': identifier, 'parties': {'add': []}}
+
+        # collect current SIs.
+        for person in submission.get('personStatements', []):
+            party_name = ''
+            for name in person.get('names'):
+                if name.get('type') == 'individual':  # expecting this to be 'individual' or 'alternative'
+                    party_name = name.get('fullName')
+                    break
+            if not party_name:
+                current_app.logger.debug('Person names: %s', person.get('names'))
+                current_app.logger.error('Error parsing SI name for %s', identifier)
+
+            business['parties']['add'].append({
+                PartyField.UNIQUE_KEY.value: identifier + '_' + person['uuid'],
+                PartyField.PARTY_NAME.value: party_name,
+                PartyField.PARTY_ROLE.value: ['significant individual'],
+                PartyField.PARENT_TYPE.value: 'person'
+            })
+        
+        prepped_data.append(business)
+
+    return prepped_data

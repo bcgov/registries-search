@@ -132,3 +132,7 @@ search-solr/test_solr
 .DS_Store
 
 .history
+
+__pycache__
+
+.python-version

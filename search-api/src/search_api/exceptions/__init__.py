@@ -19,10 +19,9 @@ BusinessException - error, status_code - Business rules error
 error - a description of the error {code / description: classname / full text}
 status_code - where possible use HTTP Error Codes
 """
-import functools
 from enum import Enum
+from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Dict, List
 
 
 class ResourceErrorCodes(str, Enum):
@@ -43,6 +42,27 @@ class ResourceErrorCodes(str, Enum):
     STORAGE_ERR = '013'
 
 
+@dataclass
+class BaseExceptionE(Exception):
+    """Base exception class for custom exceptions."""
+
+    error: str
+    message: str = None
+    status_code: HTTPStatus = None
+
+
+@dataclass
+class SolrException(BaseExceptionE):
+    """Solr search/update/delete exception."""
+
+    def __post_init__(self):
+        """Return a valid SolrException."""
+        if self.status_code != HTTPStatus.SERVICE_UNAVAILABLE:
+            self.error += f', {self.status_code}'
+            self.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+        self.message = f'Solr service error while processing request.'
+
+
 class BusinessException(Exception):
     """Exception that adds error code and error name, that can be used for i18n support."""
 
@@ -53,24 +73,10 @@ class BusinessException(Exception):
         self.status_code = status_code
 
 
-class DatabaseException(Exception):
-    """Database insert/update exception."""
-
-
-class SolrException(Exception):
-    """Solr search/update/delete exception."""
-
-    def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
-        """Return a valid SolrException."""
-        super(SolrException, self).__init__(*args, **kwargs)  # pylint: disable=super-with-arguments
-        self.error = error
-        self.status_code = status_code
-
-
 class ApiConnectionException(Exception):
     """Api Connection exception."""
 
-    def __init__(self, code: int, detail: List[Dict]):
+    def __init__(self, code: int, detail: list[dict]):
         """Initialize the error object."""
         super(ApiConnectionException, self).__init__()  # pylint: disable=super-with-arguments
         self.code = code

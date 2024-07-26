@@ -39,8 +39,13 @@ class Config():  # pylint: disable=too-few-public-methods
     TESTING = False
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+    
+    SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_LEADER_CORE', 'business')
+    SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_CORE', 'business_follower')
+    SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_URL', 'http://localhost:8873/solr')
+    SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_FOLLOWER_URL', 'http://localhost:8874/solr')
+    HAS_FOLLOWER = SOLR_SVC_FOLLOWER_URL != SOLR_SVC_LEADER_URL
 
-    SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
     SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
     SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
 
@@ -55,6 +60,31 @@ class Config():  # pylint: disable=too-few-public-methods
     PRELOADER_JOB = os.getenv('PRELOADER_JOB', 'False') == 'True'
 
     MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
+    
+    BATCH_SIZE_SOLR = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
+    BATCH_SIZE_SOLR_SI = int(os.getenv('SOLR_BATCH_UPDATE_SIZE_SI', '1000'))
+    REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
+    PRELOADER_JOB = os.getenv('PRELOADER_JOB', 'False') == 'True'
+    INCLUDE_BTR_LOAD = os.getenv('INCLUDE_BTR_LOAD', 'False') == 'True'
+    INCLUDE_COLIN_LOAD = os.getenv('INCLUDE_COLIN_LOAD', 'True') == 'True'
+    INCLUDE_LEAR_LOAD = os.getenv('INCLUDE_LEAR_LOAD', 'True') == 'True'
+    RESYNC_OFFSET = os.getenv('RESYNC_OFFSET', '130')
+
+    BTR_BATCH_LIMIT = int(os.getenv('BTR_BATCH_LIMIT', '100000'))
+
+    MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
+    
+    # TODO: or not include btr
+    IS_PARTIAL_IMPORT = not INCLUDE_COLIN_LOAD or not INCLUDE_LEAR_LOAD
+    
+    # Service account details
+    ACCOUNT_SVC_AUTH_URL = os.getenv('KEYCLOAK_AUTH_TOKEN_URL')
+    ACCOUNT_SVC_CLIENT_ID = os.getenv('BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID')
+    ACCOUNT_SVC_CLIENT_SECRET = os.getenv('BUSINESS_SEARCH_SERVICE_ACCOUNT_SECRET')
+    try:
+        ACCOUNT_SVC_TIMEOUT = int(os.getenv('AUTH_API_TIMEOUT', '20'))
+    except:  # pylint: disable=bare-except; # noqa: B901, E722
+        ACCOUNT_SVC_TIMEOUT = 20
 
     # ORACLE - CDEV/CTST/CPRD
     ORACLE_USER = os.getenv('ORACLE_USER', '')
@@ -70,7 +100,7 @@ class Config():  # pylint: disable=too-few-public-methods
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
     DB_NAME = os.getenv('DATABASE_NAME', '')
-    DB_HOST = os.getenv('DATABASE_HOST', '')
+    DB_HOST = os.getenv('DATABASE_HOST_LEAR', '')
     DB_PORT = os.getenv('DATABASE_PORT', '5432')
 
     if DB_LOCATION == 'GCP':
@@ -80,10 +110,11 @@ class Config():  # pylint: disable=too-few-public-methods
         DB_HOST = os.getenv('DATABASE_HOST_GCP', '')
         DB_PORT = os.getenv('DATABASE_PORT_GCP', '5432')
 
-    if DB_UNIX_SOCKET := os.getenv('DATABASE_UNIX_SOCKET', None):
-        SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host={DB_UNIX_SOCKET}'
-    else:
-        SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+    BTR_DB_USER = os.getenv('DATABASE_USERNAME_BTR', '')
+    BTR_DB_PASSWORD = os.getenv('DATABASE_PASSWORD_BTR', '')
+    BTR_DB_NAME = os.getenv('DATABASE_NAME_BTR', '')
+    BTR_DB_HOST = os.getenv('DATABASE_HOST_BTR', '')
+    BTR_DB_PORT = os.getenv('DATABASE_PORT_BTR', '5432')
 
     # Connection pool settings
     DB_MIN_POOL_SIZE = os.getenv('DATABASE_MIN_POOL_SIZE', '2')

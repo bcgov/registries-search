@@ -68,6 +68,11 @@ def collect_lear_data():
         return _collect_lear_data_gcp()
 
     current_app.logger.debug('Connecting to OCP Postgres instance...')
+    print(current_app.config.get('DB_HOST'))
+    print(current_app.config.get('DB_PORT'))
+    print(current_app.config.get('DB_NAME'))
+    print(current_app.config.get('DB_USER'))
+    print(current_app.config.get('DB_PASSWORD'))
     conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
                             port=current_app.config.get('DB_PORT'),
                             database=current_app.config.get('DB_NAME'),
@@ -133,4 +138,27 @@ def _collect_lear_data_gcp():
         WHERE le.entity_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
             AND er.cessation_date IS NULL
         """)
+    return cur
+
+
+def collect_btr_data(limit: int = None, offset: int = None):
+    """Collect data from BTR."""
+    limit_clause = ''
+    if limit:
+        limit_clause = f'LIMIT {limit}'
+    if offset:
+        limit_clause += f' OFFSET {offset}'
+    if limit_clause:
+        # NOTE: needed in order to make sure we get every record when doing batch loads
+        limit_clause = f'ORDER BY id {limit_clause}'
+
+    current_app.logger.debug('Connecting to BTR GCP Postgres instance...')
+    conn = psycopg2.connect(host=current_app.config.get('BTR_DB_HOST'),
+                            port=current_app.config.get('BTR_DB_PORT'),
+                            database=current_app.config.get('BTR_DB_NAME'),
+                            user=current_app.config.get('BTR_DB_USER'),
+                            password=current_app.config.get('BTR_DB_PASSWORD'))
+    cur = conn.cursor()
+    current_app.logger.debug('Collecting BTR data...')
+    cur.execute(f"SELECT payload FROM submission {limit_clause}")
     return cur

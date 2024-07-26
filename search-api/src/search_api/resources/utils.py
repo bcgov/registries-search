@@ -16,7 +16,7 @@ from http import HTTPStatus
 
 from flask import jsonify, current_app
 
-from search_api.exceptions import ResourceErrorCodes
+from search_api.exceptions import BaseExceptionE, ResourceErrorCodes
 from search_api.services.authz import user_orgs, is_reg_staff_account, is_sbc_office_account, is_bcol_help
 
 
@@ -78,77 +78,29 @@ def account_required_response():
     return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
 
 
-def error_response(status_code, message):
-    """Build generic error response."""
-    return jsonify({'message': message}), status_code
-
-
-def bad_request_response(message):
+def bad_request_response(message: str, errors: list[dict[str, str]] = None):
     """Build generic bad request response."""
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
+    return jsonify({'message': message, 'details': errors or []}), HTTPStatus.BAD_REQUEST
 
 
-def staff_payment_bcol_fas():
-    """Build staff payment info error response."""
-    message = STAFF_SEARCH_BCOL_FAS.format(code=ResourceErrorCodes.VALIDATION_ERR)
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
-
-
-def sbc_payment_invalid():
-    """Build sbc payment info error response."""
-    message = SBC_SEARCH_NO_PAYMENT.format(code=ResourceErrorCodes.VALIDATION_ERR)
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
+def exception_response(exception: BaseExceptionE):
+    """Build exception error response."""
+    current_app.logger.error(repr(exception))
+    try:
+        message = exception.message or 'Error processing request.'
+        detail = exception.error or repr(exception)
+        status_code = exception.status_code or HTTPStatus.INTERNAL_SERVER_ERROR
+    except Exception:  # noqa B902; Catch all scenario.
+        # uncaught exception
+        message = 'Error processing request.'
+        detail = repr(exception)
+        status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    return jsonify({'message': message, 'detail': detail}), status_code
 
 
 def sbc_payment_required(message: str, detail: str, error_type: str):
     """Build sbc payment required error response."""
     return jsonify({'message': message, 'detail': detail, 'type': error_type}), HTTPStatus.PAYMENT_REQUIRED
-
-
-def validation_error_response(errors, cause, additional_msg: str = None):
-    """Build a schema validation error response."""
-    message = ResourceErrorCodes.VALIDATION_ERR + ': ' + cause
-    details = serialize(errors)
-    if additional_msg:
-        details.append('Additional validation: ' + additional_msg)
-    return jsonify({'message': message, 'detail': details}), HTTPStatus.BAD_REQUEST
-
-
-def db_exception_response(exception, account_id: str, context: str):
-    """Build a database error response."""
-    message = DATABASE.format(code=ResourceErrorCodes.DATABASE_ERR, context=context, account_id=account_id)
-    current_app.logger.error(message)
-    return jsonify({'message': message, 'detail': str(exception)}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-
-def business_exception_response(exception):
-    """Build business exception error response."""
-    current_app.logger.error(str(exception))
-    return jsonify({'message': exception.error}), exception.status_code
-
-
-def solr_exception_response(exception):
-    """Build solr exception error response."""
-    current_app.logger.error(exception)
-    message = SOLR.format(code=ResourceErrorCodes.SOLR_ERR, status=exception.status_code)
-    status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-    if exception.status_code == HTTPStatus.SERVICE_UNAVAILABLE:
-        status_code = HTTPStatus.SERVICE_UNAVAILABLE
-    return jsonify({'message': message, 'detail': exception.error}), status_code
-
-
-# def pay_exception_response(exception: SBCPaymentException, account_id: str = None):
-#     """Build pay 402 exception error response."""
-#     status = exception.status_code
-#     message = PAYMENT.format(code=ResourceErrorCodes.PAY_ERR, status=status, account_id=account_id)
-#     if exception.json_data:
-#         detail = exception.json_data.get('detail', '')
-#         err_type = exception.json_data.get('type', '')
-#         return jsonify({'message': message, 'status_code': status, 'type': err_type, 'detail': detail}),\
-#             HTTPStatus.PAYMENT_REQUIRED
-
-#     current_app.logger.error(str(exception))
-#     return jsonify({'message': message, 'detail': str(exception)}), HTTPStatus.PAYMENT_REQUIRED
 
 
 def default_exception_response(exception):
@@ -158,23 +110,11 @@ def default_exception_response(exception):
     return jsonify({'message': message, 'detail': exception.with_traceback(None)}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-def service_exception_response(message):
-    """Build 500 exception error response."""
-    return jsonify({'message': message}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-
 def not_found_error_response(item, key):
     """Build a not found error response."""
     message = NOT_FOUND.format(code=ResourceErrorCodes.NOT_FOUND_ERR, item=item, key=key)
     current_app.logger.info(str(HTTPStatus.NOT_FOUND.value) + ': ' + message)
     return jsonify({'message': message}), HTTPStatus.NOT_FOUND
-
-
-def duplicate_error_response(message):
-    """Build a duplicate request error response."""
-    err_msg = ResourceErrorCodes.DUPLICATE_ERR + ': ' + message
-    current_app.logger.info(str(HTTPStatus.CONFLICT.value) + ': ' + message)
-    return jsonify({'message': err_msg}), HTTPStatus.CONFLICT
 
 
 def unauthorized_error_response(account_id):
@@ -191,53 +131,8 @@ def authorization_expired_error_response(account_id):
     return jsonify({'message': message}), HTTPStatus.UNAUTHORIZED
 
 
-def path_param_error_response(param_name):
-    """Build a bad request param missing error response."""
-    message = PATH_PARAM.format(code=ResourceErrorCodes.PATH_PARAM_ERR, param_name=param_name)
-    current_app.logger.info(str(HTTPStatus.BAD_REQUEST.value) + ': ' + message)
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
-
-
-def unprocessable_error_response(description):
-    """Build an unprocessable entity error response."""
-    message = f'The {description} request could not be processed (no change/results).'
-    current_app.logger.info(str(HTTPStatus.UNPROCESSABLE_ENTITY.value) + ': ' + message)
-    return jsonify({'message': message}), HTTPStatus.UNPROCESSABLE_ENTITY
-
-
-def path_data_mismatch_error_response(path_value, description, data_value):
-    """Build a bad request path param - payload data mismatch error."""
-    message = PATH_MISMATCH.format(code=ResourceErrorCodes.DATA_MISMATCH_ERR, path_value=path_value,
-                                   description=description, data_value=data_value)
-    current_app.logger.info(str(HTTPStatus.BAD_REQUEST.value) + ': ' + message)
-    return jsonify({'message': message}), HTTPStatus.BAD_REQUEST
-
-
 def gcp_storage_service_error(detail):
     """Build a storage servcie error response."""
     message = STORAGE.format(code=ResourceErrorCodes.STORAGE_ERR)
     current_app.logger.info(str(HTTPStatus.INTERNAL_SERVER_ERROR.value) + ': ' + detail)
     return jsonify({'message': message, 'detail': detail}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-
-def get_account_name(token: str, account_id: str = None):  # pylint: disable=too-many-return-statements; added staff
-    """Lookup the account organization name from the user token with an auth api call."""
-    try:
-        if account_id is not None and is_reg_staff_account(account_id):
-            return REG_STAFF_DESC
-        if account_id is not None and is_sbc_office_account(token, account_id):
-            return SBC_STAFF_DESC
-        if account_id is not None and is_bcol_help(account_id):
-            return BCOL_STAFF_DESC
-
-        orgs = user_orgs(token)
-        if orgs and 'orgs' in orgs and orgs['orgs']:
-            if (len(orgs['orgs']) == 1 or not account_id or not account_id.isdigit()):
-                return orgs['orgs'][0]['name']
-            for org in orgs['orgs']:
-                if org['id'] == int(account_id):
-                    return org['name']
-        return None
-    except Exception as err:  # pylint: disable=broad-except # noqa F841;
-        current_app.logger.error('get_account_name failed: ' + str(err))
-        return None

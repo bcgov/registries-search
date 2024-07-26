@@ -43,6 +43,11 @@ class SolrDoc(db.Model):
         """Return most recently submitted SolrDoc by identifier."""
         return cls.query.filter_by(identifier=identifier).order_by(cls.submission_date.desc()).first()
 
+    @classmethod
+    def get_by_id(cls, doc_id: int) -> SolrDoc:
+        """Return the solr doc by its ID."""
+        return cls.query.filter_by(id=doc_id).one_or_none()
+
     @staticmethod
     def get_updated_identifiers_after_date(date: datetime) -> List[str]:
         """Return all identifiers with a submitted SolrDoc after the date."""

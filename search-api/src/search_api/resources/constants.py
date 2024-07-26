@@ -21,3 +21,4 @@ class EndpointVersionPath(str, Enum):
     """Enumerate the endpoint mounts used in the system."""
 
     API_V1 = '/api/v1'
+    API_V2 = '/api/v2'

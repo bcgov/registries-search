@@ -1,4 +1,4 @@
-# Copyright © 2022 Daxiom™ Systems Inc.
+# Copyright © 2023 Daxiom™ Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ from flask import current_app
 from flask import Flask
 
 import search_api
-# from search_api.models import User
 from search_api.services.authz import get_role
 from search_api.utils.auth import JwtManager
 
@@ -52,7 +51,6 @@ class Flags():
         """
         self.app = app
         self.sdk_key = app.config.get('LD_SDK_KEY')
-
         if td:
             client = LDClient(config=Config('testing', update_processor_class=td))
         elif self.sdk_key:
@@ -61,11 +59,11 @@ class Flags():
 
         # with suppress(Exception):
         try:
-            if client and client.is_initialized():  # pylint: disable=E0601,E0606
+            if client and client.is_initialized():  # pylint: disable=possibly-used-before-assignment
                 app.extensions[Flags.COMPONENT_NAME] = client
                 app.teardown_appcontext(self.teardown)
         except Exception as err:  # noqa: B902
-            current_app.logger.warn('issue registering flag service', err)
+            app.logger.warn('issue registering flag service %s', err)
 
     def teardown(self, exception):  # pylint: disable=unused-argument; flask method signature
         """Destroy all objects created by this extension.
@@ -87,13 +85,6 @@ class Flags():
             return ldclient.get()
         except Exception:  # noqa: B902
             return None
-
-    @staticmethod
-    def get_anonymous_user():
-        """Return an anonymous key."""
-        return {
-            'key': 'anonymous'
-        }
 
     @staticmethod
     def flag_user(user: search_api.models.User,
@@ -119,16 +110,19 @@ class Flags():
         return _user
 
     @staticmethod
+    def get_anonymous_user():
+        """Return an anonymous key."""
+        return {'key': 'anonymous'}
+
+    @staticmethod
     def value(flag: str, user=None):
         """Retrieve the value  of the (flag, user) tuple."""
-        client = Flags.get_client()
-
-        if user:
-            flag_user = user
-        else:
-            flag_user = Flags.get_anonymous_user()
-
         try:
+            client = Flags.get_client()
+            if user:
+                flag_user = user
+            else:
+                flag_user = Flags.get_anonymous_user()
             return client.variation(flag, flag_user, None)
         except Exception as err:  # noqa: B902
             # pylint: disable=consider-using-f-string

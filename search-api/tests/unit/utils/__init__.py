@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for the api utils module."""
+from search_api.services.business_solr.doc_fields import BusinessField, PartyField
+from search_api.services.business_solr.doc_models import BusinessDoc, PartyDoc
+
 
 SOLR_UPDATE_REQUEST_TEMPLATE_CORP = {
     "business": {
@@ -50,3 +53,64 @@ SOLR_UPDATE_REQUEST_TEMPLATE_FIRM = {
         "roles": [{"roleType": "proprietor"}]
     }]
 }
+
+def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None, goodStanding=None) -> BusinessDoc:
+    solr_parties = None
+    if parties:
+        solr_parties = []
+        for index, party in enumerate(parties):
+            party_doc = {
+                PartyField.UNIQUE_KEY.value: identifier + '_' + str(index),
+                PartyField.PARENT_BN.value: bn,
+                PartyField.PARENT_IDENTIFIER.value: identifier,
+                PartyField.PARENT_NAME.value: name,
+                PartyField.PARENT_STATE.value: state,
+                PartyField.PARENT_TYPE.value: legal_type,
+                PartyField.PARTY_NAME.value: party[0],
+                PartyField.PARTY_ROLE.value: [party[1]],
+                PartyField.PARTY_TYPE.value: party[2],
+            }
+            solr_parties.append(PartyDoc(**party_doc))
+    return BusinessDoc(
+        id=identifier,
+        identifier=identifier,
+        legalType=legal_type,
+        name=name,
+        status=state,
+        goodStanding=goodStanding,
+        bn=bn,
+        parties=solr_parties
+    )
+
+
+SOLR_TEST_DOCS = [
+    create_solr_doc('CP1234567', 'business one 1', 'ACTIVE', 'CP', 'BN00012334', None, True),
+    create_solr_doc('CP0234567', 'business two 2', 'HISTORICAL', 'CP', '09876K', None, True),
+    create_solr_doc('CP0034567', 'business three 3', 'ACTIVE', 'CP', None, None, True),
+    create_solr_doc('BC0004567', 'business four 4', 'ACTIVE', 'BEN', '00987766800988', None, False),
+    create_solr_doc('BC0000567', 'business five 5', 'HISTORICAL', 'BC', 'BN9000776557', [('test si', 'significant individual', 'person')]),
+    create_solr_doc('BC0000067', 'business six 6 special and match', 'ACTIVE', 'BEN', '242217'),
+    create_solr_doc('BC0000007', 'business seven 7 special & match', 'ACTIVE', 'BEN', '124221'),
+    create_solr_doc('BC0020047', 'business eight 8 special&match', 'ACTIVE', 'BEN', '1255323221'),
+    create_solr_doc('FM1000028', 'firm nine 9 special + match', 'ACTIVE', 'SP', '123', [('person one', 'proprietor', 'person')]),
+    create_solr_doc('FM1001118', 'firm ten 10 special+match', 'ACTIVE', 'GP', None, [('organization one', 'partner', 'organization')]),
+    create_solr_doc('FM0004018', 'firm eleven 11 periods y.z. xk', 'ACTIVE', 'GP', None, [('organization two y.z. xk', 'partner', 'organization'), ('person two', 'partner', 'person')]),
+    create_solr_doc('BC0030023', 'business twelve 12 special-match', 'ACTIVE', 'BEN', '123456785BC0001'),
+    create_solr_doc('BC0030024', 'business thirteen 13 special - match', 'ACTIVE', 'BEN', '123456786BC0001'),
+    create_solr_doc('BC0030014', 'b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\;:\'",<>./', 'ACTIVE', 'BEN', '123456776BC0001'),
+    create_solr_doc('BC0030001', '01 solr special && char', 'ACTIVE', 'BEN', '123456789BC0001'),
+    create_solr_doc('BC0030002', '02 solr special || char', 'ACTIVE', 'BEN', '123456788BC0001'),
+    create_solr_doc('BC0030003', '03 solr special: char', 'ACTIVE', 'BEN', '123456787BC0001'),
+    create_solr_doc('BC0030004', '04 solr special + char', 'ACTIVE', 'BEN', '123456786BC0001'),
+    create_solr_doc('BC0030005', '05 solr special - char', 'ACTIVE', 'BEN', '123456785BC0001'),
+    create_solr_doc('BC0030006', '06 solr special ! char', 'ACTIVE', 'BEN', '123456784BC0001'),
+    create_solr_doc('BC0030007', '07 solr special \ char', 'ACTIVE', 'BEN', '123456783BC0001'),
+    create_solr_doc('BC0030008', '08 solr special (char)', 'ACTIVE', 'BEN', '123456782BC0001'),
+    create_solr_doc('BC0030009', '09 solr special " char"', 'ACTIVE', 'BEN', '123456781BC0001'),
+    create_solr_doc('BC0030010', '10 solr special ~ char', 'ACTIVE', 'BEN', '123456780BC0001'),
+    create_solr_doc('BC0030011', '11 solr special* char', 'ACTIVE', 'BEN', '123456779BC0001'),
+    create_solr_doc('BC0030012', '12 solr special? char', 'ACTIVE', 'BEN', '123456778BC0001'),
+    create_solr_doc('BC0030013', '13 solr special / char', 'ACTIVE', 'BEN', '123456777BC0001'),
+    create_solr_doc('BC0030015', 'special OR AND NOT operators', 'ACTIVE', 'BEN', '123456775BC0001'),
+    create_solr_doc('BC0030016', 'DIVINE ÉBÉNISTERIE INC.', 'ACTIVE', 'BEN', 'BN00012388')
+]

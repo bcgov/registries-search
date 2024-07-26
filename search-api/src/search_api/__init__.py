@@ -25,15 +25,12 @@ import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts wi
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
 from flask import redirect, url_for, Flask  # noqa: I001
 from flask_migrate import Migrate
-from registry_schemas import __version__ as registry_schemas_version
-from registry_schemas.flask import SchemaServices  # noqa: I001
 
 from search_api import errorhandlers, models
 from search_api.config import config
 from search_api.models import db
 from search_api.resources import v1_endpoint
-from search_api.schemas import rsbc_schemas
-from search_api.services import Flags, queue, search_solr
+from search_api.services import Flags, queue, business_solr
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.logging import set_log_level_by_flag, setup_logging
@@ -65,9 +62,8 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs
 
     errorhandlers.init_app(app)
     db.init_app(app)
-    rsbc_schemas.init_app(app)
     queue.init_app(app)
-    search_solr.init_app(app)
+    business_solr.init_app(app)
     babel.init_app(app)
     migrate.init_app(app, db)
 
@@ -88,7 +84,6 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs
     def add_version(response):  # pylint: disable=unused-variable
         version = get_run_version()
         response.headers['API'] = f'search_api/{version}'
-        response.headers['SCHEMAS'] = f'registry_schemas/{registry_schemas_version}'
         return response
 
     register_shellcontext(app)

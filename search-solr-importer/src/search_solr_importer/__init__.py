@@ -20,7 +20,7 @@ import os
 import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
 from flask import Flask  # noqa: I001
-from search_api.services import search_solr
+from search_api.services import business_solr
 
 from search_solr_importer.config import config
 from search_solr_importer.logging import setup_logging
@@ -69,7 +69,7 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production'):
 
     # db.init_app(app)
     oracle_db.init_app(app)
-    search_solr.init_app(app)
+    business_solr.init_app(app)
     babel.init_app(app)
 
     register_shellcontext(app)
