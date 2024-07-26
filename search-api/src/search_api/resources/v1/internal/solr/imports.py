@@ -38,7 +38,8 @@ def import_businesses():
             return resource_utils.bad_request_response('Invalid payload.', ['Expecting required field: "businesses"'])
 
         if (timeout := int(request_json.get('timeout', '25'))) > 200:
-            return resource_utils.bad_request_response('Invalid payload.', ['Expecting desired "timeout" to be under 200.'])
+            return resource_utils.bad_request_response('Invalid payload.',
+                                                       ['Expecting desired "timeout" to be under 200.'])
 
         if request_json.get('type') == 'partial':
             # NOTE: raw_docs may be partial data and/or child documents

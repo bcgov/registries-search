@@ -213,7 +213,6 @@ def test_search_error(app, session, client, requests_mock):
                       headers={'Accept-Version': 'v1', 'content-type': 'application/json'},
                       query_string={'query': 'value:test', 'categories': 'partyRoles:partner,proprietor'})
     # test
-    print(resp.json)
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     resp_json = resp.json
     assert resp_json.get('detail') == f'{mocked_error_msg}, {mocked_status_code}'

@@ -17,7 +17,6 @@ from http import HTTPStatus
 from flask import jsonify, current_app
 
 from search_api.exceptions import BaseExceptionE, ResourceErrorCodes
-from search_api.services.authz import user_orgs, is_reg_staff_account, is_sbc_office_account, is_bcol_help
 
 
 # Resource error messages

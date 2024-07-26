@@ -27,7 +27,7 @@ bp = Blueprint('COMMAND', __name__, url_prefix='/command')  # pylint: disable=in
 @bp.post('')
 @cross_origin(origin='*')
 @jwt.requires_roles([SYSTEM_ROLE])
-def command():
+def replication_command():
     """Execute a replication command on solr."""
     try:
         request_json: dict = request.json

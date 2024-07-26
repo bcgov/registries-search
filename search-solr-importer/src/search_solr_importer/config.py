@@ -39,7 +39,7 @@ class Config():  # pylint: disable=too-few-public-methods
     TESTING = False
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-    
+
     SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_LEADER_CORE', 'business')
     SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_FOLLOWER_CORE', 'business_follower')
     SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_LEADER_URL', 'http://localhost:8873/solr')
@@ -60,7 +60,7 @@ class Config():  # pylint: disable=too-few-public-methods
     PRELOADER_JOB = os.getenv('PRELOADER_JOB', 'False') == 'True'
 
     MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
-    
+
     BATCH_SIZE_SOLR = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
     BATCH_SIZE_SOLR_SI = int(os.getenv('SOLR_BATCH_UPDATE_SIZE_SI', '1000'))
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
@@ -73,10 +73,10 @@ class Config():  # pylint: disable=too-few-public-methods
     BTR_BATCH_LIMIT = int(os.getenv('BTR_BATCH_LIMIT', '100000'))
 
     MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
-    
+
     # TODO: or not include btr
     IS_PARTIAL_IMPORT = not INCLUDE_COLIN_LOAD or not INCLUDE_LEAR_LOAD
-    
+
     # Service account details
     ACCOUNT_SVC_AUTH_URL = os.getenv('KEYCLOAK_AUTH_TOKEN_URL')
     ACCOUNT_SVC_CLIENT_ID = os.getenv('BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID')

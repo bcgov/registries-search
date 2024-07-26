@@ -16,20 +16,22 @@ from search_api.services.business_solr import BusinessSolr
 from search_api.services.business_solr.doc_fields import BusinessField
 
 
-def business_suggest(query: str, solr: BusinessSolr, rows = 5) -> list:
+def business_suggest(query: str, solr: BusinessSolr, rows=5) -> list:
     """Return the list of business suggestions from Solr from given text."""
-
     # 1st solr query (names)
     name_suggestions = solr.suggest(query, rows, True)
-    print(name_suggestions)
     # 2nd solr query (extra names)
     extra_name_suggestions = []
     if len(name_suggestions) < rows:
-        name_select_payload = solr.query_builder.build_base_query({'value': query}, {BusinessField.NAME_SINGLE: 'parent'}, {}, {})
+        name_select_payload = solr.query_builder.build_base_query({'value': query},
+                                                                  {BusinessField.NAME_SINGLE: 'parent'},
+                                                                  {},
+                                                                  {})
         name_select_payload['fields'] = solr.business_fields
-        print(name_select_payload)
         name_docs = solr.query(name_select_payload, rows).get('response', {}).get('docs', [])
-        extra_name_suggestions = [x.get(BusinessField.NAME.value).upper() for x in name_docs if x.get(BusinessField.NAME.value)]
+        extra_name_suggestions = [
+            x.get(BusinessField.NAME.value).upper()
+            for x in name_docs if x.get(BusinessField.NAME.value)]
     # remove dups
     name_suggestions = name_suggestions + list(set(extra_name_suggestions) - set(name_suggestions))
     query = query.upper()  # NOTE: needed for bn/identifier processing too

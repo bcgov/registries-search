@@ -19,8 +19,8 @@ BusinessException - error, status_code - Business rules error
 error - a description of the error {code / description: classname / full text}
 status_code - where possible use HTTP Error Codes
 """
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
 from http import HTTPStatus
 
 
@@ -60,7 +60,7 @@ class SolrException(BaseExceptionE):
         if self.status_code != HTTPStatus.SERVICE_UNAVAILABLE:
             self.error += f', {self.status_code}'
             self.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-        self.message = f'Solr service error while processing request.'
+        self.message = 'Solr service error while processing request.'
 
 
 class BusinessException(Exception):

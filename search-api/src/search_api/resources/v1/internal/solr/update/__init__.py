@@ -20,8 +20,8 @@ from flask import Blueprint, g, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
-from search_api.exceptions import SolrException
 from search_api.enums import SolrDocEventType
+from search_api.exceptions import SolrException
 from search_api.models import SolrDoc, SolrDocEvent, User
 from search_api.services import SYSTEM_ROLE
 from search_api.services.business_solr.doc_models import BusinessDoc, PartyDoc

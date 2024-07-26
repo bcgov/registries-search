@@ -12,5 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Exports request handler functions."""
-# from .search import business_search, business_suggest, parties_search
-from .update_solr_handler import update_business_solr, resync_business_solr
+from .update_solr_handler import resync_business_solr, update_business_solr

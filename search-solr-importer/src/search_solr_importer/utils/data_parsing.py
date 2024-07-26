@@ -65,46 +65,49 @@ def _is_good_standing(item_dict: dict, source: str) -> bool:  # pylint: disable=
     return None
 
 
-def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # pylint: disable=too-many-branches, too-many-locals
+def _get_business_name(doc_info: dict) -> str:
+    """Return the parsed name of the business in the given doc info."""
+    if doc_info['legal_name']:
+        return doc_info['legal_name'].strip()
+    return doc_info.get('legal_name_alt', '').strip()
+
+
+def _get_party_name(doc_info: dict) -> str:
+    """Return the parsed name of the party in the given doc info."""
+    if doc_info['organization_name']:
+        return doc_info['organization_name'].strip()
+    if doc_info.get('organization_name_alt'):
+        return doc_info['organization_name_alt'].strip()
+    if doc_info.get('organization_name_colin'):
+        return doc_info['organization_name_colin'].strip()
+    person_name = ''
+    if doc_info['first_name']:
+        person_name += doc_info['first_name'].strip()
+    if doc_info['middle_initial']:
+        person_name += ' ' + doc_info['middle_initial'].strip()
+    if doc_info['last_name']:
+        person_name += ' ' + doc_info['last_name'].strip()
+    return person_name.strip()
+
+
+def _get_party_role(type_cd: str, legal_type: str) -> str:
+    """Return the lear party_type given the colin party type code."""
+    if type_cd == ColinPartyTypeCode.DIRECTOR:
+        return 'director'
+    if type_cd == ColinPartyTypeCode.FIRM_COMP_PARTY:
+        return 'completing_party'
+    if type_cd == ColinPartyTypeCode.INCORPORATOR:
+        return 'incorporator'
+    if type_cd in [ColinPartyTypeCode.FIRM_BUS_OWNER.value, ColinPartyTypeCode.FIRM_IND_OWNER.value]:
+        if legal_type == 'SP':
+            return 'proprietor'
+        return 'partner'
+    return 'unknown'
+
+
+def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # pylint: disable=too-many-branches
     """Return the list of BusinessDocs for the given raw db data."""
     prepped_data = {}
-
-    def get_business_name(doc_info: dict) -> str:
-        """Return the parsed name of the business in the given doc info."""
-        if doc_info['legal_name']:
-            return doc_info['legal_name'].strip()
-        return doc_info.get('legal_name_alt', '').strip()
-
-    def get_party_name(doc_info: dict) -> str:
-        """Return the parsed name of the party in the given doc info."""
-        if doc_info['organization_name']:
-            return doc_info['organization_name'].strip()
-        if doc_info.get('organization_name_alt'):
-            return doc_info['organization_name_alt'].strip()
-        if doc_info.get('organization_name_colin'):
-            return doc_info['organization_name_colin'].strip()
-        person_name = ''
-        if doc_info['first_name']:
-            person_name += doc_info['first_name'].strip()
-        if doc_info['middle_initial']:
-            person_name += ' ' + doc_info['middle_initial'].strip()
-        if doc_info['last_name']:
-            person_name += ' ' + doc_info['last_name'].strip()
-        return person_name.strip()
-
-    def get_party_role(type_cd: str, legal_type: str) -> str:
-        """Return the lear party_type given the colin party type code."""
-        if type_cd == ColinPartyTypeCode.DIRECTOR:
-            return 'director'
-        if type_cd == ColinPartyTypeCode.FIRM_COMP_PARTY:
-            return 'completing_party'
-        if type_cd == ColinPartyTypeCode.INCORPORATOR:
-            return 'incorporator'
-        if type_cd in [ColinPartyTypeCode.FIRM_BUS_OWNER.value, ColinPartyTypeCode.FIRM_IND_OWNER.value]:
-            if legal_type == 'SP':
-                return 'proprietor'
-            return 'partner'
-        return 'unknown'
 
     for item in data:
         item_dict = dict(zip(data_descs, item))
@@ -116,7 +119,7 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
         if party_id and source == 'COLIN':
             # prep party fields
             if not item_dict.get('role'):
-                item_dict['role'] = get_party_role(item_dict.get('party_typ_cd'), item_dict['legal_type'])
+                item_dict['role'] = _get_party_role(item_dict.get('party_typ_cd'), item_dict['legal_type'])
             if not item_dict.get('party_type'):
                 item_dict['party_type'] = 'organization' if item_dict['organization_name'] else 'person'
 
@@ -132,9 +135,9 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
                 prepped_data[item_dict['identifier']]['parties'][party_id] = {
                     'parentBN': item_dict['tax_id'],
                     'parentLegalType': item_dict['legal_type'],
-                    'parentName': get_business_name(item_dict),
+                    'parentName': _get_business_name(item_dict),
                     'parentStatus': item_dict['state'],
-                    'partyName': get_party_name(item_dict),
+                    'partyName': _get_party_name(item_dict),
                     'partyRoles': [item_dict['role']],
                     'partyType': item_dict['party_type']
                 }
@@ -149,7 +152,7 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
                 'legalType': item_dict['legal_type'],
                 'id': identifier,
                 'identifier': identifier,
-                'name': get_business_name(item_dict),
+                'name': _get_business_name(item_dict),
                 'status': item_dict['state'],
                 'bn': item_dict['tax_id']
             }
@@ -161,9 +164,9 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
                         'parentBN': item_dict['tax_id'],
                         'parentIdentifier': identifier,
                         'parentLegalType': item_dict['legal_type'],
-                        'parentName': get_business_name(item_dict),
+                        'parentName': _get_business_name(item_dict),
                         'parentStatus': item_dict['state'],
-                        'partyName': get_party_name(item_dict),
+                        'partyName': _get_party_name(item_dict),
                         'partyRoles': [item_dict['role']],
                         'partyType': item_dict['party_type']
                     }
@@ -178,7 +181,6 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
                     flattened_parties.append(party)
             if flattened_parties:
                 base_doc['parties'] = flattened_parties
-        print(base_doc)
         solr_docs.append(base_doc)
     return solr_docs
 
@@ -210,7 +212,7 @@ def prep_data_btr(data: list[dict]) -> list[dict]:
                 PartyField.PARTY_ROLE.value: ['significant individual'],
                 PartyField.PARENT_TYPE.value: 'person'
             })
-        
+
         prepped_data.append(business)
 
     return prepped_data

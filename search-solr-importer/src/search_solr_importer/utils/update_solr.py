@@ -49,7 +49,6 @@ def update_solr(docs: list[dict], data_name: str, partial=False) -> int:
         count += batch_amount
         # call api import endpoint
         try:
-            print(docs)
             current_app.logger.debug('Importing batch...')
             import_resp = requests.put(url=f'{api_url}/internal/solr/import',
                                        headers=headers,
@@ -66,7 +65,7 @@ def update_solr(docs: list[dict], data_name: str, partial=False) -> int:
                     headers = {'Authorization': 'Bearer ' + token}
                     current_app.logger.debug('New Token set.')
                 # try again
-                raise Exception({'error': import_resp.json(), 'status_code': import_resp.status_code})
+                raise Exception({'error': import_resp.json(), 'status_code': import_resp.status_code})  # noqa: E501; pylint: disable=broad-exception-raised
             retry_count = 0
         except Exception as err:  # noqa: B902; pylint: disable=bare-except;
             current_app.logger.debug(err)
@@ -81,27 +80,27 @@ def update_solr(docs: list[dict], data_name: str, partial=False) -> int:
                 # set count back
                 count -= batch_amount
                 continue
-            else:
-                if retry_count == 5:
-                    # wait x minutes and then try one more time
-                    current_app.logger.debug(
-                        'Max retries for batch exceeded. Awaiting 2 mins before trying one more time...')
-                    time.sleep(120)
-                    # renew token for next try
-                    current_app.logger.debug('Getting new token for Import...')
-                    token = get_bearer_token()
-                    headers = {'Authorization': 'Bearer ' + token}
-                    current_app.logger.debug('New Token set.')
-                    # try again
-                    retry_count += 1
-                    count -= batch_amount
-                    continue
-                # log and raise error
-                current_app.logger.error('Retry count exceeded for batch.')
-                raise SolrException('Retry count exceeded for updating SOLR. Aborting import.')
+            if retry_count == 5:
+                # wait x minutes and then try one more time
+                current_app.logger.debug(
+                    'Max retries for batch exceeded. Awaiting 2 mins before trying one more time...')
+                time.sleep(120)
+                # renew token for next try
+                current_app.logger.debug('Getting new token for Import...')
+                token = get_bearer_token()
+                headers = {'Authorization': 'Bearer ' + token}
+                current_app.logger.debug('New Token set.')
+                # try again
+                retry_count += 1
+                count -= batch_amount
+                continue
+            # log and raise error
+            current_app.logger.error('Retry count exceeded for batch.')
+            raise SolrException('Retry count exceeded for updating SOLR. Aborting import.') from err
         offset = count
         current_app.logger.debug(f'Total batch {data_name} doc records imported: {count}')
     return count
+
 
 def resync():
     """Resync to catch any records that had an update during the import."""
@@ -113,7 +112,8 @@ def resync():
     api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
     resync_resp = requests.post(url=f'{api_url}/internal/solr/update/resync',
                                 headers=headers,
-                                json={'minutesOffset': current_app.config.get('RESYNC_OFFSET')})
+                                json={'minutesOffset': current_app.config.get('RESYNC_OFFSET')},
+                                timeout=60)
     if resync_resp.status_code != HTTPStatus.CREATED:
         if resync_resp.status_code == HTTPStatus.GATEWAY_TIMEOUT:
             current_app.logger.debug('Resync timed out -- check api for any individual failures.')
@@ -121,6 +121,7 @@ def resync():
             current_app.logger.error('Resync failed: %s, %s', resync_resp.status_code, resync_resp.json())
     else:
         current_app.logger.debug('Resync complete.')
+
 
 def update_suggester():
     """Build the suggester."""

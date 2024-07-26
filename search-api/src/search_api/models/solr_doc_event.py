@@ -41,7 +41,7 @@ class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
         db.session.add(self)
         db.session.commit()
         return self
-    
+
     @classmethod
     def get_events_by_status(cls,
                              statuses: list[SolrDocEventStatus],

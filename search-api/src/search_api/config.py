@@ -34,12 +34,12 @@ class Config():  # pylint: disable=too-few-public-methods
     TESTING = False
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-    
+
     # Used by /sync endpoint
     MAX_BATCH_UPDATE_NUM = int(os.getenv('MAX_BATCH_UPDATE_NUM', '1000'))
     # Used by /sync heartbeat
     LAST_REPLICATION_THRESHOLD = int(os.getenv('LAST_REPLICATION_THRESHOLD', '24'))  # hours
-    
+
     SOLR_SVC_BUS_LEADER_CORE = os.getenv('SOLR_SVC_BUS_LEADER_CORE', 'business')
     SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_CORE', 'business_follower')
     SOLR_SVC_BUS_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_URL', 'http://localhost:8873/solr')

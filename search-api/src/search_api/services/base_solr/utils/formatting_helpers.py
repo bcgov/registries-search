@@ -32,7 +32,7 @@ def parse_facets(facet_data: dict) -> dict:
     return {'fields': facets}
 
 
-def prep_query_str(query: str, replace_specials = False) -> str:
+def prep_query_str(query: str, replace_specials=False) -> str:
     r"""Return the query string prepped for solr call (more advanced method).
 
     Rules:

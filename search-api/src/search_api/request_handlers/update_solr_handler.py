@@ -25,7 +25,6 @@ def update_business_solr(identifiers: list[str], doc_events: list[SolrDocEvent])
     businesses: list[BusinessDoc] = []
     for identifier in identifiers:
         doc_update = SolrDoc.find_most_recent_by_identifier(identifier)
-        print(doc_update.doc)
         businesses.append(BusinessDoc(**doc_update.doc))
     try:
         # update people

@@ -23,14 +23,14 @@ from http import HTTPStatus
 
 import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
 from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
-from flask import redirect, url_for, Flask  # noqa: I001
-from flask_migrate import Migrate
+from flask import Flask, redirect  # noqa: I001
+from flask_migrate import Migrate  # noqa: I001
 
 from search_api import errorhandlers, models
 from search_api.config import config
 from search_api.models import db
 from search_api.resources import v1_endpoint
-from search_api.services import Flags, queue, business_solr
+from search_api.services import Flags, business_solr, queue
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.logging import set_log_level_by_flag, setup_logging

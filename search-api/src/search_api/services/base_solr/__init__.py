@@ -31,10 +31,10 @@
 from contextlib import suppress
 from http import HTTPStatus
 
+from flask import Flask, current_app
 from requests import Response, Session
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import ConnectionError as SolrConnectionError
-from flask import Flask, current_app
 
 from search_api.exceptions import SolrException
 from search_api.utils.base import BaseEnum
@@ -171,7 +171,7 @@ class Solr:
         payload['limit'] = rows if rows else self.default_rows
         response = self.call_solr('POST', self.search_url, json_data=payload, leader=False)
         return response.json()
-    
+
     def suggest(self, query: str, rows: int, build: bool = False) -> list[str]:
         """Return a list of suggestions from the solr suggest handler for the given query."""
         suggest_params = {

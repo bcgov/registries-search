@@ -68,11 +68,6 @@ def collect_lear_data():
         return _collect_lear_data_gcp()
 
     current_app.logger.debug('Connecting to OCP Postgres instance...')
-    print(current_app.config.get('DB_HOST'))
-    print(current_app.config.get('DB_PORT'))
-    print(current_app.config.get('DB_NAME'))
-    print(current_app.config.get('DB_USER'))
-    print(current_app.config.get('DB_PASSWORD'))
     conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
                             port=current_app.config.get('DB_PORT'),
                             database=current_app.config.get('DB_NAME'),
@@ -160,5 +155,5 @@ def collect_btr_data(limit: int = None, offset: int = None):
                             password=current_app.config.get('BTR_DB_PASSWORD'))
     cur = conn.cursor()
     current_app.logger.debug('Collecting BTR data...')
-    cur.execute(f"SELECT payload FROM submission {limit_clause}")
+    cur.execute(f'SELECT payload FROM submission {limit_clause}')
     return cur

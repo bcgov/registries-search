@@ -45,7 +45,8 @@ def resync_solr():
             minutes_offset = float(minutes_offset)
         except:  # pylint: disable=bare-except # noqa F841;
             if not identifiers_to_resync:
-                return resource_utils.bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
+                return resource_utils.bad_request_response(
+                    'Invalid value for field "minutesOffset". Expecting a number.')
 
         if minutes_offset:
             # get all updates since the from_datetime

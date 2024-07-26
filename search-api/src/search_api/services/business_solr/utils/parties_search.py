@@ -51,5 +51,5 @@ def parties_search(params: QueryParams, solr: BusinessSolr):
                          categories=params.categories,
                          is_nested=False,
                          solr=solr)
-    print(solr_payload)
+
     return solr.query(solr_payload, params.start, params.rows)

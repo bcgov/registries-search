@@ -16,11 +16,9 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 from time import sleep
 
-import requests
 from flask import current_app
 from search_api.exceptions import SolrException
 from search_api.services import business_solr
-from search_api.services.authz import get_bearer_token
 
 
 def get_replication_detail(field: str, leader: bool):

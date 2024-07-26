@@ -57,5 +57,5 @@ def business_search(params: QueryParams, solr: BusinessSolr):
                          categories=params.child_categories,
                          is_nested=True,
                          solr=solr)
-    print(solr_payload)
+
     return solr.query(solr_payload, params.start, params.rows)

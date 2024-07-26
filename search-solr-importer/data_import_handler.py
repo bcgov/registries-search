@@ -14,13 +14,9 @@
 """The BOR solr data import service."""
 import gc
 import sys
-import time
-from http import HTTPStatus
 
-import requests
 from flask import current_app
 from search_api.exceptions import SolrException
-from search_api.services.authz import get_bearer_token
 
 from search_solr_importer import create_app
 from search_solr_importer.utils import (collect_btr_data, collect_colin_data, collect_lear_data,
@@ -92,9 +88,9 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
                 del lear_data, prepped_lear_data
                 gc.collect()
                 current_app.logger.debug(f'LEAR import completed. Total LEAR businesses imported: {lear_count}')
-            
+
             current_app.logger.debug(f'Total businesses imported: {colin_count + lear_count}')
-            
+
             total_btr_count = 0
             if include_btr_load:
                 current_app.logger.debug('---------- Collecting/Importing BTR Data ----------')

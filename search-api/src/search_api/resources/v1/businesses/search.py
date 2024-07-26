@@ -22,7 +22,6 @@ from flask_cors import cross_origin
 from search_api.exceptions import SolrException
 from search_api.services import business_solr
 from search_api.services.base_solr.utils import QueryParams, parse_facets, prep_query_str
-from search_api.services.business_solr import Solr
 from search_api.services.business_solr.doc_fields import BusinessField, PartyField
 from search_api.services.business_solr.utils import business_search, business_suggest, parties_search
 import search_api.resources.utils as resource_utils
@@ -56,7 +55,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         # parse query params
         query = _clean_request_args(request.args.get('query', ''))
         if not query:
-            return resource_utils.bad_request_response('Invalid args', [{'missing param': "Expected url param 'query'."}])
+            return resource_utils.bad_request_response(
+                'Invalid args', [{'missing param': "Expected url param 'query'."}])
 
         query_items = query.split('::')
         value = ''
@@ -75,9 +75,11 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     bn = param  # pylint: disable=invalid-name
 
         if not value:
-            return resource_utils.bad_request_response('Invalid args', [{'query param': "Expected url param 'query' to have 'value:<string>'."}])
+            return resource_utils.bad_request_response(
+                'Invalid args',
+                [{'query param': "Expected url param 'query' to have 'value:<string>'."}]
+            )
         # clean query values
-        print(value)
         query = {
             'value': prep_query_str(value, True),
             BusinessField.NAME_SINGLE.value: prep_query_str(name),
@@ -103,13 +105,15 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                 start = int(request.args.get('start', None))
                 rows = int(request.args.get('rows', None))
         except ValueError:  # catch invalid start/row entry
-            return resource_utils.bad_request_response('Invalid args', [{'start/row params': "Expected integer for params: 'start', 'rows'"}])
+            return resource_utils.bad_request_response(
+                'Invalid args',
+                [{'start/row params': "Expected integer for params: 'start', 'rows'"}]
+            )
 
         # set doc fields to return
         fields = business_solr.business_fields
         if request.args.get('parties') == 'true':
             fields = business_solr.business_with_parties_fields
-        print(query)
         # create solr search params obj from parsed params
         params = QueryParams(query=query,
                              start=start,
@@ -170,7 +174,8 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
     try:
         query = _clean_request_args(request.args.get('query', ''))
         if not query:
-            return resource_utils.bad_request_response('Invalid args', [{'missing param': "Expected url param 'query'."}])
+            return resource_utils.bad_request_response(
+                'Invalid args', [{'missing param': "Expected url param 'query'."}])
 
         query_items = query.split('::')
         value = ''
@@ -191,7 +196,10 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
                 elif param := _parse_url_param(PartyField.PARENT_BN.value, item):
                     parent_bn = param
         if not value:
-            return resource_utils.bad_request_response('Invalid args', [{'query param': "Expected url param 'query' to have 'value:<string>'."}])
+            return resource_utils.bad_request_response(
+                'Invalid args',
+                [{'query param': "Expected url param 'query' to have 'value:<string>'."}]
+            )
         # clean query values
         query = {
             'value': prep_query_str(value, True),
@@ -214,13 +222,11 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
 
         # validate party roles
         party_roles = search_categories.get(PartyField.PARTY_ROLE)
-        print(search_categories)
-        print(party_roles)
         if not party_roles:
             return jsonify(
                 {'message': f"Expected url param 'categories={PartyField.PARTY_ROLE.value}:...'."}
             ), HTTPStatus.BAD_REQUEST
-        print(party_roles)
+
         if [x for x in party_roles if x.lower() not in ['partner', 'proprietor']]:
             return jsonify({'message': f"Expected '{PartyField.PARTY_ROLE.value}:' with values 'partner' and/or " +
                                        "'proprietor'. Other partyRoles are not implemented."}), HTTPStatus.BAD_REQUEST

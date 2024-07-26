@@ -22,12 +22,11 @@ class QueryBuilder:
 
     identifier_field_values = None
     pre_child_filter_clause = None
-    
+
     def __init__(self, identifier_field_values: list[str], unique_parent_field: BaseEnum):
         """Initialize the solr class."""
         self.identifier_field_values = identifier_field_values
         self.pre_child_filter_clause = "{!parent which = '-_nest_path_:* " + unique_parent_field.value + ":*'}"
-
 
     def create_clause(self, field_value: str, term: str, is_child=False) -> str:
         """Return the query clause for the field and term."""
@@ -44,7 +43,6 @@ class QueryBuilder:
             return f'({search_field}:"{no_prefix_term}" AND {search_field}:"{prefix.upper()}")'
 
         return f'{search_field}:{term}'
-
 
     def build_child_query(self, child_query: dict[str, str]) -> str | None:
         """Return the child query fq."""
@@ -68,7 +66,6 @@ class QueryBuilder:
 
         return f'({child_q})'
 
-
     def build_facet_query(self,
                           field: BaseEnum,
                           values: list[str], is_nested: bool = False) -> str:
@@ -84,7 +81,6 @@ class QueryBuilder:
         if not is_nested:
             filter_q += ')'
         return filter_q
-
 
     def build_base_query(self,
                          query: dict[str, str],  # pylint: disable=too-many-arguments,too-many-branches
@@ -127,7 +123,6 @@ class QueryBuilder:
 
         return {'query': query_clause, 'filter': filters}
 
-
     @staticmethod
     def build_facet(field: BaseEnum, is_nested: bool) -> dict[str, dict]:
         """Return the facet dict for the field."""
@@ -137,8 +132,7 @@ class QueryBuilder:
             facet[field.value]['facet'] = {'by_parent': 'uniqueBlock({!v=$parents})'}
 
         return facet
-    
-    
+
     @staticmethod
     def get_fuzzy_str(term: str, short: int, long: int) -> str:
         """Return the fuzzy string for the term."""
@@ -147,7 +141,6 @@ class QueryBuilder:
         if len(term) < 7:
             return f'~{short}'
         return f'~{long}'
-
 
     @staticmethod
     def join_clause(current_clause: str, new_clause: str, join_str: str):

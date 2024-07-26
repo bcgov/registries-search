@@ -23,10 +23,11 @@ from .doc_models import BusinessDoc
 
 class BusinessSolr(Solr):
     """Wrapper around the solr instance."""
+
     query_builder = QueryBuilder(
         identifier_field_values=[BusinessField.IDENTIFIER.value, BusinessField.IDENTIFIER_Q.value],
         unique_parent_field=BusinessField.IDENTIFIER)
-    
+
     # fields
     business_fields = [
         BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
@@ -45,7 +46,11 @@ class BusinessSolr(Solr):
         PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
     ]
 
-    def create_or_replace_docs(self, docs: list[BusinessDoc] = None, raw_docs: list[dict] = None, timeout=25, additive=True):
+    def create_or_replace_docs(self,
+                               docs: list[BusinessDoc] = None,
+                               raw_docs: list[dict] = None,
+                               timeout=25,
+                               additive=True):
         """Create or replace solr docs in the core."""
         update_list = raw_docs if raw_docs else [asdict(doc) for doc in docs]
 
