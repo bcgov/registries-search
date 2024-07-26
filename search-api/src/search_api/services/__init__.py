@@ -14,14 +14,14 @@
 """This module wraps the calls to external services used by the API."""
 
 from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff, is_system
+from .business_solr import BusinessSolr
 from .flags import Flags
 from .queue import Queue
-from .solr import Solr
 
 
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
-# TODO: uncomment after testing with running gcp service
+business_solr = BusinessSolr('SOLR_SVC_BUS')
+
 queue = Queue()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
-search_solr = Solr()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 # TODO: uncomment after testing with running gcp service
 # storage = GoogleStorageService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.

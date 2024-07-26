@@ -95,8 +95,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							},
 							{
 								"key": "Account-Id",
@@ -105,9 +105,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/ops/readyz",
+							"raw": "{{internal_url}}/{{version}}/ops/readyz",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -125,8 +125,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -186,8 +186,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -211,8 +211,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -277,14 +277,14 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/meta/info",
+							"raw": "{{internal_url}}/{{version}}/meta/info",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -302,8 +302,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -368,8 +368,8 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							},
 							{
 								"key": "Account-Id",
@@ -378,7 +378,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=001&rows=20&highlight=true",
+							"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=113456&rows=20&highlight=true",
 							"host": [
 								"{{base_url}}"
 							],
@@ -391,7 +391,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "001"
+									"value": "113456"
 								},
 								{
 									"key": "rows",
@@ -413,8 +413,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									},
 									{
 										"key": "Account-Id",
@@ -423,7 +423,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=001&rows=20&highlight=true",
+									"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=113456&rows=20&highlight=true",
 									"host": [
 										"{{base_url}}"
 									],
@@ -436,7 +436,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "001"
+											"value": "113456"
 										},
 										{
 											"key": "rows",
@@ -455,11 +455,11 @@
 							"header": [
 								{
 									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
+									"value": "Werkzeug/3.0.3 Python/3.11.4"
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 08 Jul 2022 00:08:42 GMT"
+									"value": "Tue, 23 Jul 2024 22:37:14 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -467,7 +467,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "1163"
+									"value": "185"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -475,11 +475,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0a2.dev1"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
+									"value": "search_api/2.0.0a1"
 								},
 								{
 									"key": "Connection",
@@ -487,7 +483,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"queryInfo\": {\n        \"highlight\": true,\n        \"query\": \"001\",\n        \"rows\": 20\n    },\n    \"results\": [\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8505 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8297 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>8224 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>7127 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>6739 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>6429 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>4702 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3983 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3968 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3056 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>3 INVESTMENTS LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>2480 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>2 HOLDINGS LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>18 ENTERPRISE LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>1303 B.C. UNLIMITED LIABILITY COMPANY\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>0914 B.C. LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b>0862 B.C. UNLIMITED LIABILITY COMPANY\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b> INK TONER CARTRIDGE LTD.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \"<b>001</b> ENTERPRISES INC.\"\n        },\n        {\n            \"type\": \"name\",\n            \"value\": \".<b>001</b> PAINTING CO. LTD.\"\n        }\n    ]\n}"
+							"body": "{\n    \"queryInfo\": {\n        \"highlight\": false,\n        \"query\": \"113456\",\n        \"rows\": 5\n    },\n    \"results\": [\n        {\n            \"type\": \"bn\",\n            \"value\": \"113456789BC0001\"\n        }\n    ],\n    \"warnings\": [\n        \"This call is depreciated. Please use \\\"/facets\\\" instead.\"\n    ]\n}"
 						}
 					]
 				},
@@ -498,14 +494,14 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:BC123333&categories=status:ACTIVE&start=0&rows=15",
+							"raw": "{{internal_url}}/{{version}}/businesses/search/facets?query=value:test&categories=status:ACTIVE&start=0&rows=15&parties=true",
 							"host": [
-								"{{base_url}}"
+								"{{internal_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -516,7 +512,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:BC123333"
+									"value": "value:test"
 								},
 								{
 									"key": "categories",
@@ -529,6 +525,10 @@
 								{
 									"key": "rows",
 									"value": "15"
+								},
+								{
+									"key": "parties",
+									"value": "true"
 								}
 							]
 						},
@@ -542,14 +542,14 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
+									"raw": "{{internal_url}}/{{version}}/businesses/search/facets?query=value:test&categories=status:ACTIVE&start=0&rows=15&parties=true",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -560,7 +560,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "value:test coop::identifier:349"
+											"value": "value:test"
 										},
 										{
 											"key": "categories",
@@ -573,6 +573,10 @@
 										{
 											"key": "rows",
 											"value": "15"
+										},
+										{
+											"key": "parties",
+											"value": "true"
 										}
 									]
 								}
@@ -583,11 +587,11 @@
 							"header": [
 								{
 									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
+									"value": "Werkzeug/3.0.3 Python/3.11.4"
 								},
 								{
 									"key": "Date",
-									"value": "Wed, 27 Jul 2022 00:52:19 GMT"
+									"value": "Tue, 23 Jul 2024 22:35:32 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -595,7 +599,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "1205"
+									"value": "1833"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -603,11 +607,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0b1.dev1"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
+									"value": "search_api/2.0.0a1"
 								},
 								{
 									"key": "Connection",
@@ -615,7 +615,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 8,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 8,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": \"\",\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"349\",\n                \"name\": \"\",\n                \"value\": \"test coop\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 426.3002,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490165\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP IA\",\n                \"score\": 426.3002,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490226\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST CONSENT COOP\",\n                \"score\": 291.68088,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490282\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST REMOVE NAME TRANSLATION CO-OP\",\n                \"score\": 139.77156,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490283\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST AGAIN FOR TRANSLATION REMOVE FROM COOP\",\n                \"score\": 86.109634,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490286\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST COOP 9270 COOP\",\n                \"score\": 8.061411,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490287\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST 9270 2 COOP\",\n                \"score\": 8.061411,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"identifier\": \"CP3490288\",\n                \"legalType\": \"CP\",\n                \"name\": \"EVE TEST COOP 9270 3 COOP\",\n                \"score\": 7.806468,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 8\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 2,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 2,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BEN\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 5,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": \"\",\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"\",\n                \"name\": \"\",\n                \"value\": \"test\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"123456788BC0001\",\n                \"identifier\": \"FM1234568\",\n                \"legalType\": \"GP\",\n                \"name\": \"Test Partnership\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"Kyle Smile\",\n                        \"partyRoles\": [\n                            \"partner\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    },\n                    {\n                        \"partyName\": \"David Mortar\",\n                        \"partyRoles\": [\n                            \"partner\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 1.861066,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"113456789BC0001\",\n                \"goodStanding\": true,\n                \"identifier\": \"CP1233338\",\n                \"legalType\": \"CP\",\n                \"name\": \"Kyle stuffing tests\",\n                \"score\": 1.6912264,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"123456789BC0001\",\n                \"goodStanding\": true,\n                \"identifier\": \"BC1234567\",\n                \"legalType\": \"BEN\",\n                \"name\": \"Test Benefit Company\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"Joe Solver\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    },\n                    {\n                        \"partyName\": \"Willow Walaby\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    },\n                    {\n                        \"partyName\": \"Ryan Wills\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    },\n                    {\n                        \"partyName\": \"Filips Wills\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 1.6427289,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"123456789BC0001\",\n                \"identifier\": \"FM1234567\",\n                \"legalType\": \"GP\",\n                \"name\": \"TEST ABCD, Bobby W Walaby\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"TEST ABCD\",\n                        \"partyRoles\": [\n                            \"partner\"\n                        ],\n                        \"partyType\": \"organization\",\n                        \"score\": 0\n                    },\n                    {\n                        \"partyName\": \"Bobby W Walaby\",\n                        \"partyRoles\": [\n                            \"partner\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 1.3445685,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"goodStanding\": false,\n                \"identifier\": \"CP987654321\",\n                \"legalType\": \"CP\",\n                \"name\": \"Tested Coop\",\n                \"score\": 0.69882464,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 5\n    }\n}"
 						}
 					]
 				},
@@ -626,12 +626,12 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:1::identifier:62::name:lab&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:t::bn:1::identifier:2::name:l&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
 							"host": [
 								"{{base_url}}"
 							],
@@ -644,7 +644,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:test::bn:1::identifier:62::name:lab"
+									"value": "value:t::bn:1::identifier:2::name:l"
 								},
 								{
 									"key": "start",
@@ -662,90 +662,7 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": [
-						{
-							"name": "facets refined",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test::bn:9::identifier:62::name:te equip stor&start=0&rows=15&categories=legalType:sp,CP,bc,ben::status:ACTIVE,historical",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"{{version}}",
-										"businesses",
-										"search",
-										"facets"
-									],
-									"query": [
-										{
-											"key": "query",
-											"value": "value:test::bn:9::identifier:62::name:te equip stor"
-										},
-										{
-											"key": "start",
-											"value": "0"
-										},
-										{
-											"key": "rows",
-											"value": "15"
-										},
-										{
-											"key": "categories",
-											"value": "legalType:sp,CP,bc,ben::status:ACTIVE,historical"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 27 Jul 2022 00:45:41 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "501"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "API",
-									"value": "search_api/1.0.0b1.dev1"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"sp\",\n                    \"CP\",\n                    \"bc\",\n                    \"ben\"\n                ],\n                \"status\": [\n                    \"ACTIVE\",\n                    \"historical\"\n                ]\n            },\n            \"query\": {\n                \"bn_q\": \"9\",\n                \"identifier_q\": \"62\",\n                \"name_q\": \"te equip stor\",\n                \"value\": \"test\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"824492631BC0001\",\n                \"identifier\": \"FM0623527\",\n                \"legalType\": \"SP\",\n                \"name\": \"TESLA TEST EQUIPMENT STORE - IMPORT_TEST\",\n                \"score\": 10.710747,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "facets special operator",
@@ -754,12 +671,12 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test AND coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test AND coop::identifier:3&categories=status:ACTIVE&start=0&rows=15",
 							"host": [
 								"{{base_url}}"
 							],
@@ -772,7 +689,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:test AND coop::identifier:349"
+									"value": "value:test AND coop::identifier:3"
 								},
 								{
 									"key": "categories",
@@ -790,90 +707,7 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": [
-						{
-							"name": "facets special operator",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/facets?query=value:test AND coop::identifier:349&categories=status:ACTIVE&start=0&rows=15",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"{{version}}",
-										"businesses",
-										"search",
-										"facets"
-									],
-									"query": [
-										{
-											"key": "query",
-											"value": "value:test AND coop::identifier:349"
-										},
-										{
-											"key": "categories",
-											"value": "status:ACTIVE"
-										},
-										{
-											"key": "start",
-											"value": "0"
-										},
-										{
-											"key": "rows",
-											"value": "15"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 02 Aug 2022 22:18:39 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "408"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "API",
-									"value": "search_api/1.0.0b1.dev3"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"CP\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": \"\",\n                \"status\": [\n                    \"ACTIVE\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"349\",\n                \"name\": \"\",\n                \"value\": \"test and coop\"\n            },\n            \"rows\": 15,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"identifier\": \"CP3490234\",\n                \"legalType\": \"CP\",\n                \"name\": \"TEST COOP ANDRE\",\n                \"score\": 8.75138,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "parties",
@@ -882,12 +716,12 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test p&categories=partyRoles:partner,proprietor&rows=100",
+							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test&categories=partyRoles:partner,proprietor&rows=100",
 							"host": [
 								"{{base_url}}"
 							],
@@ -900,7 +734,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:test p"
+									"value": "value:test"
 								},
 								{
 									"key": "categories",
@@ -922,12 +756,12 @@
 								"header": [
 									{
 										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test p&categories=partyRoles:partner,proprietor&rows=100",
+									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test&categories=partyRoles:partner,proprietor&rows=100",
 									"host": [
 										"{{base_url}}"
 									],
@@ -940,7 +774,7 @@
 									"query": [
 										{
 											"key": "query",
-											"value": "value:test p"
+											"value": "value:test"
 										},
 										{
 											"key": "categories",
@@ -959,11 +793,11 @@
 							"header": [
 								{
 									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
+									"value": "Werkzeug/3.0.3 Python/3.11.4"
 								},
 								{
 									"key": "Date",
-									"value": "Wed, 27 Jul 2022 23:28:24 GMT"
+									"value": "Tue, 23 Jul 2024 22:38:41 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -971,7 +805,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "1108"
+									"value": "651"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -979,11 +813,7 @@
 								},
 								{
 									"key": "API",
-									"value": "search_api/1.0.0b1.dev1"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
+									"value": "search_api/2.0.0a1"
 								},
 								{
 									"key": "Connection",
@@ -991,7 +821,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 2,\n                    \"value\": \"HISTORICAL\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 3,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": \"\",\n                \"parentStatus\": \"\",\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"\",\n                \"partyName\": \"\",\n                \"value\": \"test p\"\n            },\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993558808\",\n                \"parentIdentifier\": \"FM1000030\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO 1.5\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentBN\": \"993538404\",\n                \"parentIdentifier\": \"FM1000036\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS SAVE 1.0\",\n                \"parentStatus\": \"HISTORICAL\",\n                \"partyName\": \"TEST PROP L PROP\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 3\n    }\n}"
+							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"GP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"partner\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": \"\",\n                \"parentStatus\": \"\",\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"\",\n                \"partyName\": \"\",\n                \"value\": \"test\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"123456789BC0001\",\n                \"parentIdentifier\": \"FM1234567\",\n                \"parentLegalType\": \"GP\",\n                \"parentName\": \"TEST ABCD, Bobby W Walaby\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST ABCD\",\n                \"partyRoles\": [\n                    \"partner\"\n                ],\n                \"partyType\": \"organization\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
 						}
 					]
 				},
@@ -1002,12 +832,12 @@
 						"header": [
 							{
 								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test::parentName:solo&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
+							"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test::parentName:bobby&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1020,7 +850,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "value:test::parentName:solo"
+									"value": "value:test::parentName:bobby"
 								},
 								{
 									"key": "rows",
@@ -1034,86 +864,7 @@
 						},
 						"description": "Get drafts example."
 					},
-					"response": [
-						{
-							"name": "parties refined",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/parties?query=value:test::parentName:solo&rows=100&categories=partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"{{version}}",
-										"businesses",
-										"search",
-										"parties"
-									],
-									"query": [
-										{
-											"key": "query",
-											"value": "value:test::parentName:solo"
-										},
-										{
-											"key": "rows",
-											"value": "100"
-										},
-										{
-											"key": "categories",
-											"value": "partyRoles:partner,proprietor::parentLegalType:SP,gp::parentStatus:active"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Werkzeug/2.1.2 Python/3.8.2"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 27 Jul 2022 23:29:36 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "665"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "API",
-									"value": "search_api/1.0.0b1.dev1"
-								},
-								{
-									"key": "SCHEMAS",
-									"value": "registry_schemas/1.1.0"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": [\n                    \"SP\",\n                    \"gp\"\n                ],\n                \"parentStatus\": [\n                    \"active\"\n                ],\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"solo\",\n                \"partyName\": \"\",\n                \"value\": \"test\"\n            },\n            \"rows\": 100,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"993539402\",\n                \"parentIdentifier\": \"FM1000034\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"SOLO DIS 1.6\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"TEST PROP PROP LNAME\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
-						}
-					]
+					"response": []
 				}
 			]
 		},
@@ -2199,286 +1950,796 @@
 			"name": "internal",
 			"item": [
 				{
-					"name": "business solr update",
-					"event": [
+					"name": "update",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "business solr update",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 202/Accepted\", function () {\r",
+											"    pm.response.to.have.status(202);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n      \"goodStanding\": true,\r\n      \"identifier\":\"BC1233334\",\r\n      \"legalName\":\"ABCD EFGH Corp\",\r\n      \"legalType\":\"BEN\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{internal_url}}/{{version}}/internal/solr/update",
-							"host": [
-								"{{internal_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update"
-							]
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"business\":{\r\n      \"goodStanding\": true,\r\n      \"identifier\":\"CP1233338\",\r\n      \"legalName\":\"Kyle stuffing tests\",\r\n      \"legalType\":\"CP\",\r\n      \"taxId\":\"113456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "business + parties solr update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 202/Accepted\", function () {\r",
+											"    pm.response.to.have.status(202);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"business\":{\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"TEST Bob Partnership\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABCD\",\r\n          \"partyType\":\"organization\",\r\n          \"id\": 543\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bobby\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\",\r\n          \"id\": 123\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sync",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/sync",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"sync"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sync heartbeat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update/sync/heartbeat",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"sync",
+										"heartbeat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "resync mins offset",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"resync"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "resync identifiers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"identifiers\": [\"CP1233338\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"update",
+										"resync"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "business + parties solr update",
-					"event": [
+					"name": "command",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(200);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "backup",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"business\":{\r\n       \"alternateNames\": [\r\n            {\r\n                \"entityType\": \"GP\",\r\n                \"identifier\": \"FM1234567\",\r\n                \"nameRegisteredDate\": \"2022-08-15T08:00:00+00:00\",\r\n                \"nameStartDate\": \"2022-08-16\",\r\n                \"operatingName\": \"Test update parties\"\r\n            }\r\n       ],\r\n      \"identifier\":\"FM1234567\",\r\n      \"legalName\":\"TEST ABCD, Bobby W Walaby\",\r\n      \"legalType\":\"GP\",\r\n      \"taxId\":\"123456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   },\r\n   \"parties\":[\r\n      {\r\n        \"officer\": {\r\n          \"organizationName\":\"TEST ABCD\",\r\n          \"partyType\":\"organization\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"officer\": {\r\n          \"firstName\":\"Bobby\",\r\n          \"lastName\": \"Walaby\",\r\n          \"middleInitial\": \"W\",\r\n          \"partyType\":\"person\"\r\n        },\r\n        \"roles\":[\r\n          {\r\n            \"appointmentDate\": \"2000-01-04\",\r\n            \"cessationDate\": null,\r\n            \"roleType\": \"partner\"\r\n          }\r\n        ]\r\n      }\r\n   ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update"
-							]
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"backup\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/command",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"command"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "restore",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"restore\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/command",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"command"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "restore status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 200/OK\", function () {\r",
+											"    pm.response.to.have.status(200);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"command\": \"restorestatus\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/command",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"command"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "resync mins offset",
-					"event": [
+					"name": "import",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(201);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "businesses",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 201/CREATED\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"minutesOffset\": 60\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"resync"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "resync identifiers",
-					"event": [
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"businesses\":[\r\n      {\r\n         \"id\":\"BC1234567\",\r\n         \"identifier\": \"BC1234567\",\r\n         \"legalType\": \"BEN\",\r\n         \"name\": \"Test Benefit Company\",\r\n         \"status\": \"ACTIVE\",\r\n         \"goodStanding\": \"true\",\r\n         \"bn\": \"123456789BC0001\",\r\n         \"parties\": [\r\n            {\r\n                \"id\": \"BC1234567_1245\",\r\n                \"parentLegalType\": \"BEN\",\r\n                \"parentIdentifier\": \"BC1234567\",\r\n                \"parentName\": \"Test Benefit Company\",\r\n                \"parentStatus\": \"ACTIVE\",\r\n                \"partyName\": \"Joe Solver\",\r\n                \"partyRoles\": [\"significant individual\"],\r\n                \"partyType\": \"person\",\r\n                \"parentBN\": \"123456789BC0001\"\r\n            },\r\n            {\r\n                \"id\": \"BC1234567_1246\",\r\n                \"parentLegalType\": \"BEN\",\r\n                \"parentIdentifier\": \"BC1234567\",\r\n                \"parentName\": \"Test Benefit Company\",\r\n                \"parentStatus\": \"ACTIVE\",\r\n                \"partyName\": \"Willow Walaby\",\r\n                \"partyRoles\": [\"significant individual\"],\r\n                \"partyType\": \"person\",\r\n                \"parentBN\": \"123456789BC0001\"\r\n            }\r\n         ]\r\n      },\r\n      {\r\n         \"id\":\"CP987654321\",\r\n         \"identifier\": \"CP987654321\",\r\n         \"legalType\": \"CP\",\r\n         \"name\": \"Tested Coop\",\r\n         \"status\": \"ACTIVE\",\r\n         \"goodStanding\": \"false\"\r\n      },\r\n      {\r\n         \"id\":\"FM1234568\",\r\n         \"identifier\": \"FM1234568\",\r\n         \"legalType\": \"GP\",\r\n         \"name\": \"Test Partnership\",\r\n         \"status\": \"ACTIVE\",\r\n         \"bn\": \"123456788BC0001\",\r\n         \"parties\": [\r\n            {\r\n                \"id\": \"FM1234568_12355\",\r\n                \"parentLegalType\": \"GP\",\r\n                \"parentIdentifier\": \"FM1234568\",\r\n                \"parentName\": \"Test Partnership\",\r\n                \"parentStatus\": \"ACTIVE\",\r\n                \"partyName\": \"Kyle Smile\",\r\n                \"partyRoles\": [\"partner\"],\r\n                \"partyType\": \"person\",\r\n                \"parentBN\": \"123456788BC0001\"\r\n            },\r\n            {\r\n                \"id\": \"FM1234568_12366\",\r\n                \"parentLegalType\": \"GP\",\r\n                \"parentIdentifier\": \"FM1234568\",\r\n                \"parentName\": \"Test Partnership\",\r\n                \"parentStatus\": \"ACTIVE\",\r\n                \"partyName\": \"David Mortar\",\r\n                \"partyRoles\": [\"partner\"],\r\n                \"partyType\": \"person\",\r\n                \"parentBN\": \"123456788BC0001\"\r\n            }\r\n         ]\r\n      }\r\n   ],\r\n   \"timeout\":\"45\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"import"
+									]
+								}
+							},
+							"response": []
+						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json()\r",
-									"\r",
-									"pm.test(\"Status code is 200/OK\", function () {\r",
-									"    pm.response.to.have.status(201);    \r",
-									"});\r",
-									"\r",
-									"pm.test('should return JSON', function () {\r",
-									"    pm.response.to.have.header('Content-Type', 'application/json');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"name": "partial party",
+							"event": [
 								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json()\r",
+											"\r",
+											"pm.test(\"Status code is 201/CREATED\", function () {\r",
+											"    pm.response.to.have.status(201);    \r",
+											"});\r",
+											"\r",
+											"pm.test('should return JSON', function () {\r",
+											"    pm.response.to.have.header('Content-Type', 'application/json');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"identifiers\": [\"BC0871330\"]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{version}}/internal/solr/update/resync",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"{{version}}",
-								"internal",
-								"solr",
-								"update",
-								"resync"
-							]
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"type\": \"partial\",\r\n    \"businesses\": [\r\n        {\r\n            \"id\": \"BC1234567\",\r\n            \"parties\": {\r\n                \"add\": [\r\n                    {\r\n                        \"id\": \"BC1234567_12457\",\r\n                        \"partyName\": \"Ryan Wills\",\r\n                        \"partyRoles\": [\"significant individual\"],\r\n                        \"partyType\": \"person\"\r\n                    },\r\n                    {\r\n                        \"id\": \"BC1234567_124590\",\r\n                        \"partyName\": \"Filips Wills\",\r\n                        \"partyRoles\": [\"significant individual\"],\r\n                        \"partyType\": \"person\"\r\n                    }\r\n                ]\r\n            }\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/{{version}}/internal/solr/import",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"internal",
+										"solr",
+										"import"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		}

@@ -18,9 +18,9 @@ from dataclasses import asdict
 from datetime import datetime, timedelta
 
 from search_api.models import SolrDoc
-from search_api.services.solr.solr_docs import BusinessDoc
+from search_api.services.business_solr.doc_models import BusinessDoc
 
-from tests.unit.services.test_solr import SOLR_TEST_DOCS
+from tests.unit.utils import SOLR_TEST_DOCS
 
 
 def test_solr_doc(session):
@@ -42,8 +42,8 @@ def test_find_most_recent_by_identifier(session):
     business_doc_3 = deepcopy(SOLR_TEST_DOCS[0])
     business_doc_3.name += '3'
 
-    solr_doc_1 = SolrDoc(doc=asdict(business_doc_1), identifier=business_doc_1.identifier).save()
-    solr_doc_2 = SolrDoc(doc=asdict(business_doc_2), identifier=business_doc_2.identifier).save()
+    SolrDoc(doc=asdict(business_doc_1), identifier=business_doc_1.identifier).save()
+    SolrDoc(doc=asdict(business_doc_2), identifier=business_doc_2.identifier).save()
     solr_doc_3 = SolrDoc(doc=asdict(business_doc_3), identifier=business_doc_3.identifier).save()
 
     # test method

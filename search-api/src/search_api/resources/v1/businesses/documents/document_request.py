@@ -85,7 +85,7 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
 
         errors = RequestValidator.validate_document_access_request(request_json, account_id, token, role)
         if errors:
-            return resource_utils.bad_request_response(errors)
+            return resource_utils.bad_request_response('Invalid payload', errors)
 
         document_access_request = save_request(account_id, business_identifier, request_json)
 

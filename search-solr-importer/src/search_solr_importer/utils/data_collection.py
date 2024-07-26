@@ -134,3 +134,26 @@ def _collect_lear_data_gcp():
             AND er.cessation_date IS NULL
         """)
     return cur
+
+
+def collect_btr_data(limit: int = None, offset: int = None):
+    """Collect data from BTR."""
+    limit_clause = ''
+    if limit:
+        limit_clause = f'LIMIT {limit}'
+    if offset:
+        limit_clause += f' OFFSET {offset}'
+    if limit_clause:
+        # NOTE: needed in order to make sure we get every record when doing batch loads
+        limit_clause = f'ORDER BY id {limit_clause}'
+
+    current_app.logger.debug('Connecting to BTR GCP Postgres instance...')
+    conn = psycopg2.connect(host=current_app.config.get('BTR_DB_HOST'),
+                            port=current_app.config.get('BTR_DB_PORT'),
+                            database=current_app.config.get('BTR_DB_NAME'),
+                            user=current_app.config.get('BTR_DB_USER'),
+                            password=current_app.config.get('BTR_DB_PASSWORD'))
+    cur = conn.cursor()
+    current_app.logger.debug('Collecting BTR data...')
+    cur.execute(f'SELECT payload FROM submission {limit_clause}')
+    return cur

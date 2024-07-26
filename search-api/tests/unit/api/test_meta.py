@@ -18,8 +18,6 @@ Test-Suite to ensure that the /meta endpoint is working as expected.
 """
 from http import HTTPStatus
 
-from registry_schemas import __version__ as registry_schemas_version
-
 from search_api.utils.run_version import get_run_version
 
 def test_info(session, client, jwt):
@@ -31,4 +29,3 @@ def test_info(session, client, jwt):
     # check
     assert rv.status_code == HTTPStatus.OK
     assert rv.json['API'] == f'search_api/{get_run_version()}'
-    assert rv.json['SCHEMAS'] == f'registry_schemas/{registry_schemas_version}'

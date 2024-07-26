@@ -21,3 +21,8 @@ v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
     name='API_V1',
     path=EndpointVersionPath.API_V1,
     bps=[bus_bp, meta_bp, ops_bp, purchases_bp, internal_bp])
+
+v2_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
+    name='API_V2',
+    path=EndpointVersionPath.API_V2,
+    bps=[])

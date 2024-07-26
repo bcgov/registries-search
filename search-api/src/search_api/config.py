@@ -35,9 +35,18 @@ class Config():  # pylint: disable=too-few-public-methods
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+    # Used by /sync endpoint
+    MAX_BATCH_UPDATE_NUM = int(os.getenv('MAX_BATCH_UPDATE_NUM', '1000'))
+    # Used by /sync heartbeat
+    LAST_REPLICATION_THRESHOLD = int(os.getenv('LAST_REPLICATION_THRESHOLD', '24'))  # hours
+
+    SOLR_SVC_BUS_LEADER_CORE = os.getenv('SOLR_SVC_BUS_LEADER_CORE', 'business')
+    SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_CORE', 'business_follower')
+    SOLR_SVC_BUS_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_URL', 'http://localhost:8873/solr')
+    SOLR_SVC_BUS_FOLLOWER_URL = os.getenv('SOLR_SVC_BUS_FOLLOWER_URL', 'http://localhost:8873/solr')
+
     PAYMENT_SVC_URL = os.getenv('PAYMENT_SVC_URL', 'http://')
     AUTH_SVC_URL = os.getenv('AUTH_SVC_URL', 'http://')
-    SOLR_SVC_URL = os.getenv('SOLR_SVC_URL', 'http://')
     LEAR_SVC_URL = os.getenv('LEGAL_API_URL', 'http://') + os.getenv('LEGAL_API_VERSION_2', '/api/v2')
 
     # Flask-Pub
@@ -138,15 +147,6 @@ class Config():  # pylint: disable=too-few-public-methods
     GATEWAY_URL = os.getenv('GATEWAY_URL', 'https://bcregistry-dev.apigee.net')
     SUBSCRIPTION_API_KEY = os.getenv('SUBSCRIPTION_API_KEY')
 
-    # reindex times
-    SOLR_REINDEX_DAY = os.getenv('SOLR_REINDEX_DAY', None)
-    if os.getenv('SOLR_REINDEX_WEEKDAY'):
-        SOLR_REINDEX_WEEKDAY = int(os.getenv('SOLR_REINDEX_WEEKDAY'))
-    else:
-        SOLR_REINDEX_WEEKDAY = None
-    SOLR_REINDEX_START_TIME = os.getenv('SOLR_REINDEX_START_TIME', '')
-    SOLR_REINDEX_LENGTH = int(os.getenv('SOLR_REINDEX_LENGTH')) if os.getenv('SOLR_REINDEX_LENGTH', None) else 0
-
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Config object for development environment."""
@@ -163,7 +163,10 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     DEVELOPMENT = False
     TESTING = True
     # SOLR
-    SOLR_SVC_URL = os.getenv('SOLR_SVC_TEST_URL', 'http://')
+    SOLR_SVC_BUS_LEADER_CORE = os.getenv('SOLR_SVC_BUS_LEADER_TEST_CORE', 'business')
+    SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_TEST_CORE', 'business')
+    SOLR_SVC_BUS_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_TEST_URL', 'http://localhost:8980/solr')
+    SOLR_SVC_BUS_FOLLOWER_URL = os.getenv('SOLR_SVC_BUS_FOLLOWER_TEST_URL', 'http://localhost:8980/solr')
     # POSTGRESQL
     DB_USER = os.getenv('DATABASE_TEST_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_TEST_PASSWORD', '')

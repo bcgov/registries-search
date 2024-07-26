@@ -14,8 +14,8 @@
 """Exposes all of the internal endpoints in Flask-Blueprint style."""
 from flask import Blueprint
 
-from .update_solr import bp as update_solr_bp
+from .solr import bp as solr_bp
 
 
 bp = Blueprint('INTERNAL', __name__, url_prefix='/internal')  # pylint: disable=invalid-name
-bp.register_blueprint(update_solr_bp)
+bp.register_blueprint(solr_bp)

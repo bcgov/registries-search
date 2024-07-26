@@ -1,4 +1,4 @@
-# Copyright © 2022 Province of British Columbia
+# Copyright © 2023 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,113 +11,145 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The SEARCH API service.
-
-This module is the API for the BC Registries Registry Search system.
-"""
+"""The BOR solr data import service."""
+import gc
 import sys
-from http import HTTPStatus
 
-import requests
 from flask import current_app
 from search_api.exceptions import SolrException
-from search_api.services import search_solr
-from search_api.services.solr.solr_docs import BusinessDoc
 
 from search_solr_importer import create_app
-from search_solr_importer.utils import collect_colin_data, collect_lear_data, prep_data
+from search_solr_importer.utils import (collect_btr_data, collect_colin_data, collect_lear_data,
+                                        prep_data, prep_data_btr, reindex_post, reindex_prep,
+                                        reindex_recovery, resync, update_solr, update_suggester)
 
 
-def update_solr(base_docs: list[BusinessDoc], data_name: str) -> int:
-    """Import data into solr."""
-    count = 0
-    offset = 0
-    rows = current_app.config.get('BATCH_SIZE', 1000)
-    retry_count = 0
-    erred_record_count = 0
-    while count < len(base_docs) and rows > 0 and len(base_docs) - offset > 0:
-        batch_amount = min(rows, len(base_docs) - offset)
-        count += batch_amount
-        # send batch to solr
-        try:
-            search_solr.create_or_replace_docs(base_docs[offset:count])
-            retry_count = 0
-        except SolrException as err:  # pylint: disable=bare-except;
-            current_app.logger.debug(err)
-            if retry_count < 3:
-                # retry
-                current_app.logger.debug('Failed to update solr. Trying again (%s of 3)...', retry_count + 1)
-                retry_count += 1
-                # set count back
-                count -= batch_amount
-                continue
-
-            # log error and skip
-            current_app.logger.error('Retry count exceeded for batch. Skipping batch.')
-            # add number of records in failed batch to the erred count
-            erred_record_count += (count - offset)
-
-        offset = count
-        current_app.logger.debug(f'Total {data_name} base doc records imported: {count - erred_record_count}')
-    return count
-
-
-def load_search_core():  # pylint: disable=too-many-statements
+def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,too-many-branches; will update
     """Load data from LEAR and COLIN into the search core."""
     try:
-        colin_data_cur = collect_colin_data()
-        colin_data = colin_data_cur.fetchall()
-        current_app.logger.debug('Prepping COLIN data...')
-        prepped_colin_data = prep_data(colin_data, colin_data_cur, 'COLIN')
-        current_app.logger.debug(f'{len(prepped_colin_data)} COLIN records ready for import.')
-        lear_data_cur = collect_lear_data()
-        lear_data = lear_data_cur.fetchall()
-        current_app.logger.debug('Prepping LEAR data...')
-        prepped_lear_data = prep_data(lear_data, lear_data_cur, 'LEAR')
-        current_app.logger.debug(f'{len(prepped_lear_data)} LEAR records ready for import.')
-        if current_app.config.get('REINDEX_CORE', False):
-            # delete existing index
-            current_app.logger.debug('REINDEX_CORE set: deleting current solr index...')
-            search_solr.delete_all_docs()
-        # execute update to solr in batches
-        current_app.logger.debug('Importing records from COLIN...')
-        count = update_solr(prepped_colin_data, 'COLIN')
-        current_app.logger.debug('COLIN import completed.')
-        current_app.logger.debug('Importing records from LEAR...')
-        count += update_solr(prepped_lear_data, 'LEAR')
-        current_app.logger.debug('LEAR import completed.')
-        current_app.logger.debug(f'Total records imported: {count}')
+        is_reindex = current_app.config.get('REINDEX_CORE')
+        is_preload = current_app.config.get('PRELOADER_JOB')
+        include_btr_load = current_app.config.get('INCLUDE_BTR_LOAD')
+        include_colin_load = current_app.config.get('INCLUDE_COLIN_LOAD')
+        include_lear_load = current_app.config.get('INCLUDE_LEAR_LOAD')
+        final_record = None
 
-        if not current_app.config.get('PRELOADER_JOB', False):
-            try:
-                current_app.logger.debug('Resyncing any overwritten docs during import...')
-                search_api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
-                resync_resp = requests.post(url=f'{search_api_url}/internal/solr/update/resync',
-                                            json={'minutesOffset': 60},
-                                            timeout=120)
-                if resync_resp.status_code != HTTPStatus.CREATED:
-                    if resync_resp.status_code == HTTPStatus.GATEWAY_TIMEOUT:
-                        current_app.logger.debug('Resync timed out -- check api for any individual failures.')
-                    else:
-                        current_app.logger.error('Resync failed with status %s', resync_resp.status_code)
-                current_app.logger.debug('Resync complete.')
-            except Exception as error:  # noqa: B902
-                current_app.logger.debug(error.with_traceback(None))
-                current_app.logger.error('Resync failed.')
+        if is_reindex and current_app.config.get('IS_PARTIAL_IMPORT'):
+            current_app.logger.error('Attempted reindex on partial data set.')
+            current_app.logger.debug('Setting reindex to False to prevent potential data loss.')
+            is_reindex = False
 
-        if current_app.config.get('REINDEX_CORE', False):
-            current_app.logger.debug('Building suggester...')
-            try:
-                search_solr.suggest('', 1, True)
-            except SolrException as err:
-                current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
-                if err.status_code in [HTTPStatus.BAD_GATEWAY, HTTPStatus.GATEWAY_TIMEOUT]:
-                    current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
-                                             'Please wait a couple minutes and then verify import '
-                                             'and suggester build manually in the solr admin UI.')
-                    return
-                raise err
-            current_app.logger.debug('Suggester built.')
+        if is_reindex:
+            current_app.logger.debug('---------- Pre Reindex Actions ----------')
+            reindex_prep(is_preload)
+
+        try:
+            colin_count = 0
+            if include_colin_load:
+                current_app.logger.debug('---------- Collecting/Importing COLIN Entities ----------')
+                colin_data_cur = collect_colin_data()
+                current_app.logger.debug('Fetching corp batch rows...')
+                colin_data = colin_data_cur.fetchall()
+                colin_data_cur.close()
+                # NB: need full data set under each corp num to collapse parties properly
+                current_app.logger.debug('********** Mapping COLIN Entities **********')
+                prepped_colin_data = prep_data(colin_data,
+                                               [desc[0].lower() for desc in colin_data_cur.description],
+                                               'COLIN')
+                current_app.logger.debug(f'COLIN businesses ready for import: {len(prepped_colin_data)}')
+                # execute update to solr in batches
+                current_app.logger.debug('********** Importing COLIN Entities **********')
+                colin_count = update_solr(prepped_colin_data, 'COLIN')
+                # free up memory
+                final_record = [prepped_colin_data[-1]], 'COLIN', False
+                del colin_data, prepped_colin_data
+                gc.collect()
+                current_app.logger.debug(f'COLIN import completed. Total COLIN businesses imported: {colin_count}.')
+
+            lear_count = 0
+            if include_lear_load:
+                current_app.logger.debug('---------- Collecting LEAR Entities ----------')
+                lear_data_cur = collect_lear_data()
+                lear_data = lear_data_cur.fetchall()
+
+                current_app.logger.debug('---------- Mapping LEAR data ----------')
+                prepped_lear_data = prep_data(
+                    data=lear_data,
+                    data_descs=[desc[0].lower() for desc in lear_data_cur.description],
+                    source='LEAR',
+                )
+                current_app.logger.debug(f'{len(prepped_lear_data)} LEAR records ready for import.')
+
+                # execute update to solr in batches
+                current_app.logger.debug('---------- Importing LEAR entities ----------')
+                lear_count = update_solr(prepped_lear_data, 'LEAR')
+                # free up memory
+                final_record = [prepped_lear_data[-1]], 'LEAR', False
+                del lear_data, prepped_lear_data
+                gc.collect()
+                current_app.logger.debug(f'LEAR import completed. Total LEAR businesses imported: {lear_count}')
+
+            current_app.logger.debug(f'Total businesses imported: {colin_count + lear_count}')
+
+            total_btr_count = 0
+            if include_btr_load:
+                current_app.logger.debug('---------- Collecting/Importing BTR Data ----------')
+                btr_fetch_count = 0
+                batch_limit = current_app.config.get('BTR_BATCH_LIMIT')
+                loop_count = 0
+
+                while loop_count < 100:  # NOTE: should never get to this condition
+                    loop_count += 1
+                    current_app.logger.debug('********** Collecting BTR data **********')
+                    btr_data_cur = collect_btr_data(batch_limit, btr_fetch_count)
+                    btr_data = btr_data_cur.fetchall()
+                    btr_fetch_count += len(btr_data)
+                    btr_data_cur.close()
+                    if not btr_data:
+                        break
+
+                    current_app.logger.debug('********** Mapping BTR data **********')
+                    prepped_btr_data = prep_data_btr(btr_data)
+                    current_app.logger.debug(f'{len(prepped_btr_data)} BTR records ready for import.')
+
+                    current_app.logger.debug('********** Importing BTR entities **********')
+                    total_btr_count += update_solr(prepped_btr_data, 'BTR', True)
+                    current_app.logger.debug(f'BTR batch import completed. Records imported: {total_btr_count}.')
+                    # free up memory
+                    final_record = [prepped_btr_data[-1]], 'BTR', True
+                    del btr_data, prepped_btr_data
+                    gc.collect()
+
+                current_app.logger.debug(f'BTR import completed. Total BTR partial records imported: {total_btr_count}')
+
+        except Exception as err:  # noqa: B902
+            if is_reindex and not is_preload:
+                reindex_recovery()
+            raise err  # pass along
+
+        try:
+            current_app.logger.debug('---------- Resync ----------')
+            resync()
+        except Exception as error:  # noqa: B902
+            current_app.logger.debug(error.with_traceback(None))
+            current_app.logger.error('Resync failed.')
+
+        try:
+            current_app.logger.debug('---------- Final Commit ----------')
+            current_app.logger.debug('Triggering final commit on leader to make changes visible to search...')
+            update_solr(final_record[0], final_record[1], final_record[2])
+            current_app.logger.debug('Final commit complete.')
+
+        except Exception as error:  # noqa: B902
+            current_app.logger.debug(error.with_traceback(None))
+            current_app.logger.error('Final commit failed. (This will only effect DEV).')
+
+        if is_reindex:
+            current_app.logger.debug('---------- Post Reindex Actions ----------')
+            update_suggester()
+            if not is_preload:
+                reindex_post()
+
         current_app.logger.debug('SOLR import finished successfully.')
 
     except SolrException as err:
