@@ -40,11 +40,11 @@ class Config():  # pylint: disable=too-few-public-methods
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    SOLR_SVC_LEADER_CORE = os.getenv('SOLR_SVC_BUS_LEADER_CORE', 'business')
-    SOLR_SVC_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_CORE', 'business_follower')
-    SOLR_SVC_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_URL', 'http://localhost:8873/solr')
-    SOLR_SVC_FOLLOWER_URL = os.getenv('SOLR_SVC_BUS_FOLLOWER_URL', 'http://localhost:8874/solr')
-    HAS_FOLLOWER = SOLR_SVC_FOLLOWER_URL != SOLR_SVC_LEADER_URL
+    SOLR_SVC_BUS_LEADER_CORE = os.getenv('SOLR_SVC_BUS_LEADER_CORE', 'business')
+    SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_CORE', 'business_follower')
+    SOLR_SVC_BUS_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_URL', 'http://localhost:8873/solr')
+    SOLR_SVC_BUS_FOLLOWER_URL = os.getenv('SOLR_SVC_BUS_FOLLOWER_URL', 'http://localhost:8874/solr')
+    HAS_FOLLOWER = SOLR_SVC_BUS_FOLLOWER_URL != SOLR_SVC_BUS_LEADER_URL
 
     SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
     SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
