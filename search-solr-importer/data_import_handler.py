@@ -50,11 +50,12 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
                 colin_data_cur = collect_colin_data()
                 current_app.logger.debug('Fetching corp batch rows...')
                 colin_data = colin_data_cur.fetchall()
+                colin_data_descs = [desc[0].lower() for desc in colin_data_cur.description]
                 colin_data_cur.close()
                 # NB: need full data set under each corp num to collapse parties properly
                 current_app.logger.debug('********** Mapping COLIN Entities **********')
                 prepped_colin_data = prep_data(colin_data,
-                                               [desc[0].lower() for desc in colin_data_cur.description],
+                                               colin_data_descs,
                                                'COLIN')
                 current_app.logger.debug(f'COLIN businesses ready for import: {len(prepped_colin_data)}')
                 # execute update to solr in batches
