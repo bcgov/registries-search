@@ -22,7 +22,7 @@ build-follower:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business_follower \
 			--build-arg FOLLOWER_CORE=business_follower \
-			--build-arg JVM_MEM=2g
+			--build-arg JVM_MEM=1g
 
 build-leader:
 	docker build . -t $(DOCKER_NAME_LEADER) \
@@ -31,7 +31,7 @@ build-leader:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business \
 			--build-arg FOLLOWER_CORE=business_follower \
-			--build-arg JVM_MEM=12g
+			--build-arg JVM_MEM=2g
 
 build-local:
 	docker build . -t $(DOCKER_NAME_LOCAL) \
@@ -40,7 +40,7 @@ build-local:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business \
 			--build-arg FOLLOWER_CORE=business_follower \
-			--build-arg JVM_MEM=512m
+			--build-arg JVM_MEM=256m
 
 #################################################################################
 # COMMANDS - Local                                                              #
