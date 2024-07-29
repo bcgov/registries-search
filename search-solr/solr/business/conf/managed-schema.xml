@@ -235,6 +235,20 @@
       <filter name="wordDelimiterGraph" generateWordParts="0" splitOnNumerics="0" catenateAll="1" generateNumberParts="0"/>
     </analyzer>
   </fieldType>
+  <fieldType name="single_word_edgeNgram" class="solr.TextField">
+    <analyzer type="index">
+      <tokenizer name="keyword"/>
+      <filter name="lowercase"/>
+      <filter name="wordDelimiterGraph" generateWordParts="0" splitOnNumerics="0" catenateAll="1" generateNumberParts="0"/>
+      <filter name="flattenGraph"/>
+      <filter name="edgeNGram" maxGramSize="15" minGramSize="1"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer name="keyword"/>
+      <filter name="lowercase"/>
+      <filter name="wordDelimiterGraph" generateWordParts="0" splitOnNumerics="0" catenateAll="1" generateNumberParts="0"/>
+    </analyzer>
+  </fieldType>
   <fieldType name="multi_word_ngram" class="solr.TextField">
     <analyzer type="index">
       <charFilter name="patternReplace" pattern="([()^{}\|])" replacement=""/>
@@ -318,6 +332,7 @@
   <field name="goodStanding" type="boolean" docValues="true" indexed="true" stored="true"/>
   <field name="identifier" type="string" indexed="true" stored="true"/>
   <field name="identifier_q" type="single_word_ngram" indexed="true" stored="false"/>
+  <field name="identifier_q_edge" type="single_word_edgeNgram" indexed="true" stored="false"/>
   <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
   <field name="name" type="string" indexed="false" stored="true"/>
   <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>
@@ -385,6 +400,7 @@
   <!-- custom copy fields -->
   <copyField source="bn" dest="bn_q"/>
   <copyField source="identifier" dest="identifier_q"/>
+  <copyField source="identifier" dest="identifier_q_edge"/>
   <copyField source="name" dest="name_q"/>
   <copyField source="name" dest="name_single_term"/>
   <copyField source="name" dest="name_stem_agro"/>

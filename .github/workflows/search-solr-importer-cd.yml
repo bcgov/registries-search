@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH SOLR IMPORTER CD
+name: SEARCH IMPORTER CD
 
 on:
   push:

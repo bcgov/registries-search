@@ -21,7 +21,7 @@ from search_api.exceptions import SolrException
 from search_solr_importer import create_app
 from search_solr_importer.utils import (collect_btr_data, collect_colin_data, collect_lear_data,
                                         prep_data, prep_data_btr, reindex_post, reindex_prep,
-                                        reindex_recovery, resync, update_solr, update_suggester)
+                                        reindex_recovery, resync, update_solr)
 
 
 def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,too-many-branches; will update
@@ -145,11 +145,9 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
             current_app.logger.debug(error.with_traceback(None))
             current_app.logger.error('Final commit failed. (This will only effect DEV).')
 
-        if is_reindex:
+        if is_reindex and not is_preload:
             current_app.logger.debug('---------- Post Reindex Actions ----------')
-            update_suggester()
-            if not is_preload:
-                reindex_post()
+            reindex_post()
 
         current_app.logger.debug('SOLR import finished successfully.')
 

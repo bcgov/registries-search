@@ -23,7 +23,7 @@ from search_api.exceptions import SolrException
 from search_api.services import business_solr
 from search_api.services.base_solr.utils import QueryParams, parse_facets, prep_query_str
 from search_api.services.business_solr.doc_fields import BusinessField, PartyField
-from search_api.services.business_solr.utils import business_search, business_suggest, parties_search
+from search_api.services.business_solr.utils import business_search, parties_search
 import search_api.resources.utils as resource_utils
 
 
@@ -284,29 +284,6 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
                 'results': results.get('response', {}).get('docs')}}
 
         return jsonify(response), HTTPStatus.OK
-
-    except SolrException as solr_exception:
-        return resource_utils.exception_response(solr_exception)
-    except Exception as default_exception:  # noqa: B902
-        return resource_utils.default_exception_response(default_exception)
-
-
-@bp.get('/suggest')
-@cross_origin(origin='*')
-def suggest():
-    """Return a list of suggestions from solr based from the given query."""
-    try:
-        query = request.args.get('query', None)
-        if not query:
-            return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
-        query = prep_query_str(query)
-
-        suggestions = business_suggest(query, business_solr)
-        return jsonify({
-            'queryInfo': {'rows': 5, 'highlight': False, 'query': query},
-            'results': suggestions,
-            'warnings': ['This call is depreciated. Please use "/facets" instead.']
-        }), HTTPStatus.OK
 
     except SolrException as solr_exception:
         return resource_utils.exception_response(solr_exception)

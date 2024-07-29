@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH FLOW TEST
+name: SEARCH FLOW TEST
 
 on: [workflow_dispatch]
 
