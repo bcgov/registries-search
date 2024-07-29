@@ -121,19 +121,3 @@ def resync():
             current_app.logger.error('Resync failed: %s, %s', resync_resp.status_code, resync_resp.json())
     else:
         current_app.logger.debug('Resync complete.')
-
-
-def update_suggester():
-    """Build the suggester."""
-    current_app.logger.debug('Building suggester...')
-    try:
-        business_solr.suggest('', 1, True)
-    except SolrException as err:
-        current_app.logger.debug(f'SOLR gave status code: {err.status_code}')
-        if err.status_code in [HTTPStatus.BAD_GATEWAY, HTTPStatus.GATEWAY_TIMEOUT]:
-            current_app.logger.error('SOLR timeout most likely due to suggester build. ' +
-                                     'Please wait a couple minutes and then verify import ' +
-                                     'and suggester build manually in the solr admin UI.')
-            return
-        raise err
-    current_app.logger.debug('Suggester built.')

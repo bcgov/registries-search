@@ -15,4 +15,4 @@
 from .data_collection import collect_btr_data, collect_colin_data, collect_lear_data
 from .data_parsing import prep_data, prep_data_btr
 from .reindex import reindex_post, reindex_prep, reindex_recovery
-from .update_solr import resync, update_solr, update_suggester
+from .update_solr import resync, update_solr

@@ -289,26 +289,3 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
         return resource_utils.exception_response(solr_exception)
     except Exception as default_exception:  # noqa: B902
         return resource_utils.default_exception_response(default_exception)
-
-
-@bp.get('/suggest')
-@cross_origin(origin='*')
-def suggest():
-    """Return a list of suggestions from solr based from the given query."""
-    try:
-        query = request.args.get('query', None)
-        if not query:
-            return jsonify({'message': "Expected url param 'query'."}), HTTPStatus.BAD_REQUEST
-        query = prep_query_str(query)
-
-        suggestions = business_suggest(query, business_solr)
-        return jsonify({
-            'queryInfo': {'rows': 5, 'highlight': False, 'query': query},
-            'results': suggestions,
-            'warnings': ['This call is depreciated. Please use "/facets" instead.']
-        }), HTTPStatus.OK
-
-    except SolrException as solr_exception:
-        return resource_utils.exception_response(solr_exception)
-    except Exception as default_exception:  # noqa: B902
-        return resource_utils.default_exception_response(default_exception)
