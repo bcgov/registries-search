@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH SOLR IMPORTER CI
+name: SEARCH IMPORTER CI
 
 on:
   pull_request:

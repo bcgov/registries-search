@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH UI CI
+name: SEARCH UI CI
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: REGISTRIES SEARCH API CI
+name: SEARCH API CI
 
 on:
   pull_request:
