@@ -43,6 +43,7 @@ class BusinessField(BaseEnum):  # pylint: disable=too-few-public-methods
     # query fields
     BN_Q = 'bn_q'
     IDENTIFIER_Q = 'identifier_q'
+    IDENTIFIER_Q_EDGE = 'identifier_q_edge'
     NAME_Q = 'name_q'
     NAME_SINGLE = 'name_single_term'
     NAME_STEM_AGRO = 'name_stem_agro'
