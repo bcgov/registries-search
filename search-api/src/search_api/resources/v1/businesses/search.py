@@ -23,7 +23,7 @@ from search_api.exceptions import SolrException
 from search_api.services import business_solr
 from search_api.services.base_solr.utils import QueryParams, parse_facets, prep_query_str
 from search_api.services.business_solr.doc_fields import BusinessField, PartyField
-from search_api.services.business_solr.utils import business_search, business_suggest, parties_search
+from search_api.services.business_solr.utils import business_search, parties_search
 import search_api.resources.utils as resource_utils
 
 

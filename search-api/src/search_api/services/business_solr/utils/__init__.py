@@ -13,5 +13,4 @@
 # limitations under the License.
 """This module manages util methods for the business solr service."""
 from .business_search import business_search
-from .business_suggest import business_suggest
 from .parties_search import parties_search
