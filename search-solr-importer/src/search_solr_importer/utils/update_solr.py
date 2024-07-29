@@ -18,7 +18,6 @@ from http import HTTPStatus
 import requests
 from flask import current_app
 from search_api.exceptions import SolrException
-from search_api.services import business_solr
 from search_api.services.authz import get_bearer_token
 
 
