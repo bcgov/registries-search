@@ -147,16 +147,15 @@
 
 <script setup lang="ts">
 // local
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
 import { DocumentAccessRequestHistory, SearchBar, SearchResults } from '@/components'
 import { useAuth, useDocumentAccessRequest, useSearch } from '@/composables'
-import { AccountTypes, RouteNames } from '@/enums';
+import { AccountTypes } from '@/enums';
 
-const props = defineProps({ appReady: { type: Boolean } })
+defineProps({ appReady: { type: Boolean } })
 
 const { auth } = useAuth()
-const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
+const { documentAccessRequest } = useDocumentAccessRequest()
 const { search } = useSearch()
 
 const bcOnlineURL = 'http://www.bconline.gov.bc.ca/'
@@ -170,23 +169,6 @@ const totalDocAccessLength = computed(() => documentAccessRequest.requests?.leng
 
 const unavailableMsg = 'Business Search is in the process of a scheduled ' +
   ' update. Searching will be unavailable for up to 15 minutes.'
-
-const route = useRoute()
-const router = useRouter()
-
-watch(() => props.appReady, (ready: boolean) => {
-  if (ready) {
-    if (route.query?.identifier) {
-      router.push({
-        name: RouteNames.BUSINESS_INFO,
-        params: { identifier: route.query?.identifier }
-      })
-    }
-    loadAccessRequestHistory()
-  }
-})
-
-
 </script>
 
 <style lang="scss" scoped>
