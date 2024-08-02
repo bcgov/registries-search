@@ -63,6 +63,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
         name = ''
         identifier = ''
         bn = ''  # pylint: disable=invalid-name
+        si_name = ''
         for item in query_items:
             with suppress(AttributeError):
                 if param := _parse_url_param('value', item):
@@ -73,6 +74,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     identifier = param
                 elif param := _parse_url_param(BusinessField.BN.value, item):
                     bn = param  # pylint: disable=invalid-name
+                elif param := _parse_url_param('siName', item):
+                    si_name = param
 
         if not value:
             return resource_utils.bad_request_response(
@@ -85,6 +88,9 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
             BusinessField.NAME_SINGLE.value: prep_query_str(name),
             BusinessField.IDENTIFIER_Q.value: prep_query_str(identifier),
             BusinessField.BN_Q.value: prep_query_str(bn)
+        }
+        child_query = {
+            PartyField.PARTY_NAME_SINGLE.value: prep_query_str(si_name)
         }
         # parse category params
         search_categories = {}
@@ -135,7 +141,7 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                                  BusinessField.NAME_Q: {'short': 1, 'long': 2},
                                  BusinessField.NAME_STEM_AGRO: {'short': 1, 'long': 2},
                                  BusinessField.NAME_SINGLE: {'short': 1, 'long': 2}},
-                             child_query={},
+                             child_query=child_query,
                              child_categories={},
                              child_date_ranges={})
         # execute search
