@@ -15,6 +15,7 @@ import { SearchBusinessInfoBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBrea
 import { DefaultError, EntityLoadError, PayDefaultError } from '@/resources/error-dialog-options'
 import { createVueRouter } from '@/router'
 import store from '@/store'
+import { axios } from '@/utils'
 
 
 // FUTURE: replace this with actual tests on App.vue
@@ -22,10 +23,38 @@ describe('App tests', () => {
   let wrapper: VueWrapper<any>
   let router: Router
   const { auth } = useAuth()
+  sessionStorage.setItem('LEGAL_API_URL', 'http://mock-legal.ca')
+  const identifier = 'BC1234567'
+  const docAccessRequest = {
+    businessIdentifier: identifier,
+    businessName: 'test business',
+    documents: [{documentKey: 'bk7rrdHhP', documentType: 'BUSINESS_SUMMARY_FILING_HISTORY', fileName: null, id: 358}],
+    expiryDate: '2024-08-15T21:30:04.101482+00:00',
+    id: 269,
+    outputFileKey: null,
+    paymentStatus: 'APPROVED',
+    status: 'PAID',
+    submissionDate: '2024-08-01T21:30:03',
+    submitter: 'tester'
+  }
 
   beforeEach(async () => {
     // set keycloak token so it doesn't redirect
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, 'token')
+
+    const mockGet = jest.spyOn(axios, 'get')
+    mockGet.mockImplementation((url) => {
+      switch (url) {
+        case 'purchases':
+          return Promise.resolve({ data: { documentAccessRequests: [docAccessRequest] } })
+        case `businesses/${identifier}`:
+          return Promise.resolve({ data: {} })
+        case `businesses/${identifier}/filings?effective_date=${docAccessRequest.submissionDate}`:
+          return Promise.resolve({ data: { filings: [] } })
+        case `businesses/${identifier}/filings`:
+          return Promise.resolve({ data: { filings: []} })
+      }
+    })
     // set auth
     auth.tokenInitialized = true
     auth.activeProducts = [{ code: ProductCode.BUSINESS_SEARCH, subscriptionStatus: ProductStatus.ACTIVE }]
@@ -136,5 +165,40 @@ describe('App tests', () => {
     expect(wrapper.vm.errorDisplay).toBe(true)
     expect(wrapper.vm.errorContactInfo).toBe(true)
     expect(wrapper.vm.errorInfo).toEqual(EntityLoadError)
+  })
+
+  it('pushes to business info when identifier param given', async () => {
+    await router.push({ name: RouteNames.SEARCH, query: { identifier: identifier } })
+    wrapper = mount(App, {
+      global: {
+        // plugins: [vuetify],
+        plugins: [router],
+        provide: {
+          store: store
+        },
+      },
+      shallow: true  // stubs out children components
+    })
+    // await api calls to resolve
+    await flushPromises()
+    // should have redirected
+    expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
+  })
+  it('pushes to opening document access info when docAccessId param given', async () => {
+    await router.push({ name: RouteNames.SEARCH, query: { docAccessId: docAccessRequest.id } })
+    wrapper = mount(App, {
+      global: {
+        // plugins: [vuetify],
+        plugins: [router],
+        provide: {
+          store: store
+        },
+      },
+      shallow: true  // stubs out children components
+    })
+    // await api calls to resolve
+    await flushPromises()
+    // should have redirected
+    expect(router.currentRoute.value.name).toBe(RouteNames.DOCUMENT_REQUEST)
   })
 })

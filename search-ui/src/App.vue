@@ -89,7 +89,7 @@ const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
 const { search } = useSearch()
 const { suggest } = useSuggest()
-const {documentAccessRequest} = useDocumentAccessRequest()
+const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -148,6 +148,24 @@ onMounted(async () => {
         statusCode: StatusCodes.UNAUTHORIZED,
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
+    }
+    const loadedHistory = loadAccessRequestHistory()
+    if (route.query?.identifier) {
+      router.push({
+        name: RouteNames.BUSINESS_INFO,
+        params: { identifier: route.query?.identifier }
+      })
+    } else if (route.query?.docAccessId) {
+      await loadedHistory
+      documentAccessRequest.currentRequest = documentAccessRequest.requests
+        .find(request => request.id === Number(route.query?.docAccessId))
+      if (documentAccessRequest.currentRequest) {
+        const identifier = documentAccessRequest.currentRequest.businessIdentifier
+        const date = documentAccessRequest.currentRequest.submissionDate
+        await useEntity().loadEntity(identifier)
+        await useFilingHistory().loadFilingHistory(identifier, date)
+        router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier } })
+      }
     }
     appReady.value = true
     console.info('App ready.')
