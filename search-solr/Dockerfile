@@ -6,6 +6,7 @@ ARG VCS_REF="missing"
 ARG BUILD_DATE="missing"
 ARG CORE="business"
 ARG FOLLOWER_CORE="business_follower"
+ARG LEADER_CORE="business"
 ARG SOLR_OPTS_VAR='$SOLR_OPTS'
 ARG JVM_MEM="1g"
 
@@ -13,6 +14,7 @@ ENV VCS_REF=${VCS_REF}
 ENV BUILD_DATE=${BUILD_DATE}
 ENV CORE=${CORE}
 ENV FOLLOWER_CORE=${FOLLOWER_CORE}
+ENV LEADER_CORE=${LEADER_CORE}
 ENV JVM_MEM=${JVM_MEM}
 
 LABEL org.label-schema.vcs-ref=${VCS_REF} \
@@ -20,13 +22,13 @@ LABEL org.label-schema.vcs-ref=${VCS_REF} \
 
 # copy files into leader / follower configsets
 COPY ./solr/${CORE}/conf /opt/solr-${SOLR_VERSION}/server/solr/configsets/${CORE}/conf
-COPY ./solr/${CORE}/conf /opt/solr-${SOLR_VERSION}/server/solr/configsets/${FOLLOWER_CORE}/conf
+COPY ./solr/${LEADER_CORE}/conf /opt/solr-${SOLR_VERSION}/server/solr/configsets/${FOLLOWER_CORE}/conf
 # copy follower specific config into configset
 COPY ./solr/${FOLLOWER_CORE}/conf/solrconfig.xml /opt/solr-${SOLR_VERSION}/server/solr/configsets/${FOLLOWER_CORE}/conf/solrconfig.xml
 # copy in starting core
-COPY ./solr/${CORE}/conf /var/solr/data/${CORE}/conf
-COPY ./solr/${CORE}/core.properties /var/solr/data/${CORE}/core.properties
+COPY ./solr/${LEADER_CORE}/conf /var/solr/data/${CORE}/conf
 # copy core specific config into starting core
+COPY ./solr/${CORE}/core.properties /var/solr/data/${CORE}/core.properties
 COPY ./solr/${CORE}/conf/solrconfig.xml /var/solr/data/${CORE}/conf/solrconfig.xml
 # copy solr.xml (will be used by both leader and followers)
 COPY ./solr/solr.xml /opt/solr-${SOLR_VERSION}/server/solr/solr.xml

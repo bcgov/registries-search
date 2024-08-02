@@ -345,6 +345,15 @@ def test_facets(app, session, client, test_name, query, categories, expected):
     ('test_partner',
      {'value': 'firm ten'},
      [{'identifier': 'FM1001118', 'legalType': 'GP', 'name': 'firm ten 10 special+match', 'parties': [{'partyName': 'organization one', 'partyRoles': ['partner'], 'partyType': 'organization', 'score': 0.0}], 'status': 'ACTIVE'}]
+    ),
+    ('test_party_filter_1',
+     {'value': '0', 'siName': 'test'},
+     [{'bn': 'BN9000776557', 'identifier': 'BC0000567', 'legalType': 'BC', 'name': 'business five 5', 'parties': [{'partyName': 'test si', 'partyRoles': ['significant individual'], 'partyType': 'person', 'score': 0.0}], 'status': 'HISTORICAL'}]
+    ),
+    ('test_party_filter_2',
+     {'value': '0', 'siName': 'one'},
+     [{'identifier': 'FM1001118', 'legalType': 'GP', 'name': 'firm ten 10 special+match', 'parties': [{'partyName': 'organization one', 'partyRoles': ['partner'], 'partyType': 'organization', 'score': 0.0}], 'status': 'ACTIVE'},
+      {'bn': '123', 'identifier': 'FM1000028', 'legalType': 'SP', 'name': 'firm nine 9 special + match', 'parties': [{'partyName': 'person one', 'partyRoles': ['proprietor'], 'partyType': 'person', 'score': 0.0}], 'status': 'ACTIVE'}]
     )
 ])
 def test_facets_with_parties(app, session, client, test_name, query, expected):

@@ -22,6 +22,7 @@ build-follower:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business_follower \
 			--build-arg FOLLOWER_CORE=business_follower \
+			--build-arg LEADER_CORE=business \
 			--build-arg JVM_MEM=1g
 
 build-leader:
@@ -31,6 +32,7 @@ build-leader:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business \
 			--build-arg FOLLOWER_CORE=business_follower \
+			--build-arg LEADER_CORE=business \
 			--build-arg JVM_MEM=2g
 
 build-local:
@@ -40,6 +42,7 @@ build-local:
 	    --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 			--build-arg CORE=business \
 			--build-arg FOLLOWER_CORE=business_follower \
+			--build-arg LEADER_CORE=business \
 			--build-arg JVM_MEM=256m
 
 #################################################################################
