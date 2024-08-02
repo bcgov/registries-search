@@ -10,6 +10,7 @@
         trailing
         trailing-icon="i-mdi-magnify"
         data-cy="search-textfield"
+        size="lg"
         @keyup="submitSearch()"
         @keyup.enter="toggleErrorMsg()"
       />

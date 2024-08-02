@@ -1,6 +1,6 @@
 {
   "name": "bor-ui",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +21,7 @@
     "@headlessui/vue": "^1.7.22",
     "@iconify-json/mdi": "^1.1.66",
     "@mdi/font": "^7.4.47",
-    "@nuxt/ui": "^2.16.0",
+    "@nuxt/ui": "^2.18.3",
     "@nuxtjs/i18n": "^8.3.1",
     "@pinia/nuxt": "^0.5.1",
     "@vuepic/vue-datepicker": "^8.5.1",

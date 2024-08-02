@@ -31,6 +31,14 @@
         "significantInfluence": "Significant influence of directors"
       }
     },
+    "docAccess": {
+      "BUSINESS_SUMMARY_FILING_HISTORY": "Business Summary",
+      "CERTIFICATE_OF_GOOD_STANDING": "Certificate of Good Standing",
+      "CERTIFICATE_OF_STATUS": "Certificate of Status",
+      "LETTER_UNDER_SEAL": "Letter Under Seal",
+      "documents": "Documents",
+      "viewDocuments": "View Documents"
+    },
     "search": {
       "searchBusinesses": "Search Businesses",
       "searchDirectors": "Search Directors",
@@ -43,8 +51,17 @@
       "businessIdentifier": "Number",
       "businessName": "Business Name",
       "businessType": "Business Type",
+      "dateTime": "Date/Time",
+      "documentType": "Document Type",
       "incorpRegNum": "Incorporation/ Registration Number",
-      "status": "Status"
+      "purchasedDate": "Purchased Date/Time (pacific time)",
+      "purchasedItems": "Purchased Items",
+      "status": "Status",
+      "userName": "User Name"
+    },
+    "tabs": {
+      "findBusinessPerson": "Find a business or person",
+      "viewPurchasedDocuments": "View recently purchased documents"
     }
   },
   "text": {
@@ -58,6 +75,11 @@
         "registeredOwner": "Registered owner",
         "significantInfluence": "Significant influence control"
       }
+    },
+    "docAccess": {
+      "errorRetry": "We were unable to retrieve your recent purchases. Please try again later.",
+      "noResults": "No purchases in the last 14 days",
+      "tableInfo": "This table will display up to 1000 of the most recent document purchases in the last 14 days."
     },
     "search": {
       "business": {

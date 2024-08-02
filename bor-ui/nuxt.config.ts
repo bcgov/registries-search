@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   extends: [
-    ['github:bcgov/business-dashboard-ui#main', { install: true }]
+    ['github:bcgov/business-dashboard-ui#v0.0.1', { install: true }]
   ],
   app: {
     buildAssetsDir: '/src/',

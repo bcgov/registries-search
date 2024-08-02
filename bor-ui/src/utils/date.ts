@@ -97,7 +97,7 @@ export function apiToPacificDateTime (dateTimeString: string, longMonth = false)
   const dateStr = dateToPacificDate(date, longMonth)
   const timeStr = dateToPacificTime(date)
 
-  return `${dateStr} at ${timeStr} Pacific time`
+  return `${dateStr} at ${timeStr}`
 }
 
 /**

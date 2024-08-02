@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import type { BusinessTypeE } from '#imports'
+import type { BusinessTypeE, DocAccessHistoryI } from '#imports'
 
 const _getSearchBusFilters = (filters: Partial<RegSearchFilterI>) => {
   const filterParams = { query: '', categories: '' }
@@ -62,13 +62,12 @@ export const useRegSearchApi = () => {
 
     return await useBcrosFetch<RegSearchResponseI>('businesses/search/facets', config)
       .then(({ data, error }) => {
-        if (error.value || !data.value) {
+        if (error.value) {
           console.warn('Error fetching search')
           let category = ErrorCategoryE.SEARCH
           if (error.value.status === StatusCodes.SERVICE_UNAVAILABLE) {
             category = ErrorCategoryE.SEARCH_UNAVAILABLE
           }
-
           return {
             searchResults: null,
             error: parseGatewayError(category, StatusCodes.INTERNAL_SERVER_ERROR, error)
@@ -79,7 +78,26 @@ export const useRegSearchApi = () => {
       })
   }
 
+  const getDocAccessHistory = async (): Promise<DocAccessHistoryI> => {
+    // add search-api config stuff
+    const config = getApiConfig(regSearchApiURL, regSearchApiKey, false)
+    return await useBcrosFetch<DocAccessHistoryI>('purchases', config)
+      .then(({ data, error }) => {
+        if (error.value) {
+          console.warn('Error fetching document access history.')
+          return {
+            error: parseGatewayError(
+              ErrorCategoryE.DOC_ACCESS_HISTORY,
+              StatusCodes.INTERNAL_SERVER_ERROR,
+              error)
+          } as DocAccessHistoryI
+        }
+        return data.value
+      })
+  }
+
   return {
+    getDocAccessHistory,
     searchBusiness
   }
 }

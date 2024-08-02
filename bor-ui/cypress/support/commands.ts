@@ -7,10 +7,11 @@ Cypress.Commands.add('visitSearchPublic', () => {
     { fixture: 'ldarklyContext.json' }
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsNone.json' }).as('getProducts')
+  cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('/public', 'searchResultsPublic.json')
   cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
-  cy.wait(['@getSettings', '@getProducts'])
+  cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
 })
 
@@ -23,10 +24,11 @@ Cypress.Commands.add('visitSearchLimited', () => {
     { fixture: 'ldarklyContext.json' }
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsBasic.json' }).as('getProducts')
+  cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('', 'searchResultsLimited.json')
   cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
-  cy.wait(['@getSettings', '@getProducts'])
+  cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
 })
 
@@ -39,10 +41,11 @@ Cypress.Commands.add('visitSearchExtended', () => {
     { fixture: 'ldarklyContext.json' }
   ).as('getLdarklyContext')
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsExtended.json' }).as('getProducts')
+  cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('/extended', 'searchResultsExtended.json')
   cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
   cy.visit('')
-  cy.wait(['@getSettings', '@getProducts'])
+  cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
 })
 

@@ -102,32 +102,36 @@
       </div>
     </div>
 
-    <div class="mt-5 px-[30px] py-12 bg-white rounded">
-      <p class="mb-7" data-cy="search-input-info-text">
-        {{ searchInfoText }}
-      </p>
-      <search-input v-model:searchType="searchType" />
-      <!-- NOTE: below is what the date picker teleport attaches to -->
-      <div id="date-range-filter-dest" />
-      <search-table-results
-        v-if="activeSearch.resultsTotal != undefined || activeSearch.loading || activeSearch.error"
-        class="mt-[30px]"
-      />
-    </div>
+    <UTabs
+      v-if="!hasExtendedAccess"
+      class="mt-5"
+      :items="tabs"
+      :ui="{ list: { background: 'bg-bcGovColor-darkBlue', width: 'w-full max-w-[600px]' } }"
+      data-cy="search-tabs"
+    >
+      <template #search>
+        <Search />
+      </template>
+      <template #documents>
+        <DocAccessHistory />
+      </template>
+    </UTabs>
+    <Search v-else />
   </div>
 </template>
-
 <script setup lang="ts">
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
-const { accessLevel, hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
+const { hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
+const { searchType } = storeToRefs(useBcrosSearch())
 
-const { searchType, activeSearch } = storeToRefs(useBcrosSearch())
+const tabs = [
+  { slot: 'search', label: 'Find a business or person', icon: 'i-mdi-magnify' },
+  { slot: 'documents', label: 'View recently purchased documents', icon: 'i-mdi-file-document-outline' }
+]
 
 const { t } = useNuxtApp().$i18n
-
 const searchTitleText = t('appHeader')
-const searchInfoText = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.info`))
 
 const bcOnlineURL = useRuntimeConfig().public.bcolURL
 const searchGuideURL = computed(() => {
@@ -140,7 +144,6 @@ const searchGuideURL = computed(() => {
 })
 const showDocHelp = ref(false)
 </script>
-
 <style lang="scss" scoped>
 .doc-help-info {
   border-bottom: 1px dashed theme('colors.bcGovGray.700');
@@ -192,23 +195,5 @@ const showDocHelp = ref(false)
   height: 67px;
   min-width: 50%;
   width: 50%;
-}
-
-.tooltip-search-tab {
-  position: relative;
-
-  &__arrow {
-    right: 119px;
-    top: -10px;
-  }
-
-  &__text {
-    text-decoration: underline dotted 1px;
-    margin-right: 2px;
-  }
-}
-
-.warning-icon {
-  color: theme('colors.yellow.400');
 }
 </style>

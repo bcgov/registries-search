@@ -1,5 +1,6 @@
 export * from './business-headers'
 export * from './detail-box-icons'
+export * from './doc-history-headers'
 export * from './multi-role-helpers'
 export * from './person-headers-extended'
 export * from './person-headers-limited'

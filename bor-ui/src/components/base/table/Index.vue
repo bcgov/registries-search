@@ -31,7 +31,7 @@
                 <slot :name="'header-item-slot-' + header.slotId" :header="header">
                   <UButton
                     v-if="header.value"
-                    class="base-table__header__item__title mb-5 font-bold text-justify"
+                    class="base-table__header__item__title mb-5 font-bold text-start"
                     color="gray"
                     :class="!header.col ? 'mx-auto': ''"
                     :label="header.value"
@@ -66,6 +66,7 @@
                       :disabled="header.filter.disabled"
                       :multiple="!!header.filter.multiple"
                       size="sm"
+                      :ui="{ placeholder: 'text-gray-700' }"
                       :ui-menu="{ option: { padding: 'pe-9', selectedIcon: { wrapper: 'hidden' } } }"
                       @update:model-value="filter(header)"
                     >
@@ -259,6 +260,7 @@ const resetAll = () => {
     }
   }
   resettingFilters.value = false
+  filter(headers[0])
 }
 watch(() => localProps.resetFiltersTrigger, () => { resetAll() })
 
@@ -313,15 +315,20 @@ const filter = useDebounceFn(async (header: BaseTableHeaderI) => {
     isFilteringActive.value = false
   } else {
     // client side custom or base filter
-    sortedItems.value = localProps.setItems.filter((item) => {
-      if (header.filter.filterFn) {
-        return header.filter.filterFn(item[header.col], header.filter.value)
-      } else if (header.filter.type === 'select') {
-        return BaseSelectFilter(item[header.col], header.filter.value)
-      } else {
-        return BaseTextFilter(item[header.col], header.filter.value)
+    sortedItems.value = [...localProps.setItems]
+    for (const i in headers) {
+      if (headers[i]?.filter?.value) {
+        sortedItems.value = sortedItems.value.filter((item) => {
+          if (headers[i].filter.filterFn) {
+            return headers[i].filter.filterFn(item[headers[i].col], headers[i].filter.value)
+          } else if (headers[i].filter.type === 'select') {
+            return BaseSelectFilter(item[headers[i].col], headers[i].filter.value)
+          } else {
+            return BaseTextFilter(item[headers[i].col], headers[i].filter.value)
+          }
+        })
       }
-    })
+    }
   }
   // clear sort
   sortBy.value = ''

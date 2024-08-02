@@ -41,3 +41,16 @@ mockNuxtImport('useBcrosAccount', () => {
     }
   }
 })
+
+mockNuxtImport('useBcrosDocAccess', () => {
+  // set these so the header values don't err and app init doesn't fail
+  return () => {
+    return {
+      docAccessHistory: ref([]),
+      docAccessErrors: ref([]),
+      docAccessLoading: ref(false),
+      clearDocAccessHistory: () => null,
+      loadDocAccessHistory: () => null
+    }
+  }
+})
