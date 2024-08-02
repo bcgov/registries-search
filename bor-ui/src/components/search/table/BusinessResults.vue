@@ -34,6 +34,14 @@
         @action="goToOpenBusiness(item.identifier, item.legalType)"
       />
     </template>
+    <template #item-slot-significant-individuals="{ item } : { item: RegSearchResultI }">
+      <p v-for="party in item.parties" :key="party.partyName" class="mb-2">
+        {{ party.partyName }}
+      </p>
+      <p v-if="!item.parties || item.parties.length === 0" class="mb-2 italic">
+        {{ $t('text.search.business.general.noSI') }}
+      </p>
+    </template>
     <template v-if="searchBusiness.error" #body-empty>
       <bcros-error-retry
         class="my-5"

@@ -54,9 +54,10 @@
       "dateTime": "Date/Time",
       "documentType": "Document Type",
       "incorpRegNum": "Incorporation/ Registration Number",
+      "status": "Status",
+      "significantIndividuals": "Significant Individuals",
       "purchasedDate": "Purchased Date/Time (pacific time)",
       "purchasedItems": "Purchased Items",
-      "status": "Status",
       "userName": "User Name"
     },
     "tabs": {
@@ -84,7 +85,8 @@
     "search": {
       "business": {
         "general": {
-          "tooltip": "You can access this business through BC OnLine or by contacting BC Registries. See \"Help with Business and Person Search\" for details."
+          "tooltip": "You can access this business through BC OnLine or by contacting BC Registries. See \"Help with Business and Person Search\" for details.",
+          "noSI": "Company indicated no significant individuals"
         },
         "extended": {
           "error": "Enter a business name or number",

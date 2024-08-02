@@ -6,6 +6,7 @@ export interface RegSearchFilterI {
   bn: string
   status: BusinessStateE.ACTIVE | BusinessStateE.HISTORICAL
   legalType: BusinessTypeE
+  siName: BigIntToLocaleStringOptions,
 }
 
 export interface RegSearchResultI {

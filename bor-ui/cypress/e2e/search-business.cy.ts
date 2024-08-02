@@ -46,13 +46,14 @@ context('Search Business', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(0).find('th').then((headerTitles) => {
-          expect(headerTitles, '6 headers').to.have.length(6)
+          expect(headerTitles, '7 headers').to.have.length(7)
           expect(headerTitles.eq(0), 'Name header').to.have.text('Business Name')
           expect(headerTitles.eq(1), 'Identifier header').to.have.text('Incorporation/ Registration Number')
           expect(headerTitles.eq(2), 'BN header').to.have.text('CRA Business Number')
           expect(headerTitles.eq(3), 'Type header').to.have.text('Business Type')
           expect(headerTitles.eq(4), 'Status header').to.have.text('Status')
-          expect(headerTitles.eq(5), 'Actions header').to.have.text('Actions')
+          expect(headerTitles.eq(5), 'Significant Individuals header').to.have.text('Significant Individuals')
+          expect(headerTitles.eq(6), 'Actions header').to.have.text('Actions')
         })
       // filters
       cy.get('[data-cy="search-results-table"]')
@@ -60,7 +61,7 @@ context('Search Business', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(1).find('th').then((headerFilters) => {
-          expect(headerFilters, '6 filters').to.have.length(6)
+          expect(headerFilters, '7 filters').to.have.length(7)
         })
       // item data
       cy.get('[data-cy="search-results-table"]')
@@ -71,7 +72,7 @@ context('Search Business', () => {
       cy.get('@rows').should('have.length', results.length)
       for (const i in results) {
         cy.get('@rows').eq(Number(i)).find('.base-table__body__row__item').then((cols) => {
-          expect(cols, '6 columns').to.have.length(6)
+          expect(cols, '7 columns').to.have.length(7)
           expect(cols.eq(0), 'Name column - name').to.include.text(results[i].name.toUpperCase())
           expect(cols.eq(1), 'Identifier column').to.have.text(results[i].identifier)
           expect(cols.eq(2), 'BN column').to.have.text(results[i].bn || '')
@@ -91,10 +92,12 @@ context('Search Business', () => {
           } else {
             expect(cols.eq(4), 'Status column').to.have.text('Historical')
           }
+          expect(cols.eq(5), 'Significant Individuals column').to.have
+            .text('Company indicated no significant individuals')
           if (['BEN', 'CP', 'SP', 'GP'].includes(results[i].legalType)) {
-            expect(cols.eq(5), 'Actions column').to.have.text('Open')
+            expect(cols.eq(6), 'Actions column').to.have.text('Open')
           } else {
-            expect(cols.eq(5), 'Actions column').to.have.text('')
+            expect(cols.eq(6), 'Actions column').to.have.text('')
           }
         })
       }

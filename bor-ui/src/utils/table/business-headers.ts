@@ -2,8 +2,9 @@
 export const getBusinessHeaders = (): BaseTableHeaderI[] => {
   const { filterSearch, highlightMatch } = useBcrosSearch()
   const { t } = useNuxtApp().$i18n
-
-  return [
+  const ldarkly = useBcrosLaunchdarkly()
+  // NOTE: if it is possible ldarkly was not initialized successfully (i.e. blank/incorrect key)
+  const columns = [
     {
       col: 'name',
       filter: {
@@ -80,14 +81,36 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       hasSort: false,
       value: t('label.table.status'),
       width: '12%'
-    },
-    {
-      col: '',
-      hasFilter: false,
-      hasSort: false,
-      slotId: 'action',
-      value: t('label.table.actions'),
-      width: '13%'
     }
   ]
+
+  if (ldarkly.getStoredFlag('enable-business-si-column')) {
+    columns.push({
+      col: 'Significant Individuals',
+      filter: {
+        clearable: true,
+        filterApiFn: (filterVal: string) => filterSearch(['siName'], filterVal),
+        label: t('label.table.significantIndividuals'),
+        type: 'text',
+        value: ''
+      },
+      hasFilter: true,
+      hasSort: false,
+      slotId: 'significant-individuals',
+      value: t('label.table.significantIndividuals'),
+      width: '15%'
+    })
+  }
+
+  columns.push({
+    col: '',
+    filter: undefined,
+    hasFilter: false,
+    hasSort: false,
+    slotId: 'action',
+    value: t('label.table.actions'),
+    width: '13%'
+  })
+
+  return columns
 }

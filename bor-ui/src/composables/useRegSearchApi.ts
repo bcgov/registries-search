@@ -13,6 +13,10 @@ const _getSearchBusFilters = (filters: Partial<RegSearchFilterI>) => {
   if (filters?.name) {
     filterParams.query += `::name:${filters.name}`
   }
+  if (filters?.siName) {
+    filterParams.query += `::siName:${filters.siName}`
+  }
+
   // categories
   if (filters?.legalType) {
     let legalTypeCode = getCorpCode(filters.legalType) || filters.legalType
@@ -55,6 +59,7 @@ export const useRegSearchApi = () => {
       query: `value:${searchValue}${filterParams.query || ''}`,
       categories: filterParams.categories || undefined,
       start: start * rows,
+      parties: true,
       rows
     }
     // add search-api config stuff
