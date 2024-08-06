@@ -44,6 +44,7 @@ class Config():  # pylint: disable=too-few-public-methods
     SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv('SOLR_SVC_BUS_FOLLOWER_CORE', 'business_follower')
     SOLR_SVC_BUS_LEADER_URL = os.getenv('SOLR_SVC_BUS_LEADER_URL', 'http://localhost:8873/solr')
     SOLR_SVC_BUS_FOLLOWER_URL = os.getenv('SOLR_SVC_BUS_FOLLOWER_URL', 'http://localhost:8873/solr')
+    SOLR_SVC_BUS_MAX_ROWS = int(os.getenv('SOLR_SVC_BUS_MAX_ROWS', '10000'))
 
     PAYMENT_SVC_URL = os.getenv('PAYMENT_SVC_URL', 'http://')
     AUTH_SVC_URL = os.getenv('AUTH_SVC_URL', 'http://')
