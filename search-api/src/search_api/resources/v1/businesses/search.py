@@ -163,7 +163,8 @@ def facets():  # pylint: disable=too-many-branches, too-many-locals
                     'start': start or 0
                 },
                 'totalResults': results.get('response', {}).get('numFound'),
-                'results': results.get('response', {}).get('docs')}}
+                'results': results.get('response', {}).get('docs')},
+            'warnings': ['This endpoint is depreciated. Please use POST /api/v2/search/businesses instead.']}
 
         return jsonify(response), HTTPStatus.OK
 
@@ -287,7 +288,10 @@ def parties():  # pylint: disable=too-many-branches, too-many-return-statements,
                     'rows': rows or business_solr.default_rows,
                     'start': start or 0},
                 'totalResults': results.get('response', {}).get('numFound'),
-                'results': results.get('response', {}).get('docs')}}
+                'results': results.get('response', {}).get('docs')
+            },
+            'warnings': ['This endpoint is depreciated. Please use POST /api/v2/search/parties instead.']
+        }
 
         return jsonify(response), HTTPStatus.OK
 

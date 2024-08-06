@@ -29,7 +29,7 @@ from flask_migrate import Migrate  # noqa: I001
 from search_api import errorhandlers, models
 from search_api.config import config
 from search_api.models import db
-from search_api.resources import v1_endpoint
+from search_api.resources import v1_endpoint, v2_endpoint
 from search_api.services import Flags, business_solr, queue
 from search_api.translations import babel
 from search_api.utils.auth import jwt
@@ -68,6 +68,7 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs
     migrate.init_app(app, db)
 
     v1_endpoint.init_app(app)
+    v2_endpoint.init_app(app)
     setup_jwt_manager(app, jwt)
 
     @app.before_request
