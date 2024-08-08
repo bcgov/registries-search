@@ -9,7 +9,7 @@ Cypress.Commands.add('visitSearchPublic', () => {
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsNone.json' }).as('getProducts')
   cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('/public', 'searchResultsPublic.json')
-  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
+  cy.interceptBusinessSearch('searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
@@ -26,7 +26,7 @@ Cypress.Commands.add('visitSearchLimited', () => {
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsBasic.json' }).as('getProducts')
   cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('', 'searchResultsLimited.json')
-  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
+  cy.interceptBusinessSearch('searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
@@ -43,7 +43,7 @@ Cypress.Commands.add('visitSearchExtended', () => {
   cy.intercept('GET', '**/api/v1/orgs/**/products*', { fixture: 'productsExtended.json' }).as('getProducts')
   cy.intercept('GET', '**/api/v1/purchases', { fixture: 'purchases.json' }).as('getPurchases')
   cy.interceptSearch('/extended', 'searchResultsExtended.json')
-  cy.interceptBusinessSearch('facets', 'searchResultsBusiness.json')
+  cy.interceptBusinessSearch('searchResultsBusiness.json')
   cy.visit('')
   cy.wait(['@getSettings', '@getProducts', '@getPurchases'])
   cy.injectAxe()
@@ -66,9 +66,9 @@ Cypress.Commands.add('interceptSearch', (path: string, fixtureFileName: string) 
   cy.intercept('POST', '**/api/v1/search' + path, { fixture: fixtureFileName }).as('getSearchResults')
 })
 
-Cypress.Commands.add('interceptBusinessSearch', (path: string, fixtureFileName: string) => {
+Cypress.Commands.add('interceptBusinessSearch', (fixtureFileName: string) => {
   cy.intercept(
-    'GET',
-    `**/api/v1/businesses/search/${path}?**`,
+    'POST',
+    '**/api/v2/search/businesses',
     { fixture: fixtureFileName }).as('getBusinessSearchResults')
 })

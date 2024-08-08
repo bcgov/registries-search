@@ -9,7 +9,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'name',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['name'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'name'], filterVal),
         label: t('label.table.businessName'),
         type: 'text',
         value: ''
@@ -24,7 +24,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'identifier',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['identifier'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'identifier'], filterVal),
         label: t('label.table.businessIdentifier'),
         type: 'text',
         value: ''
@@ -39,7 +39,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'bn',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['bn'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'bn'], filterVal),
         label: t('label.table.bn'),
         type: 'text',
         value: ''
@@ -54,7 +54,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'legalType',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['legalType'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['categories', 'legalType'], filterVal ? [filterVal] : []),
         items: SearchCorpTypes,
         label: t('label.table.businessType'),
         type: 'select',
@@ -70,7 +70,8 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'status',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['status'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(
+          ['categories', 'status'], filterVal ? [filterVal.toUpperCase()] : []),
         items: [t('label.business.status.active'), t('label.business.status.historical')],
         label: t('label.table.status'),
         type: 'select',
@@ -89,7 +90,7 @@ export const getBusinessHeaders = (): BaseTableHeaderI[] => {
       col: 'Significant Individuals',
       filter: {
         clearable: true,
-        filterApiFn: (filterVal: string) => filterSearch(['siName'], filterVal),
+        filterApiFn: (filterVal: string) => filterSearch(['query', 'parties', 'partyName'], filterVal),
         label: t('label.table.significantIndividuals'),
         type: 'text',
         value: ''

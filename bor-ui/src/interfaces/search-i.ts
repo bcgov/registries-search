@@ -53,7 +53,7 @@ export interface SearchPayloadI {
     identifier?: string
     name?: string
     info?: string
-    roles: {
+    roles?: {
       relatedBN?: string
       relatedEmail?: string
       relatedIdentifier?: string
@@ -67,7 +67,7 @@ export interface SearchPayloadI {
   categories: {
     entityType?: BusinessTypeE[]
     legalType?: BusinessTypeE[]
-    roles: {
+    roles?: {
       relatedEntityType?: BusinessTypeE[]
       relatedState?: BusinessStateE[]
       roleType?: SearchRoleTypeE[]

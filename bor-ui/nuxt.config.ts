@@ -21,9 +21,6 @@ export default defineNuxtConfig({
     '@/assets/styles/base.scss',
     '@/assets/styles/layout.scss'
   ],
-  ui: {
-    icons: ['mdi']
-  },
   ssr: false,
   imports: {
     dirs: ['enums', 'interfaces', 'stores']
@@ -62,6 +59,8 @@ export default defineNuxtConfig({
       borApiKey: `${process.env.VUE_APP_BOR_API_KEY || ''}`,
       regSearchApiURL: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_URL || ''}` +
         `${process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION || ''}`,
+      regSearchApiURLV2: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_URL || ''}` +
+        `${process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION_2 || ''}`,
       regSearchApiKey: `${process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY || ''}`,
       registryHomeURL: process.env.VUE_APP_REGISTRY_HOME_URL || '',
       bcolURL: process.env.VUE_APP_BCONLINE_URL || '',

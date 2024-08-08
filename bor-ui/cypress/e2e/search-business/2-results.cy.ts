@@ -1,36 +1,20 @@
-import { RegSearchResultI } from '../../src/interfaces/reg-search-i'
+import { RegSearchResultI } from '../../../src/interfaces/reg-search-i'
 
-context('Search Business', () => {
+context('Search Business - results', () => {
   beforeEach(() => {
     cy.visitSearchPublic()
   })
 
-  it('should display expected search bar', () => {
-    // info text
-    cy.get('[data-cy="search-input-info-text"]').should(
-      'have.text',
-      'Search for businesses registered or incorporated in B.C. and access their business documents.'
-    )
-    // search input
-    cy.get('[data-cy="search-input"]').find('[data-cy="search-textfield"]').should('exist')
-    // label text
-    cy.get('[data-cy="search-input"]')
-      .find('[data-cy="search-textfield"]')
-      .should('have.attr', 'placeholder', 'Business Name or Incorporation/Registration Number or CRA Business Number')
-    // hint text
-    cy.get('[data-cy="search-input"]')
-      .find('p')
-      .should(
-        'have.text',
-        'Example: "Test Construction Inc.", "BC0000123", "987654321BC001"')
-  })
-
   it('should display expected results after a search is triggered', () => {
     cy.get('[data-cy="search-results-table"]').should('not.exist')
+    const queryVal = 'test'
     cy.get('[data-cy="search-input"]')
       .find('[data-cy="search-textfield"]')
-      .type('test')
-    cy.wait('@getBusinessSearchResults')
+      .type(queryVal)
+    cy.wait('@getBusinessSearchResults').then((search) => {
+      expect(search).to.have.nested.property('request.body.query.value')
+      expect(search.request.body.query.value).to.eql(queryVal)
+    })
     cy.get('[data-cy="search-results-table"]').should('exist')
     cy.fixture('searchResultsBusiness.json').then((searchResponse) => {
       const results: RegSearchResultI[] = searchResponse.searchResults.results

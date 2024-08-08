@@ -1,71 +1,48 @@
 import { StatusCodes } from 'http-status-codes'
-import type { BusinessTypeE, DocAccessHistoryI } from '#imports'
+import type { BusinessTypeE, DocAccessHistoryI, RegSearchPayloadI } from '#imports'
 
-const _getSearchBusFilters = (filters: Partial<RegSearchFilterI>) => {
-  const filterParams = { query: '', categories: '' }
-  // filters
-  if (filters?.bn) {
-    filterParams.query += `::bn:${filters.bn}`
-  }
-  if (filters?.identifier) {
-    filterParams.query += `::identifier:${filters.identifier}`
-  }
-  if (filters?.name) {
-    filterParams.query += `::name:${filters.name}`
-  }
-  if (filters?.siName) {
-    filterParams.query += `::siName:${filters.siName}`
-  }
+export const useRegSearchApi = () => {
+  const { regSearchApiURL, regSearchApiURLV2, regSearchApiKey } = useRuntimeConfig().public
 
-  // categories
-  if (filters?.legalType) {
-    let legalTypeCode = getCorpCode(filters.legalType) || filters.legalType
-    // group specific corp type codes together
-    if (legalTypeCode === 'Other' as BusinessTypeE) {
-      // query by all 'other' corp types
-      legalTypeCode = OtherCorpTypes.join(',') as BusinessTypeE
-    } else {
-      const corpGrps = [BCLimitedTypes, ULCTypes, SocietyTypes]
-      for (const i in corpGrps) {
-        if (corpGrps[i].includes(legalTypeCode as BusinessTypeE)) {
-          // query by all society corp types
-          legalTypeCode = corpGrps[i].join(',') as BusinessTypeE
-          break
+  /** Helper function to apply groups of legal types based on the user selection. */
+  const legalTypePayloadConversion = (legalTypes: BusinessTypeE[]): BusinessTypeE[] => {
+    let updatedLegalTypes = []
+    for (const legalType of legalTypes ?? []) {
+      const legalTypeCode = getCorpCode(legalType) || legalType
+      // group specific corp type codes together
+      if (legalTypeCode === 'Other' as BusinessTypeE) {
+        // query by all 'other' corp types
+        updatedLegalTypes = updatedLegalTypes.concat(OtherCorpTypes)
+      } else {
+        updatedLegalTypes.push(legalTypeCode)
+        const corpGrps = [BCLimitedTypes, ULCTypes, SocietyTypes]
+        for (const i in corpGrps) {
+          if (corpGrps[i].includes(legalTypeCode as BusinessTypeE)) {
+            // rmv dup code
+            updatedLegalTypes.pop()
+            // query by all grp corp types)
+            updatedLegalTypes = updatedLegalTypes.concat(corpGrps[i])
+            break
+          }
         }
       }
     }
-    filterParams.categories += `legalType:${legalTypeCode}`
+    return updatedLegalTypes
   }
-  if (filters?.status) {
-    filterParams.categories += filters?.legalType ? '::' : ''
-    filterParams.categories += `status:${filters.status}`
-  }
-  return filterParams
-}
-
-export const useRegSearchApi = () => {
-  const { regSearchApiURL, regSearchApiKey } = useRuntimeConfig().public
 
   const searchBusiness = async (
     searchValue: string,
-    filters: Partial<RegSearchFilterI>,
-    rows: number,
-    start: number
+    payload: RegSearchPayloadI
   ): Promise<RegSearchResponseI> => {
     if (!searchValue) { return }
 
-    const filterParams = _getSearchBusFilters(filters)
-    const params = {
-      query: `value:${searchValue}${filterParams.query || ''}`,
-      categories: filterParams.categories || undefined,
-      start: start * rows,
-      parties: true,
-      rows
-    }
+    // set 'value'
+    payload.query.value = searchValue
+    // update legal types based on selection
+    payload.categories.legalType = legalTypePayloadConversion(payload.categories.legalType)
     // add search-api config stuff
-    const config = getApiConfig(regSearchApiURL, regSearchApiKey, false, params)
-
-    return await useBcrosFetch<RegSearchResponseI>('businesses/search/facets', config)
+    const config = getApiConfig(regSearchApiURLV2, regSearchApiKey, false)
+    return await useBcrosFetch<RegSearchResponseI>('search/businesses', { method: 'POST', body: payload, ...config })
       .then(({ data, error }) => {
         if (error.value) {
           console.warn('Error fetching search')

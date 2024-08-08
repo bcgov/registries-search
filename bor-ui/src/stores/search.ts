@@ -1,13 +1,11 @@
-import { SearchTypeE, type FacetsResultI, type RegSearchResultI, type SearchPayloadI } from '#imports'
+import mergeWith from 'lodash.mergewith'
+import { SearchTypeE } from '#imports'
 
 const DEFAULT_SEARCH_ROWS = 50
 
-const STARTING_FILTERS = {
-  query: { roles: { roleDates: {} } },
-  categories: {
-    entityAddresses: {},
-    roles: {}
-  }
+const STARTING_FILTERS: SearchPayloadI | RegSearchPayloadI = {
+  query: {},
+  categories: {}
 }
 
 /** Manages bcros search data */
@@ -20,9 +18,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   /** Return an initialized search object based on the type. */
   const _initSearch = (type: SearchTypeE) => {
-    const filters = type === SearchTypeE.BUSINESS
-      ? {} as Partial<RegSearchFilterI>
-      : structuredClone(STARTING_FILTERS) as Partial<SearchPayloadI>
+    const filters = structuredClone(STARTING_FILTERS)
 
     const results = type === SearchTypeE.BUSINESS
       ? [] as RegSearchResultI[]
@@ -79,27 +75,34 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   }
 
   /** Call the appropriate search api based on the current state and return the response. */
-  const callSearch = async (exporting = false, rows = undefined) => {
+  const callSearch = async (exporting = false, rows?: number) => {
+    rows ??= activeSearch.value.rows
     return (searchType.value === SearchTypeE.BUSINESS
       ? await useRegSearchApi()
         .searchBusiness(
           activeSearch.value.val,
-          { ...activeSearch.value.filters } as RegSearchFilterI,
-          activeSearch.value.rows,
-          activeSearch.value.start)
+          {
+            ...structuredClone(toRaw(activeSearch.value.filters)),
+            rows,
+            start: activeSearch.value.start * rows
+          } as RegSearchPayloadI
+        )
       : await useBorSearchApi()
         .searchEntities(
           activeSearch.value.val,
-          { ...activeSearch.value.filters } as SearchPayloadI,
-          rows || activeSearch.value.rows,
-          exporting ? 0 : activeSearch.value.start,
-          exporting)
+          {
+            ...structuredClone(toRaw(activeSearch.value.filters)),
+            rows,
+            start: exporting ? 0 : activeSearch.value.start
+          } as SearchPayloadI,
+          exporting
+        )
     )
   }
 
   /** Export search to file for download. */
   const exportSearch = async () => {
-    const searchResp = await callSearch(true, activeSearch.value.exportRows)
+    const searchResp = await callSearch(true, Number(activeSearch.value.exportRows))
     if (searchResp && searchResp.error) {
       searchErrorHandler(searchResp.error)
     }
@@ -109,23 +112,24 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
   const filterSearch = async (path: string[], val: any, reset = false) => {
     const search = searches[searchType.value]
     if (reset) {
-      search.value.filters = searchType.value === SearchTypeE.BUSINESS
-        ? {}
-        : structuredClone(STARTING_FILTERS)
+      search.value.filters = structuredClone(STARTING_FILTERS)
       await getSearchResults(search.value.val, true, true)
       return
     }
-    // path will have length of 3 at most
-    if (path.length === 1) {
-      // i.e. search.filters['start'] = val
-      search.value.filters[path[0]] = val
-    } else if (path.length === 2) {
-      // i.e. search.filters['query']['bn'] = val
-      search.value.filters[path[0]][path[1]] = val
-    } else {
-      // i.e. search.filters['query']['roles']['relatedBN'] = val
-      search.value.filters[path[0]][path[1]][path[2]] = val
-    }
+
+    // NB: i.e. ['one', 'two', 'three'] => { one: { two: { three: <val> }}}
+    const newFilter = path.reduceRight((value, next) => ({ [next]: value }), val)
+    // apply newFilter to existing filter obj
+    search.value.filters = mergeWith(search.value.filters, newFilter, (existingValue, newValue) => {
+      // want to overwrite arrays instead of merging them
+      if (Array.isArray(existingValue)) {
+        return newValue
+      }
+      // overwrite when new value obj is empty (obj was cleared)
+      if (Object.keys(newValue).length === 0) {
+        return newValue
+      }
+    })
 
     if (search.value.val) {
       const increasingScope = !hasActiveFilter()
@@ -233,7 +237,7 @@ export const useBcrosSearch = defineStore('bcros/search', () => {
 
   const reset = (type: SearchTypeE) => {
     searches[type].value.val = ''
-    searches[type].value.filters = type === SearchTypeE.BUSINESS ? {} : structuredClone(STARTING_FILTERS)
+    searches[type].value.filters = structuredClone(STARTING_FILTERS)
     searches[type].value.results = []
     searches[type].value.resultsTotal = undefined
     searches[type].value.error = undefined

@@ -8,18 +8,11 @@ export const useBorSearchApi = () => {
 
   const searchEntities = async (
     searchValue: string,
-    filters: SearchPayloadI,
-    rows: number,
-    start: number,
+    payload: SearchPayloadI,
     exportSearch = false
-  ): Promise<SearchResponseI | undefined> => {
+  ): Promise<SearchResponseI> => {
     if (!searchValue) { return }
-    // set payload
-    const payload: SearchPayloadI = {
-      ...filters,
-      rows,
-      start: start * rows
-    }
+    // set 'value'
     payload.query.value = searchValue
     // add search-api config stuff
     const config = getApiConfig(borApiURL, borApiKey, exportSearch)

@@ -7,6 +7,7 @@
       label="Clear Filters"
       trailing
       variant="ghost"
+      data-cy="search-table-clear-filters"
       @click="emit('action', true)"
     />
   </div>
