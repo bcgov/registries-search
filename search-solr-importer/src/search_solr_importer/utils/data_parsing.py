@@ -133,7 +133,9 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
             else:
                 # add party doc to base doc
                 prepped_data[item_dict['identifier']]['parties'][party_id] = {
+                    'id': f"{item_dict['identifier']}_{party_id}",
                     'parentBN': item_dict['tax_id'],
+                    'parentIdentifier': item_dict['identifier'],
                     'parentLegalType': item_dict['legal_type'],
                     'parentName': _get_business_name(item_dict),
                     'parentStatus': item_dict['state'],
