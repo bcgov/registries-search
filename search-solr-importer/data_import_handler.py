@@ -97,6 +97,7 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
                 current_app.logger.debug('---------- Collecting/Importing BTR Data ----------')
                 btr_fetch_count = 0
                 batch_limit = current_app.config.get('BTR_BATCH_LIMIT')
+                btr_data_descs = []
                 loop_count = 0
 
                 while loop_count < 100:  # NOTE: should never get to this condition
@@ -110,7 +111,10 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
                         break
 
                     current_app.logger.debug('********** Mapping BTR data **********')
-                    prepped_btr_data = prep_data_btr(btr_data)
+                    if not btr_data_descs:
+                        # just need to do once
+                        btr_data_descs = [desc[0].lower() for desc in btr_data_cur.description]
+                    prepped_btr_data = prep_data_btr(btr_data, btr_data_descs)
                     current_app.logger.debug(f'{len(prepped_btr_data)} BTR records ready for import.')
 
                     current_app.logger.debug('********** Importing BTR entities **********')

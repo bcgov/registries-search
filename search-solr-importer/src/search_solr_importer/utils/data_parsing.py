@@ -187,33 +187,33 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
     return solr_docs
 
 
-def prep_data_btr(data: list[dict]) -> list[dict]:
+def prep_data_btr(data: list[dict], data_descs: list[str]) -> list[dict]:
     """Return the list of partial business docs containing the SI party information."""
     prepped_data: list[dict] = []
 
     for item in data:
-        submission = item[0]
-        identifier = submission['businessIdentifier']
+        item_dict = dict(zip(data_descs, item))
+        identifier = item_dict['business_identifier']
 
         business = {'id': identifier, 'parties': {'add': []}}
 
         # collect current SIs.
-        for person in submission.get('personStatements', []):
-            party_name = ''
-            for name in person.get('names'):
-                if name.get('type') == 'individual':  # expecting this to be 'individual' or 'alternative'
-                    party_name = name.get('fullName')
-                    break
-            if not party_name:
-                current_app.logger.debug('Person names: %s', person.get('names'))
-                current_app.logger.error('Error parsing SI name for %s', identifier)
+        person = item_dict['person_json']
+        party_name = ''
+        for name in person.get('names'):
+            if name.get('type') == 'individual':  # expecting this to be 'individual' or 'alternative'
+                party_name = name.get('fullName')
+                break
+        if not party_name:
+            current_app.logger.debug('Person names: %s', person.get('names'))
+            current_app.logger.error('Error parsing SI name for %s', identifier)
 
-            business['parties']['add'].append({
-                PartyField.UNIQUE_KEY.value: identifier + '_' + person['uuid'],
-                PartyField.PARTY_NAME.value: party_name,
-                PartyField.PARTY_ROLE.value: ['significant individual'],
-                PartyField.PARENT_TYPE.value: 'person'
-            })
+        business['parties']['add'].append({
+            PartyField.UNIQUE_KEY.value: identifier + '_' + person['statementID'],
+            PartyField.PARTY_NAME.value: party_name,
+            PartyField.PARTY_ROLE.value: ['significant individual'],
+            PartyField.PARENT_TYPE.value: 'person'
+        })
 
         prepped_data.append(business)
 
