@@ -150,7 +150,7 @@ def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
     if (addresses := party.get('addresses')) and len(addresses) > 0:
         address = get_btr_address(addresses[0], 'RESIDENCE')
 
-    entity_id = party['uuid']
+    entity_id = party['statementID']
     role_id = entity_id + business.identifier + 'SIGNIFICANT_INDIVIDUAL'
     return Entity(id=entity_id,
                   entityAddresses=[address] if address else None,

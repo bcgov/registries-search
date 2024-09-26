@@ -22,7 +22,7 @@ import requests_mock
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services import solr
-from bor_api.services.authz import BASIC_USER
+from bor_api.services.authz import BASIC_USER, auth_cache
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 from tests import integration_solr
@@ -109,6 +109,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
 ])
 def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, query, categories):
     """Assert that the entities search call works returns successfully."""
+    auth_cache.clear()
     # setup mocks
     account_id = 1
     requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}/orgs/{account_id}/products?include_hidden=true",

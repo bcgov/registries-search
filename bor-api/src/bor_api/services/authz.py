@@ -18,10 +18,14 @@ import requests
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
 from flask import current_app
+from flask_caching import Cache
 from flask_jwt_oidc import JwtManager
 from urllib3.util.retry import Retry
 
 from bor_api.exceptions import ExternalServiceException
+
+
+auth_cache = Cache()
 
 
 # TODO: identify what roles we need for search
@@ -37,6 +41,12 @@ BCOL_HELP = 'helpdesk'
 SBC_STAFF = 'sbc_staff'
 
 
+def get_cache_key(path: str, token: str):
+    """Return the cache key for the given args."""
+    return path + token
+
+
+@auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
 def _call_auth_api(path: str, token: str) -> dict:
     """Return the auth api response for the given endpoint path."""
     response = None
@@ -72,6 +82,7 @@ def _call_auth_api(path: str, token: str) -> dict:
     return response
 
 
+@auth_cache.cached(timeout=300)
 def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')

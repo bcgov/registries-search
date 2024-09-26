@@ -79,7 +79,7 @@ class Solr:
         self.leader_url = app.config.get('SOLR_SVC_LEADER_URL')
         self.follower_url = app.config.get('SOLR_SVC_FOLLOWER_URL')
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-positional-arguments
     def call_solr(self,
                   method: str,
                   query: str,

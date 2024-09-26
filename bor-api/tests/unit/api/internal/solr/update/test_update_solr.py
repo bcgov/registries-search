@@ -73,7 +73,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                 check_update_recorded(identifier, True)
         # check SI update
         for owner in request_json.get('owners', []):
-            identifier = owner['interestedParty']['uuid']
+            identifier = owner['interestedParty']['statementID']
             check_update_recorded(identifier, True)
             
         # check did not call to solr mock (only updates the DB)
@@ -92,7 +92,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                 identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
                 check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         for owner in request_json.get('owners', []):
-            identifier = owner['interestedParty']['uuid']
+            identifier = owner['interestedParty']['statementID']
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
         # check call to solr was correct
         assert m.called == True
@@ -244,7 +244,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'entityAddresses': {'set': entity_addresses},
                     'entityType': 'PERSON',
                     'externalInfluence': 'CanBeInfluenced',
-                    'id': '123xxx-456xxx',
+                    'id': '7f0511ba-9621-4134-8363-462c61b9162a',
                     'legalName': 'Kial Jinnah',
                     'alternateName': 'wallaby willow',
                     'name_q': 'Kial Jinnah wallaby willow',
@@ -259,7 +259,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json, 
                     'nationalities': {'set': ['CA']},
                     'phoneNumber': '+44 020 0456 7890 #123',
                     'roles': {'set': [{
-                        'id': '123xxx-456xxxBC1233335SIGNIFICANT_INDIVIDUAL',
+                        'id': '7f0511ba-9621-4134-8363-462c61b9162aBC1233335SIGNIFICANT_INDIVIDUAL',
                         'relatedAddresses': [{
                             'address_q': None,
                             'parentDoc': 'entityRole',
@@ -356,7 +356,7 @@ def test_update_solr(session, client, jwt, test_name, request_json, existing_ent
             check_update_recorded(party_id, True)
     # check si update
     for owner in request_json.get('owners', []):
-        si_id = owner['interestedParty']['uuid']
+        si_id = owner['interestedParty']['statementID']
         si_ids.append(si_id)
         check_update_recorded(si_id, True)
     # verify update has NOT synced to solr yet
@@ -377,7 +377,7 @@ def test_update_solr(session, client, jwt, test_name, request_json, existing_ent
             identifier = f"{party['source']}{party['officer']['id']}{business_identifier}{role['roleType'].replace(' ', '_')}".upper()
             check_update_recorded(identifier, True, status=SolrDocEventStatus.COMPLETE)
     for owner in request_json.get('owners', []):
-        si_id = owner['interestedParty']['uuid']
+        si_id = owner['interestedParty']['statementID']
         check_update_recorded(si_id, True, status=SolrDocEventStatus.COMPLETE)
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update

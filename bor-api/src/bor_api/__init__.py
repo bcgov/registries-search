@@ -28,6 +28,7 @@ from bor_api.config import config
 from bor_api.models import db
 from bor_api.resources import v1_endpoint
 from bor_api.services import Flags, jwt, solr
+from bor_api.services.authz import auth_cache
 from bor_api.utils.logging import set_log_level_by_flag, setup_logging
 from bor_api.utils.run_version import get_run_version
 # noqa: I003; the sentry import creates a bad line count in isort
@@ -61,6 +62,8 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs
     migrate.init_app(app, db)
     v1_endpoint.init_app(app)
     setup_jwt_manager(app, jwt)
+
+    auth_cache.init_app(app)
 
     @app.before_request
     def before_request():  # pylint: disable=unused-variable

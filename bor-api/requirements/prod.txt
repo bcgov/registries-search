@@ -1,4 +1,5 @@
 Flask
+Flask-Caching
 Flask-Cors
 Flask-Migrate
 Flask-SQLAlchemy

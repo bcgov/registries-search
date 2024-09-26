@@ -20,5 +20,5 @@ from dataclasses import dataclass
 class InterestParty:
     """Class representation for a solr interest party doc."""
 
-    interestPartyID: str  # maps to person uuid in BTR
+    interestPartyID: str  # maps to person statementID in BTR
     interestPartyName: str = None
