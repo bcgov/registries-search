@@ -5,6 +5,7 @@ venv
 .env*
 .eggs
 Makefile
+cache
 devops
 k8s
 manage.py

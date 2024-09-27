@@ -43,7 +43,7 @@ SBC_STAFF = 'sbc_staff'
 
 def get_cache_key(path: str, token: str):
     """Return the cache key for the given args."""
-    return path + token
+    return 'auth' + path + token
 
 
 @auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
@@ -82,7 +82,7 @@ def _call_auth_api(path: str, token: str) -> dict:
     return response
 
 
-@auth_cache.cached(timeout=300)
+@auth_cache.cached(timeout=300, key_prefix='view/token')
 def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
