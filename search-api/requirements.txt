@@ -62,5 +62,7 @@ six==1.16.0
 strict-rfc3339==0.7
 typing_extensions==4.12.2
 urllib3==1.26.16
-git+https://github.com/daxiom/simple-cloudevent.py.git@0.0.2
+cachecontrol==0.14.0
+git+https://github.com/daxiom/simple-cloudevent.py.git
 git+https://github.com/daxiom/flask-pub.git@0.0.4
+git+https://github.com/bcgov/sbc-connect-common.git@43411ed428c4c4b89bea1ac6acdb10077f247d2b#egg=gcp_queue&subdirectory=python\gcp-queue

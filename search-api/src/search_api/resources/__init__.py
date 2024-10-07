@@ -14,7 +14,7 @@
 """Exposes the versioned endpoints."""
 from .constants import EndpointVersionPath
 from .v1 import bus_bp, internal_bp, meta_bp, ops_bp, purchases_bp
-from .v2 import search_bp
+from .v2 import search_bp, payments_bp
 from .version_endpoint import VersionEndpoint
 
 
@@ -26,4 +26,4 @@ v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
 v2_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
     name='API_V2',
     path=EndpointVersionPath.API_V2,
-    bps=[search_bp])
+    bps=[search_bp, payments_bp])
