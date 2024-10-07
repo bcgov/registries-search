@@ -17,6 +17,7 @@ from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_
 from .business_solr import BusinessSolr
 from .flags import Flags
 from .queue import Queue
+from gcp_queue import GcpQueue
 
 
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
@@ -25,3 +26,4 @@ business_solr = BusinessSolr('SOLR_SVC_BUS')
 queue = Queue()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 # TODO: uncomment after testing with running gcp service
 # storage = GoogleStorageService()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.
+simple_queue = GcpQueue()

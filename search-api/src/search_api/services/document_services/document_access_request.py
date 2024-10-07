@@ -11,6 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Exposes all of the resource v2 endpoints in Flask-Blueprint style."""
-from .search import bp as search_bp
-from .payments import bp as payments_bp
+"""Handles the Document Access Request updates."""
+from search_api.models import DocumentAccessRequest
+from search_api.models.errors import DbRowNotFound
+
+
+def update_document_access_request_status_by_id(dar_id: int, status: str):
+    dar = DocumentAccessRequest.find_by_id(dar_id)
+
+    if not dar:
+        raise DbRowNotFound()
+
+    dar.status = status
+    dar.save()
