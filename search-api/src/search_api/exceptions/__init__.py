@@ -63,6 +63,15 @@ class SolrException(BaseExceptionE):
         self.message = 'Solr service error while processing request.'
 
 
+class DbRecordNotFoundException(BaseExceptionE):
+    """Row not found in database"""
+
+    def __init__(self):
+        self.message = "DB record not found"
+        self.status_code = HTTPStatus.NOT_FOUND
+        super().__init__()
+
+
 class BusinessException(Exception):
     """Exception that adds error code and error name, that can be used for i18n support."""
 
