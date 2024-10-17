@@ -17,14 +17,15 @@ import functools
 import json
 import os
 
-import google.auth.transport.requests
-import google.oauth2.id_token as id_token
+from http import HTTPStatus
 
 from cachecontrol import CacheControl
 from flask import abort, current_app, request
-from google.oauth2 import service_account
-from http import HTTPStatus
 from requests.sessions import Session
+
+from google.oauth2 import service_account
+import google.auth.transport.requests
+import google.oauth2.id_token as id_token # pylint disable=consider-using-from-import
 
 from search_api.services.gcp_auth.abstract_auth_service import AuthService
 
@@ -54,8 +55,8 @@ class GoogleAuthService(AuthService):  # pylint: disable=too-few-public-methods
         if cls.credentials is None:
             cls.credentials = service_account.Credentials.from_service_account_info(cls.service_account_info,
                                                                                     scopes=cls.GCP_SA_SCOPES)
-        request = google.auth.transport.requests.Request()
-        cls.credentials.refresh(request)
+        g_request = google.auth.transport.requests.Request()
+        cls.credentials.refresh(g_request)
         current_app.logger.info('Call successful: obtained token.')
         return cls.credentials.token
 
@@ -81,8 +82,8 @@ def verify_jwt(session):
         required_emails = current_app.config.get('VERIFY_PUBSUB_EMAILS')
         if claims.get('email_verified') and claims.get('email') in required_emails:
             return None
-        else:
-            return 'Email not verified or does not match', 401
+
+        return 'Email not verified or does not match', 401
     except Exception as e:
         current_app.logger.info(f'Invalid token {e}')
         return f'Invalid token: {e}', 400

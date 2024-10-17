@@ -13,11 +13,11 @@
 # limitations under the License.
 """This module wraps the calls to external services used by the API."""
 
+from gcp_queue import GcpQueue
 from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff, is_system
 from .business_solr import BusinessSolr
 from .flags import Flags
 from .queue import Queue
-from gcp_queue import GcpQueue
 
 
 flags = Flags()  # pylint: disable=invalid-name; shared variables are lower case by Flask convention.

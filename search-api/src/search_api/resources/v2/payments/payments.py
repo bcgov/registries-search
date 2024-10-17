@@ -46,7 +46,7 @@ def gcp_listener():
     try:
         credit_card_payment = ce.data
         if credit_card_payment.get('corpTypeCode', '') != 'BUS':
-            raise Exception('invalid or missing corpTypeCode.')
+            raise Exception('invalid or missing corpTypeCode.')  # noqa pylint: disable=broad-exception-raised
         dar = DocumentAccessRequest.find_by_id(credit_card_payment['id'])
         if not dar:
             raise DbRecordNotFoundException()
@@ -55,7 +55,7 @@ def gcp_listener():
         dar.save()
 
         return {}, HTTPStatus.OK
-    except Exception:  # NOQA # pylint:Q disable=broad-except
+    except Exception:  # noqa pylint: disable=broad-except
         # Catch Exception so that any error is still caught and the message is removed from the queue
         current_app.logger.error('Error processing event: ', exc_info=True)
         return {}, HTTPStatus.OK
