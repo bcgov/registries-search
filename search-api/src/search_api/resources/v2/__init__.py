@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Exposes all of the resource v2 endpoints in Flask-Blueprint style."""
-from .search import bp as search_bp
 from .payments import bp as payments_bp
+from .search import bp as search_bp

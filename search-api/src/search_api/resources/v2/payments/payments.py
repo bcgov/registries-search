@@ -22,15 +22,14 @@ from flask_cors import cross_origin
 from search_api.exceptions import DbRecordNotFoundException
 from search_api.models import DocumentAccessRequest
 from search_api.services import simple_queue
-# from search_api.services.gcp_auth.auth_service import ensure_authorized_queue_user
-from search_api.services.gcp_auth import auth_service
+from search_api.services.gcp_auth.auth_service import ensure_authorized_queue_user
 
 bp = Blueprint('GCP_LISTENER', __name__, url_prefix='')  # pylint: disable=invalid-name
 
 
 @bp.post('')
 @cross_origin(origin='*')
-@auth_service.ensure_authorized_queue_user
+@ensure_authorized_queue_user
 def gcp_listener():
     """Process the incoming cloud event.
 

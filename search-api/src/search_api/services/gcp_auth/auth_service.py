@@ -88,7 +88,7 @@ def verify_jwt(session):
 
 
 def ensure_authorized_queue_user(f):
-    """Ensures the user is authorized to use the queue."""
+    """Ensure the user is authorized to use the queue."""
 
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):

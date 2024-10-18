@@ -14,7 +14,7 @@
 """Exposes the versioned endpoints."""
 from .constants import EndpointVersionPath
 from .v1 import bus_bp, internal_bp, meta_bp, ops_bp, purchases_bp
-from .v2 import search_bp, payments_bp
+from .v2 import payments_bp, search_bp
 from .version_endpoint import VersionEndpoint
 
 
