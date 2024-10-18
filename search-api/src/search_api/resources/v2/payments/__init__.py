@@ -16,6 +16,7 @@ from flask import Blueprint
 
 from .payments import bp as payments_bp
 
+
 bp = Blueprint('PAYMENTS', __name__, url_prefix='/payments')  # pylint: disable=invalid-name
 
 bp.register_blueprint(payments_bp)

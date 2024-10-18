@@ -24,6 +24,7 @@ from search_api.models import DocumentAccessRequest
 from search_api.services import simple_queue
 from search_api.services.gcp_auth.auth_service import ensure_authorized_queue_user
 
+
 bp = Blueprint('GCP_LISTENER', __name__, url_prefix='')  # pylint: disable=invalid-name
 
 

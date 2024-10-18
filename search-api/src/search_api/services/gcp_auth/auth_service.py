@@ -82,7 +82,7 @@ def verify_jwt(session):
             return None
 
         return 'Email not verified or does not match', 401
-    except Exception as e:
+    except Exception as e:  # noqa: B902
         current_app.logger.info(f'Invalid token {e}')
         return f'Invalid token: {e}', 400
 
