@@ -38,15 +38,15 @@ def gcp_listener():
         200 - on success or invalid message (do not return invalid message in the queue)
     """
     ce = simple_queue.get_simple_cloud_event(request, wrapped=True)
-    if ce is None or ce.data is None or not 'id' in ce.data or not 'statusCode' in ce.data:
-        # current flow says if msg is inv   alid, it should be ACKed to get out of the queue
+    if ce is None or ce.data is None or 'id' not in ce.data or 'statusCode' not in ce.data:
+        # current flow says if msg is invalid, it should be ACKed to get out of the queue
         current_app.logger.error('Invalid Event Message Received: %s ', json.dumps(dataclasses.asdict(ce)))
         return {}, HTTPStatus.OK
 
     try:
         credit_card_payment = ce.data
         if credit_card_payment.get('corpTypeCode', '') != 'BUS':
-            raise Exception('invalid or missing corpTypeCode.')  # noqa pylint: disable=broad-exception-raised
+            raise Exception('invalid or missing corpTypeCode.')  # noqa: E713 # pylint: disable=broad-exception-raised
         dar = DocumentAccessRequest.find_by_id(credit_card_payment['id'])
         if not dar:
             raise DbRecordNotFoundException()

@@ -18,14 +18,12 @@ import json
 import os
 
 from http import HTTPStatus
-
 from cachecontrol import CacheControl
 from flask import abort, current_app, request
 from requests.sessions import Session
-
 from google.oauth2 import service_account
 import google.auth.transport.requests
-import google.oauth2.id_token as id_token # pylint: disable=consider-using-from-import
+import google.oauth2.id_token as id_token  # pylint: disable=consider-using-from-import
 
 from search_api.services.gcp_auth.abstract_auth_service import AuthService
 
