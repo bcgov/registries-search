@@ -1,4 +1,5 @@
-import { ErrorI } from '@/interfaces' 
+import { ErrorI } from '@/interfaces'
+import { DocumentAccessRequestPaymentStatus } from '@/enums/document-access-request-payment-status'
 
 export interface DocumentDetailsI {
     businessIdentifier: string,
@@ -10,32 +11,34 @@ export interface DocumentDetailsI {
     expiryDate: string,
     submitter: string,
     documents: DocumentI[]
+    paymentStatus: DocumentAccessRequestPaymentStatus
+    paymentToken: string
 }
 
 // api responses
-export interface CreateDocumentResponseI {     
+export interface CreateDocumentResponseI {
     createDocumentResponse?: DocumentDetailsI,
     error?: ErrorI
 }
 
-export interface DocumentI {     
+export interface DocumentI {
     documentKey: string,
     documentType: string,
     fileName: string,
     id: number
 }
 
-export interface AccessRequestsHistoryI {     
+export interface AccessRequestsHistoryI {
     documentAccessRequests?: DocumentDetailsI[],
     error?: ErrorI
 }
 
-export interface DocumentAccessRequestsI {     
+export interface DocumentAccessRequestsI {
     requests: DocumentDetailsI[],
     currentRequest: DocumentDetailsI,
     _error: ErrorI,
     _loading: boolean,
     _saving: boolean,
-    _downloading: boolean
+    _downloading: boolean,
+    _needsPayment: boolean
 }
-
