@@ -17,14 +17,14 @@
 from datetime import datetime
 from http import HTTPStatus
 
+import pytest
 from flask import current_app, g
 
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 
-
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
-    "documentAccessRequest":{
+    "documentAccessRequest": {
         "documents": [
             {
                 "type": "BUSINESS_SUMMARY_FILING_HISTORY"
@@ -33,9 +33,10 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     }
 }
 
+
 def test_save_request(client, session, jwt, mocker):
     """Assert that request can be saved."""
-    g.jwt_oidc_token_info={}
+    g.jwt_oidc_token_info = {}
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
     user.save()
     mocker.patch('search_api.models.User.get_or_create_user_by_jwt', return_value=user)
@@ -45,7 +46,10 @@ def test_save_request(client, session, jwt, mocker):
     assert document_access_request.submitter.firstname == user.firstname
 
 
-def test_create_invoice(client, session, jwt, mocker):
+@pytest.mark.parametrize('test_name,mock_response,is_payment_completion_date_expected', [
+    ('test_pad_invoice', {'id': 123, 'paymentMethod': 'PAD'}, True),
+    ('test_pad_invoice', {'id': 123, 'paymentMethod': 'DIRECT_PAY'}, False)])
+def test_create_invoice(client, session, jwt, mocker, test_name, mock_response, is_payment_completion_date_expected):
     """Assert that access request is updated with payment details."""
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
@@ -64,9 +68,9 @@ def test_create_invoice(client, session, jwt, mocker):
         }
     }
 
-    mock_response = MockResponse({'id': 123},HTTPStatus.CREATED)
+    mock_payment_response = MockResponse(mock_response, HTTPStatus.CREATED)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
-                 return_value=mock_response)
+                 return_value=mock_payment_response)
     mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',
                  return_value='basic')
 
@@ -74,8 +78,12 @@ def test_create_invoice(client, session, jwt, mocker):
     create_invoice(document_access_request, jwt, request_json, business_json)
 
     document_access_request = DocumentAccessRequest.find_by_id(document_access_request.id)
+
     assert document_access_request.payment_token
-    assert document_access_request.payment_completion_date
+    if is_payment_completion_date_expected:
+        assert document_access_request.payment_completion_date
+    else:
+        assert not document_access_request.payment_completion_date
     assert document_access_request.expiry_date
 
 
@@ -95,7 +103,7 @@ def test_create_invoice_failure(client, session, jwt, mocker):
         'documentAccessRequest': document_access_request
     }
 
-    mock_response = MockResponse({'type': 'BAD_REQUEST'},HTTPStatus.BAD_REQUEST)
+    mock_response = MockResponse({'type': 'BAD_REQUEST'}, HTTPStatus.BAD_REQUEST)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
     mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',

@@ -1,0 +1,57 @@
+{
+  "_links": {
+    "collection": "/api/v1/payment-requests?invoice_id=41861",
+    "self": "/api/v1/payment-requests/41861"
+  },
+  "businessIdentifier": "FM1000026",
+  "corpTypeCode": "BUS",
+  "createdBy": "BCSC/ZGCBNHM6U7FPRXI7AJT6KFF7GSKY43TA",
+  "createdName": "BCREG2 Ayisha FIFTY",
+  "createdOn": "2024-10-25T21:19:17+00:00",
+  "details": [
+    {
+      "label": "Registration Number: ",
+      "value": "FM1000026"
+    }
+  ],
+  "id": 41861,
+  "isPaymentActionRequired": true,
+  "lineItems": [
+    {
+      "description": "Business Summary",
+      "filingFees": 7.0,
+      "futureEffectiveFees": 0.0,
+      "gst": 0.0,
+      "id": 44464,
+      "priorityFees": 0.0,
+      "pst": 0.0,
+      "quantity": 1,
+      "serviceFees": 1.5,
+      "statusCode": "ACTIVE",
+      "total": 8.5,
+      "waivedBy": null,
+      "waivedFees": 0.0
+    }
+  ],
+  "overdueDate": "2024-12-15T08:00:00+00:00",
+  "paid": 0.0,
+  "paymentAccount": {
+    "accountId": "3137",
+    "accountName": "Kial Dev 3 (BTR test account) - Public search access",
+    "billable": true,
+    "branchName": "Public search access"
+  },
+  "paymentMethod": "DIRECT_PAY",
+  "references": [
+    {
+      "createdOn": "2024-10-25T21:19:17+00:00",
+      "id": 34456,
+      "invoiceNumber": "REGUT00041861",
+      "statusCode": "ACTIVE"
+    }
+  ],
+  "refund": 0.0,
+  "serviceFees": 1.5,
+  "statusCode": "CREATED",
+  "total": 8.5
+}

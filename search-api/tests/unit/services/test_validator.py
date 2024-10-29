@@ -71,23 +71,6 @@ def test_document_access_request_valid(client, session, jwt, requests_mock):
     assert err is None
 
 
-def test_document_access_request_invalid_basic_account(client, session, jwt, requests_mock):
-    """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
-    # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
-    token = helper_create_jwt(jwt, [authz.PPR_ROLE])
-    USERS_ORG_COPY = copy.deepcopy(USERS_ORG)
-    USERS_ORG_COPY['orgs'][0]['orgType'] = 'BASIC'
-    org = USERS_ORG_COPY['orgs'][0]
-    requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG_COPY)
-    requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}orgs/{org['id']}", json=org)
-
-    err =RequestValidator.validate_document_access_request(DOCUMENT_ACCESS_REQUEST_TEMPLATE, org['id'], token, 'basic')
-    # check
-
-    assert err[0]['error'] == 'Document Access Request can be created only by a premium account user'
-
-
 @pytest.mark.parametrize('test_name, error_message', [
     ('no_documents', 'Document list must contain atleast one document type'),
     ('invalid_document_type', 'Invalid Document Type')

@@ -139,6 +139,7 @@ def test_document_access_request_json(session):
        'id': document_access_request.id,
        'outputFileKey': None,
        'paymentStatus': 'COMPLETED',
+       'paymentToken': document_access_request.payment_token,
        'status': 'PAID',
        'submissionDate': document_access_request.submission_date.isoformat(),
        'submitter': 'firstname lastname'
