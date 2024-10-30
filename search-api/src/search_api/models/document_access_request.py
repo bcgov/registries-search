@@ -127,7 +127,7 @@ class DocumentAccessRequest(db.Model):
             'expiryDate': self.expiry_date.isoformat() if self.expiry_date else None,
             'outputFileKey': self._output_file_key,
             'submitter': self.submitter.display_name if self.submitter else None,
-            'paymentToken': self.payment_token
+            'paymentToken': self.payment_token # invoice id from the pay db
         }
 
         documents = []

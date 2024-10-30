@@ -71,15 +71,15 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
 
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             is_pad = payment_response.json().get('paymentMethod') == 'PAD'
-            today_utc = datetime.utcnow()
+            pid = payment_response.json().get('id')
+            today_utc = datetime.now()
+
+            document_access_request.payment_token = pid
             if is_pad:
                 document_access_request.status = DocumentAccessRequest.Status.PAID
                 document_access_request.payment_completion_date = today_utc
             else:
                 document_access_request.status = DocumentAccessRequest.Status.CREATED
-
-            pid = payment_response.json().get('id')
-            document_access_request.payment_token = pid
             document_access_request.payment_status_code = payment_response.json().get('statusCode', '')
             validity_in_days = current_app.config.get('DOCUMENT_REQUEST_VALIDITY_DURATION', 14)
             document_access_request.expiry_date = today_utc + relativedelta(days=validity_in_days)

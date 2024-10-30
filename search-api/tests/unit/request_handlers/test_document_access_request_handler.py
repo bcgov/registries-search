@@ -54,7 +54,7 @@ def test_create_invoice(client, session, jwt, mocker, test_name, mock_response, 
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
         account_id=123,
-        submission_date=datetime.utcnow()
+        submission_date=datetime.now()
     )
 
     document_access_request.save()
