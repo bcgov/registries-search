@@ -37,10 +37,6 @@ class RequestValidator():  # pylint: disable=too-few-public-methods
             if not account_org:
                 validation_errors.append({'error': 'Invalid Account'})
 
-            if account_org.get('orgType') != 'PREMIUM':
-                validation_errors.append({
-                    'error': 'Document Access Request can be created only by a premium account user'})
-
         documents = document_access_request_json.get('documentAccessRequest', {}).get('documents', [])
         if not documents:
             validation_errors.append({'error': 'Document list must contain atleast one document type'})

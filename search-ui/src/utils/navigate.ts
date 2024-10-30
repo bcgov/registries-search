@@ -23,3 +23,17 @@ export function navigate (url: string): boolean {
     return false
   }
 }
+
+/**
+ * Navigates to the direct payment URL (credit card payment processing)
+ */
+export const redirectToPayment = async (invoiceId: string, documentAccessRequestId: string) => {
+  const currentUrl = new URL(window.location.origin + window.location.pathname)
+  currentUrl.searchParams.append('documentAccessRequestId', documentAccessRequestId)
+  const encodedURI = encodeURIComponent(currentUrl.href)
+
+  const paymentUrl = sessionStorage.getItem('AUTH_WEB_URL') + 'makepayment'
+  const directPayUrl = paymentUrl + '/' + invoiceId + '/' + encodedURI
+
+  window.location.assign(directPayUrl)
+}

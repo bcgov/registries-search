@@ -1,0 +1,49 @@
+{
+  "_links": {
+    "collection": "/api/v1/payment-requests?invoice_id=41863",
+    "self": "/api/v1/payment-requests/41863"
+  },
+  "businessIdentifier": "FM1000026",
+  "corpTypeCode": "BUS",
+  "createdBy": "BCSC/ZGCBNHM6U7FPRXI7AJT6KFF7GSKY43TA",
+  "createdName": "BCREG2 Ayisha FIFTY",
+  "createdOn": "2024-10-25T21:22:37+00:00",
+  "details": [
+    {
+      "label": "Registration Number: ",
+      "value": "FM1000026"
+    }
+  ],
+  "id": 41863,
+  "isPaymentActionRequired": false,
+  "lineItems": [
+    {
+      "description": "Business Summary",
+      "filingFees": 7.0,
+      "futureEffectiveFees": 0.0,
+      "gst": 0.0,
+      "id": 44466,
+      "priorityFees": 0.0,
+      "pst": 0.0,
+      "quantity": 1,
+      "serviceFees": 1.5,
+      "statusCode": "ACTIVE",
+      "total": 7.0,
+      "waivedBy": null,
+      "waivedFees": 0.0
+    }
+  ],
+  "overdueDate": "2024-12-15T08:00:00+00:00",
+  "paid": 0.0,
+  "paymentAccount": {
+    "accountId": "3101",
+    "accountName": "Kial Dev 2 (BTR test account)-Director search access",
+    "billable": true,
+    "branchName": "Director search access"
+  },
+  "paymentMethod": "PAD",
+  "refund": 0.0,
+  "serviceFees": 1.5,
+  "statusCode": "APPROVED",
+  "total": 8.5
+}

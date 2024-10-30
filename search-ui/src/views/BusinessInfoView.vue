@@ -193,6 +193,7 @@ import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useDocumentAcce
 import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
 import { FeeAction, FeeI, FeeDataI, DialogOptionsI } from '@/interfaces'
 import { RegistriesInfo } from '@/resources/contact-info'
+import { redirectToPayment } from '@/utils'
 
 const props = defineProps({
   appReady: { default: false },
@@ -277,6 +278,10 @@ const payForDocuments = async () => {
     await loadFilingHistory(entity.identifier, documentAccessRequest.currentRequest.submissionDate)
     await loadAccessRequestHistory()
     router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier: entity.identifier } })
+  }
+  if (documentAccessRequest._needsPayment) {
+    const currentDar = documentAccessRequest.currentRequest
+    await redirectToPayment(currentDar.paymentToken, currentDar.id.toString())
   }
   loading.value = false
 }
@@ -435,21 +440,21 @@ const toggleFee = (event: any, item: any) => {
 
   &__label,
   &__fee {
-    color: $gray8;      
+    color: $gray8;
   }
 
-  &__label {     
+  &__label {
     width: 85%;
   }
 
-  &__fee {       
+  &__fee {
     text-align: right;
     width: 15%;
     margin-right: 5px;
   }
 }
 
-.document-list-error {  
+.document-list-error {
   border-left: solid 4px #D3272C;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;

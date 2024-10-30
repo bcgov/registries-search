@@ -23,11 +23,10 @@ from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services import queue
 from search_api.services.authz import STAFF_ROLE
-from search_api.services.validator import RequestValidator
 from search_api.services.flags import Flags
 
 from tests.unit import MockResponse
-from tests.unit.services.utils import create_header, helper_create_jwt
+from tests.unit.services.utils import create_header
 
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
@@ -233,7 +232,7 @@ def create_user():
     def _create_user(**kwargs):
         if not kwargs:
             return User()
-        
+
         return User(**kwargs)
     return _create_user
 
@@ -256,7 +255,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
     idp_userid = '123'
     iss = 'iss'
     login_source = 'API_GW'
- 
+
     mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
                  return_value=[])
     mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_role',
@@ -287,7 +286,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
         HTTPStatus.OK)
     mocker.patch('search_api.resources.v1.businesses.documents.document_request.get_business',
                  return_value=business_mock_response)
-    
+
     mock_pub = mocker.patch.object(queue, 'publish', return_value=[])
 
     # set the test data for the flag
@@ -298,7 +297,7 @@ def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, moc
                 .variations(False, True)
                 .variation_for_user(flag_user['key'], flag_value)
                 .fallthrough_variation(False))
-    
+
     # Test
     api_response = client.post(f'/api/v1/businesses/{business_identifier}/documents/requests',
                                data=json.dumps(DOCUMENT_ACCESS_REQUEST_TEMPLATE),

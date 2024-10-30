@@ -1,11 +1,17 @@
 import { reactive } from 'vue'
 
 import { DocumentType } from '@/enums'
-import { StaffPaymentIF } from '@/interfaces'
-import { AccessRequestsHistoryI, DocumentAccessRequestsI, CreateDocumentResponseI, DocumentI } from '@/interfaces'
+import {
+    AccessRequestsHistoryI,
+    CreateDocumentResponseI,
+    DocumentAccessRequestsI,
+    DocumentI,
+    StaffPaymentIF
+} from '@/interfaces'
 import { EntityI } from '@/interfaces/entity'
-import { getActiveAccessRequests, createDocumentAccessRequest, getDocument, fetchFilingDocument } from '@/requests'
-import {  Document } from '@/types'
+import { createDocumentAccessRequest, fetchFilingDocument, getActiveAccessRequests, getDocument } from '@/requests'
+import { Document } from '@/types'
+import { DocumentAccessRequestPaymentStatus } from '@/enums/document-access-request-payment-status'
 
 
 const documentAccessRequest = reactive({
@@ -14,7 +20,8 @@ const documentAccessRequest = reactive({
     _error: null,
     _loading: false,
     _saving: false,
-    _downloading: false
+    _downloading: false,
+    _needsPayment: false
 }) as DocumentAccessRequestsI
 
 export const useDocumentAccessRequest = () => {
@@ -47,24 +54,27 @@ export const useDocumentAccessRequest = () => {
             documentAccessRequest._error = response.error
         } else {
             documentAccessRequest.currentRequest = response.createDocumentResponse
-        }        
+            if(documentAccessRequest.currentRequest.paymentStatus === DocumentAccessRequestPaymentStatus.CREATED) {
+                documentAccessRequest._needsPayment = true
+            }
+        }
         documentAccessRequest._saving = false
     }
 
     const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
         documentAccessRequest._downloading = true
         documentAccessRequest._error = null
-        const response = await getDocument(businessIdentifier, document)       
+        const response = await getDocument(businessIdentifier, document)
         if (response?.error){
             documentAccessRequest._error = response.error
-        }   
+        }
         documentAccessRequest._downloading = false
     }
 
-    const downloadFilingDocument = async (businessIdentifier: string, filingId: number, document: Document) => {     
+    const downloadFilingDocument = async (businessIdentifier: string, filingId: number, document: Document) => {
         documentAccessRequest._downloading = true
         documentAccessRequest._error = null
-        const response = await fetchFilingDocument(businessIdentifier, filingId, document)      
+        const response = await fetchFilingDocument(businessIdentifier, filingId, document)
         if (response?.error){
             documentAccessRequest._error = response.error
         }
