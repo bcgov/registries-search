@@ -107,6 +107,14 @@
           :class="['document-list', 'mt-3', 'py-8', searchValidInput ? '': 'document-list-error']"
           :key="checkBoxesKey"
         >
+
+          <div v-if="paymentError.text" style="padding: 16px">
+            <error-box
+              :title="paymentError.title"
+              :error-text="paymentError.text"
+              :has-bc-reg-contact="paymentError.showBcRegContact"
+            />
+          </div>
           <v-row v-if="!pageLoaded" class="my-3" justify="center" no-gutters>
             <v-col cols="auto">
               <v-progress-circular color="primary" size="50" indeterminate />
@@ -180,20 +188,21 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref, computed } from 'vue'
+import { computed, onMounted, Ref, ref } from 'vue'
 import { useRouter } from 'vue-router'
 // bcregistry
-import { StaffPaymentIF } from '@/interfaces'
+import { DialogOptionsI, FeeAction, FeeDataI, FeeI, StaffPaymentIF } from '@/interfaces'
 // local
 import { StaffPayment } from '@/bcrs-common-components'
-import { BaseFeeCalculator, BaseDialog, ContactInfo } from '@/components'
+import { BaseDialog, BaseFeeCalculator, ContactInfo } from '@/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FilingHistory from '@/components/FilingHistory/FilingHistory.vue'
-import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useDocumentAccessRequest } from '@/composables'
-import { ActionComps, FeeCodes, FeeEntities, RouteNames, DocumentType } from '@/enums'
-import { FeeAction, FeeI, FeeDataI, DialogOptionsI } from '@/interfaces'
+import { useAuth, useDocumentAccessRequest, useEntity, useFeeCalculator, useFilingHistory } from '@/composables'
+import { ActionComps, DocumentType, FeeCodes, FeeEntities, RouteNames } from '@/enums'
 import { RegistriesInfo } from '@/resources/contact-info'
-import { redirectToPayment } from '@/utils'
+import { howManySecondsPassedTillNow, redirectToPayment } from '@/utils'
+import ErrorBox from '@/components/common/ErrorBox.vue'
+import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
 
 const props = defineProps({
   appReady: { default: false },
@@ -206,6 +215,54 @@ const loading = ref(false)
 const pageLoaded = ref(false)
 const router = useRouter()
 const validationMsg = ref('')
+
+/**
+ * Computed property that evaluates the current payment status of a document access request
+ * and sets an appropriate error message if the payment has failed.
+ *
+ * The `paymentError` will contain:
+ * - A `title` indicating the error status.
+ * - A `text` message providing details about the error.
+ * - A `showBcRegContact` flag determining whether to show contact support information.
+ *
+ * The error is identified based on two conditions:
+ * 1. The request status is `ERROR` and the payment status is `TIMED_OUT`.
+ * 2. The request status is `CREATED` and more than 10 seconds have passed since the `submissionDate`.
+ *
+ * @returns {Object} An object containing the error message and contact support flag.
+ * - `title` (string): The error title.
+ * - `text` (string): The error message text.
+ * - `showBcRegContact` (boolean): Flag indicating whether to show contact support information.
+ */
+const paymentError = computed(() => {
+  const currentDar = documentAccessRequest.currentRequest
+  if (!currentDar) {
+    return {
+      title: '',
+      text: '',
+      showBcRegContact: false
+    }
+  }
+
+  if ((currentDar.status === DocumentAccessRequestStatus.ERROR &&
+      currentDar.paymentStatus === 'TIMED_OUT') ||
+    (currentDar.status === DocumentAccessRequestStatus.CREATED &&
+      howManySecondsPassedTillNow(new Date(currentDar.submissionDate)) >= 10
+    )
+  ) {
+    return {
+      title: 'Payment failed',
+      text: 'Your payment has timed out. Please try again or contact support:',
+      showBcRegContact: true
+    }
+  }
+
+  return {
+    title: '',
+    text: '',
+    showBcRegContact: false
+  }
+})
 
 const { isStaff, isStaffSBC } = useAuth()
 const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp, warnings } = useEntity()
@@ -267,7 +324,11 @@ const payForDocuments = async () => {
   let header = { folioNumber: fees.folioNumber } as StaffPaymentIF
   if (isStaff.value) header = fees.staffPaymentData
   await createAccessRequest(selectedDocs.value, entity, header)
-  if (!documentAccessRequest._error) {
+
+  if (documentAccessRequest._needsPayment) {
+    const currentDar = documentAccessRequest.currentRequest
+    await redirectToPayment(currentDar.paymentToken, currentDar.id.toString())
+  } else if (!documentAccessRequest._error) {
     selectedDocs.value = []
     clearFees()
     // refresh checkboxes
@@ -279,10 +340,7 @@ const payForDocuments = async () => {
     await loadAccessRequestHistory()
     router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier: entity.identifier } })
   }
-  if (documentAccessRequest._needsPayment) {
-    const currentDar = documentAccessRequest.currentRequest
-    await redirectToPayment(currentDar.paymentToken, currentDar.id.toString())
-  }
+
   loading.value = false
 }
 

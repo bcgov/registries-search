@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 // External
-import { computed, onMounted, ref, watch, Ref } from 'vue'
+import { computed, onMounted, ref, Ref, watch } from 'vue'
 import * as Sentry from '@sentry/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
@@ -58,19 +58,35 @@ import { StatusCodes } from 'http-status-codes'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { LoadingScreen, SbcFooter, SbcHeader } from '@/sbc-common-components'
 // Bcrs shared components
-import { BreadcrumbIF } from '@/interfaces'
+import { BreadcrumbIF, DialogOptionsI, ErrorI } from '@/interfaces'
 // Local
 import { ErrorCategories, ErrorCodes, ProductCode, RouteNames } from '@/enums'
-import { DialogOptionsI, ErrorI } from '@/interfaces'
 import { BcrsBreadcrumb } from '@/bcrs-common-components'
 import { BaseDialog, EntityInfo } from '@/components'
-import { useAuth, useEntity, useFeeCalculator, useFilingHistory, useSearch, useSuggest,
-  useDocumentAccessRequest } from '@/composables'
-import { AuthAccessError, DefaultError, EntityLoadError, PayDefaultError, PayBcolError,
-  PayPadError, ReportError } from '@/resources/error-dialog-options'
+import {
+  useAuth,
+  useDocumentAccessRequest,
+  useEntity,
+  useFeeCalculator,
+  useFilingHistory,
+  useSearch,
+  useSuggest
+} from '@/composables'
+import {
+  AuthAccessError,
+  DefaultError,
+  EntityLoadError,
+  PayBcolError,
+  PayDefaultError,
+  PayPadError,
+  ReportError
+} from '@/resources/error-dialog-options'
 import { HelpdeskInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
+import { getDocumentAccessRequestsById } from '@/requests'
+import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
+import { PaymentCancelledError } from '@/resources/error-dialog-options/payment-canceled'
 
 const aboutText: string = 'Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)
@@ -89,7 +105,7 @@ const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
 const { search } = useSearch()
 const { suggest } = useSuggest()
-const { documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
+const { cancelAccessRequest, documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -149,14 +165,41 @@ onMounted(async () => {
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
     }
-    const loadedHistory = loadAccessRequestHistory()
+
     if (route.query?.identifier) {
       router.push({
         name: RouteNames.BUSINESS_INFO,
         params: { identifier: route.query?.identifier }
       })
+    } else if (route.query?.documentAccessRequestId) {
+      const darId = Number(route.query?.documentAccessRequestId)
+      let currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
+      const x = JSON.stringify(currentDar)
+      currentDar = JSON.parse(x)
+
+      if (currentDar?.status === DocumentAccessRequestStatus.CREATED &&
+        route.query?.status === 'UEFZTUVOVF9DQU5DRUxMRUQ=' // this is PAYMENT_CANCELLED
+      ) {
+        await cancelAccessRequest(entity, currentDar.id)
+        currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
+      } else if (currentDar?.status === DocumentAccessRequestStatus.CREATED) {
+        // wait 10 seconds to see if the document gets into the paid state
+        for (let i = 0; i < 10; i++) {
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
+          if (currentDar.status !== DocumentAccessRequestStatus.CREATED) {
+            break
+          }
+        }
+      }
+
+      if (currentDar?.status === DocumentAccessRequestStatus.COMPLETED) {
+        router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { darId } })
+      }
+
+      documentAccessRequest.currentRequest = currentDar
     } else if (route.query?.docAccessId) {
-      await loadedHistory
+      await loadAccessRequestHistory()
       documentAccessRequest.currentRequest = documentAccessRequest.requests
         .find(request => request.id === Number(route.query?.docAccessId))
       if (documentAccessRequest.currentRequest) {
@@ -258,7 +301,13 @@ const handleError = (error: ErrorI) => {
       Sentry.captureException(error)
       break
     case ErrorCategories.SEARCH_UNAVAILABLE:
+    case ErrorCategories.DOCUMENT_ACCESS_PAYMENT_ERROR:
       // handled inline and no error msg needed
+      break
+    case ErrorCategories.DOCUMENT_ACCESS_PAYMENT_CANCELLED:
+      errorInfo.value = {...PaymentCancelledError}
+      errorContactInfo.value = false
+      errorDisplay.value = true
       break
     default:
       errorInfo.value = {...DefaultError}

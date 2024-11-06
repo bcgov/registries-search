@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-import { DocumentType } from '@/enums'
+import { DocumentType, ErrorCategories } from '@/enums'
 import {
     AccessRequestsHistoryI,
     CreateDocumentResponseI,
@@ -9,9 +9,16 @@ import {
     StaffPaymentIF
 } from '@/interfaces'
 import { EntityI } from '@/interfaces/entity'
-import { createDocumentAccessRequest, fetchFilingDocument, getActiveAccessRequests, getDocument } from '@/requests'
+import {
+    cancelDocumentAccessRequestById,
+    createDocumentAccessRequest,
+    fetchFilingDocument,
+    getActiveAccessRequests,
+    getDocument,
+    getDocumentAccessRequestsById
+} from '@/requests'
 import { Document } from '@/types'
-import { DocumentAccessRequestPaymentStatus } from '@/enums/document-access-request-payment-status'
+import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
 
 
 const documentAccessRequest = reactive({
@@ -45,6 +52,18 @@ export const useDocumentAccessRequest = () => {
         documentAccessRequest._loading = false
     }
 
+    const getAccessRequestById = async (documentAccessRequestId: number) => {
+        documentAccessRequest._loading = true
+        clearAccessRequestHistory()
+        const accessRequestsResponse: AccessRequestsHistoryI
+          = await getDocumentAccessRequestsById(documentAccessRequestId)
+        if (accessRequestsResponse.error) {
+            documentAccessRequest._error = accessRequestsResponse.error
+        } else {
+            documentAccessRequest.currentRequest = accessRequestsResponse.documentAccessRequest
+        }
+        documentAccessRequest._loading = false
+    }
     const createAccessRequest = async (selectedDocs: DocumentType[], entity: EntityI, header: StaffPaymentIF) => {
         documentAccessRequest._saving = true
         documentAccessRequest._error = null
@@ -54,11 +73,33 @@ export const useDocumentAccessRequest = () => {
             documentAccessRequest._error = response.error
         } else {
             documentAccessRequest.currentRequest = response.createDocumentResponse
-            if(documentAccessRequest.currentRequest.paymentStatus === DocumentAccessRequestPaymentStatus.CREATED) {
+            if(documentAccessRequest.currentRequest.status === DocumentAccessRequestStatus.CREATED) {
                 documentAccessRequest._needsPayment = true
             }
         }
         documentAccessRequest._saving = false
+    }
+
+    const cancelAccessRequest = async (entity: EntityI, darId: number) => {
+        documentAccessRequest._saving = true
+        documentAccessRequest._error = null
+        const response
+          = await cancelDocumentAccessRequestById(entity.identifier, darId)
+        if (response.error) {
+            documentAccessRequest._error = response.error
+        } else {
+            documentAccessRequest._needsPayment = false
+        }
+        documentAccessRequest._saving = false
+        // show payment canceled dialog
+        documentAccessRequest._error = {
+            category: ErrorCategories.DOCUMENT_ACCESS_PAYMENT_CANCELLED,
+            detail: 'not used',
+            message: 'not used',
+            statusCode: null,
+            type: null
+        }
+        return
     }
 
     const downloadDocument = async (businessIdentifier: string, document: DocumentI) => {
@@ -83,9 +124,11 @@ export const useDocumentAccessRequest = () => {
 
     return {
         documentAccessRequest,
+        cancelAccessRequest,
         clearAccessRequestHistory,
         createAccessRequest,
         loadAccessRequestHistory,
+        getAccessRequestById,
         downloadDocument,
         downloadFilingDocument
     }

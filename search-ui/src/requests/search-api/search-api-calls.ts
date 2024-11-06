@@ -124,10 +124,10 @@ export async function createDocumentAccessRequest(
 
   headerInfo.waiveFees = headerInfo.option === StaffPaymentOptions.NO_FEE
 
-  const createRequest = {  
+  const createRequest = {
     header: headerInfo,
-    business:{ 
-      businessName: business_name, 
+    business:{
+      businessName: business_name,
     },
     documentAccessRequest: {
       documents: docs
@@ -152,7 +152,6 @@ export async function createDocumentAccessRequest(
     })
 }
 
-
 export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI> {
   const config = getSearchConfig()
   return axios.get<AccessRequestsHistoryI>(`purchases`,
@@ -167,6 +166,45 @@ export async function getActiveAccessRequests(): Promise<AccessRequestsHistoryI>
       return {
         error: parseGatewayError(
           ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
+      }
+    })
+}
+
+export async function getDocumentAccessRequestsById (documentAccessRequestId: number): Promise<AccessRequestsHistoryI> {
+  const config = getSearchConfig()
+  return axios.get<AccessRequestsHistoryI>(`purchases/${documentAccessRequestId}`, config)
+    .then(response => {
+      const data: AccessRequestsHistoryI = response?.data
+      if (!data) {
+        throw new Error('Invalid API response')
+      }
+      return data
+    }).catch(error => {
+      return {
+        error: parseGatewayError(
+          ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          error
+        )
+      }
+    })
+}
+
+export async function cancelDocumentAccessRequestById(
+  business_identifier: string,
+  darId: number
+): Promise<CreateDocumentResponseI> {
+  const config = getSearchConfig()
+  return axios.delete<DocumentDetailsI>(`businesses/${business_identifier}/documents/requests/${darId}`, config)
+    .then(() => {
+      return {}
+    }).catch(error => {
+      return {
+        error: parseGatewayError(
+          ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE,
           StatusCodes.INTERNAL_SERVER_ERROR,
           error
         )
@@ -211,9 +249,9 @@ export async function getDocument(businessIdentifier: string, document: Document
 
 /**
  * Fetches the list of documents belonging to a particular filing
- * 
+ *
  * @param businessIdentifier  - The business identifier
- * @param filingId - filing Id 
+ * @param filingId - filing Id
  * @returns List of documents applicable for the specified filing
  */
 export const fetchDocumentList = async (businessIdentifier: string, filingId: number): Promise<ApiDocuments> => {
