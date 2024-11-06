@@ -131,3 +131,28 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
     except Exception as default_exception:   # noqa: B902
         current_app.logger.error(default_exception.with_traceback(None))
         return resource_utils.default_exception_response(default_exception)
+
+
+@bp.delete('/<int:request_id>')
+@cross_origin(origin='*')
+@jwt.requires_auth
+def cancel_request(business_identifier, request_id):
+    """Cancel document access request by id if it is in state created."""
+    try:
+        account_id = request.headers.get('Account-Id', None)
+        if not account_id:
+            return resource_utils.account_required_response()
+
+        access_request = DocumentAccessRequest.find_by_id(request_id)
+
+        if not access_request or access_request.business_identifier != business_identifier:
+            return resource_utils.not_found_error_response('Document Access Request', request_id)
+        if str(access_request.account_id) != account_id:
+            return resource_utils.unauthorized_error_response(account_id)
+
+        access_request.cancel()
+
+        return {}, HTTPStatus.OK
+
+    except Exception as default_exception:  # noqa: B902
+        return resource_utils.default_exception_response(default_exception)

@@ -47,12 +47,16 @@ def gcp_listener():
         credit_card_payment = ce.data
         if credit_card_payment.get('corpTypeCode', '') != 'BUS':
             raise Exception('invalid or missing corpTypeCode.')  # noqa: E713 # pylint: disable=broad-exception-raised
-        dar = DocumentAccessRequest.find_by_id(credit_card_payment['id'])
-        if not dar:
+        payment_id = credit_card_payment['id']
+
+        dars = DocumentAccessRequest.find_by_payment_token(str(payment_id))
+
+        if dars is None:
             raise DbRecordNotFoundException()
 
-        dar.status = credit_card_payment['statusCode']
-        dar.save()
+        for dar in dars:
+            dar.status = credit_card_payment['statusCode']
+            dar.save()
 
         return {}, HTTPStatus.OK
     except Exception:  # noqa pylint: disable=broad-except

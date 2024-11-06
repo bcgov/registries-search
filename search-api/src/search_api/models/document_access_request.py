@@ -17,6 +17,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import auto
 from http import HTTPStatus
+from typing import List
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -47,7 +48,7 @@ class DocumentAccessRequest(db.Model):
     status = db.Column('status', db.Enum(Status), default=Status.CREATED)
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
-    _payment_token = db.Column('payment_id', db.String(4096))
+    _payment_token = db.Column('payment_id', db.String(4096), index=True)
     _payment_completion_date = db.Column('payment_completion_date', db.DateTime(timezone=True))
     submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime(timezone=True))
@@ -158,12 +159,35 @@ class DocumentAccessRequest(db.Model):
         """Return a request having the specified id."""
         return cls.query.filter_by(id=request_id).one_or_none()
 
+    @classmethod
+    def find_by_payment_token(cls, payment_id: str) -> List[DocumentAccessRequest]:
+        """Return a list of requests having the specified payment_id."""
+        return cls.query.filter_by(_payment_token=payment_id).all()
+
     @staticmethod
     def _raise_default_lock_exception():
         raise BusinessException(
             error='Request cannot be modified after the invoice is created.',
             status_code=HTTPStatus.FORBIDDEN
         )
+
+    def cancel(self):
+        """
+        Cancels the current payment request if it is in the CREATED state.
+
+        Raises a BusinessException with an error and the HTTP status FORBIDDEN
+        if the payment request is not in the CREATED state.
+        Sets the status to ERROR and updates the payment status code to 'PAYMENT_CANCELLED'.
+        Saves the current state of the request.
+        """
+        if self.status != self.Status.CREATED:
+            raise BusinessException(
+                error='Payment can be only cancelled if in state created.',
+                status_code=HTTPStatus.FORBIDDEN
+            )
+        self.status = DocumentAccessRequest.status = self.Status.ERROR
+        self._payment_status_code = 'PAYMENT_CANCELLED'
+        self.save()
 
     def save(self):
         """Store the request into the db."""

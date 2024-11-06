@@ -66,9 +66,13 @@ class SolrException(BaseExceptionE):
 class DbRecordNotFoundException(BaseExceptionE):
     """Row not found in database."""
 
-    def __init__(self):
+    def __init__(self, message=None):
         """Return a valid Record Not Found Exception."""
-        self.message = 'DB record not found'
+        if message is None:
+            self.message = 'DB record not found'
+        else:
+            self.message = message
+
         self.status_code = HTTPStatus.NOT_FOUND
         super().__init__()
 
