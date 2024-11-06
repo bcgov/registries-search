@@ -173,12 +173,10 @@ class DocumentAccessRequest(db.Model):
 
     def cancel(self):
         """
-        Cancels the current payment request if it is in the CREATED state.
+        Cancel the current payment request if it is in the CREATED state.
 
         Raises a BusinessException with an error and the HTTP status FORBIDDEN
         if the payment request is not in the CREATED state.
-        Sets the status to ERROR and updates the payment status code to 'PAYMENT_CANCELLED'.
-        Saves the current state of the request.
         """
         if self.status != self.Status.CREATED:
             raise BusinessException(
