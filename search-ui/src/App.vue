@@ -84,7 +84,6 @@ import {
 import { HelpdeskInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
-import { getDocumentAccessRequestsById } from '@/requests'
 import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
 import { PaymentCancelledError } from '@/resources/error-dialog-options/payment-canceled'
 
@@ -105,7 +104,8 @@ const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
 const { search } = useSearch()
 const { suggest } = useSuggest()
-const { cancelAccessRequest, documentAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
+const { cancelAccessRequest, documentAccessRequest, loadAccessRequestHistory, getAccessRequestById }
+  = useDocumentAccessRequest()
 
 /** True if Jest is running the code. */
 const isJestRunning = computed((): boolean => {
@@ -165,7 +165,7 @@ onMounted(async () => {
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
     }
-
+    const loadedHistory = loadAccessRequestHistory()
     if (route.query?.identifier) {
       router.push({
         name: RouteNames.BUSINESS_INFO,
@@ -173,20 +173,18 @@ onMounted(async () => {
       })
     } else if (route.query?.documentAccessRequestId) {
       const darId = Number(route.query?.documentAccessRequestId)
-      let currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
-      const x = JSON.stringify(currentDar)
-      currentDar = JSON.parse(x)
+      let currentDar = await getAccessRequestById(darId)
 
       if (currentDar?.status === DocumentAccessRequestStatus.CREATED &&
         route.query?.status === 'UEFZTUVOVF9DQU5DRUxMRUQ=' // this is PAYMENT_CANCELLED
       ) {
         await cancelAccessRequest(entity, currentDar.id)
-        currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
+        currentDar =  await getAccessRequestById(darId)
       } else if (currentDar?.status === DocumentAccessRequestStatus.CREATED) {
         // wait 10 seconds to see if the document gets into the paid state
         for (let i = 0; i < 10; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000))
-          currentDar = (await getDocumentAccessRequestsById(darId)).documentAccessRequest
+          currentDar =  await getAccessRequestById(darId)
           if (currentDar.status !== DocumentAccessRequestStatus.CREATED) {
             break
           }
@@ -199,7 +197,7 @@ onMounted(async () => {
 
       documentAccessRequest.currentRequest = currentDar
     } else if (route.query?.docAccessId) {
-      await loadAccessRequestHistory()
+      await loadedHistory
       documentAccessRequest.currentRequest = documentAccessRequest.requests
         .find(request => request.id === Number(route.query?.docAccessId))
       if (documentAccessRequest.currentRequest) {

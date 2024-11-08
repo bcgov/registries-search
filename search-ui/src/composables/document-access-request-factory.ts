@@ -57,13 +57,13 @@ export const useDocumentAccessRequest = () => {
         clearAccessRequestHistory()
         const accessRequestsResponse: AccessRequestsHistoryI
           = await getDocumentAccessRequestsById(documentAccessRequestId)
-        if (accessRequestsResponse.error) {
+        if (!accessRequestsResponse || accessRequestsResponse.error) {
             documentAccessRequest._error = accessRequestsResponse.error
-        } else {
-            documentAccessRequest.currentRequest = accessRequestsResponse.documentAccessRequest
         }
         documentAccessRequest._loading = false
+        return accessRequestsResponse?.documentAccessRequest || undefined
     }
+
     const createAccessRequest = async (selectedDocs: DocumentType[], entity: EntityI, header: StaffPaymentIF) => {
         documentAccessRequest._saving = true
         documentAccessRequest._error = null
