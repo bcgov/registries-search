@@ -75,6 +75,7 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
             today_utc = datetime.now()
 
             document_access_request.payment_token = pid
+            document_access_request.submission_date = today_utc
             if is_pad:
                 document_access_request.status = DocumentAccessRequest.Status.PAID
                 document_access_request.payment_completion_date = today_utc

@@ -147,3 +147,12 @@ export function isEffectiveDateFuture(effectiveDate: Date): boolean {
   return (effectiveDate > new Date())
 }
 
+export function howManySecondsPassedTillNow(beforeDate: Date) {
+  const currentDate = new Date()
+  const currentIsoDate = new Date(currentDate.toISOString())
+  return howManySecondsPassed(beforeDate, currentIsoDate)
+}
+
+export function howManySecondsPassed (beforeDate: Date, afterDate: Date): number {
+  return (afterDate.getTime() - beforeDate.getTime()) / 1000
+}
