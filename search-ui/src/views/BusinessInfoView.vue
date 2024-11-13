@@ -107,8 +107,7 @@
           :class="['document-list', 'mt-3', 'py-8', searchValidInput ? '': 'document-list-error']"
           :key="checkBoxesKey"
         >
-
-          <div v-if="paymentError.text" style="padding: 16px">
+          <div v-if="paymentError.text" class="payment-error" >
             <error-box
               :title="paymentError.title"
               :error-text="paymentError.text"
@@ -120,7 +119,7 @@
               <v-progress-circular color="primary" size="50" indeterminate />
             </v-col>
           </v-row>
-          <div v-else class="pl-3 pr-5">
+          <div v-else class="pl-3 pr-5 doc-list-container">
             <div v-for="item, i in purchasableDocs" :key="`${item.label}-${i}`" no-gutters class="document-row">
               <div class="document-list__label">
                 <div>
@@ -626,5 +625,14 @@ const toggleFee = (event: any, item: any) => {
 
 .warnings-count {
   color: #868e96
+}
+
+.payment-error {
+  padding: 0 30px 30px;
+}
+
+.doc-list-container {
+  margin-left: 16px;
+  margin-right: 16px;
 }
 </style>

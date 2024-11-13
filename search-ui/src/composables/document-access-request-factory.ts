@@ -59,6 +59,8 @@ export const useDocumentAccessRequest = () => {
           = await getDocumentAccessRequestsById(documentAccessRequestId)
         if (!accessRequestsResponse || accessRequestsResponse.error) {
             documentAccessRequest._error = accessRequestsResponse.error
+        } else {
+            documentAccessRequest._error = undefined
         }
         documentAccessRequest._loading = false
         return accessRequestsResponse?.documentAccessRequest || undefined
