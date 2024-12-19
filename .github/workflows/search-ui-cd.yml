@@ -13,14 +13,17 @@ on:
         required: true
         type: choice
         options:
-          - dev
-          - test
-          - sandbox
-          - prod
-      tagname:
-        description: "Specify a previous version (git tag) to deploy"
-        required: false
-        default: ""
+          - "dev"
+          - "test"
+          - "sandbox"
+          - "prod"
+      redeploy:
+        description: "Redeploy Application"
+        required: true
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
   search-ui-cd:
@@ -30,6 +33,7 @@ jobs:
       node_version: "18.16.0"
       app_name: "registries-search-ui"
       working_directory: "search-ui"
+      redeploy: ${{ inputs.redeploy }}
     secrets:
       WORKLOAD_IDENTIFY_POOLS_PROVIDER: ${{ secrets.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
