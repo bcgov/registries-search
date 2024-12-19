@@ -62,7 +62,7 @@
     },
     "tabs": {
       "findBusinessPerson": "Find a business or person",
-      "viewPurchasedDocuments": "View recently purchased documents"
+      "viewPurchasedDocuments": "View documents"
     }
   },
   "text": {
@@ -80,7 +80,8 @@
     "docAccess": {
       "errorRetry": "We were unable to retrieve your recent purchases. Please try again later.",
       "noResults": "No purchases in the last 14 days",
-      "tableInfo": "This table will display up to 1000 of the most recent document purchases in the last 14 days."
+      "tryAgain": "Try Again",
+      "tableInfo": "This table will display up to 1000 of the most recent document activity in the last 14 days."
     },
     "search": {
       "business": {

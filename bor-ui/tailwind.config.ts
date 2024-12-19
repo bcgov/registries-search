@@ -2,6 +2,7 @@ import type { Config } from 'tailwindcss'
 
 export default <Partial<Config>>{
   // content: ['./src/*.{html,ts,js,vue}'],
+  content: [],
   theme: {
     extend: {
       boxShadow: {
@@ -66,6 +67,12 @@ export default <Partial<Config>>{
           800: '#933e0d',
           900: '#79340e',
           950: '#451903'
+        },
+        green: {
+          success: '#2E7D32'
+        },
+        grey: {
+          550: '#e2e8ee'
         }
       }
     }

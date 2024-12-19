@@ -22,7 +22,7 @@ context('Document Access History Table', () => {
     cy.get('[data-cy="search-tabs"]').find('button[role=tab]').eq(1).click()
     cy.get('[data-cy="search-docAccess"]').should('be.visible')
     cy.get('[data-cy="search-docAccess-info"]').should(
-      'have.text', 'This table will display up to 1000 of the most recent document purchases in the last 14 days.')
+      'have.text', 'This table will display up to 1000 of the most recent document activity in the last 14 days.')
     cy.fixture('purchases.json').then((purchasesResponse) => {
       const results: DocAccessI[] = purchasesResponse.documentAccessRequests
       const totalResults = results.length

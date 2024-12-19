@@ -124,13 +124,13 @@ const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
 const { hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
 const { searchType } = storeToRefs(useBcrosSearch())
+const { t } = useNuxtApp().$i18n
 
 const tabs = [
-  { slot: 'search', label: 'Find a business or person', icon: 'i-mdi-magnify' },
-  { slot: 'documents', label: 'View recently purchased documents', icon: 'i-mdi-file-document-outline' }
+  { slot: 'search', label: t('label.tabs.findBusinessPerson'), icon: 'i-mdi-magnify' },
+  { slot: 'documents', label: t('label.tabs.viewPurchasedDocuments'), icon: 'i-mdi-file-document-outline' }
 ]
 
-const { t } = useNuxtApp().$i18n
 const searchTitleText = t('appHeader')
 
 const bcOnlineURL = useRuntimeConfig().public.bcolURL

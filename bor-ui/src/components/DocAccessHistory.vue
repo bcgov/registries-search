@@ -33,15 +33,34 @@
           <li v-for="(document, index) in item.documents" :key="index" class="doc-list-item">
             <span>{{ documentDescription(document.documentType) }}</span>
           </li>
+          <li>
+            <BaseBadge
+              :color="colorForStatus(item.status)"
+              :text="textForStatus(item.status)"
+              :text-color="textColorForStatus(item.status)"
+            />
+          </li>
         </ul>
       </template>
       <template #item-slot-action="{ item } : { item: DocAccessI }">
         <UButton
           class="px-7 py-2"
           color="primary"
-          :label="t('label.docAccess.viewDocuments')"
-          @click="goToOpenDocAccess(item)"
-        />
+          :disabled="item.status.toLowerCase().indexOf('pending') !== -1"
+          @click="actionButton(item)"
+        >
+          <span
+            v-if="item.status.toLowerCase().indexOf('pending') === -1"
+          >
+            {{ buttonTextForStatus(item.status) }}
+          </span>
+          <UIcon
+            v-if="item.status.toLowerCase().indexOf('pending') !== -1"
+            class="text-3xl animate-spin"
+            name="i-mdi-loading"
+            data-cy="loading-icon"
+          />
+        </UButton>
       </template>
       <template v-if="docAccessErrors.length > 0" #body-empty>
         <bcros-error-retry
@@ -67,6 +86,63 @@ const resetFiltersTrigger = ref(false)
 
 const documentDescription = (type: DocAccessTypeE): string => {
   return t(`label.docAccess.${type}`)
+}
+
+const buttonTextForStatus = (status: string): string => {
+  if ((status.toLowerCase().indexOf('paid') === 0) ||
+    (status.toLowerCase().indexOf('completed') === 0)
+  ) {
+    return t('label.docAccess.viewDocuments')
+  } else if (status.toLowerCase().indexOf('error') === 0) {
+    return t('text.docAccess.tryAgain')
+  }
+  return ''
+}
+
+const colorForStatus = (status: string): string => {
+  if ((status.toLowerCase().indexOf('paid') === 0) ||
+    (status.toLowerCase().indexOf('completed') === 0)
+  ) {
+    return 'green-success'
+  } else if (status.toLowerCase().indexOf('pending') === 0) {
+    return 'grey-550'
+  } else if (status.toLowerCase().indexOf('error') === 0) {
+    return 'red-600'
+  }
+  return 'grey-550'
+}
+
+const textForStatus = (status: string): string => {
+  if ((status.toLowerCase().indexOf('paid') === 0) ||
+    (status.toLowerCase().indexOf('completed') === 0)
+  ) {
+    return 'PAID'
+  } else if (status.toLowerCase().indexOf('pending') === 0) {
+    return 'PAYMENT PENDING'
+  } else if (status.toLowerCase().indexOf('error') === 0) {
+    return 'PATMENT FAILED'
+  }
+}
+
+const actionButton = (item: DocAccessI) => {
+  if ((status.toLowerCase().indexOf('paid') === 0) ||
+    (status.toLowerCase().indexOf('completed') === 0)
+  ) {
+    goToOpenDocAccess(item)
+  } else if (item.status.toLowerCase().indexOf('error') === 0) {
+    const identifier = item.businessIdentifier
+
+    // NOTE This is obviously not the legal type, but we don't have legal type
+    // and you can't get an item in this list unless it's modernized
+    goToOpenBusiness(identifier, BusinessTypeE.BENEFIT_COMPANY)
+  }
+}
+
+const textColorForStatus = (status: string): string => {
+  if (status.toLowerCase().indexOf('pending') === 0) {
+    return 'black'
+  }
+  return 'white'
 }
 
 onMounted(() => { docAccess.loadDocAccessHistory() })
