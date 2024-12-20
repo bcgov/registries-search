@@ -76,5 +76,8 @@ export default <Partial<Config>>{
         }
       }
     }
-  }
+  },
+  safelist: [{
+    pattern: /(bg|text|border)-(green|grey)*/
+  }]
 }
