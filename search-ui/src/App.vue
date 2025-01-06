@@ -302,11 +302,6 @@ const handleError = (error: ErrorI) => {
     case ErrorCategories.DOCUMENT_ACCESS_PAYMENT_ERROR:
       // handled inline and no error msg needed
       break
-    case ErrorCategories.DOCUMENT_ACCESS_PAYMENT_CANCELLED:
-      errorInfo.value = {...PaymentCancelledError}
-      errorContactInfo.value = false
-      errorDisplay.value = true
-      break
     default:
       errorInfo.value = {...DefaultError}
       errorContactInfo.value = true

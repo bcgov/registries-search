@@ -4,7 +4,6 @@ export enum ErrorCategories {
   DOCUMENT_ACCESS_REQUEST_CREATE = 'document-access-request-create',
   DOCUMENT_ACCESS_REQUEST_HISTORY = 'document-access-request-history',
   DOCUMENT_ACCESS_PAYMENT_ERROR = 'document-access-request-payment-error',
-  DOCUMENT_ACCESS_PAYMENT_CANCELLED = 'document-access-request-payment-cancelled',
   ENTITY_BASIC = 'entity-basic',
   ENTITY_FILINGS = 'entity-filings',
   FEE_INFO = 'fee-info',
