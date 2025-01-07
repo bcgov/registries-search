@@ -93,14 +93,6 @@ export const useDocumentAccessRequest = () => {
             documentAccessRequest._needsPayment = false
         }
         documentAccessRequest._saving = false
-        // show payment canceled dialog
-        documentAccessRequest._error = {
-            category: ErrorCategories.DOCUMENT_ACCESS_PAYMENT_CANCELLED,
-            detail: 'not used',
-            message: 'not used',
-            statusCode: null,
-            type: null
-        }
         return
     }
 
