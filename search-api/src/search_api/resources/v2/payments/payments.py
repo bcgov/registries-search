@@ -18,6 +18,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, current_app, request
 from flask_cors import cross_origin
+from datetime import datetime, timezone
 
 from search_api.exceptions import DbRecordNotFoundException
 from search_api.models import DocumentAccessRequest
@@ -56,8 +57,13 @@ def gcp_listener():
 
         for dar in dars:
             dar.status = credit_card_payment['statusCode']
+            if dar.status == 'COMPLETED':
+                if ce.time is not None:
+                    dar.payment_completion_date = str(ce.time)
+                else:
+                    dar.payment_completion_date = datetime.now(timezone.utc)
+                dar.payment_status_code = 'APPROVED'
             dar.save()
-
         return {}, HTTPStatus.OK
     except Exception:  # noqa pylint: disable=broad-except
         # Catch Exception so that any error is still caught and the message is removed from the queue
