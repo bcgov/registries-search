@@ -15,10 +15,10 @@
 import dataclasses
 import json
 from http import HTTPStatus
+from datetime import datetime, timezone
 
 from flask import Blueprint, current_app, request
 from flask_cors import cross_origin
-from datetime import datetime, timezone
 
 from search_api.exceptions import DbRecordNotFoundException
 from search_api.models import DocumentAccessRequest

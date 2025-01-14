@@ -71,7 +71,7 @@ class DocumentAccessRequest(db.Model):
 
     @payment_status_code.setter
     def payment_status_code(self, error_type: str):
-        if self.locked and not self._payment_status_code == 'CREATED':
+        if self.locked and self._payment_status_code != 'CREATED':
             self._raise_default_lock_exception()
         self._payment_status_code = error_type
 
