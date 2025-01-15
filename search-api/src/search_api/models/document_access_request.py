@@ -71,7 +71,7 @@ class DocumentAccessRequest(db.Model):
 
     @payment_status_code.setter
     def payment_status_code(self, error_type: str):
-        if self.locked:
+        if self.locked and self._payment_status_code != 'CREATED':
             self._raise_default_lock_exception()
         self._payment_status_code = error_type
 
@@ -183,7 +183,7 @@ class DocumentAccessRequest(db.Model):
                 error='Payment can be only cancelled if in state created.',
                 status_code=HTTPStatus.FORBIDDEN
             )
-        self.status = DocumentAccessRequest.status = self.Status.ERROR
+        self.status = self.Status.ERROR
         self._payment_status_code = 'PAYMENT_CANCELLED'
         self.save()
 
