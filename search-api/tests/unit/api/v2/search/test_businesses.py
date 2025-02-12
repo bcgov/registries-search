@@ -262,6 +262,7 @@ def test_businesses_solr_mock(app, session, client, requests_mock, test_name, qu
      [{'bn': '00987766800988', 'goodStanding': False, 'identifier': 'BC0004567', 'legalType': 'BEN', 'name': 'business four 4', 'status': 'ACTIVE'}]
     ),
     ('test_basic_no_match', {'value': 'zzz no match here qljrb'}, {},[]),
+    ('test_basic_name_space', {'value': ' '}, {}, []),
     ('test_filters_name',
      {'value': 'business', BusinessField.NAME.value: 'three'},
      {},

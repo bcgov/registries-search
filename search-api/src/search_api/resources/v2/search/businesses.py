@@ -39,9 +39,8 @@ def businesses():
             return resource_utils.bad_request_response('Errors processing request.', errors)
         # set base query params
         query_json: dict = request_json.get('query', {})
-        value = query_json.get('value', None)
         query = {
-            'value': prep_query_str(value, True),
+            'value': prep_query_str(query_json['value'], True),
             BusinessField.NAME_SINGLE.value: prep_query_str(query_json.get(BusinessField.NAME.value, '')),
             BusinessField.IDENTIFIER_Q.value: prep_query_str(query_json.get(BusinessField.IDENTIFIER.value, '')),
             BusinessField.BN_Q.value: prep_query_str(query_json.get(BusinessField.BN.value, ''))

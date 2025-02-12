@@ -30,8 +30,9 @@ def parties_search(params: QueryParams, solr: BusinessSolr):
     # boosts for term order result ordering
     initial_queries['query'] += f' OR ({PartyField.PARTY_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"].split()[0]}"^2)'
-
+    if params.query['value']:
+        initial_queries['query'] += \
+            f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"].split()[0]}"^2)'
     # add defaults
     solr_payload = {
         **initial_queries,

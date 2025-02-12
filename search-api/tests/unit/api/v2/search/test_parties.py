@@ -133,6 +133,7 @@ def test_parties_solr_mock(app, session, client, requests_mock, test_name, query
      [{'parentIdentifier': 'FM0004018', 'parentLegalType': 'GP', 'parentName': 'firm eleven 11 periods y.z. xk', 'parentStatus': 'ACTIVE', 'partyName': 'organization two y.z. xk', 'partyRoles': ['partner'], 'partyType': 'organization'}]
     ),
     ('test_basic_no_match', {'value': 'zzz no match here qljrb'}, {PartyField.PARTY_ROLE.value: ['partner','proprietor']},[]),
+    ('test_basic_name_space', {'value': ' '}, {PartyField.PARTY_ROLE.value: ['partner','proprietor']},[]),
     ('test_filters_name',
      {'value': 'person', PartyField.PARENT_NAME.value: 'nine'},
      {PartyField.PARTY_ROLE.value: ['partner','proprietor']},

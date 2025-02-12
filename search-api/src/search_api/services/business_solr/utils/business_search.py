@@ -31,7 +31,6 @@ def business_search(params: QueryParams, solr: BusinessSolr):
     initial_queries['query'] += f' OR ({BusinessField.NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({BusinessField.NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
     initial_queries['query'] += f' OR ({BusinessField.IDENTIFIER_Q_EDGE.value}:"{params.query["value"]}"^5)'
-    print(initial_queries['query'])
 
     # add defaults
     solr_payload = {
