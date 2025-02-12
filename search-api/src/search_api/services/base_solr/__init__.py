@@ -131,10 +131,6 @@ class Solr:
                 status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:  # noqa B902
             current_app.logger.debug(err.with_traceback(None))
-            current_app.logger.debug(err)
-            current_app.logger.debug(response)
-            current_app.logger.debug(response.status_code)
-            current_app.logger.debug(response.json())
             msg = 'Error handling Solr request.'
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):

@@ -121,6 +121,10 @@ class QueryBuilder:
             for term in terms:
                 filters.append(self.create_clause(key, term))
 
+        if not query_clause:
+            # handle empty string provided for query value
+            query_clause = '""'
+
         return {'query': query_clause, 'filter': filters}
 
     @staticmethod
