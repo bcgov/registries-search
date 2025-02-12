@@ -464,6 +464,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ),
     ('test_basic_rel_email_no_match', {'value': 'person xyz@email.com'}, {}, []),
     ('test_basic_no_match', {'value': 'zzz no match here qljrb'}, {},[]),
+    ('test_basic_empty_space', {'value': ' '}, {},[]),
     ('test_filters_business',
      {'value': 'test', EntityField.LEGAL_NAME.value: 'test 1234', EntityField.IDENTIFIER.value: 'CP123', EntityField.BN.value: 'BN00'},
      {},

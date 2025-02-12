@@ -66,6 +66,9 @@ def test_find_synonym_terms(session, test_name, term: str, term_index: int, term
     ('test_basic',
      {'query': {'value':'name'}, 'fields': {EntityField.LEGAL_NAME_Q: 'parent'}, 'boost': {}, 'fuzzy': {}},
      {'query': f'({EntityField.LEGAL_NAME_Q.value}:name)', 'filter': []}),
+    ('test_basic_empty_string_value',
+     {'query': {'value':''}, 'fields': {EntityField.LEGAL_NAME_Q: 'parent'}, 'boost': {}, 'fuzzy': {}},
+     {'query': f'""', 'filter': []}),
     ('test_basic_multi_fields_1',
      {'query': {'value':'name'}, 'fields': {EntityField.LEGAL_NAME_Q: 'parent', EntityField.LEGAL_NAME_AGRO_Q: 'parent'}, 'boost': {}, 'fuzzy': {}}, 
      {'query': f'({EntityField.LEGAL_NAME_Q.value}:name OR {EntityField.LEGAL_NAME_AGRO_Q.value}:name)', 'filter': []}

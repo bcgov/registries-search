@@ -207,4 +207,8 @@ def build_base_query(query: dict[str, str],  # pylint: disable=too-many-argument
         for term in terms:
             filters.append(_create_clause(key, term))
 
+    if not query_clause:
+        # handle empty string provided for query value
+        query_clause = '""'
+
     return {'query': query_clause, 'filter': filters}

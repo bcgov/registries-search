@@ -44,13 +44,17 @@ def entities_search(params: SearchParams, solr: BorSolr):
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
     initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
+    if params.query['value']:
+        initial_queries['query'] += \
+            f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
     # Only add alternate name boost if it is specified in the query
     if EntityField.ALT_NAME_Q.value in params.query_fields:
         initial_queries['query'] += f' OR ({EntityField.ALT_NAME_Q.value}:"{params.query["value"]}"~5^5)'
         initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
         initial_queries['query'] += f' OR ({EntityField.ALT_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
-        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
+        if params.query['value']:
+            initial_queries['query'] += \
+                f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults
     solr_payload = {

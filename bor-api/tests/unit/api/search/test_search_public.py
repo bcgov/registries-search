@@ -232,6 +232,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic_tax_number_no_match', {'value': '705 362 853'}, {}, []),
     ('test_basic_alt_name_no_match', {'value': 'significant individual alt'}, {}, []),
     ('test_basic_no_match', {'value': 'zzz no match here qljrb'}, {},[]),
+    ('test_basic_empty_space', {'value': ' '}, {},[]),
     ('test_filters_person',
      {'value': 'person', EntityField.LEGAL_NAME.value: 'nine'},
      {},
