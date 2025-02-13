@@ -46,6 +46,8 @@ def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **k
     app.logger = StructuredLogging().get_logger()
     app.config.from_object(CONFIG_MAP.get(environment, 'production'))
 
+    db.init_app(app)
+
     if environment == 'migration':
         Migrate(app, db)
 
@@ -55,7 +57,6 @@ def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **k
         Flags().init_app(app, td)
 
         errorhandlers.init_app(app)
-        db.init_app(app)
         queue.init_app(app)
         business_solr.init_app(app)
         babel.init_app(app)
