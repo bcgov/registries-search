@@ -1,0 +1,2 @@
+gcp_queue @ git+https://github.com/bcgov/sbc-connect-common.git@43411ed428c4c4b89bea1ac6acdb10077f247d2b#subdirectory=python/gcp-queue
+structured_logging @ git+https://github.com/bcgov/sbc-connect-common.git@7f1cc0ea4a374310ac558ff435fa6b7ea7bb2f8b#subdirectory=python/structured-logging

@@ -19,15 +19,11 @@ http://flask.pocoo.org/docs/1.0/errorhandling/
 http://flask.pocoo.org/docs/1.0/patterns/apierrors/
 """
 
-import logging
 import sys
 
-from flask import jsonify
+from flask import current_app, jsonify
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import RoutingException
-
-
-logger = logging.getLogger(__name__)
 
 
 def init_app(app):
@@ -52,13 +48,12 @@ def handle_http_error(error):
     return response
 
 
-def handle_uncaught_error(error: Exception):  # pylint: disable=unused-argument
+def handle_uncaught_error(_: Exception):
     """Handle any uncaught exceptions.
 
-    Since the handler suppresses the actual exception, log it explicitly to
-    ensure it's logged and recorded in Sentry.
+    Since the handler suppresses the actual exception, log it explicitly to ensure it's logged.
     """
-    logger.error('Uncaught exception', exc_info=sys.exc_info())
+    current_app.logger.error('Uncaught exception', exc_info=sys.exc_info())
     response = jsonify({'message': 'Internal server error'})
     response.status_code = 500
     return response

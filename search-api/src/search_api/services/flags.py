@@ -63,7 +63,7 @@ class Flags():
                 app.extensions[Flags.COMPONENT_NAME] = client
                 app.teardown_appcontext(self.teardown)
         except Exception as err:  # noqa: B902
-            app.logger.warn('issue registering flag service %s', err)
+            app.logger.warning('issue registering flag service %s', err)
 
     def teardown(self, exception):  # pylint: disable=unused-argument; flask method signature
         """Destroy all objects created by this extension.
