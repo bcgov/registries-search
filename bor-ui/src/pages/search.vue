@@ -106,7 +106,13 @@
       v-if="!hasExtendedAccess"
       class="mt-5"
       :items="tabs"
-      :ui="{ list: { background: 'bg-bcGovColor-darkBlue', width: 'w-full max-w-[600px]' } }"
+      :ui="{
+        list: {
+          background: 'bg-bcGovColor-darkBlue',
+          width: 'w-full max-w-[600px]',
+          tab: { inactive: 'text-white' }
+        },
+      }"
       data-cy="search-tabs"
     >
       <template #search>

@@ -14,6 +14,7 @@
 """Test-Suite to ensure that the search endpoints/functions work as expected."""
 import json
 import time
+from copy import deepcopy
 from http import HTTPStatus
 
 import pytest
@@ -55,7 +56,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+            EntityRoleField.ROLE_TYPE.value: ['PROPRIETOR']
         }
      }
     ),
@@ -74,7 +75,7 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON', 'BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+            EntityRoleField.ROLE_TYPE.value: ['PROPRIETOR', 'PARTNER']
         }
      })
 ])
@@ -94,12 +95,13 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.json
     assert resp_json['facets'] == {'fields': {}}
+    expected_default_role_types = ['PARTNER', 'PROPRIETOR', 'SIGNIFICANT INDIVIDUAL']
     assert resp_json['searchResults']['queryInfo']['categories'] == {
         'roles': {
             'active': [True],
             'relatedEntityType': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_ENTITY_TYPE.value, None),
             'relatedState': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.RELATED_STATE.value, None),
-            'roleType': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.ROLE_TYPE.value, None)
+            'roleType': categories.get(EntityField.ROLES.value, {}).get(EntityRoleField.ROLE_TYPE.value, expected_default_role_types)
         }
     }
     assert resp_json['searchResults']['queryInfo']['query'] == {
@@ -187,23 +189,23 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_basic_name_match_and_and',
      {'value': 'person and'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]}, 
-      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]}, 
+      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]}, 
+      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_and_&',
      {'value': 'person &'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]},
+      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]},
+      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_and_+',
      {'value': 'person +'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person and 5', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]},
+      {'entityType': 'PERSON', 'legalName': 'person&six', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]},
+      {'entityType': 'PERSON', 'legalName': 'person+seven', 'roles': [{'relatedBN': '09876K', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP0234567', 'relatedLegalType': 'CP', 'relatedName': 'tester 1111', 'relatedState': 'HISTORICAL', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_basic_name_match_._1',
      {'value': 'person ten y.z.'},
@@ -269,7 +271,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         }
      },
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_filters_related_value',
      {
@@ -277,7 +279,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ROLES.value: {'value': 'CP123 test'}
      },
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_filters_all_combined',
      {
@@ -290,7 +292,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         }
      },
      {},
-     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_filters_address_no_effect',
      {
@@ -333,13 +335,13 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+            EntityRoleField.ROLE_TYPE.value: ['PARTNER']
         }
      },
      [
-        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_categories_addresses_no_effect',
      {'value': 'person'},
@@ -351,13 +353,13 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+            EntityRoleField.ROLE_TYPE.value: ['PARTNER']
         }
      },
      [
-        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_categories_interests_no_effect',
      {'value': 'person'},
@@ -368,21 +370,21 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR', 'INCORPORATOR']
+            EntityRoleField.ROLE_TYPE.value: ['PARTNER']
         }
      },
      [
-        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]},
-        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+        {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
     ('test_child_categories_no_match',
      {'value': 'person'},
      {
         EntityField.ROLES.value: {
-            EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
+            EntityRoleField.RELATED_STATE.value: ['OOPS'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['PERSON'],
-            EntityRoleField.ROLE_TYPE.value: ['OOPS']
+            EntityRoleField.ROLE_TYPE.value: ['PROPRIETOR']
         }
      },
      []
@@ -390,7 +392,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
     ('test_synonym_name',
      {'value': 'person three chute'},
      {},
-     [{'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}],
+     [{'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}],
     ),
     ('test_all_combined_person',
      {
@@ -408,10 +410,10 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
         EntityField.ROLES.value: {
             EntityRoleField.RELATED_STATE.value: ['ACTIVE'],
             EntityRoleField.RELATED_ENTITY_TYPE.value: ['BUSINESS'],
-            EntityRoleField.ROLE_TYPE.value: ['DIRECTOR']
+            EntityRoleField.ROLE_TYPE.value: ['PARTNER']
         }
      },
-     [{'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'DIRECTOR', 'score': 0.0}]}]
+     [{'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     )
 ])
 def test_search(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
@@ -421,7 +423,14 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
         # setup solr data for test (only needed the first time)
         solr.delete_all_docs()
         time.sleep(1)
-        solr.create_or_replace_docs(SOLR_TEST_DOCS)
+        # change invalid roles for public search
+        public_solr_test_docs = deepcopy(SOLR_TEST_DOCS)
+        for doc in public_solr_test_docs:
+            for role in (doc.roles or []):
+                if role.roleType not in ['PROPRIETOR', 'PARTNER', 'SIGNIFICANT INDIVIDUAL']:
+                    role.roleType = 'PARTNER'
+
+        solr.create_or_replace_docs(public_solr_test_docs)
         time.sleep(2)
     # add test dependent name synonyms to db
     SolrSynonymList(synonym='chute', synonym_list=['chute', 'shoot'], synonym_type=SolrSynonymType.NAME).save()
@@ -482,6 +491,20 @@ def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
     ('test_no_value', {}, {}, {}, [{'Invalid payload': "Expected a string for 'value'."}]),
     ('test_invalid_accept_headers', {'value': 'a'}, {}, {'Accept': 'application/pdf'}, [{'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
     ('test_invalid_query_and_headers', {}, {}, {'Accept': 'application/pdf'}, [{'Invalid payload': "Expected a string for 'value'."}, {'Invalid header': 'Invalid Accept header. Expected application/json or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet but received application/pdf'}]),
+    ('test_invalid_role_types_director', {'value': 'a'}, {'roles': {'roleType': ['DIRECTOR']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_incorporator', {'value': 'a'}, {'roles': {'roleType': ['INCORPORATOR']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_officer', {'value': 'a'}, {'roles': {'roleType': ['OFFICER']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_attorney', {'value': 'a'}, {'roles': {'roleType': ['ATTORNEY']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_applicant', {'value': 'a'}, {'roles': {'roleType': ['APPLICANT']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_reccustodian', {'value': 'a'}, {'roles': {'roleType': ['REC CUSTODIAN']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_completingparty', {'value': 'a'}, {'roles': {'roleType': ['COMPLETING PARTY']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_receivermanager', {'value': 'a'}, {'roles': {'roleType': ['RECEIVER MGR']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_custodian', {'value': 'a'}, {'roles': {'roleType': ['CUSTODIAN']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_liquidator', {'value': 'a'}, {'roles': {'roleType': ['LIQUIDATOR']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_firmcompparty', {'value': 'a'}, {'roles': {'roleType': ['FIRM COMPLETING PARTY']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_manager', {'value': 'a'}, {'roles': {'roleType': ['MANAGER']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_nonsense', {'value': 'a'}, {'roles': {'roleType': ['bla']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}]),
+    ('test_invalid_role_types_combined_with_valid', {'value': 'a'}, {'roles': {'roleType': ['PARTNER', 'bla']}}, {}, [{'invalid payload': "Unexpected values provided for 'categories/roles/roleType': Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. Other role types are not available."}])
 ])
 def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""

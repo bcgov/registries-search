@@ -80,8 +80,10 @@ def public_search():
             EntityRoleField.RELATED_ENTITY_TYPE: role_categories_json.get(EntityRoleField.RELATED_ENTITY_TYPE.value,
                                                                           None),
             EntityRoleField.RELATED_STATE: role_categories_json.get(EntityRoleField.RELATED_STATE.value, None),
-            EntityRoleField.ROLE_TYPE: role_categories_json.get(EntityRoleField.ROLE_TYPE.value, None),
-            # DateRange - for public search we only show active records
+            # Public search only shows proprietors, partners and sis
+            EntityRoleField.ROLE_TYPE: role_categories_json.get(EntityRoleField.ROLE_TYPE.value,
+                                                                ['PARTNER', 'PROPRIETOR', 'SIGNIFICANT INDIVIDUAL']),
+            # Public search only shows active records
             DateRangeField.ACTIVE: [True]
         }
 

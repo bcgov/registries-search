@@ -77,7 +77,7 @@ export default <Partial<Config>>{
       }
     }
   },
-  //when only using a colour dynamically it won't be in the css output
+  // when only using a colour dynamically it won't be in the css output
   safelist: [{
     pattern: /(bg|text|border)-(green|grey)*/
   }]

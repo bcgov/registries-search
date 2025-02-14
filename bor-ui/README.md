@@ -3,11 +3,11 @@
 # bor-ui
 
 ## Project configuration
-- node 20
-- nuxt 3
+- Node 20
+- Nuxt 3
 - Vite
 - Vue 3
-- Vuetify 3
+- Nuxt/ui
 - Tailwind
 - Typescript
 - Vitest

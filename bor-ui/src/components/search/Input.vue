@@ -45,7 +45,7 @@ const searchTypeOptions = ref([
   { value: SearchTypeE.BUSINESS, label: t('label.search.searchBusinesses') },
   {
     value: SearchTypeE.PERSON,
-    label: hasExtendedAccess.value ? t('label.search.searchPeople') : t('label.search.searchOwners')
+    label: t('label.search.searchPeople')
   }
 ])
 

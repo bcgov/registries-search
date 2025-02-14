@@ -10,14 +10,14 @@ context('Search public', () => {
     // info text
     cy.get('[data-cy="search-input-info-text"]').should(
       'have.text',
-      'Search for owners of businesses in B.C.'
+      'Search for the names of people associated with businesses in B.C.'
     )
     // search input
     cy.get('[data-cy="search-input"]').find('[data-cy="search-textfield"]').should('exist')
     // label text
     cy.get('[data-cy="search-input"]')
       .find('[data-cy="search-textfield"]')
-      .should('have.attr', 'placeholder', 'Owner Name')
+      .should('have.attr', 'placeholder', 'Person Name')
     // hint text
     cy.get('[data-cy="search-input"]')
       .find('p')

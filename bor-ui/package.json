@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt generate",
+    "build-check": "nuxt generate",
     "build:local": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -12,6 +13,7 @@
     "lint:fix": "eslint --cache --ext '.ts,.vue' . --max-warnings 0 --fix",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "test": "vitest",
     "test:unit": "vitest",
     "test:e2e": "cypress open",
     "test:e2e:firefox": "cypress run firefox",
@@ -47,6 +49,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@vue/test-utils": "^2.4.6",
+    "corepack": "^0.31.0",
     "cypress": "^13.9.0",
     "cypress-axe": "^1.5.0",
     "happy-dom": "^13.10.1",

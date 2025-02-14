@@ -19,12 +19,13 @@ from bor_api.exceptions import AuthorizationException
 from bor_api.models import User
 from bor_api.services import jwt, flags
 from bor_api.services.authz import account_products
+from bor_api.services.bor_solr.fields import EntityField, EntityRoleField
 from bor_api.services.bor_solr.utils import get_search_field_group
 
 from .util import get_str
 
 
-def _validate_search_request() -> tuple[dict, list[dict]]:
+def _validate_search_request(access_level: SearchAccessLevel) -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
@@ -44,6 +45,28 @@ def _validate_search_request() -> tuple[dict, list[dict]]:
     if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
         msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
         errors.append({'Invalid header': msg})
+
+    if access_level == SearchAccessLevel.PUBLIC:
+        # Public search has limited access to roles (only allowed to see: partner, proprietor, sis)
+        if role_types := request_json.get('categories', {})\
+            .get(EntityField.ROLES.value, {})\
+                .get(EntityRoleField.ROLE_TYPE.value, []):
+
+            if not isinstance(role_types, list):
+                errors.append({
+                    'invalid payload':
+                        'Expected a list of strings for ' +
+                        f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}'"
+                })
+
+            elif any(x for x in role_types if x not in ['PARTNER', 'PROPRIETOR', 'SIGNIFICANT INDIVIDUAL']):
+                errors.append({
+                    'invalid payload':
+                        'Unexpected values provided for ' +
+                        f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}': " +
+                        "Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. " +
+                        'Other role types are not available.'
+                })
 
     return request_json, errors
 
@@ -91,7 +114,7 @@ def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -
 
 def validate_search(user: User, access_level: SearchAccessLevel) -> tuple[dict, list[str], bool, list[dict]]:
     """Validate the search request and user access."""
-    request_json, request_errors = _validate_search_request()
+    request_json, request_errors = _validate_search_request(access_level)
     has_direct_access, access_errors = _validate_search_access_level(user, access_level)
 
     return request_json, get_search_field_group(access_level), has_direct_access, request_errors + access_errors

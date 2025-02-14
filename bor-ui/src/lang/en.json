@@ -42,7 +42,6 @@
     "search": {
       "searchBusinesses": "Search Businesses",
       "searchDirectors": "Search Directors",
-      "searchOwners": "Search Owners",
       "searchPeople": "Search People"
     },
     "table": {
@@ -116,16 +115,16 @@
           "placeholder": "Person Name, Address, SIN/TTN/ITN, and/or Email Address"
         },
         "limited": {
-          "error": "Enter an owner name",
+          "error": "Enter a name",
           "hint": "Example: \"John Smith\"",
-          "info": "Search for owners of businesses in B.C.",
-          "placeholder": "Owner Name"
+          "info": "Search for the names of people associated with businesses in B.C.",
+          "placeholder": "Person Name"
         },
         "public": {
-          "error": "Enter an owner name",
+          "error": "Enter a name",
           "hint": "Example: \"John Smith\"",
-          "info": "Search for owners of businesses in B.C.",
-          "placeholder": "Owner Name"
+          "info": "Search for the names of people associated with businesses in B.C.",
+          "placeholder": "Person Name"
         }
       },
       "director": {

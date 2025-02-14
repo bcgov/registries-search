@@ -88,6 +88,9 @@ devDependencies:
   '@vue/test-utils':
     specifier: ^2.4.6
     version: 2.4.6
+  corepack:
+    specifier: ^0.31.0
+    version: 0.31.0
   cypress:
     specifier: ^13.9.0
     version: 13.9.0
@@ -5238,6 +5241,12 @@ packages:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
     dev: false
 
+  /corepack@0.31.0:
+    resolution: {integrity: sha512-PFXOWB1S3gzr8Afuwq1sslrxDzLKsef6bu8NXKPxCBJAy54FXm86NutB/kjiPhwjSwV3hMzKSnLFzxTBlWNUqA==}
+    engines: {node: ^18.17.1 || ^20.10.0 || >=22.11.0}
+    hasBin: true
+    dev: true
+
   /country-list@2.3.0:
     resolution: {integrity: sha512-qZk66RlmQm7fQjMYWku1AyjlKPogjPEorAZJG88owPExoPV8EsyCcuFLvO2afTXHEhi9liVOoyd+5A6ZS5QwaA==}
     dev: false
@@ -6335,6 +6344,7 @@ packages:
   /eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)

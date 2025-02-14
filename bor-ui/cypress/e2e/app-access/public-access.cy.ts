@@ -10,6 +10,6 @@ context('App access - public', () => {
     cy.get('[data-cy="search-container"]').should('exist')
     cy.get('[data-cy="search-radios"]').find('label').should('have.length', 2)
     cy.get('[data-cy="search-radios"]').find('label').eq(0).should('have.text', 'Search Businesses')
-    cy.get('[data-cy="search-radios"]').find('label').eq(1).should('have.text', 'Search Owners')
+    cy.get('[data-cy="search-radios"]').find('label').eq(1).should('have.text', 'Search People')
   })
 })
