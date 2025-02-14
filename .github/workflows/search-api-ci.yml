@@ -98,6 +98,8 @@ jobs:
         run: |
           make setup
       - name: Upgrade db
+        env:
+          DEPLOYMENT_ENV: migration
         run: |
           . venv/bin/activate && flask db upgrade
       - name: Test with pytest

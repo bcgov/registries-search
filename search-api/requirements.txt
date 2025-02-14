@@ -57,10 +57,10 @@ requests==2.31.0
 requests-oauthlib==2.0.0
 rsa==4.9
 semver==2.13.0
-sentry-sdk==2.10.0
 six==1.16.0
 SQLAlchemy==2.0.19
 strict-rfc3339==0.7
 typing_extensions==4.12.2
 urllib3==1.26.16
 Werkzeug==2.3.6
+structured_logging @ git+https://github.com/bcgov/sbc-connect-common.git@7f1cc0ea4a374310ac558ff435fa6b7ea7bb2f8b#subdirectory=python/structured-logging

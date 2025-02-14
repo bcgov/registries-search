@@ -64,7 +64,7 @@ def _call_auth_api(path: str, token: str) -> dict:
             exceptions.Timeout,
             ValueError,
             Exception) as err:
-        current_app.logger.error(f'Auth api connection failure using svc:{api_url}', err)
+        current_app.logger.error('Auth api connection failure using svc:%s %s', api_url, repr(err))
     return response
 
 

@@ -15,67 +15,55 @@
 
 This module is the API for the BC Registries Registry Search system.
 """
-import asyncio
-import logging
-import logging.config
 import os
 from http import HTTPStatus
 
-import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
-from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
-from flask import Flask, redirect  # noqa: I001
-from flask_migrate import Migrate  # noqa: I001
+from flask import Flask, redirect
+from flask_migrate import Migrate
+from structured_logging import StructuredLogging
 
 from search_api import errorhandlers, models
-from search_api.config import config
+from search_api.config import DevelopmentConfig, MigrationConfig, ProductionConfig, UnitTestingConfig
 from search_api.models import db
 from search_api.resources import v1_endpoint, v2_endpoint
 from search_api.services import Flags, business_solr, queue
 from search_api.translations import babel
 from search_api.utils.auth import jwt
-from search_api.utils.logging import set_log_level_by_flag, setup_logging
 from search_api.utils.run_version import get_run_version
-# noqa: I003; the sentry import creates a bad line count in isort
-
-setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
-migrate = Migrate()  # pylint: disable=invalid-name
 
 
-def create_app(config_name: str = os.getenv('APP_ENV') or 'production', **kwargs):
+CONFIG_MAP = {
+    'development': DevelopmentConfig,
+    'testing': UnitTestingConfig,
+    'migration': MigrationConfig,
+    'production': ProductionConfig
+}
+
+
+def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
+    app.logger = StructuredLogging().get_logger()
+    app.config.from_object(CONFIG_MAP.get(environment, 'production'))
 
-    # Configure Sentry
-    if dsn := app.config.get('SENTRY_DSN'):
-        sentry_sdk.init(  # pylint: disable=E0110
-            dsn=dsn,
-            integrations=[FlaskIntegration()],
-            environment=app.config.get('POD_NAMESPACE'),
-            release=f'search-api@{get_run_version()}',
-            traces_sample_rate=app.config.get('SENTRY_TSR')
-        )
-
-    # td is testData instance passed in to support testing
-    td = kwargs.get('ld_test_data', None)  # pylint: disable=invalid-name;
-    Flags().init_app(app, td)
-
-    errorhandlers.init_app(app)
     db.init_app(app)
-    queue.init_app(app)
-    business_solr.init_app(app)
-    babel.init_app(app)
-    migrate.init_app(app, db)
 
-    v1_endpoint.init_app(app)
-    v2_endpoint.init_app(app)
-    setup_jwt_manager(app, jwt)
+    if environment == 'migration':
+        Migrate(app, db)
 
-    @app.before_request
-    def before_request():  # pylint: disable=unused-variable
-        # do any common setup here
-        # set logging level
-        set_log_level_by_flag()
+    else:
+        # td is testData instance passed in to support testing
+        td = kwargs.get('ld_test_data', None)  # pylint: disable=invalid-name;
+        Flags().init_app(app, td)
+
+        errorhandlers.init_app(app)
+        queue.init_app(app)
+        business_solr.init_app(app)
+        babel.init_app(app)
+
+        v1_endpoint.init_app(app)
+        v2_endpoint.init_app(app)
+        setup_jwt_manager(app, jwt)
 
     @app.route('/')
     def be_nice_swagger_redirect():  # pylint: disable=unused-variable

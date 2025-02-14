@@ -108,7 +108,7 @@ def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, head
         pay_api_timeout = current_app.config.get('PAY_API_TIMEOUT')
         payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=pay_api_timeout)
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:
-        current_app.logger.error('Payment connection failure:', err)
+        current_app.logger.error('Payment connection failure: %s', err)
         raise ApiConnectionException(HTTPStatus.PAYMENT_REQUIRED,
                                      [{'message': 'Unable to create invoice for payment.'}]) from err
     return payment_response

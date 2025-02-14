@@ -64,7 +64,6 @@ class Config():  # pylint: disable=too-few-public-methods
 
     # Flag Names
     FF_QUEUE_DOC_REQUEST_NAME = os.getenv('FF_QUEUE_DOC_REQUEST_NAME', None)
-    OPS_LOGGER_LEVEL = os.getenv('OPS_LOGGER_LEVEL', None)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ALEMBIC_INI = 'migrations/alembic.ini'
@@ -254,8 +253,18 @@ class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
     TESTING = False
 
 
-config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'unitTesting': UnitTestingConfig,
-}
+class MigrationConfig:  # pylint: disable=too-few-public-methods
+    """Config object for migration environment."""
+
+    ALEMBIC_INI = 'migrations/alembic.ini'
+
+    DB_USER = os.getenv('DATABASE_USERNAME', '')
+    DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
+    DB_NAME = os.getenv('DATABASE_NAME', '')
+    DB_HOST = os.getenv('DATABASE_HOST', '')
+    DB_PORT = os.getenv('DATABASE_PORT', '5432')
+
+    if DB_UNIX_SOCKET := os.getenv('DATABASE_UNIX_SOCKET', None):
+        SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host={DB_UNIX_SOCKET}'
+    else:
+        SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
