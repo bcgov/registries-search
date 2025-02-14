@@ -45,20 +45,10 @@ def ld():
 @pytest.fixture(scope='session')
 def app(ld):
     """Return a session-wide application configured in TEST mode."""
-    _app = create_app('unitTesting', **{'ld_test_data': ld})
+    _app = create_app('testing', **{'ld_test_data': ld})
     
     with _app.app_context():
         yield _app
-
-
-@pytest.fixture
-def set_env(app):
-    """Factory to set environment and Flask config variables."""
-    def _set_env(name, value):
-        os.environ[name] = value
-        app.config[name] = value
-
-    return _set_env
 
 
 @pytest.fixture(scope='function')

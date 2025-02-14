@@ -14,5 +14,4 @@ psycopg2-binary
 pycountry
 python-dotenv
 requests
-sentry-sdk[flask]
 xlsxwriter
