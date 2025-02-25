@@ -102,11 +102,11 @@ def test_document_access_request_json(session):
         business_name='test',
         account_id=123,
         payment_token=567,
-        payment_status_code='COMPLETED',
+        payment_status_code='APPROVED',
         payment_completion_date=datetime.utcnow(),
         submission_date=datetime.utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
-        status=DocumentAccessRequest.Status.PAID
+        status=DocumentAccessRequest.Status.COMPLETED
     )
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
@@ -138,9 +138,10 @@ def test_document_access_request_json(session):
        'expiryDate': document_access_request.expiry_date.isoformat(),
        'id': document_access_request.id,
        'outputFileKey': None,
-       'paymentStatus': 'COMPLETED',
+       'paymentCompletionDate': document_access_request.payment_completion_date.isoformat(),
+       'paymentStatus': 'APPROVED',
        'paymentToken': document_access_request.payment_token,
-       'status': 'PAID',
+       'status': 'COMPLETED',
        'submissionDate': document_access_request.submission_date.isoformat(),
        'submitter': 'firstname lastname'
     }

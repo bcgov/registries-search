@@ -15,6 +15,7 @@ export interface DocumentDetailsI {
     documents: DocumentI[]
     paymentStatus: string
     paymentToken: string
+    paymentCompletionDate?: string
 }
 
 // api responses

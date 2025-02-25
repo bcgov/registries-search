@@ -85,7 +85,6 @@ import { HelpdeskInfo } from '@/resources/contact-info'
 import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
 import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
-import { PaymentCancelledError } from '@/resources/error-dialog-options/payment-canceled'
 
 const aboutText: string = 'Search UI v' + process.env.VUE_APP_VERSION
 const appLoading = ref(false)

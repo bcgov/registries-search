@@ -10,7 +10,7 @@
         </v-fade-transition>
         <v-row no-gutters>
             <v-col cols="9">
-                <span class="section-header">Purchased Documents as of {{ submissionDate }}</span>
+                <span class="section-header">Purchased Documents as of {{ purchasedDate }}</span>
                 <p class="pt-6">
                     Your documents are now available to view and download.
                     You will be able to access these documents for up to 14 days from the business search dashboard.
@@ -71,8 +71,13 @@ onMounted(async () => {
 })
 
 const documents = computed(() => documentAccessRequest.currentRequest?.documents || [])
-const submissionDate = computed(() => (documentAccessRequest.currentRequest?.submissionDate) ?
-    dateToPacificDateTime(new Date(documentAccessRequest.currentRequest.submissionDate)) : '')
+const purchasedDate = computed(() => {
+    if (documentAccessRequest.currentRequest?.paymentCompletionDate) {
+        return dateToPacificDateTime(
+            new Date(documentAccessRequest.currentRequest.paymentCompletionDate))
+    }
+    return ''
+})
 const showFilingHistory = computed(() => documents.value.find(doc => (
     doc.documentType == DocumentType.BUSINESS_SUMMARY_FILING_HISTORY)) != null)
 const hasNewFilings = computed(() => {

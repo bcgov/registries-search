@@ -49,6 +49,8 @@ class DocumentAccessRequest(db.Model):
     account_id = db.Column('account_id', db.Integer)
     _payment_status_code = db.Column('payment_status_code', db.String(50))
     _payment_token = db.Column('payment_id', db.String(4096), index=True)
+    # NOTE: _payment_completion_date is the date payment is marked complete in search,
+    #       which is not the same as the invoice completion date
     _payment_completion_date = db.Column('payment_completion_date', db.DateTime(timezone=True))
     submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime(timezone=True))
@@ -130,6 +132,9 @@ class DocumentAccessRequest(db.Model):
             'submitter': self.submitter.display_name if self.submitter else None,
             'paymentToken': self.payment_token  # invoice id from the pay db
         }
+
+        if completed_date := self.payment_completion_date:
+            document_access_request['paymentCompletionDate'] = completed_date.isoformat()
 
         documents = []
 

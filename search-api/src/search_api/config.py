@@ -151,6 +151,11 @@ class Config():  # pylint: disable=too-few-public-methods
     PAY_AUDIENCE_SUB = os.getenv('PAY_AUDIENCE_SUB')
     VERIFY_PUBSUB_EMAILS = os.getenv('VERIFY_PUBSUB_EMAILS', '').split(',')
 
+    try:
+        DOCUMENT_REQUEST_VALIDITY_DURATION = int(os.getenv('DOCUMENT_REQUEST_VALIDITY_DURATION', '14'))
+    except:  # pylint: disable=bare-except; # noqa: B901, E722
+        DOCUMENT_REQUEST_VALIDITY_DURATION = 14
+
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Config object for development environment."""
