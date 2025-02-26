@@ -79,7 +79,7 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
                 now = datetime.now(timezone.utc)
                 document_access_request.payment_completion_date = now
                 document_access_request.expiry_date = now + \
-                    relativedelta(days=current_app.config['DOCUMENT_REQUEST_VALIDITY_DURATION'])
+                    relativedelta(days=current_app.config['DOCUMENT_REQUEST_DAYS_DURATION'])
 
             document_access_request.save()
             return {'isPaymentActionRequired': is_action_required}, HTTPStatus.CREATED

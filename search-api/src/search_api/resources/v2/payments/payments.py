@@ -77,7 +77,7 @@ def gcp_listener():
                 now = datetime.now(timezone.utc)
                 dar.payment_completion_date = now
                 dar.expiry_date = now + relativedelta(
-                    days=current_app.config['DOCUMENT_REQUEST_VALIDITY_DURATION'])
+                    days=current_app.config['DOCUMENT_REQUEST_DAYS_DURATION'])
 
                 # NOTE: below is only used for ops
                 if dar.payment_status_code == 'CREATED':

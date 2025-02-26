@@ -152,9 +152,9 @@ class Config():  # pylint: disable=too-few-public-methods
     VERIFY_PUBSUB_EMAILS = os.getenv('VERIFY_PUBSUB_EMAILS', '').split(',')
 
     try:
-        DOCUMENT_REQUEST_VALIDITY_DURATION = int(os.getenv('DOCUMENT_REQUEST_VALIDITY_DURATION', '14'))
+        DOCUMENT_REQUEST_DAYS_DURATION = int(os.getenv('DOCUMENT_REQUEST_DAYS_DURATION', '14'))
     except:  # pylint: disable=bare-except; # noqa: B901, E722
-        DOCUMENT_REQUEST_VALIDITY_DURATION = 14
+        DOCUMENT_REQUEST_DAYS_DURATION = 14
 
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
