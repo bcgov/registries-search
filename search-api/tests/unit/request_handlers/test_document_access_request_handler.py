@@ -48,7 +48,8 @@ def test_save_request(client, session, jwt, mocker):
 
 @pytest.mark.parametrize('test_name,mock_response,is_payment_completion_date_expected', [
     ('test_pad_invoice', {'id': 123, 'paymentMethod': 'PAD'}, True),
-    ('test_pad_invoice', {'id': 123, 'paymentMethod': 'DIRECT_PAY'}, False)])
+    ('test_ejv_invoice', {'id': 123, 'paymentMethod': 'EJV'}, True),
+    ('test_cc_invoice', {'id': 123, 'paymentMethod': 'DIRECT_PAY', 'isPaymentActionRequired': True}, False)])
 def test_create_invoice(client, session, jwt, mocker, test_name, mock_response, is_payment_completion_date_expected):
     """Assert that access request is updated with payment details."""
     document_access_request = DocumentAccessRequest(
@@ -82,9 +83,10 @@ def test_create_invoice(client, session, jwt, mocker, test_name, mock_response, 
     assert document_access_request.payment_token
     if is_payment_completion_date_expected:
         assert document_access_request.payment_completion_date
+        assert document_access_request.expiry_date
     else:
         assert not document_access_request.payment_completion_date
-    assert document_access_request.expiry_date
+        assert not document_access_request.expiry_date
 
 
 def test_create_invoice_failure(client, session, jwt, mocker):

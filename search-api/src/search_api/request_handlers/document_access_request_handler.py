@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import secrets
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 from http import HTTPStatus
 from typing import Tuple
 
@@ -70,23 +70,19 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
                                           header, business_json)
 
         if payment_response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
-            is_pad = payment_response.json().get('paymentMethod') == 'PAD'
-            pid = payment_response.json().get('id')
-            today_utc = datetime.now()
-
-            document_access_request.payment_token = pid
-            document_access_request.submission_date = today_utc
-            if is_pad:
-                document_access_request.status = DocumentAccessRequest.Status.PAID
-                document_access_request.payment_completion_date = today_utc
-            else:
-                document_access_request.status = DocumentAccessRequest.Status.CREATED
+            is_action_required = payment_response.json().get('isPaymentActionRequired', False)
+            document_access_request.payment_token = payment_response.json().get('id')
             document_access_request.payment_status_code = payment_response.json().get('statusCode', '')
-            validity_in_days = current_app.config.get('DOCUMENT_REQUEST_VALIDITY_DURATION', 14)
-            document_access_request.expiry_date = today_utc + relativedelta(days=validity_in_days)
+            if not is_action_required:
+                # PAD, EJV, etc.
+                document_access_request.status = DocumentAccessRequest.Status.COMPLETED
+                now = datetime.now(timezone.utc)
+                document_access_request.payment_completion_date = now
+                document_access_request.expiry_date = now + \
+                    relativedelta(days=current_app.config['DOCUMENT_REQUEST_DAYS_DURATION'])
+
             document_access_request.save()
-            return {'isPaymentActionRequired': payment_response.json().get('isPaymentActionRequired',
-                                                                           False)}, HTTPStatus.CREATED
+            return {'isPaymentActionRequired': is_action_required}, HTTPStatus.CREATED
         if payment_response.status_code == HTTPStatus.BAD_REQUEST:
             # Set payment error type used to retrieve error messages from pay-api
             error_type = payment_response.json().get('type')

@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-import { DocumentType, ErrorCategories } from '@/enums'
+import { DocumentType } from '@/enums'
 import {
     AccessRequestsHistoryI,
     CreateDocumentResponseI,

@@ -17,10 +17,11 @@ import json
 from http import HTTPStatus
 from datetime import datetime, timezone
 
+from dateutil.relativedelta import relativedelta
 from flask import Blueprint, current_app, request
 from flask_cors import cross_origin
 
-from search_api.exceptions import DbRecordNotFoundException
+from search_api.exceptions import BusinessException, DbRecordNotFoundException
 from search_api.models import DocumentAccessRequest
 from search_api.services import simple_queue
 from search_api.services.gcp_auth.auth_service import ensure_authorized_queue_user
@@ -45,10 +46,14 @@ def gcp_listener():
         return {}, HTTPStatus.OK
 
     try:
-        credit_card_payment = ce.data
-        if credit_card_payment.get('corpTypeCode', '') != 'BUS':
-            raise Exception('invalid or missing corpTypeCode.')  # noqa: E713 # pylint: disable=broad-exception-raised
-        payment_id = credit_card_payment['id']
+        # NOTE: this will be triggered for any payment (CC, PAD, etc.), but we only need to update for CC
+        payment = ce.data
+        if payment.get('corpTypeCode', '') != 'BUS':
+            raise BusinessException('invalid or missing corpTypeCode.', HTTPStatus.BAD_REQUEST)
+        if not (payment_id := payment.get('id')):
+            raise BusinessException('missing payment id.', HTTPStatus.BAD_REQUEST)
+        if not (payment_status := payment.get('statusCode')):
+            raise BusinessException('missing payment statusCode.', HTTPStatus.BAD_REQUEST)
 
         dars = DocumentAccessRequest.find_by_payment_token(str(payment_id))
 
@@ -56,16 +61,34 @@ def gcp_listener():
             raise DbRecordNotFoundException()
 
         for dar in dars:
-            dar.status = credit_card_payment['statusCode']
-            if dar.status == 'COMPLETED':
-                if ce.time is not None:
-                    dar.payment_completion_date = str(ce.time)
-                else:
-                    dar.payment_completion_date = datetime.now(timezone.utc)
-                dar.payment_status_code = 'APPROVED'
+            if dar.status == DocumentAccessRequest.Status.COMPLETED:
+                # This document is already in a completed state so skip
+                current_app.logger.debug(
+                    'Document Access Request already in a completed state for DAR id, Invoice id: %s, %s',
+                    dar.id,
+                    payment_id)
+                continue
+
+            if payment_status in ['COMPLETED', 'APPROVED']:
+                # set dar status + payment_completion_date + expiry date
+                dar.status = DocumentAccessRequest.Status.COMPLETED
+                # NOTE: payment_completion_date is for when pay was marked completed in this api,
+                #       which is not the same as the invoice completion date
+                now = datetime.now(timezone.utc)
+                dar.payment_completion_date = now
+                dar.expiry_date = now + relativedelta(
+                    days=current_app.config['DOCUMENT_REQUEST_DAYS_DURATION'])
+
+                # NOTE: below is only used for ops
+                if dar.payment_status_code == 'CREATED':
+                    # NOTE: this causes an exception when dar.payment_status_code != 'CREATED'
+                    dar.payment_status_code = payment_status
+            else:
+                current_app.logger.debug('Unexpected status given in pay event %s, %s', payment_id, payment_status)
+                raise BusinessException('Unexpected pay status', HTTPStatus.NOT_IMPLEMENTED)
             dar.save()
         return {}, HTTPStatus.OK
-    except Exception:  # noqa pylint: disable=broad-except
+    except Exception as err:  # noqa pylint: disable=broad-except
         # Catch Exception so that any error is still caught and the message is removed from the queue
-        current_app.logger.error('Error processing event: ', exc_info=True)
+        current_app.logger.error('Error processing pay event: %s', err.with_traceback(None))
         return {}, HTTPStatus.OK
