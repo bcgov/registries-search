@@ -57,7 +57,8 @@ class KeyCloakService {
       token,
       refreshToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakRefreshToken) || undefined,
       idToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || undefined,
-      pkceMethod: 'S256'
+      pkceMethod: 'S256',
+      useNonce: false
     }
     return this.kc.init(kcOptions)
   }
@@ -178,7 +179,8 @@ class KeyCloakService {
       token: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined,
       refreshToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakRefreshToken) || undefined,
       idToken: ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakIdToken) || undefined,
-      pkceMethod: 'S256'
+      pkceMethod: 'S256',
+      useNonce: false
     }
 
     return new Promise((resolve, reject) => {
