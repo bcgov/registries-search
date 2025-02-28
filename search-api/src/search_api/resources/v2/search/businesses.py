@@ -41,7 +41,7 @@ def businesses():
         query_json: dict = request_json.get('query', {})
         query = {
             'value': prep_query_str(query_json['value'], True),
-            BusinessField.NAME_SINGLE.value: prep_query_str(query_json.get(BusinessField.NAME.value, '')),
+            BusinessField.NAME_SINGLE.value: prep_query_str(query_json.get(BusinessField.NAME.value, ''), True),
             BusinessField.IDENTIFIER_Q.value: prep_query_str(query_json.get(BusinessField.IDENTIFIER.value, '')),
             BusinessField.BN_Q.value: prep_query_str(query_json.get(BusinessField.BN.value, ''))
         }
