@@ -268,6 +268,16 @@ def test_businesses_solr_mock(app, session, client, requests_mock, test_name, qu
      {},
      [{'goodStanding': True, 'identifier': 'CP0034567', 'legalType': 'CP', 'name': 'business three 3', 'status': 'ACTIVE'}]
     ),
+    ('test_filters_name_&',
+     {'value': 'business seven 7 special & match', BusinessField.NAME.value: 'special & match'},
+     {},
+     [{'bn': '124221', 'identifier': 'BC0000007', 'legalType': 'BEN', 'name': 'business seven 7 special & match', 'status': 'ACTIVE'}]
+    ),
+    ('test_filters_name_+',
+     {'value': '04 solr special + char', BusinessField.NAME.value: 'special + char'},
+     {},
+     [{'bn': '123456786BC0001', 'identifier': 'BC0030004', 'legalType': 'BEN', 'name': '04 solr special + char', 'status': 'ACTIVE'}]
+    ),
     ('test_filters_parties_1',
      {'value': '0', 'parties': {'partyName': 'test'}},
      {},
