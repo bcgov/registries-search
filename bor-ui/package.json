@@ -30,7 +30,7 @@
     "@vueuse/core": "^10.9.0",
     "country-list": "^2.3.0",
     "http-status-codes": "^2.3.0",
-    "keycloak-js": "22.0.5",
+    "keycloak-js": "24.0.4",
     "launchdarkly-vue-client-sdk": "2.0.4",
     "lodash": "^4.17.21",
     "lodash.mergewith": "^4.6.2",
@@ -58,5 +58,6 @@
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",
     "vitest-environment-nuxt": "^1.0.0"
-  }
+  },
+  "packageManager": "pnpm@8.15.4+sha1.c85a4305534f76d461407b59277b954bac97b5c4"
 }
