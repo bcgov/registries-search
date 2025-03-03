@@ -32,7 +32,7 @@ describe('DashboardView tests', () => {
       switch (url) {
         case 'purchases':
           return Promise.resolve({ data: { documentAccessRequests: [] } })
-        case `businesses/${identifier}`:
+        case `businesses/${identifier}?slim=true`:
           return Promise.resolve({ data: {} })
       }
     })
