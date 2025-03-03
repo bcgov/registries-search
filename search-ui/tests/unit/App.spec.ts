@@ -47,7 +47,7 @@ describe('App tests', () => {
       switch (url) {
         case 'purchases':
           return Promise.resolve({ data: { documentAccessRequests: [docAccessRequest] } })
-        case `businesses/${identifier}`:
+        case `businesses/${identifier}?slim=true`:
           return Promise.resolve({ data: {} })
         case `businesses/${identifier}/filings?effective_date=${docAccessRequest.submissionDate}`:
           return Promise.resolve({ data: { filings: [] } })

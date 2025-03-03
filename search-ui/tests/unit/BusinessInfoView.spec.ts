@@ -65,7 +65,7 @@ const setupBusInfoTest = (goodStanding = true) => {
   }
   mockGet.mockImplementation((url) => {
     switch (url) {
-      case `businesses/${identifier}`:
+      case `businesses/${identifier}?slim=true`:
         return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
       case `businesses/${identifier}/filings`:
         return Promise.resolve({ data: { filings: [...mockedFilingResp] } })
@@ -120,7 +120,7 @@ describe('BusinessInfo tests', () => {
     // FUTURE: check fee summary
   })
   it('loads the entity of the given identifier when mounted', () => {
-    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
+    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}?slim=true`, { baseURL: url })
     // check entity was loaded
     expect(entity.bn).toBe(mockedBusinessResp.taxId)
     expect(entity.identifier).toBe(identifier)

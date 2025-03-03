@@ -9,7 +9,7 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
   const url = sessionStorage.getItem('LEGAL_API_URL')
   if (!url) console.error('Error: LEGAL_API_URL expected, but not found.')
   const config = { baseURL: url }
-  return axios.get<any>(`businesses/${identifier}`, config)
+  return axios.get<any>(`businesses/${identifier}?slim=true`, config)
     .then(response => {
       const data = response?.data
       if (!data) throw new Error('Invalid API response')
@@ -32,7 +32,6 @@ export async function getFilings(identifier: string, effective_date: string): Pr
   const config = { baseURL: url }
   let filings_url = `businesses/${identifier}/filings`
   if (effective_date) {
-
     filings_url = filings_url + `?effective_date=${effective_date.split('.')[0]}`
   }
   return axios.get<any>(filings_url, config)

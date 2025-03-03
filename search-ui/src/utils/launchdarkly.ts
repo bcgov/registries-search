@@ -6,7 +6,8 @@ import { initialize, LDClient, LDFlagSet, LDOptions, LDUser } from 'launchdarkly
 const defaultFlagSet: LDFlagSet = {
   'ui-enabled': false,
   'banner-text': ' ',
-  'sentry-enable': false
+  'sentry-enable': false,
+  'search-moved': false,
 }
 
 /**

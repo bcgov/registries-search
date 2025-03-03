@@ -16,7 +16,7 @@ describe('Entity Factory tests', () => {
     const mockGet = jest.spyOn(axios, 'get')
     mockGet.mockImplementation((url) => {
       switch (url) {
-        case `businesses/${identifier}`:
+        case `businesses/${identifier}?slim=true`:
           return Promise.resolve({ data: { business: { ...mockedBusinessResp } } })
         // FUTURE: add case for filing history
       }
@@ -79,7 +79,7 @@ describe('Entity Factory tests', () => {
     const newEntity = await getEntityInfo(identifier)
     // check call was made
     expect(axios.get).toBeCalledTimes(1)
-    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
+    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}?slim=true`, { baseURL: url })
     // check entity was loaded
     expect(newEntity.bn).toBe(mockedBusinessResp.taxId)
     expect(newEntity.identifier).toBe(identifier)
@@ -97,7 +97,7 @@ describe('Entity Factory tests', () => {
     await loadEntity(identifier)
     // check call was made
     expect(axios.get).toBeCalledTimes(1)
-    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}`, { baseURL: url })
+    expect(axios.get).toHaveBeenCalledWith(`businesses/${identifier}?slim=true`, { baseURL: url })
     // check entity was loaded
     expect(entity.bn).toBe(mockedBusinessResp.taxId)
     expect(entity.identifier).toBe(identifier)
