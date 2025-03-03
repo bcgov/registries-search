@@ -8,6 +8,7 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { RouteNames } from '@/enums'
 import { SearchBusinessInfoBreadcrumb } from '@/resources'
+import { getFeatureFlag, navigate } from '@/utils'
 import { routes } from './routes'
 
 export function createVueRouter (): Router {
@@ -15,8 +16,16 @@ export function createVueRouter (): Router {
     history: createWebHistory(sessionStorage.getItem('VUE_ROUTER_BASE') || ''),
     routes
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   router.beforeEach(async (to, from, next) => {
+    if (to.name === RouteNames.SEARCH && getFeatureFlag('search-moved')) {
+      const bpSearchUrl = sessionStorage.getItem('BP_SEARCH_URL')
+      // The identifier and documentAccessRequestId params cause it to load and then go to other pages
+      if (bpSearchUrl && !to.query.identifier && !to.query.documentAccessRequestId) {
+        navigate(bpSearchUrl)
+        next(from)
+      }
+    }
     if (isLoginSuccess(to)) {
       // this route is to verify login
       next({
@@ -52,8 +61,7 @@ export function createVueRouter (): Router {
       }
     }
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  router.afterEach((to, from) => {
+  router.afterEach((to) => {
     // Overrid the browser tab name
     nextTick(() => {
       if (to.meta.title) {
@@ -71,18 +79,6 @@ export function createVueRouter (): Router {
   function isAuthenticated(): boolean {
     // FUTURE: also check that token isn't expired!
     return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
-  }
-  
-  /** Returns True if route is Signin, else False. */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function isSigninRoute(route: RouteLocationNormalized): boolean {
-    return Boolean(route.name === RouteNames.SIGN_IN)
-  }
-  
-  /** Returns True if route is Signout, else False. */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function isSignoutRoute(route: RouteLocationNormalized): boolean {
-    return Boolean(route.name === RouteNames.SIGN_OUT)
   }
   
   /** Returns True if route is Login success, else False. */

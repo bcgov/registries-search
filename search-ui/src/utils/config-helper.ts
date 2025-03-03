@@ -21,6 +21,9 @@ export async function fetchConfig(): Promise<any> {
     (<any>window).searchApiKey = searchApiKey
   }
 
+  const bpSearchUrl: string = process.env.VUE_APP_BP_SEARCH_URL
+  sessionStorage.setItem('BP_SEARCH_URL', bpSearchUrl)
+
   const registryUrl: string = process.env.VUE_APP_REGISTRY_URL
   sessionStorage.setItem('REGISTRY_URL', registryUrl)
 
