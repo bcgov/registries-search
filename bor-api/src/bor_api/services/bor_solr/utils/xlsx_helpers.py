@@ -20,7 +20,7 @@ import xlsxwriter
 from flask import make_response
 
 
-def xlsx_response(results: dict):
+def xlsx_response(results: list):
     """Return the xlsx response containing the given results."""
     temp_name = uuid4()
     workbook = xlsxwriter.Workbook(f'tmp-excel/{temp_name}.xlsx')
@@ -40,7 +40,7 @@ def xlsx_response(results: dict):
     worksheet.write('K1', 'Business Email', bold)
 
     # Iterate over the data and write it out row by row.
-    for result, index in zip(results, range(1, len(results) + 1)):
+    for index, result in enumerate(results, start=1):
         worksheet.write(index, 0, result['legalName'])
         if addresses := result.get('entityAddresses'):
             street = addresses[0].get('streetAddress') or ''

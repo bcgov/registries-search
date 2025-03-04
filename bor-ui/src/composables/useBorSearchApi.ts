@@ -59,7 +59,7 @@ export const useBorSearchApi = () => {
         // else download file
         const { pacificDate } = useDatetime()
         const downloadName = `${pacificDate(new Date(), 'YYYY-MM-DD_HH_mm_ss')}_BC_DIRECTOR_SEARCH.xlsx`
-        downloadFile(data as any, downloadName)
+        downloadFile(data.value, downloadName)
       })
   }
 
