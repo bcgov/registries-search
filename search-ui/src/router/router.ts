@@ -9,21 +9,21 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { RouteNames } from '@/enums'
 import { SearchBusinessInfoBreadcrumb } from '@/resources'
 import { getFeatureFlag, navigate } from '@/utils'
-import { routes } from './routes'
+import { routes, routes_old } from './routes'
 
-export function createVueRouter (): Router {
+export function createVueRouter(): Router {
+  
   const router = createRouter({
     history: createWebHistory(sessionStorage.getItem('VUE_ROUTER_BASE') || ''),
-    routes
+    routes: getFeatureFlag('search-moved') ? routes : routes_old
   })
 
-  router.beforeEach(async (to, from, next) => {
+  router.beforeEach(async (to, _from, next) => {
     if (to.name === RouteNames.SEARCH && getFeatureFlag('search-moved')) {
       const bpSearchUrl = sessionStorage.getItem('BP_SEARCH_URL')
       // The identifier and documentAccessRequestId params cause it to load and then go to other pages
       if (bpSearchUrl && !to.query.identifier && !to.query.documentAccessRequestId) {
-        navigate(bpSearchUrl)
-        next(from)
+        await navigate(bpSearchUrl)
       }
     }
     if (isLoginSuccess(to)) {

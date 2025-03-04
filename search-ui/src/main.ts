@@ -28,7 +28,6 @@ async function start() {
   // must come first as inits below depend on config
   await fetchConfig()
 
-  const router = createVueRouter()
   const app = createApp(App)
 
   // configure Keycloak Service
@@ -45,6 +44,8 @@ async function start() {
   if (window.ldClientId) {
     await initLdClient()
   }
+
+  const router = createVueRouter()
 
   // init sentry if applicable
   if (getFeatureFlag('sentry-enable')) {
