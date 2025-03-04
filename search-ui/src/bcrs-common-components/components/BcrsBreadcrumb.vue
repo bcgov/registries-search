@@ -22,7 +22,7 @@
             <span
               class="breadcrumb-text"
               :class="isLast(index) ? 'inactive-crumb' : 'active-crumb'"
-              @click="navigate(crumb)"
+              @click="navigateCrumb(crumb)"
             >
                 {{ crumb.text }}
             </span>
@@ -39,6 +39,7 @@
 import { PropType } from 'vue'
 import { useRouter } from 'vue-router'
 import { BreadcrumbIF } from '@/interfaces'
+import { navigate } from '@/utils'
 
 const props = defineProps({
   breadcrumbs: { type: Array as PropType<BreadcrumbIF[]> }
@@ -49,18 +50,18 @@ const router = useRouter()
 const back = () => {
   const crumbsLength = props.breadcrumbs.length
   const backCrumb = props.breadcrumbs[crumbsLength - 2]
-  navigate(backCrumb)
+  navigateCrumb(backCrumb)
 }
 
 const isLast = (index: number): boolean =>  {
   return index === props.breadcrumbs.length - 1;
 }
 
-const navigate = (breadcrumb: BreadcrumbIF): void => {
+const navigateCrumb = (breadcrumb: BreadcrumbIF): void => {
   if (breadcrumb.to) {
     router.push(breadcrumb.to)
   } else if (breadcrumb.href) {
-    window.location.assign(breadcrumb.href)
+    navigate(breadcrumb.href)
   }
 }
 

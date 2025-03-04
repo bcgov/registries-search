@@ -7,9 +7,14 @@ export const SearchHomeBreadCrumb: BreadcrumbIF = {
 }
 
 export const SearchDashboardBreadcrumb: BreadcrumbIF = {
-    text: 'Business and Person Search',
+    text: 'Business Search',
     to: { name: RouteNames.SEARCH },
     href: '/dashboard'
+}
+
+export const SearchBreadcrumb: BreadcrumbIF = {
+    text: 'Business and Person Search',
+    href: sessionStorage.getItem('BP_SEARCH_URL')
 }
 
 export const SearchBusinessInfoBreadcrumb: BreadcrumbIF = {

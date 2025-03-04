@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   setup-job:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     if: github.repository == 'bcgov/registries-search'
     
@@ -23,7 +23,7 @@ jobs:
 
   linting:
     needs: setup-job
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
@@ -64,7 +64,7 @@ jobs:
   #     LEGAL_API_URL: https://legal_api_url.test
   #     REGISTRIES_SEARCH_API_INTERNAL_URL: https://search_api_url.test
 
-  #   runs-on: ubuntu-20.04
+  #   runs-on: ubuntu-24.04
 
   #   steps:
   #     - uses: actions/checkout@v3
@@ -89,7 +89,7 @@ jobs:
 
   build-check:
     needs: setup-job
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v3
