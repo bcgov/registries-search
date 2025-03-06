@@ -8,6 +8,7 @@ CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
 
 PROJECT_NAME:=search_solr_updater
 DOCKER_NAME:=search-solr-updater
+SECRET_NAME:=search-auth-solr-updater
 
 #################################################################################
 # COMMANDS -- Setup                                                             #
@@ -117,7 +118,7 @@ update-env: ## Update env from 1pass
 	oc -n "$(OPS_REPOSITORY)-$(TAG_NAME)" exec "dc/vault-service-$(TAG_NAME)" -- ./scripts/1pass.sh \
 		-m "secret" \
 		-e "$(TAG_NAME)" \
-		-a "$(DOCKER_NAME)-$(TAG_NAME)" \
+		-a "$(SECRET_NAME)-$(TAG_NAME)" \
 		-n "$(OPENSHIFT_REPOSITORY)-$(TAG_NAME)" \
 		-v "$(VAULTS)" \
 		-r "true" \
