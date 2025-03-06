@@ -80,17 +80,6 @@
           <li>Certificate of Good Standing</li>
           <li>Letter Under Seal</li>
         </ul>
-        <div class="mt-6">
-          <UButton
-            class="text-base"
-            :to="searchGuideURL"
-            :label="`Learn how to use ${searchTitleText} - User Guide`"
-            icon="i-mdi-open-in-new"
-            target="_blank"
-            trailing
-            variant="link"
-          />
-        </div>
       </div>
       <div class="flex justify-end">
         <UButton
@@ -129,7 +118,6 @@
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
 const { hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
-const { searchType } = storeToRefs(useBcrosSearch())
 const { t } = useNuxtApp().$i18n
 
 const tabs = [
@@ -140,14 +128,7 @@ const tabs = [
 const searchTitleText = t('appHeader')
 
 const bcOnlineURL = useRuntimeConfig().public.bcolURL
-const searchGuideURL = computed(() => {
-  // TODO: extended/public/business search link tbd
-  if (searchType.value === SearchTypeE.DIRECTOR) {
-    // eslint-disable-next-line
-    return 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/director_search_quick_guide.pdf'
-  }
-  return ''
-})
+
 const showDocHelp = ref(false)
 </script>
 <style lang="scss" scoped>

@@ -90,19 +90,19 @@
         },
         "extended": {
           "error": "Enter a business name or number",
-          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC0001\"",
           "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
           "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
         },
         "limited": {
           "error": "Enter a business name or number",
-          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC0001\"",
           "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
           "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
         },
         "public": {
           "error": "Enter a business name or number",
-          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC001\"",
+          "hint": "Example: \"Test Construction Inc.\", \"BC0000123\", \"987654321BC0001\"",
           "info": "Search for businesses registered or incorporated in B.C. and access their business documents.",
           "placeholder": "Business Name or Incorporation/Registration Number or CRA Business Number"
         }

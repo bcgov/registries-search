@@ -20,6 +20,6 @@ context('Search Business - input', () => {
       .find('p')
       .should(
         'have.text',
-        'Example: "Test Construction Inc.", "BC0000123", "987654321BC001"')
+        'Example: "Test Construction Inc.", "BC0000123", "987654321BC0001"')
   })
 })
