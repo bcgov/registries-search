@@ -1,4 +1,4 @@
-import { getCode, getNames } from 'country-list'
+// import { getCode, getNames } from 'country-list'
 
 /** Return the table headers for the entity table. */
 export const getPersonHeadersPublic = (): BaseTableHeaderI[] => {
@@ -19,29 +19,30 @@ export const getPersonHeadersPublic = (): BaseTableHeaderI[] => {
       itemFn: (val: SearchResultI) => highlightMatch(val.legalName),
       slotId: 'name',
       value: 'Name',
-      width: '33%'
+      width: '34%'
     },
-    {
-      col: 'nationalities',
-      filter: {
-        clearable: true,
-        disabled: true,
-        filterApiFn: (filterVal: string) => filterSearch(
-          ['categories', 'nationalities'], filterVal ? [getCode(filterVal)] : null),
-        hasSelectedSlot: true,
-        itemValue: 'value',
-        items: ['Canada', 'United States of America'].concat(
-          (getNames()).filter(country => !['Canada', 'United States of America'].includes(country))),
-        label: 'All',
-        type: 'select',
-        value: null
-      },
-      hasFilter: true,
-      hasSort: false,
-      value: 'Citizenship',
-      slotId: 'citizenship',
-      width: '15%'
-    },
+    // will be added back in once SIs are added
+    // {
+    //   col: 'nationalities',
+    //   filter: {
+    //     clearable: true,
+    //     disabled: true,
+    //     filterApiFn: (filterVal: string) => filterSearch(
+    //       ['categories', 'nationalities'], filterVal ? [getCode(filterVal)] : null),
+    //     hasSelectedSlot: true,
+    //     itemValue: 'value',
+    //     items: ['Canada', 'United States of America'].concat(
+    //       (getNames()).filter(country => !['Canada', 'United States of America'].includes(country))),
+    //     label: 'All',
+    //     type: 'select',
+    //     value: null
+    //   },
+    //   hasFilter: true,
+    //   hasSort: false,
+    //   value: 'Citizenship',
+    //   slotId: 'citizenship',
+    //   width: '15%'
+    // },
     {
       col: 'roles',
       filter: {
@@ -57,7 +58,7 @@ export const getPersonHeadersPublic = (): BaseTableHeaderI[] => {
       itemHidden: false,
       slotId: 'details',
       value: 'Business Details',
-      width: '32%'
+      width: '33%'
     },
     {
       col: 'roles',
@@ -79,7 +80,7 @@ export const getPersonHeadersPublic = (): BaseTableHeaderI[] => {
       itemColspan: 0,
       itemHidden: true,
       value: 'Roles',
-      width: '20%'
+      width: '33%'
     }
   ]
 }

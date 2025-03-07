@@ -19,38 +19,23 @@
       @click="showDocHelp = !showDocHelp"
     />
     <div v-if="showDocHelp" class="doc-help-info mb-10 mt-5 pt-6">
-      <div class="doc-help-info__content mx-auto">
+      <div class="doc-help-info__content mx-auto space-y-6">
         <h3 style="text-align: center;">
           Help with {{ searchTitleText }}
         </h3>
-        <h3 class="mt-6">
+        <h3>
           Search
         </h3>
-        <p class="mt-6">
-          The Person Search returns results for people
-          associated with all businesses in British Columbia.
+        <p>
+          {{ $t(`text.search.person.${accessLevel}.help1`) }}
         </p>
-        <p v-if="hasExtendedAccess" class="mt-6">
-          You can find people by searching for any part of the person's name, preferred name, address,
-          email, or SIN. Note that all searches prioritize name matches, so
-          searches for an address will list name matches first. For example,
-          searches for Parker Ave. will list matches for peoples' names containing Parker
-          above addresses containing Parker.
+        <p>
+          {{ $t(`text.search.person.${accessLevel}.help2`) }}
         </p>
-        <p v-else-if="hasLimitedAccess" class="mt-6">
-          You can find people by searching for any part of the person's name or address, or
-          their business email address. Note that all searches prioritize name matches, so
-          searches for an address will list name matches first. For example,
-          searches for Parker Ave. will list matches for peoples' names containing Parker
-          above addresses containing Parker.
-        </p>
-        <p v-else class="mt-6">
-          You can find people by searching for any part of the person's name.
-        </p>
-        <h3 class="mt-6">
+        <h3>
           Business Information
         </h3>
-        <p class="mt-6">
+        <p>
           You can directly view information for the business types listed below in {{ searchTitleText }}.
           Information for other business types can be obtained through
           <UButton
@@ -64,16 +49,16 @@
           />
           .
         </p>
-        <ul class="ml-4 mt-6">
+        <ul class="ml-4">
           <li>Benefit Companies</li>
           <li>Cooperative Associations (active only)</li>
           <li>Sole Proprietorships</li>
           <li>General Partnerships</li>
         </ul>
-        <p class="mt-6">
+        <p>
           Where available, documents for these business types include:
         </p>
-        <ul class="ml-4 mt-6">
+        <ul class="ml-4">
           <li>Business Summary</li>
           <li>Filing History Documents (ledger filings)</li>
           <li>Certificate of Status</li>
@@ -117,7 +102,7 @@
 <script setup lang="ts">
 const account = useBcrosAccount()
 const { currentAccount, currentAccountName, userFullName } = storeToRefs(account)
-const { hasExtendedAccess, hasLimitedAccess } = storeToRefs(useBcrosSearchAccess())
+const { accessLevel, hasExtendedAccess } = storeToRefs(useBcrosSearchAccess())
 const { t } = useNuxtApp().$i18n
 
 const tabs = [

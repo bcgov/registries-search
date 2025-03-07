@@ -340,6 +340,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      },
      [
         {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'person 13 partner', 'roles': [{'relatedBN': '987654322BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234568', 'relatedLegalType': 'GP', 'relatedName': 'Firm GP', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
@@ -358,6 +359,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      },
      [
         {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'person 13 partner', 'roles': [{'relatedBN': '987654322BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234568', 'relatedLegalType': 'GP', 'relatedName': 'Firm GP', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
@@ -375,6 +377,7 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
      },
      [
         {'entityType': 'PERSON', 'legalName': 'person one', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+        {'entityType': 'PERSON', 'legalName': 'person 13 partner', 'roles': [{'relatedBN': '987654322BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234568', 'relatedLegalType': 'GP', 'relatedName': 'Firm GP', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'persons two', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
         {'entityType': 'PERSON', 'legalName': 'personing three shoot', 'roles': [{'relatedBN': 'BN00012334', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'CP1234567', 'relatedLegalType': 'CP', 'relatedName': 'test 1234', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]}]
     ),
@@ -435,7 +438,7 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
     # add test dependent name synonyms to db
     SolrSynonymList(synonym='chute', synonym_list=['chute', 'shoot'], synonym_type=SolrSynonymType.NAME).save()
     # setup products mock in validator
-    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [])
     # format payload
     payload = {'query': query}
     if categories:
@@ -467,6 +470,74 @@ def test_search(app, session, client, jwt, monkeypatch, test_name, query, catego
 
     assert results == expected
 
+
+@integration_solr
+@pytest.mark.parametrize('test_name,query,categories,expected', [
+    ('test_basic',  # NOTE: test setup checks for 'test_basic' on the first run
+     {'value': 'person'},
+     {},
+     [
+         {'birthDate': '1999', 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]},
+         {'entityType': 'PERSON', 'legalName': 'person twelve proprietor', 'roles': [{'relatedBN': '987654321BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234567', 'relatedLegalType': 'SP', 'relatedName': 'Firm SP', 'relatedState': 'ACTIVE', 'roleType': 'PROPRIETOR', 'score': 0.0}]},
+         {'entityType': 'PERSON', 'legalName': 'person 13 partner', 'roles': [{'relatedBN': '987654322BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234568', 'relatedLegalType': 'GP', 'relatedName': 'Firm GP', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+         {'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]},
+         {'birthDate': '1988', 'entityType': 'PERSON', 'legalName': 'p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+    ('test_blank_roles',
+     {'value': 'person'},
+     {EntityField.ROLES.value: {EntityRoleField.ROLE_TYPE.value: []}},
+     [
+         {'birthDate': '1999', 'entityType': 'PERSON', 'legalName': 'person nine', 'nationalities': ['CA'], 'roles': [{'relatedBN': '124221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0000007', 'relatedLegalType': 'BEN', 'relatedName': 'lots of words in here', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]},
+         {'entityType': 'PERSON', 'legalName': 'person twelve proprietor', 'roles': [{'relatedBN': '987654321BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234567', 'relatedLegalType': 'SP', 'relatedName': 'Firm SP', 'relatedState': 'ACTIVE', 'roleType': 'PROPRIETOR', 'score': 0.0}]},
+         {'entityType': 'PERSON', 'legalName': 'person 13 partner', 'roles': [{'relatedBN': '987654322BC0001', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'FM1234568', 'relatedLegalType': 'GP', 'relatedName': 'Firm GP', 'relatedState': 'ACTIVE', 'roleType': 'PARTNER', 'score': 0.0}]},
+         {'birthDate': '1954', 'entityType': 'PERSON', 'legalName': 'person ten y.z. xk', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]},
+         {'birthDate': '1988', 'entityType': 'PERSON', 'legalName': 'p!e(rs)on e}l{ev-en ~`@#$%^-_=[]|\\;:\'",<>./', 'nationalities': ['CA'], 'roles': [{'relatedBN': '1255323221', 'relatedEntityType': 'BUSINESS', 'relatedIdentifier': 'BC0020047', 'relatedLegalType': 'BEN', 'relatedName': 'NOt Case SENSitive', 'relatedState': 'ACTIVE', 'roleType': 'SIGNIFICANT INDIVIDUAL', 'score': 0.0}]}]
+    ),
+])
+def test_search_role_access(app, session, client, jwt, monkeypatch, test_name, query, categories, expected):
+    """Assert that the search public call only returns proprietors, partners and significant individuals."""
+    # test setup
+    if test_name == 'test_basic':
+        # setup solr data for test (only needed the first time)
+        solr.delete_all_docs()
+        time.sleep(1)
+        solr.create_or_replace_docs(SOLR_TEST_DOCS)
+        time.sleep(2)
+    # setup products mock in validator
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [])
+    # format payload
+    payload = {'query': query}
+    if categories:
+        payload['categories'] = categories
+    # call search
+    resp = client.post(f'/api/v1/search/public',
+                       data=json.dumps(payload),
+                       headers={'Accept-Version': 'v1', 'content-type': 'application/json'})
+    # test
+    assert resp.status_code == HTTPStatus.OK
+    resp_json = resp.json
+    assert resp_json['facets']
+    assert resp_json['searchResults']
+    results = resp_json['searchResults']['results']
+    assert resp_json['searchResults']['totalResults'] == len(expected)
+    for result in results:
+        del result['score']
+        assert result.get(EntityField.LEGAL_NAME.value)
+        # tax info should not be visible from this search
+        assert not result.get(EntityField.TAX_NUMBER.value)
+        assert not result.get(EntityField.TAX_RESIDENCIES.value)
+        # personal email should not be visible from this search
+        assert not result.get(EntityField.EMAIL.value)
+        # addresses should never be visible from this search
+        assert not result.get(EntityField.ENTITY_ADDRESSES.value)
+        # birthdate should only show the year
+        assert not len(result.get(EntityField.BIRTH_DATE.value, '')) > 4
+        # role type should be in ['SIGNIFICANT INDIVIDUAL','PARTNER','PROPRIETOR']
+        assert len(result[EntityField.ROLES.value]) > 0
+        for role in result[EntityField.ROLES.value]:
+            assert role[EntityRoleField.ROLE_TYPE.value] in ['SIGNIFICANT INDIVIDUAL','PARTNER','PROPRIETOR']
+
+    assert results == expected
 
 def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
     """Assert that the entities search call error handling works as expected."""
@@ -509,7 +580,7 @@ def test_search_error(app, session, client, jwt, monkeypatch, requests_mock):
 def test_search_bad_request(app, session, client, jwt, monkeypatch, test_name, query, categories, headers, errors):
     """Assert that the entities search call validates the payload."""
     # setup products mock in validator
-    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [{'code': 'NDS', 'subscriptionStatus': 'ACTIVE'}])
+    monkeypatch.setattr('bor_api.utils.request_validators.account_products', lambda *args, **kwargs: [])
     # create payload
     payload = {'query': query}
     if categories:

@@ -10,7 +10,7 @@ context('Search public', () => {
     // info text
     cy.get('[data-cy="search-input-info-text"]').should(
       'have.text',
-      'Search for the names of people associated with businesses in B.C.'
+      'Search for the names of partners and proprietors associated with businesses in B.C.'
     )
     // search input
     cy.get('[data-cy="search-input"]').find('[data-cy="search-textfield"]').should('exist')
@@ -47,11 +47,12 @@ context('Search public', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(0).find('th').then((headerTitles) => {
-          expect(headerTitles, '4 headers').to.have.length(4)
+          // expect(headerTitles, '4 headers').to.have.length(4)
+          expect(headerTitles, '3 headers').to.have.length(3)
           expect(headerTitles.eq(0), 'Name header').to.have.text('Name')
-          expect(headerTitles.eq(1), 'Citizenship header').to.have.text('Citizenship')
-          expect(headerTitles.eq(2), 'Business Details header').to.have.text('Business Details')
-          expect(headerTitles.eq(3), 'Roles header').to.have.text('Roles')
+          // expect(headerTitles.eq(1), 'Citizenship header').to.have.text('Citizenship')
+          expect(headerTitles.eq(1), 'Business Details header').to.have.text('Business Details')
+          expect(headerTitles.eq(2), 'Roles header').to.have.text('Roles')
         })
       // filters
       cy.get('[data-cy="search-results-table"]')
@@ -59,7 +60,8 @@ context('Search public', () => {
         .find('.base-table')
         .find('.base-table__header')
         .find('tr').eq(1).find('th').then((headerFilters) => {
-          expect(headerFilters, '4 filters').to.have.length(4)
+          // expect(headerFilters, '4 filters').to.have.length(4)
+          expect(headerFilters, '3 filters').to.have.length(3)
         })
       // item data
       cy.get('[data-cy="search-results-table"]')
@@ -71,23 +73,23 @@ context('Search public', () => {
       for (const i in results) {
         cy.get('@rows').eq(Number(i)).find('.base-table__body__row__item').then((cols) => {
           // NB: business details and roles are combined into a single column
-          expect(cols, '4 columns').to.have.length(3)
+          expect(cols, '3 columns').to.have.length(2)
           // name
           expect(cols.eq(0), 'Name column - name').to.include.text(results[i].legalName.toUpperCase())
           expect(cols.eq(0), 'Name column - birthdate').to.include.text(results[i].birthDate || '')
           // citizenship
-          expect(cols.eq(1), 'Citizenship column - no text').to.have.text('')
-          if (results[i].nationalities) {
-            expect(cols.eq(1).find('span'), 'Citizenship column - x flags')
-              .to.have.length(results[i].nationalities.length)
-            expect(cols.eq(1).find('span').attr('class'), 'Citizenship column - flag').includes('flag')
-          } else {
-            expect(cols.eq(1).find('span'), 'Citizenship column - no flag').to.have.length(0)
-          }
+          // expect(cols.eq(1), 'Citizenship column - no text').to.have.text('')
+          // if (results[i].nationalities) {
+          //   expect(cols.eq(1).find('span'), 'Citizenship column - x flags')
+          //     .to.have.length(results[i].nationalities.length)
+          //   expect(cols.eq(1).find('span').attr('class'), 'Citizenship column - flag').includes('flag')
+          // } else {
+          //   expect(cols.eq(1).find('span'), 'Citizenship column - no flag').to.have.length(0)
+          // }
 
           for (const roleIdx in results[i].roles) {
             const role = results[i].roles[roleIdx]
-            const roleDivs = cols.eq(2).find('.inner-row-div').eq(Number(roleIdx)).find('.inner-col-div')
+            const roleDivs = cols.eq(1).find('.inner-row-div').eq(Number(roleIdx)).find('.inner-col-div')
             // business
             expect(roleDivs.eq(0), 'Business Details column - identifier')
               .to.include.text(role.relatedIdentifier)
@@ -113,14 +115,14 @@ context('Search public', () => {
     cy.get('.base-table__header').find('tr').first().as('headers')
     cy.get('.base-table__body').find('tr').first().as('firstRow')
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       cy.get('@headers').find('th').eq(Number(i)).invoke('outerWidth').then((headerWidth) => {
-        if (i < 2) {
+        if (i < 1) {
           cy.get('@firstRow').find('td').eq(Number(i)).invoke('outerWidth').then((bodyWidth) => {
             expect(headerWidth).to.equal(bodyWidth)
           })
         } else {
-          cy.get('@firstRow').find('td').eq(2).find('.inner-row-div').eq(0).find('.inner-col-div').eq(Number(i) - 2)
+          cy.get('@firstRow').find('td').eq(1).find('.inner-row-div').eq(0).find('.inner-col-div').eq(Number(i) - 2)
             .invoke('outerWidth').then((bodyWidth) => {
               // NOTE: width of the screen cypress is running is smaller so it is off by more
               expect(headerWidth).to.be.closeTo(bodyWidth, 10)

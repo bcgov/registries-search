@@ -25,7 +25,9 @@ TEST_BUSINESSES = [
     create_entity(name='4444 test', bn='BN9000776557', entity_id='BC0000567', legal_type='BEN', entity_type='BUSINESS', state='HISTORICAL'),
     create_entity(name='single', bn='242217', entity_id='BC0000067', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
     create_entity(name='lots of words in here', bn='124221', entity_id='BC0000007', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
-    create_entity(name='NOt Case SENSitive', bn='1255323221', entity_id='BC0020047', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE')
+    create_entity(name='NOt Case SENSitive', bn='1255323221', entity_id='BC0020047', legal_type='BEN', entity_type='BUSINESS', state='ACTIVE'),
+    create_entity(name='Firm SP', bn='987654321BC0001', entity_id='FM1234567', legal_type='SP', entity_type='BUSINESS', state='ACTIVE'),
+    create_entity(name='Firm GP', bn='987654322BC0001', entity_id='FM1234568', legal_type='GP', entity_type='BUSINESS', state='ACTIVE')
 ]
 
 TEST_PERSONS = [
@@ -275,6 +277,42 @@ TEST_PERSONS = [
                                      streetAddress='Willaby Way',
                                      postalCode='V3V 4T6',
                                      locationDescription='location desc 11')]),
+    create_entity(name='person twelve proprietor',
+                  entity_id='proprietor12',
+                  roles=[EntityRole(id='proprietor12/roles0',
+                                    relatedBN=TEST_BUSINESSES[8].bn,
+                                    relatedEmail=TEST_BUSINESSES[8].email,
+                                    relatedEntityType='BUSINESS',
+                                    relatedIdentifier=TEST_BUSINESSES[8].identifier,
+                                    relatedLegalType=TEST_BUSINESSES[8].legalType,
+                                    relatedName=TEST_BUSINESSES[8].legalName,
+                                    relatedState=TEST_BUSINESSES[8].state,
+                                    roleType='PROPRIETOR',
+                                    roleDates=[DateRange(start='2023-04-09T00:03:54Z', end=None)])],
+                  addresses=[Address(addressCity='Bowen Island',
+                                     addressCountry='Canada',
+                                     addressRegion='BC',
+                                     addressType='DELIVERY',
+                                     streetAddress='Cherry Lane',
+                                     postalCode='V8T 4R8')]),
+    create_entity(name='person 13 partner',
+                  entity_id='partner13',
+                  roles=[EntityRole(id='partner13/roles0',
+                                    relatedBN=TEST_BUSINESSES[9].bn,
+                                    relatedEmail=TEST_BUSINESSES[9].email,
+                                    relatedEntityType='BUSINESS',
+                                    relatedIdentifier=TEST_BUSINESSES[9].identifier,
+                                    relatedLegalType=TEST_BUSINESSES[9].legalType,
+                                    relatedName=TEST_BUSINESSES[9].legalName,
+                                    relatedState=TEST_BUSINESSES[9].state,
+                                    roleType='PARTNER',
+                                    roleDates=[DateRange(start='2024-10-01T00:03:54Z', end=None)])],
+                  addresses=[Address(addressCity='Penticton',
+                                     addressCountry='Canada',
+                                     addressRegion='BC',
+                                     addressType='DELIVERY',
+                                     streetAddress='404 Fake Street',
+                                     postalCode='F4K 3S7')]),
 ]
     
 SOLR_TEST_DOCS = TEST_BUSINESSES + TEST_PERSONS

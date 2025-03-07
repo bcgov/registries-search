@@ -110,20 +110,26 @@
       "person": {
         "extended": {
           "error": "Enter a name, address, SIN/TTN/ITN, and/or email address",
+          "help1": "The person search returns results for people associated with businesses registered in British Columbia.",
+          "help2": "You can find people by searching for any part of the person's name, preferred name, address, email, or SIN. Note that all searches prioritize name matches, so searches for an address will list name matches first. For example, searches for Parker Ave. will list matches for peoples' names containing Parker above addresses containing Parker.",
           "hint": "Example: \"John Smith\", \"123 Main St\", \"V1V 1V1\", \"John Smith Victoria\", \"j.smith{'@'}123.aba\", \"000 000 000\"",
           "info": "Search for the names, addresses, SIN/TTN/ITN, and email addresses of people associated with businesses in B.C.",
           "placeholder": "Person Name, Address, SIN/TTN/ITN, and/or Email Address"
         },
         "limited": {
           "error": "Enter a name",
+          "help1": "The person search returns results for partners and proprietors associated with businesses registered in British Columbia.",
+          "help2": "You can find people by searching for any part of the person's name or address, or their business email address. Note that all searches prioritize name matches, so searches for an address will list name matches first. For example, searches for Parker Ave. will list matches for peoples' names containing Parker above addresses containing Parker.",
           "hint": "Example: \"John Smith\"",
-          "info": "Search for the names of people associated with businesses in B.C.",
+          "info": "Search for the names of partners and proprietors associated with businesses in B.C.",
           "placeholder": "Person Name"
         },
         "public": {
           "error": "Enter a name",
+          "help1": "The person search returns results for partners and proprietors associated with businesses registered in British Columbia.",
+          "help2": "You can find people by searching for any part of the person's name.",
           "hint": "Example: \"John Smith\"",
-          "info": "Search for the names of people associated with businesses in B.C.",
+          "info": "Search for the names of partners and proprietors associated with businesses in B.C.",
           "placeholder": "Person Name"
         }
       },
