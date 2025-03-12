@@ -82,7 +82,7 @@ import {
   ReportError
 } from '@/resources/error-dialog-options'
 import { HelpdeskInfo } from '@/resources/contact-info'
-import { getFeatureFlag, navigate } from '@/utils'
+import { getFeatureFlag } from '@/utils'
 import ContactInfo from './components/common/ContactInfo.vue'
 import { DocumentAccessRequestStatus } from '@/enums/document-access-request'
 
@@ -189,15 +189,15 @@ onMounted(async () => {
         }
       }
 
+      documentAccessRequest.currentRequest = currentDar
+      const identifier = documentAccessRequest.currentRequest.businessIdentifier
       if ([DocumentAccessRequestStatus.COMPLETED, DocumentAccessRequestStatus.PAID].includes(currentDar?.status)) {
-        documentAccessRequest.currentRequest = currentDar
-        const identifier = documentAccessRequest.currentRequest.businessIdentifier
         const date = documentAccessRequest.currentRequest.submissionDate
         await useEntity().loadEntity(identifier)
         await useFilingHistory().loadFilingHistory(identifier, date)
         router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier, darId } })
       } else {
-        navigate(sessionStorage.getItem('BP_SEARCH_URL'))
+        router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier }})
       }
     }
     appReady.value = true
