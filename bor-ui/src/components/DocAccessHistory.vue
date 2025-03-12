@@ -125,11 +125,9 @@ const textForStatus = (status: string): string => {
 }
 
 const actionButton = (item: DocAccessI) => {
-  if ((status.toLowerCase().indexOf('paid') === 0) ||
-    (status.toLowerCase().indexOf('completed') === 0)
-  ) {
+  if (['PAID', 'COMPLETED'].includes(item.status)) {
     goToOpenDocAccess(item)
-  } else if (item.status.toLowerCase().indexOf('error') === 0) {
+  } else if (item.status === 'ERROR') {
     const identifier = item.businessIdentifier
 
     // NOTE This is obviously not the legal type, but we don't have legal type
