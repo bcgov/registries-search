@@ -103,7 +103,7 @@ const { filingHistory } = useFilingHistory()
 const { fees } = useFeeCalculator()
 const { search } = useSearch()
 const { suggest } = useSuggest()
-const { cancelAccessRequest, documentAccessRequest, loadAccessRequestHistory, getAccessRequestById }
+const { cancelAccessRequest, documentAccessRequest, getAccessRequestById }
   = useDocumentAccessRequest()
 
 /** True if Jest is running the code. */
@@ -164,7 +164,6 @@ onMounted(async () => {
         type: ErrorCodes.AUTH_PRODUCTS_ERROR
       })
     }
-    const loadedHistory = loadAccessRequestHistory()
     if (route.query?.identifier) {
       router.push({
         name: RouteNames.BUSINESS_INFO,
@@ -178,33 +177,27 @@ onMounted(async () => {
         route.query?.status === 'UEFZTUVOVF9DQU5DRUxMRUQ=' // this is PAYMENT_CANCELLED
       ) {
         await cancelAccessRequest(entity, currentDar.id)
-        currentDar =  await getAccessRequestById(darId)
+        currentDar = await getAccessRequestById(darId)
       } else if (currentDar?.status === DocumentAccessRequestStatus.CREATED) {
         // wait 10 seconds to see if the document gets into the paid state
         for (let i = 0; i < 10; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000))
-          currentDar =  await getAccessRequestById(darId)
+          currentDar = await getAccessRequestById(darId)
           if (currentDar.status !== DocumentAccessRequestStatus.CREATED) {
             break
           }
         }
       }
 
-      if (currentDar?.status === DocumentAccessRequestStatus.COMPLETED) {
-        router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { darId } })
-      }
-
       documentAccessRequest.currentRequest = currentDar
-    } else if (route.query?.docAccessId) {
-      await loadedHistory
-      documentAccessRequest.currentRequest = documentAccessRequest.requests
-        .find(request => request.id === Number(route.query?.docAccessId))
-      if (documentAccessRequest.currentRequest) {
-        const identifier = documentAccessRequest.currentRequest.businessIdentifier
+      const identifier = documentAccessRequest.currentRequest.businessIdentifier
+      if ([DocumentAccessRequestStatus.COMPLETED, DocumentAccessRequestStatus.PAID].includes(currentDar?.status)) {
         const date = documentAccessRequest.currentRequest.submissionDate
         await useEntity().loadEntity(identifier)
         await useFilingHistory().loadFilingHistory(identifier, date)
-        router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier } })
+        router.push({ name: RouteNames.DOCUMENT_REQUEST, params: { identifier, darId } })
+      } else {
+        router.push({ name: RouteNames.BUSINESS_INFO, params: { identifier }})
       }
     }
     appReady.value = true

@@ -57,7 +57,7 @@ import { dateToPacificDateTime } from '@/utils'
 import { DocumentTypeDescriptions } from '@/resources'
 import { DocumentType, RouteNames } from '@/enums'
 
-const { entity } = useEntity()
+const { entity, loadEntity } = useEntity()
 const { filingHistory } = useFilingHistory()
 const { documentAccessRequest, downloadDocument } = useDocumentAccessRequest()
 
@@ -67,6 +67,9 @@ onMounted(async () => {
     const currentRequest: DocumentDetailsI = documentAccessRequest.currentRequest
     if (currentRequest == null) {
         router.push('/')
+    }
+    if (entity.identifier !== currentRequest.businessIdentifier) {
+        await loadEntity(currentRequest.businessIdentifier)
     }
 })
 

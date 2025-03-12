@@ -54,7 +54,6 @@ export const useDocumentAccessRequest = () => {
 
     const getAccessRequestById = async (documentAccessRequestId: number) => {
         documentAccessRequest._loading = true
-        clearAccessRequestHistory()
         const accessRequestsResponse: AccessRequestsHistoryI
           = await getDocumentAccessRequestsById(documentAccessRequestId)
         if (!accessRequestsResponse || accessRequestsResponse.error) {
