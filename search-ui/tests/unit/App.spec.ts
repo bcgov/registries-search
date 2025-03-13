@@ -47,6 +47,8 @@ describe('App tests', () => {
       switch (url) {
         case 'purchases':
           return Promise.resolve({ data: { documentAccessRequests: [docAccessRequest] } })
+        case `purchases/${docAccessRequest.id}`:
+          return Promise.resolve({ data: { documentAccessRequest: docAccessRequest } })
         case `businesses/${identifier}?slim=true`:
           return Promise.resolve({ data: {} })
         case `businesses/${identifier}/filings?effective_date=${docAccessRequest.submissionDate}`:
@@ -184,8 +186,8 @@ describe('App tests', () => {
     // should have redirected
     expect(router.currentRoute.value.name).toBe(RouteNames.BUSINESS_INFO)
   })
-  it('pushes to opening document access info when docAccessId param given', async () => {
-    await router.push({ name: RouteNames.SEARCH, query: { docAccessId: docAccessRequest.id } })
+  it('pushes to opening document access info when documentAccessRequestId param given', async () => {
+    await router.push({ name: RouteNames.SEARCH, query: { documentAccessRequestId: docAccessRequest.id } })
     wrapper = mount(App, {
       global: {
         // plugins: [vuetify],
