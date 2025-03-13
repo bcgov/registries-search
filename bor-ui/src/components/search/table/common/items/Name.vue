@@ -4,7 +4,7 @@
       <UIcon v-if="icon" class="text-xl" :name="icon" />
     </div>
     <div class="flex flex-col">
-      <span v-html="legalName" />
+      <span class="break-all" v-html="legalName" />
       <BcrosDetailsInfoBox
         v-if="item.alternateName"
         class="info-section"
