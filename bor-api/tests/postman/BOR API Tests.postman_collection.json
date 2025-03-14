@@ -377,7 +377,7 @@
 									},
 									{
 										"key": "Account-ID",
-										"value": "1999",
+										"value": "3137",
 										"type": "text"
 									}
 								],
@@ -1699,7 +1699,7 @@
 									},
 									{
 										"key": "Account-ID",
-										"value": "1999"
+										"value": "3101"
 									}
 								],
 								"body": {
@@ -1921,7 +1921,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"query\": {\n        \"value\": \"bop\"\n    }\n}",
+									"raw": "{\n    \"query\": {\n        \"value\": \"kial\"\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2037,7 +2037,7 @@
 									},
 									{
 										"key": "Account-ID",
-										"value": "1999"
+										"value": "3113"
 									}
 								],
 								"body": {
@@ -3271,6 +3271,299 @@
 										"internal",
 										"solr",
 										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "direct solr calls",
+					"item": [
+						{
+							"name": "Query",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": \"(legalName_q:{{value}}^2 OR legalName_q:{{value}}~1 OR legalName_stem_agro_q:{{value}}^2 OR legalName_stem_agro_q:{{value}}~1 OR legalName_single_term_q:{{value}}^2 OR legalName_single_term_q:{{value}}~1 OR legalName_xtra_q:{{value}}^2) OR (legalName_q:\\\"{{value}}\\\"~5^5) OR (legalName_stem_agro_q:\\\"{{value}}\\\"~10^3) OR (legalName_synonym_q:\\\"{{value}}\\\"~10^3) OR (legalName_stem_agro_q:\\\"{{value}}\\\"^2)\",\n    \"filter\": [\n        \"{!parent which = '-_nest_path_:* entityType:*'}roleType:\\\"PARTNER\\\" OR roleType: \\\"PROPRIETOR\\\" OR roleType: \\\"SIGNIFICANT INDIVIDUAL\\\"\", \"{!parent which = '-_nest_path_:* entityType:*'}active:\\\"True\\\"\"\n        ],\n    \"queries\": {\n        \"parents\": \"entityType:*\",\n        \"parentFilters\": \"\"\n    },\n    \"facet\": {\n        \"relatedEntityType\": {\n            \"type\": \"terms\",\n            \"field\": \"relatedEntityType\",\n            \"domain\": {\n                \"blockChildren\": \"{!v=$parents}\"\n            },\n            \"facet\": {\n                \"by_parent\": \"uniqueBlock({!v=$parents})\"\n            }\n        },\n        \"relatedLegalType\": {\n            \"type\": \"terms\",\n            \"field\": \"relatedLegalType\",\n            \"domain\": {\n                \"blockChildren\": \"{!v=$parents}\"\n            },\n            \"facet\": {\n                \"by_parent\": \"uniqueBlock({!v=$parents})\"\n            }\n        },\n        \"relatedState\": {\n            \"type\": \"terms\",\n            \"field\": \"relatedState\",\n            \"domain\": {\n                \"blockChildren\": \"{!v=$parents}\"\n            },\n            \"facet\": {\n                \"by_parent\": \"uniqueBlock({!v=$parents})\"\n            }\n        },\n        \"roleType\": {\n            \"type\": \"terms\",\n            \"field\": \"roleType\",\n            \"domain\": {\n                \"blockChildren\": \"{!v=$parents}\"\n            },\n            \"facet\": {\n                \"by_parent\": \"uniqueBlock({!v=$parents})\"\n            }\n        }\n    },\n    \"fields\": [\n        \"birthDate\",\n        \"entityType\",\n        \"legalName\",\n        \"nationalities\",\n        \"roles\",\n        \"score\",\n        \"[child]\",\n        \"relatedBN\",\n        \"relatedEntityType\",\n        \"relatedIdentifier\",\n        \"relatedName\",\n        \"relatedState\",\n        \"roleType\",\n        \"relatedLegalType\"\n    ],\n    \"offset\": 0,\n    \"limit\": 10\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{follower_url}}/query",
+									"host": [
+										"{{follower_url}}"
+									],
+									"path": [
+										"query"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create or replace docs",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[{\n    \"id\": \"COLIN111111BC1234567OFFICER\",\n    \"entityType\": \"PERSON\",\n    \"legalName\": \"Pikachu Zap\",\n    \"bn\": \"123456789\",\n    \"email\": \"fake@email.com\",\n    \"name_q\": \"Pikachu Zap\",\n    \"info_q\":\"360 Osilinka Drive Box 125 Mackenzie British Columbia Canada V0J 2C0 fake@email.com\",\n    \"roles\": {\n        \"set\": [{\n            \"id\":\"COLIN111111BC1234567OFFICER/roles0\",\n            \"relatedEntityType\":\"BUSINESS\",\n            \"relatedIdentifier\":\"BC1234567\",\n            \"relatedLegalType\":\"BC\",\n            \"relatedName\":\"Test Name LTD.\",\n            \"relatedState\":\"ACTIVE\",\n            \"roleType\":\"OFFICER\",\n            \"related_q\":\"Test Name LTD. BC1234567\",\n            \"roleDates\":[{\n            \"start\":\"2005-07-14T16:11:47\",\n            \"active\":true\n            }],\n            \"relatedAddresses\":[{\n            \"addressType\":\"DELIVERY\",\n            \"addressCity\":\"PRINCE GEORGE\",\n            \"addressCountry\":\"Canada\",\n            \"addressRegion\":\"BC\",\n            \"postalCode\":\"V2L 5G7\",\n            \"streetAddress\":\"1598 SIXTH AVENUE\",\n            \"parentDoc\":\"entityRole\"\n            }]\n        }]\n    },\n    \"entityAddresses\": {\n        \"set\": [{\n            \"addressType\":\"DELIVERY\",\n            \"addressCity\":\"Mackenzie\",\n            \"addressCountry\":\"Canada\",\n            \"addressRegion\":\"BC\",\n            \"postalCode\":\"V0J 2C0\",\n            \"streetAddress\":\"360 Osilinka Drive Box 125\",\n            \"address_q\":\"360 Osilinka Drive Box 125 Mackenzie British Columbia Canada V0J 2C0\",\n            \"parentDoc\":\"entity\"\n        }]\n    }\n}]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{leader_url}}/update?commit=true&overwrite=true&wt=json",
+									"host": [
+										"{{leader_url}}"
+									],
+									"path": [
+										"update"
+									],
+									"query": [
+										{
+											"key": "commit",
+											"value": "true"
+										},
+										{
+											"key": "overwrite",
+											"value": "true"
+										},
+										{
+											"key": "wt",
+											"value": "json"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Synonyms",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"synonym\": [\"synonym\"],\n    \"another\": [\"another\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{leader_url}}/schema/analysis/synonyms/:synonym_type",
+									"host": [
+										"{{leader_url}}"
+									],
+									"path": [
+										"schema",
+										"analysis",
+										"synonyms",
+										":synonym_type"
+									],
+									"variable": [
+										{
+											"key": "synonym_type",
+											"value": "NAME"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete all",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "<delete><query>*:*</query></delete>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{leader_url_delete_all}}/update?commit=true&overwrite=true&wt=json",
+									"host": [
+										"{{leader_url_delete_all}}"
+									],
+									"path": [
+										"update"
+									],
+									"query": [
+										{
+											"key": "commit",
+											"value": "true"
+										},
+										{
+											"key": "overwrite",
+											"value": "true"
+										},
+										{
+											"key": "wt",
+											"value": "json"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete specific ids",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "<delete><query>id:update_me1 OR id:update_me2</query></delete>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{leader_url}}/update?commit=true&overwrite=true&wt=json",
+									"host": [
+										"{{leader_url}}"
+									],
+									"path": [
+										"update"
+									],
+									"query": [
+										{
+											"key": "commit",
+											"value": "true"
+										},
+										{
+											"key": "overwrite",
+											"value": "true"
+										},
+										{
+											"key": "wt",
+											"value": "json"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Leader Replication Cmd",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{leader_url}}/replication?command=backup",
+									"host": [
+										"{{leader_url}}"
+									],
+									"path": [
+										"replication"
+									],
+									"query": [
+										{
+											"key": "command",
+											"value": "backup"
+										},
+										{
+											"key": "command",
+											"value": "restore",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "restorestatus",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "details",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "enablereplication",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "disablereplication",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "fetchindex",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "enablepoll",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "disablepoll",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Follower Replication Cmd Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{follower_url}}/replication?command=details",
+									"host": [
+										"{{follower_url}}"
+									],
+									"path": [
+										"replication"
+									],
+									"query": [
+										{
+											"key": "command",
+											"value": "details"
+										},
+										{
+											"key": "command",
+											"value": "fetchindex",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "enablepoll",
+											"disabled": true
+										},
+										{
+											"key": "command",
+											"value": "disablepoll",
+											"disabled": true
+										}
 									]
 								}
 							},
