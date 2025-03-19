@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   app: {
     buildAssetsDir: '/src/',
     head: {
+      title: 'Business and Person Search',
       htmlAttrs: { dir: 'ltr' },
       link: [{ rel: 'icon', type: 'image/ico', href: '/favicon.ico' }]
     }
