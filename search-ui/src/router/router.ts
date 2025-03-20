@@ -8,18 +8,17 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // Local
 import { RouteNames } from '@/enums'
 import { SearchBusinessInfoBreadcrumb } from '@/resources'
-import { getFeatureFlag, navigate } from '@/utils'
-import { routes, routes_old } from './routes'
+import { navigate } from '@/utils'
+import { routes } from './routes'
 
 export function createVueRouter(): Router {
-  
   const router = createRouter({
     history: createWebHistory(sessionStorage.getItem('VUE_ROUTER_BASE') || ''),
-    routes: getFeatureFlag('search-moved') ? routes : routes_old
+    routes: routes
   })
 
   router.beforeEach(async (to, _from, next) => {
-    if (to.name === RouteNames.SEARCH && getFeatureFlag('search-moved')) {
+    if (to.name === RouteNames.SEARCH) {
       const bpSearchUrl = sessionStorage.getItem('BP_SEARCH_URL')
       // The identifier and documentAccessRequestId params cause it to load and then go to other pages
       if (bpSearchUrl && !to.query.identifier && !to.query.documentAccessRequestId) {
@@ -69,23 +68,23 @@ export function createVueRouter(): Router {
       }
     })
   })
-  
+
   /** Returns True if route requires authentication, else False. */
   function requiresAuth(route: RouteLocationNormalized): boolean {
     return route.matched.some(r => r.meta?.requiresAuth)
   }
-  
+
   /** Returns True if user is authenticated, else False. */
   function isAuthenticated(): boolean {
     // FUTURE: also check that token isn't expired!
     return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
   }
-  
+
   /** Returns True if route is Login success, else False. */
   function isLogin(route: RouteLocationNormalized): boolean {
     return Boolean(route.name === RouteNames.LOGIN)
   }
-  
+
   /** Returns True if route is Login success, else False. */
   function isLoginSuccess(route: RouteLocationNormalized): boolean {
     return Boolean(route.name === RouteNames.LOGIN && route.hash)

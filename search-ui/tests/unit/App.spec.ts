@@ -11,7 +11,7 @@ import { SbcHeader, SbcFooter } from '@/sbc-common-components'
 // import vuetify from '@/plugins/vuetify'
 import { useAuth, useDocumentAccessRequest, useEntity } from '@/composables'
 import { ErrorCategories, ErrorCodes, ProductCode, ProductStatus, RouteNames } from '@/enums'
-import { SearchBusinessInfoBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
+import { SearchBusinessInfoBreadcrumb, SearchBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 import { DefaultError, EntityLoadError, PayDefaultError } from '@/resources/error-dialog-options'
 import { createVueRouter } from '@/router'
 import store from '@/store'
@@ -84,10 +84,10 @@ describe('App tests', () => {
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
   })
   it('passes correct breadcrumbs depending on route', async () => {
-    const expectedSearchBreadcrumbs = [SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+    const expectedSearchBreadcrumbs = [SearchHomeBreadCrumb, SearchBreadcrumb]
     const identifier = 'BC1234567'
     const businessInfoCrumb = { text: identifier, to: SearchBusinessInfoBreadcrumb.to }
-    const expectedBusinessInfoBreadcrumbs = [SearchHomeBreadCrumb, SearchDashboardBreadcrumb, businessInfoCrumb]
+    const expectedBusinessInfoBreadcrumbs = [SearchHomeBreadCrumb, SearchBreadcrumb, businessInfoCrumb]
     // currently on search route
     expect(router.currentRoute.value.name).toBe(RouteNames.SEARCH)
     expect(wrapper.findComponent(BcrsBreadcrumb).props().breadcrumbs).toEqual(expectedSearchBreadcrumbs)
