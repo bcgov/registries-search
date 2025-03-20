@@ -10,9 +10,9 @@ import {
   Signout
  } from '@/views'
 import { RouteNames } from '@/enums'
-import { SearchBreadcrumb, SearchDashboardBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
+import { SearchBreadcrumb, SearchHomeBreadCrumb } from '@/resources'
 
-export const routes_old: RouteRecordRaw[] = [
+export const routes: RouteRecordRaw[] = [
   {
     // router.beforeEach() routes here:
     path: '/login',
@@ -50,7 +50,7 @@ export const routes_old: RouteRecordRaw[] = [
     component: DashboardView,
     meta: {
       requiresAuth: false, // landing page so needs chance to load without auth
-      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
     },
   },
   {
@@ -60,16 +60,16 @@ export const routes_old: RouteRecordRaw[] = [
     props: true,
     meta: {
       requiresAuth: false, // app.vue will still verify token after page init
-      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
     },
   },
   {
     path: '/open/request',
     name: RouteNames.DOCUMENT_REQUEST,
-    component: DocumentRequestView,    
+    component: DocumentRequestView,
     meta: {
       requiresAuth: true,
-      breadcrumb:[SearchHomeBreadCrumb, SearchDashboardBreadcrumb]
+      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
     },
   },
   {
@@ -78,39 +78,4 @@ export const routes_old: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }
-]
-
-export const routes: RouteRecordRaw[] = [
-  routes_old[0],
-  routes_old[1],
-  routes_old[2],
-  {
-    path: '/',
-    name: RouteNames.SEARCH,
-    component: DashboardView,
-    meta: {
-      requiresAuth: false, // landing page so needs chance to load without auth
-      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
-    },
-  },
-  {
-    path: '/open/:identifier',
-    name: RouteNames.BUSINESS_INFO,
-    component: BusinessInfoView,
-    props: true,
-    meta: {
-      requiresAuth: false, // app.vue will still verify token after page init
-      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
-    },
-  },
-  {
-    path: '/open/request',
-    name: RouteNames.DOCUMENT_REQUEST,
-    component: DocumentRequestView,    
-    meta: {
-      requiresAuth: true,
-      breadcrumb:[SearchHomeBreadCrumb, SearchBreadcrumb]
-    },
-  },
-  routes_old[6],
 ]
