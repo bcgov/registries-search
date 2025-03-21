@@ -70,8 +70,9 @@ def update_bor_solr(entity_ids: list[str], doc_events: list[SolrDocEvent]):
                     EntityRoleField.RELATED_Q.value: {'set': entity_role.related_q}
                 })
     try:
-        # update people
-        solr.create_or_replace_docs(people, additive=False)
+        if people:
+            # update people
+            solr.create_or_replace_docs(people, additive=False)
 
         if businesses:
             # update all previously existing related business records if any existed previously

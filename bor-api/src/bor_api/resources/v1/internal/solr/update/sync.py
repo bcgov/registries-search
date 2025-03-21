@@ -33,15 +33,20 @@ bp = Blueprint('SYNC', __name__, url_prefix='/sync')  # pylint: disable=invalid-
 def sync_solr():
     """Sync docs in the DB that haven't been applied to SOLR yet."""
     try:
-        pending_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.PENDING,
-                                                                            SolrDocEventStatus.ERROR],
-                                                                  event_type=SolrDocEventType.UPDATE,
+        pending_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.PENDING],
+                                                                  event_types=[SolrDocEventType.UPDATE,
+                                                                               SolrDocEventType.RESYNC],
                                                                   limit=current_app.config.get('MAX_BATCH_UPDATE_NUM'))
+        err_update_events = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.ERROR],
+                                                              event_types=[SolrDocEventType.UPDATE,
+                                                                           SolrDocEventType.RESYNC],
+                                                              limit=current_app.config.get('MAX_BATCH_UPDATE_NUM'))
 
-        identifiers_to_sync = [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in pending_update_events]
-        current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
-        if identifiers_to_sync:
-            update_bor_solr(identifiers_to_sync, pending_update_events)
+        for event_list in [pending_update_events, err_update_events]:
+            identifiers_to_sync = [(SolrDoc.get_by_id(event.solr_doc_id)).entity_id for event in event_list]
+            current_app.logger.debug(f'Syncing: {identifiers_to_sync}')
+            if identifiers_to_sync:
+                update_bor_solr(identifiers_to_sync, event_list)
 
         return jsonify({'message': 'Sync successful.'}), HTTPStatus.OK
 
@@ -80,7 +85,7 @@ def sync_follower_heartbeat():  # pylint: disable=too-many-branches,too-many-sta
 
         # verify an update that happened in the last hour (if there is one)
         events_to_verify = SolrDocEvent.get_events_by_status(statuses=[SolrDocEventStatus.COMPLETE],
-                                                             event_type=SolrDocEventType.UPDATE,
+                                                             event_types=[SolrDocEventType.UPDATE],
                                                              start_date=now - timedelta(minutes=60),
                                                              limit=2)
 
@@ -101,6 +106,7 @@ def sync_follower_heartbeat():  # pylint: disable=too-many-branches,too-many-sta
                 # if the second event pulled is also a business then skip (should happen very rarely)
                 if doc_obj_to_verify.doc['entityType'] == 'BUSINESS':
                     current_app.logger.debug('Did not pull a person update event. Skipping verification.')
+                    return jsonify({'message': 'Skipped.'}), HTTPStatus.OK
 
             most_recent_doc_for_entity = SolrDoc.find_most_recent_by_entity_id(doc_obj_to_verify.entity_id)
             if most_recent_doc_for_entity.id != doc_obj_to_verify.id:
