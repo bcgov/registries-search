@@ -18,9 +18,9 @@ import requests
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
 from flask import current_app
-from flask_caching import Cache
 from flask_jwt_oidc import JwtManager
 from urllib3.util.retry import Retry
+from flask_caching import Cache
 
 from search_api.exceptions import ApiConnectionException
 

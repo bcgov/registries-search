@@ -18,7 +18,7 @@ from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
 from search_api.models import DocumentAccessRequest, User
-from search_api.services.authz import user_orgs, does_user_have_account
+from search_api.services.authz import does_user_have_account
 from search_api.utils.auth import jwt
 
 

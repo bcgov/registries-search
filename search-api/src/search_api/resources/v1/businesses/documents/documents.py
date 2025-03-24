@@ -18,7 +18,7 @@ from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
 from search_api.enums import DocumentType
-from search_api.exceptions import ApiConnectionException, StorageException
+from search_api.exceptions import ApiConnectionException, StorageException, UnauthorizedException
 from search_api.models import Document, DocumentAccessRequest
 from search_api.services.authz import does_user_have_account
 # from search_api.services import storage
@@ -52,7 +52,7 @@ def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
         user_is_part_of_org = does_user_have_account(token, account_id)
 
         if not user_is_part_of_org:
-            return resource_utils.unauthorized_error_response(account_id)
+            raise UnauthorizedException(account_id)
 
         # check access
         active_access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
@@ -63,12 +63,14 @@ def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
 
         if not has_filing_history_access:
             # account doesn't have an active access request with a business summary/history doc
-            return resource_utils.unauthorized_error_response(account_id)
+            raise UnauthorizedException(account_id)
 
         # get pdf
         resp = get_business_filing_document(business_identifier, filing_id, filing_name)
         return resp.content, resp.status_code
 
+    except UnauthorizedException as unauthorized_exception:
+        return resource_utils.unauthorized_error_response(unauthorized_exception.account_id)
     except ApiConnectionException as api_exception:
         return jsonify({'message': 'Error getting document data.', 'detail': api_exception.detail}), api_exception.code
     except Exception as default_exception:  # noqa: B902
