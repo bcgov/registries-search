@@ -18,6 +18,7 @@ import requests
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
 from flask import current_app
+from flask_caching import Cache
 from flask_jwt_oidc import JwtManager
 from urllib3.util.retry import Retry
 
@@ -36,6 +37,7 @@ GOV_ACCOUNT_ROLE = 'gov_account_user'
 BCOL_HELP = 'helpdesk'
 SBC_STAFF = 'sbc_staff'
 
+auth_cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
 
 def _call_auth_api(path: str, token: str) -> dict:
     """Return the auth api response for the given endpoint path."""
@@ -177,3 +179,26 @@ def get_role(jwt: JwtManager, account_id) -> str:
         role = SBC_STAFF
 
     return role
+
+
+def get_cache_key(jwt_token: str, account_id: str):
+    """Return the cache key for the given args."""
+
+    cache_key = 'auth' + str(account_id) + str(jwt_token)
+    return cache_key
+
+
+@auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
+def does_user_have_account(jwt_token: str, account_id: str) -> bool:
+    """Return True if the user belongs to the account with account id."""
+    if not jwt_token or not account_id:
+        return False
+
+    orgs = user_orgs(jwt_token)
+    if orgs and 'orgs' in orgs:
+        orgs = orgs['orgs']
+        for org in orgs:
+            if str(org.get('id')) == account_id:
+                return True
+
+    return False

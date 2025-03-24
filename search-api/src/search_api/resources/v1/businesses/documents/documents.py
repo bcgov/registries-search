@@ -20,6 +20,7 @@ import search_api.resources.utils as resource_utils
 from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException, StorageException
 from search_api.models import Document, DocumentAccessRequest
+from search_api.services.authz import does_user_have_account
 # from search_api.services import storage
 from search_api.services.entity import (
     get_business_document,
@@ -46,6 +47,13 @@ def get_filing_documents_info(business_identifier, filing_id, filing_name=None):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
+
         # check access
         active_access_requests = DocumentAccessRequest.find_active_requests(account_id, business_identifier)
         has_filing_history_access = False
@@ -77,6 +85,12 @@ def get_document_data(business_identifier, document_key):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
 
         if (content_type := str(request.accept_mimetypes)) not in ['application/json', 'application/pdf']:
             msg = f'Invalid Accept header. Expected application/json or application/pdf but received {content_type}'

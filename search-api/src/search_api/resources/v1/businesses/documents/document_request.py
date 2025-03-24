@@ -24,6 +24,7 @@ from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 from search_api.services import get_role
 from search_api.services import queue
+from search_api.services.authz import does_user_have_account
 from search_api.services.document_services import create_doc_request_ce
 from search_api.services.entity import get_business
 from search_api.services.flags import Flags
@@ -44,6 +45,12 @@ def get(business_identifier, request_id=None):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
 
         if request_id:
             access_request = DocumentAccessRequest.find_by_id(request_id)
@@ -72,6 +79,13 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
+
         business_response = get_business(business_identifier)
         if business_response.status_code not in [HTTPStatus.OK]:
             return resource_utils.bad_request_response('Business not found.')
@@ -142,6 +156,12 @@ def cancel_request(business_identifier, request_id):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
 
         access_request = DocumentAccessRequest.find_by_id(request_id)
 
