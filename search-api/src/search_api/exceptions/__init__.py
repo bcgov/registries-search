@@ -100,7 +100,10 @@ class ApiConnectionException(Exception):
 class StorageException(Exception):
     """Exception for document storage service related errors."""
 
+
 class UnauthorizedException(Exception):
     """Exception for unauthorized access."""
+
     def __init__(self, account_id: str):
+        """Initialize the error object."""
         self.account_id = account_id

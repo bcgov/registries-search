@@ -39,6 +39,7 @@ SBC_STAFF = 'sbc_staff'
 
 auth_cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
 
+
 def _call_auth_api(path: str, token: str) -> dict:
     """Return the auth api response for the given endpoint path."""
     response = None
@@ -183,9 +184,7 @@ def get_role(jwt: JwtManager, account_id) -> str:
 
 def get_cache_key(jwt_token: str, account_id: str):
     """Return the cache key for the given args."""
-
-    cache_key = 'auth' + str(account_id) + str(jwt_token)
-    return cache_key
+    return 'auth' + str(account_id) + str(jwt_token)
 
 
 @auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
