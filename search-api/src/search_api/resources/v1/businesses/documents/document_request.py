@@ -19,11 +19,12 @@ from flask_cors import cross_origin
 from simple_cloudevent import to_queue_message
 
 import search_api.resources.utils as resource_utils
-from search_api.exceptions import ApiConnectionException
+from search_api.exceptions import ApiConnectionException, UnauthorizedException
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
 from search_api.services import get_role
 from search_api.services import queue
+from search_api.services.authz import does_user_have_account
 from search_api.services.document_services import create_doc_request_ce
 from search_api.services.entity import get_business
 from search_api.services.flags import Flags
@@ -45,12 +46,18 @@ def get(business_identifier, request_id=None):
         if not account_id:
             return resource_utils.account_required_response()
 
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            raise UnauthorizedException(account_id)
+
         if request_id:
             access_request = DocumentAccessRequest.find_by_id(request_id)
             if not access_request:
                 return resource_utils.not_found_error_response('Document Access Request', request_id)
             if str(access_request.account_id) != account_id:
-                return resource_utils.unauthorized_error_response(account_id)
+                raise UnauthorizedException(account_id)
             return jsonify(documentAccessRequest=access_request.json)
 
         access_requests_list = []
@@ -59,6 +66,9 @@ def get(business_identifier, request_id=None):
             access_requests_list.append(access_request.json)
 
         return jsonify(documentAccessRequests=access_requests_list)
+
+    except UnauthorizedException as unauthorized_exception:
+        return resource_utils.unauthorized_error_response(unauthorized_exception.account_id)
     except Exception as default_exception:  # noqa: B902
         return resource_utils.default_exception_response(default_exception)
 
@@ -72,6 +82,13 @@ def post(business_identifier):  # pylint: disable=too-many-return-statements
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
+
         business_response = get_business(business_identifier)
         if business_response.status_code not in [HTTPStatus.OK]:
             return resource_utils.bad_request_response('Business not found.')
@@ -142,6 +159,12 @@ def cancel_request(business_identifier, request_id):
         account_id = request.headers.get('Account-Id', None)
         if not account_id:
             return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
 
         access_request = DocumentAccessRequest.find_by_id(request_id)
 

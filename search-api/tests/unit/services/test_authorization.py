@@ -19,9 +19,9 @@ Test-Suite to ensure that the client for the auth-api service is working as expe
 import pytest
 from flask import current_app
 
+from search_api import auth_cache
 from search_api.services import authz
 from tests.unit.services.utils import helper_create_jwt
-
 
 MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
 MOCK_URL = 'https://bcregistry-bcregistry-mock.apigee.net/auth/api/v1/'
@@ -97,3 +97,35 @@ def test_staff_account(session, desc, account_id, valid):
     result = authz.is_staff_account(account_id)
     # check
     assert result == valid
+
+
+USERS_ORG_123 = {
+    "orgs": [
+        {"id": 123, }
+    ]
+}
+
+USERS_ORG_1234 = {
+    "orgs": [
+        {"id": 1234, }
+    ]
+}
+
+
+def test_does_user_have_account_caching(requests_mock):
+    """Assert that the user has account caching works correctly."""
+    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
+
+    requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG_123)
+
+    result = authz.does_user_have_account(jwt_token='jwt_token_123', account_id='123')
+    assert result == True
+
+    requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG_1234)
+
+    result = authz.does_user_have_account(jwt_token='jwt_token_123', account_id='123')
+    assert result == True
+
+    auth_cache.clear()
+    result = authz.does_user_have_account(jwt_token='jwt_token_123', account_id='123')
+    assert result == False

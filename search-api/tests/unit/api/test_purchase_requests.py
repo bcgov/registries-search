@@ -34,9 +34,12 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     }
 }
 
+MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
+ACCOUNT_ID = 2617
+
 def test_get_business_documents_by_account(session, client, jwt):
     """Assert that document requests are returned."""
-    account_id = 123
+    account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v1/purchases',
@@ -59,9 +62,7 @@ def test_get_business_documents_by_account_invalid_account(session, client, jwt)
                                                                                      'Account-Id': 456})
                     )
     # check
-    assert rv.status_code == HTTPStatus.OK
-    assert 'documentAccessRequests' in rv.json
-    assert len(rv.json['documentAccessRequests']) == 0
+    assert rv.status_code == HTTPStatus.UNAUTHORIZED
 
 
 def create_document_access_request(identifier: str, account_id: int, is_paid: bool = False):
