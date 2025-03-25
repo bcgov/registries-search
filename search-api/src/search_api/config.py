@@ -58,6 +58,15 @@ class Config():  # pylint: disable=too-few-public-methods
 
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
+    # Cache stuff # flask cache uses these internally as defaults when instantiating cache with no config options
+    # e.g. like this: Cache()
+    CACHE_TYPE = os.getenv('CACHE_TYPE', 'FileSystemCache')
+    CACHE_DIR = os.getenv('CACHE_DIR', 'cache')
+    try:
+        CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
+    except (TypeError, ValueError):
+        CACHE_DEFAULT_TIMEOUT = 300
+
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
     SENTRY_DSN = os.getenv('SENTRY_DSN', None)
     SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')

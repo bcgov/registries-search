@@ -37,7 +37,7 @@ GOV_ACCOUNT_ROLE = 'gov_account_user'
 BCOL_HELP = 'helpdesk'
 SBC_STAFF = 'sbc_staff'
 
-auth_cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
+auth_cache = Cache()
 
 
 def _call_auth_api(path: str, token: str) -> dict:
