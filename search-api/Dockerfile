@@ -12,6 +12,7 @@ LABEL org.label-schema.vcs-ref=${VCS_REF} \
 
 # Create working directory
 RUN mkdir /opt/app-root && chmod 755 /opt/app-root
+RUN mkdir /opt/app-root/cache && chmod 777 /opt/app-root/cache
 WORKDIR /opt/app-root
 
 # Install the requirements
