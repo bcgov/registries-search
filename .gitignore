@@ -118,6 +118,7 @@ venv/
 htmlcov/
 search-api/tests/.DS_Store
 search-api/tests/postman/.DS_Store
+search-api/tests/cache
 
 # local config
 search-ui/public/config/configuration.json
@@ -136,5 +137,3 @@ search-solr/test_solr
 __pycache__
 
 .python-version
-
-cache
