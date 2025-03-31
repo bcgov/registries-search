@@ -156,7 +156,7 @@ def is_sbc_office_account(token: str, account_id: str) -> bool:
         return None
 
 
-def is_gov_account(jwt: JwtManager) -> bool:  # pylint: disable=too-many-return-statements
+def is_gov_account(jwt: JwtManager) -> bool:
     """Return True if the user has the gov account user role."""
     if not jwt:
         return False
