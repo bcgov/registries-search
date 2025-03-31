@@ -2,6 +2,7 @@ name: SEARCH API CI
 
 on:
   pull_request:
+    types: [assigned, synchronize]
     paths:
       - "search-api/**"
   workflow_dispatch:
@@ -12,7 +13,7 @@ defaults:
     working-directory: ./search-api
 
 jobs:
-  bor-api-ci:
+  search-api-ci:
     uses: bcgov/bcregistry-sre/.github/workflows/backend-ci.yaml@main
     with:
       app_name: "search-api"
