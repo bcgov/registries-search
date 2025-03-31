@@ -19,8 +19,8 @@ from google.cloud import storage
 
 from search_api.enums import DocumentType
 from search_api.exceptions import StorageException
-from search_api.services.gcp_auth.auth_service import GoogleAuthService
 from search_api.services.document_storage.abstract_storage_service import StorageService
+from search_api.services.gcp_auth.auth_service import GoogleAuthService
 
 
 class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-methods
@@ -30,25 +30,25 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
     """
 
     # Google cloud storage configuration.
-    GCP_BUCKET_ID_SUMMARY = str(os.getenv('GCP_CS_BUCKET_ID_SUMMARY'))
-    GCP_BUCKET_ID_COGS = str(os.getenv('GCP_BUCKET_ID_CERT_OF_GOOD_STANDING'))
-    GCP_BUCKET_ID_COS = str(os.getenv('GCP_BUCKET_ID_CERT_OF_STATUS'))
-    GCP_BUCKET_ID_LUS = str(os.getenv('GCP_BUCKET_ID_LETTER_UNDER_SEAL'))
+    GCP_BUCKET_ID_SUMMARY = str(os.getenv("GCP_CS_BUCKET_ID_SUMMARY"))
+    GCP_BUCKET_ID_COGS = str(os.getenv("GCP_BUCKET_ID_CERT_OF_GOOD_STANDING"))
+    GCP_BUCKET_ID_COS = str(os.getenv("GCP_BUCKET_ID_CERT_OF_STATUS"))
+    GCP_BUCKET_ID_LUS = str(os.getenv("GCP_BUCKET_ID_LETTER_UNDER_SEAL"))
 
     @classmethod
     def get_document(cls, name: str, doc_type: DocumentType = None):
         """Fetch the uniquely named document from cloud storage as binary data."""
         try:
-            current_app.logger.info(f'Fetching doc type={doc_type}, name={name}.')
+            current_app.logger.info(f"Fetching doc type={doc_type}, name={name}.")
             credentials = GoogleAuthService.get_credentials()
             storage_client = storage.Client(credentials=credentials)
             bucket = storage_client.bucket(cls.__get_bucket_id(doc_type))
             blob = bucket.blob(name)
             return blob.download_as_bytes()
 
-        except Exception as err:  # pylint: disable=broad-except # noqa F841;
+        except Exception as err:  # pylint: disable=broad-except
             current_app.logger.error(str(err))
-            raise StorageException(f'GET document failed for doc type={doc_type}, name={name}.') from err
+            raise StorageException(f"GET document failed for doc type={doc_type}, name={name}.") from err
 
     @classmethod
     def __get_bucket_id(cls, doc_type: DocumentType = None):
@@ -62,5 +62,5 @@ class GoogleStorageService(StorageService):  # pylint: disable=too-few-public-me
         if doc_type == DocumentType.LETTER_UNDER_SEAL:
             return cls.GCP_BUCKET_ID_LUS
 
-        current_app.logger.error(f'No bucket ID mapped for DocumentType {str(doc_type)}')
+        current_app.logger.error(f"No bucket ID mapped for DocumentType {doc_type!s}")
         return None

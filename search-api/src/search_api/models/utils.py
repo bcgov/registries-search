@@ -15,29 +15,27 @@
 
 Common constants/utilities used across models.
 """
-from datetime import date
+from datetime import UTC, date, time, timedelta, timezone
 from datetime import datetime as _datetime
-from datetime import time, timedelta, timezone
 
 import pytz
 
-
 # Local timzone
-LOCAL_TZ = pytz.timezone('America/Los_Angeles')
+LOCAL_TZ = pytz.timezone("America/Los_Angeles")
 
 
 def format_ts(time_stamp):
     """Build a UTC ISO 8601 date and time string with no microseconds."""
     formatted_ts = None
     if time_stamp:
-        formatted_ts = time_stamp.replace(tzinfo=timezone.utc).replace(microsecond=0).isoformat()
+        formatted_ts = time_stamp.replace(tzinfo=UTC).replace(microsecond=0).isoformat()
 
     return formatted_ts
 
 
 def now_ts():
     """Create a timestamp representing the current date and time in the UTC time zone."""
-    return _datetime.now(timezone.utc)
+    return _datetime.now(UTC)
 
 
 def now_ts_offset(offset_days: int = 1, add: bool = False):
@@ -52,7 +50,7 @@ def now_ts_offset(offset_days: int = 1, add: bool = False):
 def today_ts_offset(offset_days: int = 1, add: bool = False):
     """Create a timestamp representing the current date at 00:00:00 adjusted by offset number of days."""
     today = date.today()
-    day_time = time(0, 0, 0, tzinfo=timezone.utc)
+    day_time = time(0, 0, 0, tzinfo=UTC)
     today_ts = _datetime.combine(today, day_time)
     if add:
         return today_ts + timedelta(days=offset_days)
@@ -63,7 +61,7 @@ def today_ts_offset(offset_days: int = 1, add: bool = False):
 def ts_from_iso_format(timestamp_iso: str):
     """Create a datetime object from a timestamp string in the ISO format."""
     time_stamp = _datetime.fromisoformat(timestamp_iso).timestamp()
-    return _datetime.utcfromtimestamp(time_stamp).replace(tzinfo=timezone.utc)
+    return _datetime.utcfromtimestamp(time_stamp).replace(tzinfo=UTC)
 
 
 def ts_from_date_iso_format(date_iso: str):

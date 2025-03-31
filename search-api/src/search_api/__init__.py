@@ -17,10 +17,10 @@ This module is the API for the BC Registries Registry Search system.
 """
 import os
 from http import HTTPStatus
+from uuid import uuid4
 
 from flask import Flask, redirect
 from flask_migrate import Migrate
-from structured_logging import StructuredLogging
 
 from search_api import errorhandlers, models
 from search_api.config import DevelopmentConfig, MigrationConfig, ProductionConfig, UnitTestingConfig
@@ -31,30 +31,30 @@ from search_api.services.authz import auth_cache
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.run_version import get_run_version
-
+from structured_logging import StructuredLogging
 
 CONFIG_MAP = {
-    'development': DevelopmentConfig,
-    'testing': UnitTestingConfig,
-    'migration': MigrationConfig,
-    'production': ProductionConfig
+    "development": DevelopmentConfig,
+    "testing": UnitTestingConfig,
+    "migration": MigrationConfig,
+    "production": ProductionConfig
 }
 
 
-def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **kwargs):
+def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **kwargs):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
-    app.logger = StructuredLogging().get_logger()
-    app.config.from_object(CONFIG_MAP.get(environment, 'production'))
+    app.logger = StructuredLogging(app).get_logger().new(worker_id=str(uuid4()))
+    app.config.from_object(CONFIG_MAP.get(environment, "production"))
 
     db.init_app(app)
 
-    if environment == 'migration':
+    if environment == "migration":
         Migrate(app, db)
 
     else:
         # td is testData instance passed in to support testing
-        td = kwargs.get('ld_test_data', None)  # pylint: disable=invalid-name;
+        td = kwargs.get("ld_test_data");
         Flags().init_app(app, td)
 
         errorhandlers.init_app(app)
@@ -67,14 +67,14 @@ def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **k
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
 
-    @app.route('/')
+    @app.route("/")
     def be_nice_swagger_redirect():  # pylint: disable=unused-variable
-        return redirect('/api/v1', code=HTTPStatus.MOVED_PERMANENTLY)
+        return redirect("/api/v1", code=HTTPStatus.MOVED_PERMANENTLY)
 
     @app.after_request
     def add_version(response):  # pylint: disable=unused-variable
         version = get_run_version()
-        response.headers['API'] = f'search_api/{version}'
+        response.headers["API"] = f"search_api/{version}"
         return response
 
     register_shellcontext(app)
@@ -85,8 +85,8 @@ def create_app(environment: str = os.getenv('DEPLOYMENT_ENV', 'production'), **k
 def setup_jwt_manager(app, jwt_manager):
     """Use flask app to configure the JWTManager to work for a particular Realm."""
     def get_roles(a_dict):
-        return a_dict['realm_access']['roles']  # pragma: no cover
-    app.config['JWT_ROLE_CALLBACK'] = get_roles
+        return a_dict["realm_access"]["roles"]  # pragma: no cover
+    app.config["JWT_ROLE_CALLBACK"] = get_roles
 
     jwt_manager.init_app(app)
 
@@ -96,9 +96,9 @@ def register_shellcontext(app):
     def shell_context():
         """Shell context objects."""
         return {
-            'app': app,
-            'jwt': jwt,
-            'db': db,
-            'models': models}  # pragma: no cover
+            "app": app,
+            "jwt": jwt,
+            "db": db,
+            "models": models}  # pragma: no cover
 
     app.shell_context_processor(shell_context)

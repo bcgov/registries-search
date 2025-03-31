@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manage version endpoints."""
-from typing import List
-
-from flask import Blueprint, Flask  # noqa: I001
+from flask import Blueprint, Flask
 
 from .constants import EndpointVersionPath
 
@@ -22,12 +20,12 @@ from .constants import EndpointVersionPath
 class VersionEndpoint:  # pylint: disable=too-few-public-methods
     """Manage the mounting, traversal and redirects for a versioned enpoint."""
 
-    def __init__(self, name: str, path: EndpointVersionPath, bps: List, app: Flask = None):
+    def __init__(self, name: str, path: EndpointVersionPath, bps: list, app: Flask = None):
         """Initialize the version endpoint and mount the blueprints to it."""
         self.app = None
         self.version_bp = Blueprint(name, __name__, url_prefix=path)
 
-        for bp in bps:  # pylint: disable=invalid-name
+        for bp in bps:
             self.version_bp.register_blueprint(bp)
 
         if app:
@@ -36,6 +34,6 @@ class VersionEndpoint:  # pylint: disable=too-few-public-methods
     def init_app(self, app: Flask):
         """Add the version endpoint to the app."""
         if not app:
-            raise Exception('Cannot initialize without a Flask App.')  # pylint: disable=broad-exception-raised
+            raise Exception("Cannot initialize without a Flask App.")  # pylint: disable=broad-exception-raised
         self.app = app
         self.app.register_blueprint(self.version_bp)

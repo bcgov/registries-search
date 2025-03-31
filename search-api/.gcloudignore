@@ -1,15 +1,12 @@
 .pytest_cache
 __pycache__
-venv
+.venv
 .env
 .env*
 .eggs
 Makefile
+cache
 devops
-k8s
 manage.py
 migrations
-pre-hook-update-db.sh
-requirements
-test_data
 tests

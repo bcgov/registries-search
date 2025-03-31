@@ -22,27 +22,27 @@ from .db import db
 class Document(db.Model):
     """Used to hold the documents requested in an access request."""
 
-    __tablename__ = 'document'
+    __tablename__ = "document"
 
     id = db.Column(db.Integer, primary_key=True)
     document_type = db.Column(db.Enum(DocumentType), index=True)
-    document_key = db.Column('document_key', db.String(100), nullable=False)
-    file_name = db.Column('file_name', db.String(100))
-    access_request_id = db.Column('access_request_id', db.Integer, db.ForeignKey('document_access_request.id'))
+    document_key = db.Column("document_key", db.String(100), nullable=False)
+    file_name = db.Column("file_name", db.String(100))
+    access_request_id = db.Column("access_request_id", db.Integer, db.ForeignKey("document_access_request.id"))
 
     @property
     def json(self):
         """Return a dict of this object, with keys in JSON format."""
         document = {
-            'id': self.id,
-            'documentType': self.document_type.name,
-            'documentKey': self.document_key,
-            'fileName': self.file_name
+            "id": self.id,
+            "documentType": self.document_type.name,
+            "documentKey": self.document_key,
+            "fileName": self.file_name
         }
         return document
 
     @classmethod
-    def find_by_id(cls, document_id: int = None) -> Document:
+    def find_by_id(cls, document_id: int | None = None) -> Document:
         """Return a Document that has the specified id."""
         return cls.query.filter_by(id=document_id).one_or_none()
 

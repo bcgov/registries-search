@@ -17,13 +17,12 @@ from .v1 import bus_bp, internal_bp, meta_bp, ops_bp, purchases_bp
 from .v2 import payments_bp, search_bp
 from .version_endpoint import VersionEndpoint
 
-
-v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
-    name='API_V1',
+v1_endpoint = VersionEndpoint(
+    name="API_V1",
     path=EndpointVersionPath.API_V1,
     bps=[bus_bp, meta_bp, ops_bp, purchases_bp, internal_bp])
 
-v2_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
-    name='API_V2',
+v2_endpoint = VersionEndpoint(
+    name="API_V2",
     path=EndpointVersionPath.API_V2,
     bps=[search_bp, payments_bp])

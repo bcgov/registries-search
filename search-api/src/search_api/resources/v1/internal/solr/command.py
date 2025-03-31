@@ -20,12 +20,11 @@ from search_api.exceptions import SolrException
 from search_api.services import SYSTEM_ROLE, business_solr
 from search_api.utils.auth import jwt
 
+bp = Blueprint("COMMAND", __name__, url_prefix="/command")
 
-bp = Blueprint('COMMAND', __name__, url_prefix='/command')  # pylint: disable=invalid-name
 
-
-@bp.post('')
-@cross_origin(origin='*')
+@bp.post("")
+@cross_origin(origins="*")
 @jwt.requires_roles([SYSTEM_ROLE])
 def replication_command():
     """Execute a replication command on solr."""
@@ -33,20 +32,20 @@ def replication_command():
         request_json: dict = request.json
 
         # validate payload
-        if not (command := request_json.get('command')):
-            return resource_utils.bad_request_response('Invalid payload.',
-                                                       [{'Missing Required Field': 'Expected "command" in payload.'}])
+        if not (command := request_json.get("command")):
+            return resource_utils.bad_request_response("Invalid payload.",
+                                                       [{"Missing Required Field": 'Expected "command" in payload.'}])
 
-        valid_commands = ['backup', 'details', 'restore', 'restorestatus']
+        valid_commands = ["backup", "details", "restore", "restorestatus"]
         if command not in valid_commands:
-            return resource_utils.bad_request_response('Invalid payload.',
-                                                       [{'error': f'Expected value to be one of {valid_commands}',
-                                                         'path': '/command'}])
+            return resource_utils.bad_request_response("Invalid payload.",
+                                                       [{"error": f"Expected value to be one of {valid_commands}",
+                                                         "path": "/command"}])
 
         resp = business_solr.replication(command)
         return jsonify(resp.json()), resp.status_code
 
     except SolrException as solr_exception:
         return resource_utils.exception_response(solr_exception)
-    except Exception as exception:  # noqa: B902
+    except Exception as exception:
         return resource_utils.default_exception_response(exception)

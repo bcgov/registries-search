@@ -15,7 +15,7 @@
 import time
 from copy import deepcopy
 from dataclasses import asdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from http import HTTPStatus
 
 import pytest
@@ -26,6 +26,7 @@ from search_api.models import SolrDoc, SolrDocEvent
 from search_api.services import business_solr
 from search_api.services.authz import SYSTEM_ROLE, STAFF_ROLE, PUBLIC_USER
 from search_api.services.business_solr.doc_models import BusinessDoc
+from search_api.utils.util import utcnow
 
 from tests import integration_solr
 from tests.unit.services.utils import create_header
@@ -44,7 +45,7 @@ def prep_resync(businesses: list[BusinessDoc]) -> list[tuple[BusinessDoc, SolrDo
         entity_old = deepcopy(business)
         entity_old.name = f'{business.id} test_should_not_have_updated'
         solr_doc_old = SolrDoc(doc=asdict(entity_old), identifier=entity_old.id).save()
-        solr_doc_old.submission_date = datetime.utcnow() - timedelta(minutes=10)
+        solr_doc_old.submission_date = utcnow() - timedelta(minutes=10)
         solr_doc_old.save()
         SolrDocEvent(solr_doc_id=solr_doc_old.id, event_status=SolrDocEventStatus.COMPLETE, event_type=SolrDocEventType.UPDATE).save()
         setup_info.append((business, solr_doc, solr_doc_old))

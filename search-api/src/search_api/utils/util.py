@@ -16,27 +16,12 @@
 
 A simple decorator to add the options method to a Request Class.
 """
-# from functools import wraps
-from typing import Dict
+from datetime import UTC, datetime
 
 import dpath.util
 
 
-def cors_preflight(methods: str = 'GET'):
-    """Render an option method on the class."""
-    def wrapper(f):  # pylint: disable=invalid-name
-        def options(self, *args, **kwargs):  # pylint: disable=unused-argument
-            return {'Allow': 'GET'}, 200, \
-                   {'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': methods,
-                    'Access-Control-Allow-Headers': 'Authorization, Content-Type, App-Name'}
-
-        setattr(f, 'options', options)
-        return f
-    return wrapper
-
-
-def get_str(filing: Dict, path: str) -> str:
+def get_str(filing: dict, path: str) -> str:
     """Extract a str from the JSON filing, at the provided path.
 
     Args:
@@ -55,3 +40,10 @@ def get_str(filing: Dict, path: str) -> str:
         return str(raw)
     except (IndexError, KeyError, TypeError, ValueError):
         return None
+
+
+def utcnow():
+    """Get the current datetime in utc.
+    
+    Helpful for model datetime defaults."""
+    return datetime.now(UTC)

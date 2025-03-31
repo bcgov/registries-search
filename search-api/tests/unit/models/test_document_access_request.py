@@ -20,6 +20,7 @@ from dateutil.relativedelta import relativedelta
 
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
+from search_api.utils.util import utcnow
 
 
 def test_document_request_save(session):
@@ -27,7 +28,7 @@ def test_document_request_save(session):
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
         account_id = 123,
-        submission_date = datetime.utcnow(),
+        submission_date = utcnow(),
         expiry_date = datetime.now()+ relativedelta(days=7)
     )
 
@@ -48,8 +49,8 @@ def test_find_active_requests(session):
         business_identifier='CP1234567',
         account_id=123,
         payment_token=567,
-        payment_completion_date=datetime.utcnow(),
-        submission_date=datetime.utcnow(),
+        payment_completion_date=utcnow(),
+        submission_date=utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
         status=DocumentAccessRequest.Status.PAID.value
     )
@@ -78,7 +79,7 @@ def test_find_by_id(session):
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
         account_id=123,
-        submission_date=datetime.utcnow(),
+        submission_date=utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7)
     )
 
@@ -103,8 +104,8 @@ def test_document_access_request_json(session):
         account_id=123,
         payment_token=567,
         payment_status_code='APPROVED',
-        payment_completion_date=datetime.utcnow(),
-        submission_date=datetime.utcnow(),
+        payment_completion_date=utcnow(),
+        submission_date=utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7),
         status=DocumentAccessRequest.Status.COMPLETED
     )

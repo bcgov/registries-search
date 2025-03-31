@@ -17,7 +17,6 @@ from flask import Blueprint
 from .businesses import bp as businesses_bp
 from .parties import bp as parties_bp
 
-
-bp = Blueprint('SEARCH', __name__, url_prefix='/search')  # pylint: disable=invalid-name
+bp = Blueprint("SEARCH", __name__, url_prefix="/search")
 bp.register_blueprint(businesses_bp)
 bp.register_blueprint(parties_bp)

@@ -27,19 +27,19 @@ from http import HTTPStatus
 class ResourceErrorCodes(str, Enum):
     """Render an Enum of error codes as message prefixes to facilitate identifying the source of the exception."""
 
-    ACCOUNT_REQUIRED_ERR = '001'
-    UNAUTHORIZED_ERR = '002'
-    VALIDATION_ERR = '003'
-    PAY_ERR = '004'
-    DATABASE_ERR = '005'
-    NOT_FOUND_ERR = '006'
-    DUPLICATE_ERR = '007'
-    PATH_PARAM_ERR = '008'
-    DATA_MISMATCH_ERR = '009'
-    DEFAULT_ERR = '010'
-    SOLR_ERR = '011'
-    AUTH_EXPIRED_ERR = '012'
-    STORAGE_ERR = '013'
+    ACCOUNT_REQUIRED_ERR = "001"
+    UNAUTHORIZED_ERR = "002"
+    VALIDATION_ERR = "003"
+    PAY_ERR = "004"
+    DATABASE_ERR = "005"
+    NOT_FOUND_ERR = "006"
+    DUPLICATE_ERR = "007"
+    PATH_PARAM_ERR = "008"
+    DATA_MISMATCH_ERR = "009"
+    DEFAULT_ERR = "010"
+    SOLR_ERR = "011"
+    AUTH_EXPIRED_ERR = "012"
+    STORAGE_ERR = "013"
 
 
 @dataclass
@@ -58,9 +58,9 @@ class SolrException(BaseExceptionE):
     def __post_init__(self):
         """Return a valid SolrException."""
         if self.status_code != HTTPStatus.SERVICE_UNAVAILABLE:
-            self.error += f', {self.status_code}'
+            self.error += f", {self.status_code}"
             self.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-        self.message = 'Solr service error while processing request.'
+        self.message = "Solr service error while processing request."
 
 
 class DbRecordNotFoundException(BaseExceptionE):
@@ -69,7 +69,7 @@ class DbRecordNotFoundException(BaseExceptionE):
     def __init__(self, message=None):
         """Return a valid Record Not Found Exception."""
         if message is None:
-            self.message = 'DB record not found'
+            self.message = "DB record not found"
         else:
             self.message = message
 
@@ -82,7 +82,7 @@ class BusinessException(Exception):
 
     def __init__(self, error: str, status_code: HTTPStatus, *args, **kwargs):
         """Return a valid BusinessException."""
-        super(BusinessException, self).__init__(*args, **kwargs)  # pylint: disable=super-with-arguments
+        super().__init__(*args, **kwargs)
         self.error = error
         self.status_code = status_code
 
@@ -92,7 +92,7 @@ class ApiConnectionException(Exception):
 
     def __init__(self, code: int, detail: list[dict]):
         """Initialize the error object."""
-        super(ApiConnectionException, self).__init__()  # pylint: disable=super-with-arguments
+        super().__init__()
         self.code = code
         self.detail = str(detail)
 

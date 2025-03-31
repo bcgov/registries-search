@@ -43,7 +43,7 @@ def handle_http_error(error):
     if isinstance(error, RoutingException):
         return error
 
-    response = jsonify({'message': error.description})
+    response = jsonify({"message": error.description})
     response.status_code = error.code
     return response
 
@@ -53,7 +53,7 @@ def handle_uncaught_error(_: Exception):
 
     Since the handler suppresses the actual exception, log it explicitly to ensure it's logged.
     """
-    current_app.logger.error('Uncaught exception', exc_info=sys.exc_info())
-    response = jsonify({'message': 'Internal server error'})
+    current_app.logger.error("Uncaught exception", exc_info=sys.exc_info())
+    response = jsonify({"message": "Internal server error"})
     response.status_code = 500
     return response

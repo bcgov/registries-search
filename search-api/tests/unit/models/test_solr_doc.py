@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 
 from search_api.models import SolrDoc
 from search_api.services.business_solr.doc_models import BusinessDoc
+from search_api.utils.util import utcnow
 
 from tests.unit.utils import SOLR_TEST_DOCS
 
@@ -63,7 +64,7 @@ def test_get_updated_identifiers_after_date(session):
     for doc in [business_doc_1, business_doc_2, business_doc_3, business_doc_4]:
         SolrDoc(doc=asdict(doc), identifier=doc.identifier).save()
 
-    identifiers = SolrDoc.get_updated_identifiers_after_date(datetime.utcnow() - timedelta(minutes=5))
+    identifiers = SolrDoc.get_updated_identifiers_after_date(utcnow() - timedelta(minutes=5))
     # should be 1 of each identifier (no dupes)
     assert len(identifiers) == 3
     assert business_doc_1.identifier in identifiers
