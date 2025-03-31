@@ -13,10 +13,10 @@
 # limitations under the License.
 """Business search methods."""
 from search_api.services.base_solr.utils import QueryParams
+from search_api.services.business_solr import BusinessSolr
+from search_api.services.business_solr.doc_fields import BusinessField
 
 from .add_category_filters import add_category_filters
-from .. import BusinessSolr
-from ..doc_fields import BusinessField
 
 
 def business_search(params: QueryParams, solr: BusinessSolr):
@@ -28,21 +28,21 @@ def business_search(params: QueryParams, solr: BusinessSolr):
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields)
     # boosts for term order result ordering
-    initial_queries['query'] += f' OR ({BusinessField.NAME_Q.value}:"{params.query["value"]}"~5^5)'
-    initial_queries['query'] += f' OR ({BusinessField.NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({BusinessField.IDENTIFIER_Q_EDGE.value}:"{params.query["value"]}"^5)'
+    initial_queries["query"] += f' OR ({BusinessField.NAME_Q.value}:"{params.query["value"]}"~5^5)'
+    initial_queries["query"] += f' OR ({BusinessField.NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
+    initial_queries["query"] += f' OR ({BusinessField.IDENTIFIER_Q_EDGE.value}:"{params.query["value"]}"^5)'
 
     # add defaults
     solr_payload = {
         **initial_queries,
-        'queries': {
-            'parents': f'{BusinessField.IDENTIFIER.value}:*',
-            'parentFilters': ' AND '.join(initial_queries['filter'])},
-        'facet': {
+        "queries": {
+            "parents": f"{BusinessField.IDENTIFIER.value}:*",
+            "parentFilters": " AND ".join(initial_queries["filter"])},
+        "facet": {
             **solr.query_builder.build_facet(BusinessField.STATE, False),
             **solr.query_builder.build_facet(BusinessField.TYPE, False)
         },
-        'fields': params.fields
+        "fields": params.fields
     }
     # base doc faceted filters
     add_category_filters(solr_payload=solr_payload,
@@ -51,7 +51,7 @@ def business_search(params: QueryParams, solr: BusinessSolr):
                          solr=solr)
     # child filter queries
     if child_query := solr.query_builder.build_child_query(params.child_query):
-        solr_payload['filter'].append(child_query)
+        solr_payload["filter"].append(child_query)
     # child doc faceted filter queries
     add_category_filters(solr_payload=solr_payload,
                          categories=params.child_categories,

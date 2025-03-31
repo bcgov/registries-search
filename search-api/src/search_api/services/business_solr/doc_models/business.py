@@ -14,7 +14,6 @@
 # pylint: disable=invalid-name
 """Manages solr dataclasses for search solr docs."""
 from dataclasses import dataclass
-from typing import List, Optional
 
 from .party import PartyDoc
 
@@ -29,5 +28,5 @@ class BusinessDoc:
     name: str
     status: str
     goodStanding: bool = None
-    bn: Optional[str] = None
-    parties: Optional[List[PartyDoc]] = None
+    bn: str | None = None
+    parties: list[PartyDoc] | None = None

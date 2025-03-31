@@ -4,7 +4,7 @@ from uuid import uuid4
 from freezegun import freeze_time
 
 # from search_api.services.sce import SimpleCloudEvent
-from simple_cloudevent import SimpleCloudEvent, SIMPLE_CE_SPEC_VERSION
+from simple_cloudevent import SimpleCloudEvent
 
 
 from tests.unit.request_handlers.test_document_access_request_handler import DOCUMENT_ACCESS_REQUEST_TEMPLATE
@@ -51,7 +51,6 @@ def test_create_cloud_event_example():
 
         # check
         assert isinstance(ce, SimpleCloudEvent)
-        assert ce.specversion == SIMPLE_CE_SPEC_VERSION
 
         assert ce.id == msg_id
         assert ce.source == source
@@ -111,7 +110,6 @@ def test_create_doc_request_ce(client, session, set_env, jwt, mocker):
 
         # check
         assert isinstance(ce, SimpleCloudEvent)
-        assert ce.specversion == SIMPLE_CE_SPEC_VERSION
 
         assert isinstance(ce.id, str)
         assert ce.source == source

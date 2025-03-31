@@ -137,3 +137,9 @@ search-solr/test_solr
 __pycache__
 
 .python-version
+
+# flask-caching
+**/cache/*
+
+# ruff cache
+**/.ruff_cache

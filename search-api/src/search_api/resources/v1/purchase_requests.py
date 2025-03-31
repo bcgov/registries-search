@@ -21,25 +21,24 @@ from search_api.models import DocumentAccessRequest, User
 from search_api.services.authz import does_user_have_account
 from search_api.utils.auth import jwt
 
+bp = Blueprint("PURCHASE_REQUESTS", __name__, url_prefix="/purchases")
 
-bp = Blueprint('PURCHASE_REQUESTS', __name__, url_prefix='/purchases')  # pylint: disable=invalid-name
 
-
-@bp.get('')
-@bp.get('/<int:request_id>')
-@cross_origin(origin='*')
+@bp.get("")
+@bp.get("/<int:request_id>")
+@cross_origin(origins="*")
 @jwt.requires_auth
-def get(request_id=None):  # pylint: disable=too-many-return-statements
+def get(request_id=None):  # noqa: PLR0911
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
-        account_id = request.headers.get('Account-Id', None)
+        account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
 
         # updates user information with given jwt
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
         if not user:
-            return resource_utils.default_exception_response('Error getting user information from JWT.')
+            return resource_utils.default_exception_response("Error getting user information from JWT.")
 
         token = jwt.get_token_auth_header()
         user_is_part_of_org = does_user_have_account(token, account_id)
@@ -50,7 +49,7 @@ def get(request_id=None):  # pylint: disable=too-many-return-statements
         if request_id:
             access_request = DocumentAccessRequest.find_by_id(request_id)
             if not access_request:
-                return resource_utils.not_found_error_response('Document Access Request', request_id)
+                return resource_utils.not_found_error_response("Document Access Request", request_id)
             if str(access_request.account_id) != account_id:
                 return resource_utils.unauthorized_error_response(account_id)
             return jsonify(documentAccessRequest=access_request.json)
@@ -61,5 +60,5 @@ def get(request_id=None):  # pylint: disable=too-many-return-statements
             access_requests_list.append(access_request.json)
 
         return jsonify(documentAccessRequests=access_requests_list)
-    except Exception as default_exception:  # noqa: B902
+    except Exception as default_exception:
         return resource_utils.default_exception_response(default_exception)

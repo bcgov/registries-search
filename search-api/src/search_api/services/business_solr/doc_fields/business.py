@@ -32,23 +32,23 @@ class BusinessField(BaseEnum):  # pylint: disable=too-few-public-methods
     """Enum of the business fields available."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # stored fields
-    BN = 'bn'
-    IDENTIFIER = 'identifier'
-    NAME = 'name'
-    PARTIES = 'parties'
-    STATE = 'status'
-    TYPE = 'legalType'
+    BN = "bn"
+    IDENTIFIER = "identifier"
+    NAME = "name"
+    PARTIES = "parties"
+    STATE = "status"
+    TYPE = "legalType"
     # query fields
-    BN_Q = 'bn_q'
-    IDENTIFIER_Q = 'identifier_q'
-    IDENTIFIER_Q_EDGE = 'identifier_q_edge'
-    NAME_Q = 'name_q'
-    NAME_SINGLE = 'name_single_term'
-    NAME_STEM_AGRO = 'name_stem_agro'
-    NAME_SUGGEST = 'name_suggest'
-    NAME_XTRA_Q = 'name_xtra_q'
-    GOOD_STANDING = 'goodStanding'
+    BN_Q = "bn_q"
+    IDENTIFIER_Q = "identifier_q"
+    IDENTIFIER_Q_EDGE = "identifier_q_edge"
+    NAME_Q = "name_q"
+    NAME_SINGLE = "name_single_term"
+    NAME_STEM_AGRO = "name_stem_agro"
+    NAME_SUGGEST = "name_suggest"
+    NAME_XTRA_Q = "name_xtra_q"
+    GOOD_STANDING = "goodStanding"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

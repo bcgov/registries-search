@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Category filter methods."""
-from .. import BusinessSolr
-from ..doc_fields import BusinessField
+from search_api.services.business_solr import BusinessSolr
+from search_api.services.business_solr.doc_fields import BusinessField
 
 
 def add_category_filters(solr_payload: dict,
@@ -21,7 +21,7 @@ def add_category_filters(solr_payload: dict,
                          is_nested: bool,
                          solr: BusinessSolr):
     """Attach filter queries for categories to the params."""
-    for category in categories:
-        if category_filters := categories[category]:
+    for category, category_filters in categories.items():
+        if category_filters:
             filter_str = solr.query_builder.build_facet_query(category, category_filters, is_nested)
-            solr_payload['filter'].append(filter_str)
+            solr_payload["filter"].append(filter_str)

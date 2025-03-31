@@ -24,5 +24,6 @@ class AuthService(ABC):  # pylint: disable=too-few-public-methods
         """Generate an OAuth access token with the appropriate access."""
 
     @classmethod
+    @abstractmethod
     def get_credentials(cls):
         """Generate auth credentials with the appropriate access."""

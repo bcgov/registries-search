@@ -21,6 +21,7 @@ from dateutil.relativedelta import relativedelta
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.authz import STAFF_ROLE
+from search_api.utils.util import utcnow
 from tests.unit.services.utils import create_header
 
 
@@ -70,12 +71,12 @@ def create_document_access_request(identifier: str, account_id: int, is_paid: bo
     document_access_request = DocumentAccessRequest(
             business_identifier=identifier,
             account_id = account_id,
-            submission_date = datetime.utcnow(),
+            submission_date = utcnow(),
             expiry_date = datetime.now()+ relativedelta(days=7)
     )
     if is_paid:
         document_access_request.payment_token=567
-        document_access_request.payment_completion_date=datetime.utcnow()
+        document_access_request.payment_completion_date=utcnow()
         document_access_request.status=DocumentAccessRequest.Status.PAID
 
     user = User(username='username', firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')

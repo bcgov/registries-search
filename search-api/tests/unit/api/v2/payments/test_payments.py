@@ -9,6 +9,7 @@ from search_api.services.gcp_auth.auth_service import id_token
 
 from search_api.enums import DocumentType
 from search_api.models import Document, DocumentAccessRequest, User
+from search_api.utils.util import utcnow
 from simple_cloudevent import SimpleCloudEvent
 
 
@@ -16,7 +17,7 @@ def _create_test_document_request():
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
         account_id=123,
-        submission_date=datetime.utcnow(),
+        submission_date=utcnow(),
         expiry_date=datetime.now() + relativedelta(days=7)
     )
 

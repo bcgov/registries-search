@@ -24,26 +24,26 @@ from search_api.models import SolrDoc
 from search_api.request_handlers import resync_business_solr
 from search_api.services import SYSTEM_ROLE
 from search_api.utils.auth import jwt
+from search_api.utils.util import utcnow
+
+bp = Blueprint("RESYNC", __name__, url_prefix="/resync")
 
 
-bp = Blueprint('RESYNC', __name__, url_prefix='/resync')  # pylint: disable=invalid-name
-
-
-@bp.post('')
-@cross_origin(origin='*')
+@bp.post("")
+@cross_origin(origins="*")
 @jwt.requires_roles([SYSTEM_ROLE])
 def resync_solr():
     """Resync solr docs from the given date or identifiers given."""
     try:
         request_json = request.json
-        from_datetime = datetime.utcnow()
-        minutes_offset = request_json.get('minutesOffset', None)
-        identifiers_to_resync = request_json.get('identifiers', None)
+        from_datetime = utcnow()
+        minutes_offset = request_json.get("minutesOffset", None)
+        identifiers_to_resync = request_json.get("identifiers", None)
         if not minutes_offset and not identifiers_to_resync:
             return resource_utils.bad_request_response('Missing required field "minutesOffset" or "identifiers".')
         try:
             minutes_offset = float(minutes_offset)
-        except:  # pylint: disable=bare-except # noqa F841;
+        except:  # pylint: disable=bare-except
             if not identifiers_to_resync:
                 return resource_utils.bad_request_response(
                     'Invalid value for field "minutesOffset". Expecting a number.')
@@ -54,14 +54,14 @@ def resync_solr():
             identifiers_to_resync = SolrDoc.get_updated_identifiers_after_date(resync_date)
 
         if identifiers_to_resync:
-            current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+            current_app.logger.debug(f"Resyncing: {identifiers_to_resync}")
             resync_business_solr(identifiers_to_resync)
         else:
-            current_app.logger.debug('No records to resync.')
+            current_app.logger.debug("No records to resync.")
 
-        return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+        return jsonify({"message": "Resync successful."}), HTTPStatus.CREATED
 
     except SolrException as solr_exception:
         return resource_utils.exception_response(solr_exception)
-    except Exception as exception:  # noqa: B902
+    except Exception as exception:
         return resource_utils.default_exception_response(exception)

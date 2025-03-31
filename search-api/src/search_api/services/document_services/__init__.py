@@ -17,32 +17,32 @@ from uuid import uuid4
 from flask import current_app
 from simple_cloudevent import SimpleCloudEvent
 
-from search_api.models import Document, DocumentAccessRequest, User
-from search_api.utils.datetime import datetime
+from search_api.models import DocumentAccessRequest
+from search_api.utils.util import utcnow
 
 
 def create_doc_request_ce(document_request: DocumentAccessRequest) -> SimpleCloudEvent:
     """Create a CloudEvent containing all the information for a document request."""
     sce_dict = {}
-    sce_dict['id'] = str(uuid4())
-    sce_dict['source'] = current_app.config.get('SERVICE_NAME')
-    sce_dict['subject'] = current_app.config.get('SERVICE_DOCUMENT_SUBJECT')
-    sce_dict['time'] = datetime.utcnow()
+    sce_dict["id"] = str(uuid4())
+    sce_dict["source"] = current_app.config.get("SERVICE_NAME")
+    sce_dict["subject"] = current_app.config.get("SERVICE_DOCUMENT_SUBJECT")
+    sce_dict["time"] = utcnow()
 
-    sce_dict['data'] = {}
-    sce_data = sce_dict['data']
-    sce_data['businessIdentifier'] = document_request.business_identifier
-    sce_data['accountId'] = document_request.account_id
-    sce_data['user'] = document_request.submitter.sub
+    sce_dict["data"] = {}
+    sce_data = sce_dict["data"]
+    sce_data["businessIdentifier"] = document_request.business_identifier
+    sce_data["accountId"] = document_request.account_id
+    sce_data["user"] = document_request.submitter.sub
 
-    sce_data['documents'] = []
-    sce_documents = sce_data['documents']
+    sce_data["documents"] = []
+    sce_documents = sce_data["documents"]
     for doc in document_request.documents:
-        document = {'documentKey': doc.document_key,
-                    'documentType': doc.document_type,
+        document = {"documentKey": doc.document_key,
+                    "documentType": doc.document_type,
                     }
         sce_documents.append(document)
 
-    ce = SimpleCloudEvent(**sce_dict)  # pylint: disable=invalid-name;
+    ce = SimpleCloudEvent(**sce_dict);
 
     return ce

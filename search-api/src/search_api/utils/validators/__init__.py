@@ -17,39 +17,39 @@ from flask import current_app, request
 
 def valid_charset(word: str) -> bool:
     """Verify word characters adhere to a supported set."""
-    return word == word.encode('ascii', 'ignore').decode('utf-8')
+    return word == word.encode("ascii", "ignore").decode("utf-8")
 
 
 def validate_search_request() -> tuple[dict, list[dict]]:
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
-    query_json = request_json.get('query', None)
+    query_json = request_json.get("query", None)
     if not isinstance(query_json, dict):
-        errors.append({'Invalid payload': "Expected an object for 'query'."})
+        errors.append({"Invalid payload": "Expected an object for 'query'."})
     else:
-        value = query_json.get('value', None)
+        value = query_json.get("value", None)
         if not value or not isinstance(value, str):
-            errors.append({'Invalid payload': "Expected a string for 'query/value'."})
+            errors.append({"Invalid payload": "Expected a string for 'query/value'."})
 
-        if not isinstance(query_json.get('parties', {}), dict):
-            errors.append({'Invalid payload': "Expected an object for 'query/parties'."})
+        if not isinstance(query_json.get("parties", {}), dict):
+            errors.append({"Invalid payload": "Expected an object for 'query/parties'."})
 
-    categories = request_json.get('categories', {})
+    categories = request_json.get("categories", {})
     if not isinstance(categories, dict):
-        errors.append({'Invalid payload': "Expected an object for 'categories'."})
+        errors.append({"Invalid payload": "Expected an object for 'categories'."})
     else:
         for key, value in categories.items():
             if not isinstance(value, list):
-                errors.append({'Invalid payload': f"Expected a list for 'categories/{key}'."})
+                errors.append({"Invalid payload": f"Expected a list for 'categories/{key}'."})
     try:
-        start = int(request_json.get('start', 0))
-        rows = int(request_json.get('rows', 0))
+        start = int(request_json.get("start", 0))
+        rows = int(request_json.get("rows", 0))
         if start < 0:
-            errors.append({'Invalid payload': "Expected 'start' to be >= 0."})
-        if rows > (max_rows := current_app.config['SOLR_SVC_BUS_MAX_ROWS']) or rows < 0:
-            errors.append({'Invalid payload': f"Expected 'rows' to be between 0 and {max_rows}."})
+            errors.append({"Invalid payload": "Expected 'start' to be >= 0."})
+        if rows > (max_rows := current_app.config["SOLR_SVC_BUS_MAX_ROWS"]) or rows < 0:
+            errors.append({"Invalid payload": f"Expected 'rows' to be between 0 and {max_rows}."})
     except ValueError:  # catch invalid start/row entry
-        errors.append({'Invalid payload': "Expected integer for params: 'start', 'rows'"})
+        errors.append({"Invalid payload": "Expected integer for params: 'start', 'rows'"})
 
     return request_json, errors

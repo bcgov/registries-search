@@ -14,101 +14,95 @@
 """Manages filing type codes and payment service interactions."""
 
 from http import HTTPStatus
-from typing import Tuple
 
 import requests
 from flask import current_app
-from flask_jwt_oidc import JwtManager
 
+from flask_jwt_oidc import JwtManager
 from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException
 from search_api.models import UserRoles
 from search_api.services import BASIC_USER, SBC_STAFF, STAFF_ROLE, is_staff
 
-
 # Maps Document Type to Pay API Filing Type
 DOCUMENT_TYPE_TO_FILING_TYPE = {
     DocumentType.BUSINESS_SUMMARY_FILING_HISTORY.name: {
-        BASIC_USER: 'BSRCH',
-        STAFF_ROLE: 'SBSRCH',
-        SBC_STAFF: 'SBSRCH'
+        BASIC_USER: "BSRCH",
+        STAFF_ROLE: "SBSRCH",
+        SBC_STAFF: "SBSRCH"
     },
     DocumentType.CERTIFICATE_OF_GOOD_STANDING.name: {
-        BASIC_USER: 'CGOOD',
-        STAFF_ROLE: 'CGOOD',
-        SBC_STAFF: 'CGOOD'
+        BASIC_USER: "CGOOD",
+        STAFF_ROLE: "CGOOD",
+        SBC_STAFF: "CGOOD"
     },
     DocumentType.CERTIFICATE_OF_STATUS.name: {
-        BASIC_USER: 'CSTAT',
-        STAFF_ROLE: 'CSTAT',
-        SBC_STAFF: 'CSTAT'
+        BASIC_USER: "CSTAT",
+        STAFF_ROLE: "CSTAT",
+        SBC_STAFF: "CSTAT"
     },
     DocumentType.LETTER_UNDER_SEAL.name: {
-        BASIC_USER: 'LSEAL',
-        STAFF_ROLE: 'LSEAL',
-        SBC_STAFF: 'LSEAL'
+        BASIC_USER: "LSEAL",
+        STAFF_ROLE: "LSEAL",
+        SBC_STAFF: "LSEAL"
     }
 }
 
 PAYMENT_REQUEST_TEMPLATE = {
-    'filingInfo': {
-        'filingTypes': [
-            {'filingTypeCode': ''}
+    "filingInfo": {
+        "filingTypes": [
+            {"filingTypeCode": ""}
         ]
     },
-    'businessInfo': {
-        'corpType': 'BUS'
+    "businessInfo": {
+        "corpType": "BUS"
     }
 }
 
 
-# pylint: disable=too-many-locals
-def create_payment(account_id: str, filing_types: [], user_jwt: JwtManager, header: dict, business_json: str) -> \
-        Tuple[int, dict, int]:
+def create_payment(account_id: str, filing_types: list[str], user_jwt: JwtManager, header: dict, business_json: str) -> \
+        tuple[int, dict, int]:
     """Create the invoice for the document access request."""
-    payment_svc_url = current_app.config.get('PAYMENT_SVC_URL')
+    payment_svc_url = current_app.config.get("PAYMENT_SVC_URL")
 
     payload = PAYMENT_REQUEST_TEMPLATE
-    payload['filingInfo']['filingTypes'] = filing_types
+    payload["filingInfo"]["filingTypes"] = filing_types
 
-    if folio_number := header.get('folioNumber', None):
-        payload['filingInfo']['folioNumber'] = folio_number
+    if folio_number := header.get("folioNumber"):
+        payload["filingInfo"]["folioNumber"] = folio_number
 
-    if is_staff(user_jwt):
-        special_role = UserRoles.STAFF
-    else:
-        special_role = None
+    special_role = UserRoles.STAFF if is_staff(user_jwt) else None
 
     if special_role:
         account_info = {}
-        if header.get('routingSlipNumber', None):
-            account_info['routingSlip'] = header.get('routingSlipNumber')
-        if header.get('bcolAccountNumber', None):
-            account_info['bcolAccountNumber'] = header.get('bcolAccountNumber')
-        if header.get('datNumber', None):
-            account_info['datNumber'] = header.get('datNumber')
+        if header.get("routingSlipNumber"):
+            account_info["routingSlip"] = header.get("routingSlipNumber")
+        if header.get("bcolAccountNumber"):
+            account_info["bcolAccountNumber"] = header.get("bcolAccountNumber")
+        if header.get("datNumber"):
+            account_info["datNumber"] = header.get("datNumber")
 
         if account_info:
-            payload['accountInfo'] = account_info
+            payload["accountInfo"] = account_info
 
-    legal_type = business_json.get('legalType')
-    label_name = 'Registration Number' if legal_type in ['SP', 'GP'] else 'Incorporation Number'
+    legal_type = business_json.get("legalType")
+    label_name = "Registration Number" if legal_type in ["SP", "GP"] else "Incorporation Number"
 
-    payload['details'] = [{
-        'label': f'{label_name}: ',
-        'value': business_json.get('identifier')
+    payload["details"] = [{
+        "label": f"{label_name}: ",
+        "value": business_json.get("identifier")
     }]
-    payload['businessInfo']['businessIdentifier'] = business_json.get('identifier')
+    payload["businessInfo"]["businessIdentifier"] = business_json.get("identifier")
 
     try:
         token = user_jwt.get_token_auth_header()
-        headers = {'Authorization': 'Bearer ' + token,
-                   'Content-Type': 'application/json',
-                   'Account-Id': account_id}
-        pay_api_timeout = current_app.config.get('PAY_API_TIMEOUT')
+        headers = {"Authorization": "Bearer " + token,
+                   "Content-Type": "application/json",
+                   "Account-Id": account_id}
+        pay_api_timeout = current_app.config.get("PAY_API_TIMEOUT")
         payment_response = requests.post(url=payment_svc_url, json=payload, headers=headers, timeout=pay_api_timeout)
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as err:
-        current_app.logger.error('Payment connection failure: %s', err)
+        current_app.logger.error("Payment connection failure: %s", err)
         raise ApiConnectionException(HTTPStatus.PAYMENT_REQUIRED,
-                                     [{'message': 'Unable to create invoice for payment.'}]) from err
+                                     [{"message": "Unable to create invoice for payment."}]) from err
     return payment_response

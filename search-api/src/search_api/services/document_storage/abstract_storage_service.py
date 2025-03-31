@@ -20,5 +20,5 @@ class StorageService(ABC):  # pylint: disable=too-few-public-methods
 
     @classmethod
     @abstractmethod
-    def get_document(cls, name: str, doc_type: str = None):
+    def get_document(cls, name: str, doc_type: str | None = None):
         """Fetch the uniquely named document from storage as binary data."""

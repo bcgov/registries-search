@@ -17,18 +17,15 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import Final, Union
 
-from flask import Flask
-from flask import current_app
-# from flask_pub import FlaskPub
+from flask import Flask, current_app
 from google.cloud import pubsub
 
+__version__ = "0.0.1"
 
-__version__ = '0.0.1'
-
-EXTENSION_NAME: Final = 'FLASK_BCROS_PUBSUB'
+EXTENSION_NAME: Final = "FLASK_BCROS_PUBSUB"
 
 
-class Queue():
+class Queue:
     """Queue publishing services."""
 
     def __init__(
@@ -56,18 +53,18 @@ class Queue():
         # applications. If the app is passed in the constructor,
         # we set it and don't support multiple applications.
 
-        if not app.config.get('FLASK_PUB_CONFIG'):
+        if not app.config.get("FLASK_PUB_CONFIG"):
             raise RuntimeError(
-                'FLASK_PUB_CONFIG needs to be set.'
+                "FLASK_PUB_CONFIG needs to be set."
             )
 
-        app.config.setdefault('FLASK_PUB_DEFAULT_SUBJECT', None)
+        app.config.setdefault("FLASK_PUB_DEFAULT_SUBJECT", None)
 
         try:
             self.driver = pubsub.PublisherClient()
             app.extensions[EXTENSION_NAME] = self.driver
-        except Exception as err:  # noqa: B902
-            app.logger.warning('flask_pub.init_app called but unable to create driver. %s', err)
+        except Exception as err:
+            app.logger.warning("flask_pub.init_app called but unable to create driver. %s", err)
 
         @app.teardown_appcontext
         def shutdown(response_or_exc):  # pylint: disable=W0612
@@ -75,21 +72,21 @@ class Queue():
             return response_or_exc
 
     def publish(self,
-                msg: Union[str, bytes],
-                subject: str = None):
+                msg: str | bytes,
+                subject: str | None = None):
         """Publish a message onto the queue subject."""
         if not (app := self.app):  # pylint: disable=C0325
             app = current_app
 
-        topic_name = subject or app.config.get('FLASK_PUB_DEFAULT_SUBJECT')
+        topic_name = subject or app.config.get("FLASK_PUB_DEFAULT_SUBJECT")
 
         if app and topic_name and (_queue := self._get_queue(app)):
 
             data = msg
             if isinstance(msg, str):
-                data = msg.encode('utf8')
+                data = msg.encode("utf8")
 
-            future = _queue.publish(subject, data)  # pylint: disable=W0612; # noqa: F841; an unused future, debugging
+            future = _queue.publish(subject, data)
 
     @staticmethod
     def create_subject(
@@ -97,7 +94,7 @@ class Queue():
             topic: str,
     ) -> str:
         """Return a fully-qualified topic string."""
-        return f'projects/{project}/topics/{topic}'
+        return f"projects/{project}/topics/{topic}"
 
     @staticmethod
     def _get_queue(app):
@@ -111,4 +108,4 @@ class Queue():
             app.extensions[EXTENSION_NAME] = driver
             return driver
 
-        raise RuntimeError('The Flask_Pub extension was not registered with the current app.')
+        raise RuntimeError("The Flask_Pub extension was not registered with the current app.")

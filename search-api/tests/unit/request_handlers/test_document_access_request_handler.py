@@ -18,10 +18,11 @@ from datetime import datetime
 from http import HTTPStatus
 
 import pytest
-from flask import current_app, g
+from flask import g
 
 from search_api.models import DocumentAccessRequest, User
 from search_api.request_handlers.document_access_request_handler import create_invoice, save_request
+from search_api.utils.util import utcnow
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     "documentAccessRequest": {
@@ -94,7 +95,7 @@ def test_create_invoice_failure(client, session, jwt, mocker):
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
         account_id=123,
-        submission_date=datetime.utcnow()
+        submission_date=utcnow()
     )
     document_access_request.save()
 

@@ -14,6 +14,8 @@
 """This module wraps the solr classes/fields for using registries search solr."""
 from dataclasses import asdict
 
+from flask import Flask
+
 from search_api.services.base_solr import Solr
 from search_api.services.base_solr.utils import QueryBuilder
 
@@ -24,31 +26,33 @@ from .doc_models import BusinessDoc
 class BusinessSolr(Solr):
     """Wrapper around the solr instance."""
 
-    query_builder = QueryBuilder(
-        identifier_field_values=[BusinessField.IDENTIFIER.value, BusinessField.IDENTIFIER_Q.value],
-        unique_parent_field=BusinessField.IDENTIFIER)
+    def __init__(self, config_prefix: str, app: Flask = None) -> None:
+        super().__init__(config_prefix, app)
+        self.query_builder = QueryBuilder(
+            identifier_field_values=[BusinessField.IDENTIFIER.value, BusinessField.IDENTIFIER_Q.value],
+            unique_parent_field=BusinessField.IDENTIFIER)
 
-    # fields
-    business_fields = [
-        BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
-        BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
-        BusinessField.SCORE.value
-    ]
-    business_with_parties_fields = [
-        BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
-        BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
-        BusinessField.PARTIES.value, '[child]', BusinessField.SCORE.value,
-        PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
-    ]
-    party_fields = [
-        PartyField.PARENT_BN.value, PartyField.PARENT_IDENTIFIER.value,
-        PartyField.PARENT_NAME.value, PartyField.PARENT_STATE.value, PartyField.PARENT_TYPE.value,
-        PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
-    ]
+        # fields
+        self.business_fields = [
+            BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
+            BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
+            BusinessField.SCORE.value
+        ]
+        self.business_with_parties_fields = [
+            BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
+            BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
+            BusinessField.PARTIES.value, "[child]", BusinessField.SCORE.value,
+            PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
+        ]
+        self.party_fields = [
+            PartyField.PARENT_BN.value, PartyField.PARENT_IDENTIFIER.value,
+            PartyField.PARENT_NAME.value, PartyField.PARENT_STATE.value, PartyField.PARENT_TYPE.value,
+            PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
+        ]
 
     def create_or_replace_docs(self,
-                               docs: list[BusinessDoc] = None,
-                               raw_docs: list[dict] = None,
+                               docs: list[BusinessDoc] | None = None,
+                               raw_docs: list[dict] | None = None,
                                timeout=25,
                                additive=True):
         """Create or replace solr docs in the core."""
@@ -58,7 +62,7 @@ class BusinessSolr(Solr):
             for business_dict in update_list:
                 # parties
                 if parties := business_dict.get(BusinessField.PARTIES.value, None):
-                    business_dict[BusinessField.PARTIES.value] = {'set': parties}
+                    business_dict[BusinessField.PARTIES.value] = {"set": parties}
 
-        url = self.update_url if len(update_list) < 1000 else self.bulk_update_url
-        return self.call_solr('POST', url, json_data=update_list, timeout=timeout)
+        url = self.update_url if len(update_list) < 1000 else self.bulk_update_url  # noqa: PLR2004
+        return self.call_solr("POST", url, json_data=update_list, timeout=timeout)

@@ -15,16 +15,15 @@
 
 Currently this only provides API versioning information
 """
-from flask import jsonify, Blueprint
+from flask import Blueprint, jsonify
 
 from search_api.utils.run_version import get_run_version
 
+bp = Blueprint("META", __name__, url_prefix="/meta")
 
-bp = Blueprint('META', __name__, url_prefix='/meta')  # pylint: disable=invalid-name
 
-
-@bp.get('/info')
+@bp.get("/info")
 def info():
     """Return a JSON object with meta information about the Service."""
     version = get_run_version()
-    return jsonify(API=f'search_api/{version}')
+    return jsonify(API=f"search_api/{version}")

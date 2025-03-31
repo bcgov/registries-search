@@ -14,10 +14,9 @@
 """Table for storing document access request details."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import auto
 from http import HTTPStatus
-from typing import List
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -25,6 +24,7 @@ from sqlalchemy.orm import backref
 
 from search_api.exceptions import BusinessException
 from search_api.utils.base import BaseEnum
+from search_api.utils.util import utcnow
 
 from .db import db
 
@@ -40,31 +40,31 @@ class DocumentAccessRequest(db.Model):
         ERROR = auto()
         COMPLETED = auto()  # After all docs are generated and stored.
 
-    __tablename__ = 'document_access_request'
+    __tablename__ = "document_access_request"
 
     id = db.Column(db.Integer, primary_key=True)
-    business_identifier = db.Column('business_identifier', db.String(10), index=True)
-    business_name = db.Column('business_name', db.String(1000))
-    status = db.Column('status', db.Enum(Status), default=Status.CREATED)
-    account_id = db.Column('account_id', db.Integer)
-    _payment_status_code = db.Column('payment_status_code', db.String(50))
-    _payment_token = db.Column('payment_id', db.String(4096), index=True)
+    business_identifier = db.Column("business_identifier", db.String(10), index=True)
+    business_name = db.Column("business_name", db.String(1000))
+    status = db.Column("status", db.Enum(Status), default=Status.CREATED)
+    account_id = db.Column("account_id", db.Integer)
+    _payment_status_code = db.Column("payment_status_code", db.String(50))
+    _payment_token = db.Column("payment_id", db.String(4096), index=True)
     # NOTE: _payment_completion_date is the date payment is marked complete in search,
     #       which is not the same as the invoice completion date
-    _payment_completion_date = db.Column('payment_completion_date', db.DateTime(timezone=True))
-    submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    _payment_completion_date = db.Column("payment_completion_date", db.DateTime(timezone=True))
+    submission_date = db.Column(db.DateTime(timezone=True), default=utcnow)
     expiry_date = db.Column(db.DateTime(timezone=True))
-    _output_file_key = db.Column('output_file_key', db.String(100))
-    _submitter_id = db.Column('submitter_id', db.Integer, db.ForeignKey('users.id'))
+    _output_file_key = db.Column("output_file_key", db.String(100))
+    _submitter_id = db.Column("submitter_id", db.Integer, db.ForeignKey("users.id"))
 
-    submitter = db.relationship('User', backref=backref('filing_submitter', uselist=False),
+    submitter = db.relationship("User", backref=backref("filing_submitter", uselist=False),
                                 foreign_keys=[_submitter_id])
-    documents = db.relationship('Document', backref='document_access_request', cascade='all, delete, delete-orphan')
+    documents = db.relationship("Document", backref="document_access_request", cascade="all, delete, delete-orphan")
 
     @hybrid_property
     def is_active(self) -> bool:
         """Return if this object is active or not."""
-        return self.expiry_date > datetime.now(timezone.utc)
+        return self.expiry_date > datetime.now(UTC)
 
     @hybrid_property
     def payment_status_code(self):
@@ -73,7 +73,7 @@ class DocumentAccessRequest(db.Model):
 
     @payment_status_code.setter
     def payment_status_code(self, error_type: str):
-        if self.locked and self._payment_status_code != 'CREATED':
+        if self.locked and self._payment_status_code != "CREATED":
             self._raise_default_lock_exception()
         self._payment_status_code = error_type
 
@@ -101,7 +101,7 @@ class DocumentAccessRequest(db.Model):
 
         else:
             raise BusinessException(
-                error='Payment Dates cannot be set.',
+                error="Payment Dates cannot be set.",
                 status_code=HTTPStatus.FORBIDDEN
             )
 
@@ -112,41 +112,39 @@ class DocumentAccessRequest(db.Model):
         Once an access request has an payment attached, it can no longer be altered and is locked.
         """
         insp = inspect(self)
-        attr_state = insp.attrs._payment_token  # pylint: disable=protected-access;
-        if self._payment_token and not attr_state.history.added:
-            return True
-        return False
+        attr_state = insp.attrs._payment_token
+        return self._payment_token and not attr_state.history.added
 
     @property
     def json(self):
         """Return a dict of this object, with keys in JSON format."""
         document_access_request = {
-            'id': self.id,
-            'businessIdentifier': self.business_identifier,
-            'businessName': self.business_name,
-            'status': self.status.name,
-            'paymentStatus': self.payment_status_code,
-            'submissionDate': self.submission_date.isoformat(),
-            'expiryDate': self.expiry_date.isoformat() if self.expiry_date else None,
-            'outputFileKey': self._output_file_key,
-            'submitter': self.submitter.display_name if self.submitter else None,
-            'paymentToken': self.payment_token  # invoice id from the pay db
+            "id": self.id,
+            "businessIdentifier": self.business_identifier,
+            "businessName": self.business_name,
+            "status": self.status.name,
+            "paymentStatus": self.payment_status_code,
+            "submissionDate": self.submission_date.isoformat(),
+            "expiryDate": self.expiry_date.isoformat() if self.expiry_date else None,
+            "outputFileKey": self._output_file_key,
+            "submitter": self.submitter.display_name if self.submitter else None,
+            "paymentToken": self.payment_token  # invoice id from the pay db
         }
 
         if completed_date := self.payment_completion_date:
-            document_access_request['paymentCompletionDate'] = completed_date.isoformat()
+            document_access_request["paymentCompletionDate"] = completed_date.isoformat()
 
         documents = []
 
         for document in self.documents:
             documents.append(document.json)
 
-        document_access_request['documents'] = documents
+        document_access_request["documents"] = documents
 
         return document_access_request
 
     @classmethod
-    def find_active_requests(cls, account_id: int, business_identifier: str = None):
+    def find_active_requests(cls, account_id: int, business_identifier: str | None = None):
         """Return all active requests matching specified account id and business identifier."""
         query = db.session.query(DocumentAccessRequest).\
             filter(DocumentAccessRequest.account_id == account_id).\
@@ -165,14 +163,14 @@ class DocumentAccessRequest(db.Model):
         return cls.query.filter_by(id=request_id).one_or_none()
 
     @classmethod
-    def find_by_payment_token(cls, payment_id: str) -> List[DocumentAccessRequest]:
+    def find_by_payment_token(cls, payment_id: str) -> list[DocumentAccessRequest]:
         """Return a list of requests having the specified payment_id."""
         return cls.query.filter_by(_payment_token=payment_id).all()
 
     @staticmethod
     def _raise_default_lock_exception():
         raise BusinessException(
-            error='Request cannot be modified after the invoice is created.',
+            error="Request cannot be modified after the invoice is created.",
             status_code=HTTPStatus.FORBIDDEN
         )
 
@@ -185,11 +183,11 @@ class DocumentAccessRequest(db.Model):
         """
         if self.status != self.Status.CREATED:
             raise BusinessException(
-                error='Payment can be only cancelled if in state created.',
+                error="Payment can be only cancelled if in state created.",
                 status_code=HTTPStatus.FORBIDDEN
             )
         self.status = self.Status.ERROR
-        self._payment_status_code = 'PAYMENT_CANCELLED'
+        self._payment_status_code = "PAYMENT_CANCELLED"
         self.save()
 
     def save(self):

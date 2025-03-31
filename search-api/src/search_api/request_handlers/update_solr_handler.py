@@ -31,9 +31,9 @@ def update_business_solr(identifiers: list[str], doc_events: list[SolrDocEvent])
         business_solr.create_or_replace_docs(businesses, additive=False)
         SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
-    except Exception as err:  # noqa: B902
+    except Exception as err:
         # log / update event / pass err
-        current_app.logger.debug('Failed to UPDATE solr for %s', identifiers)
+        current_app.logger.debug("Failed to UPDATE solr for %s", identifiers)
         SolrDocEvent.update_events_status(SolrDocEventStatus.ERROR, doc_events)
         raise err
 
@@ -53,8 +53,8 @@ def resync_business_solr(identifiers: list[str]):
             business_solr.create_or_replace_docs(businesses, additive=False)
             SolrDocEvent.update_events_status(SolrDocEventStatus.COMPLETE, doc_events)
 
-    except Exception as err:  # noqa: B902
+    except Exception as err:
         # log / update event / pass err
-        current_app.logger.debug('Failed to RESYNC solr for %s', identifiers)
+        current_app.logger.debug("Failed to RESYNC solr for %s", identifiers)
         SolrDocEvent.update_events_status(SolrDocEventStatus.ERROR, doc_events)
         raise err

@@ -13,13 +13,11 @@
 # limitations under the License.
 
 """This exports all of the models and schemas used by the application."""
-# flake8: noqa I001
 from .db import db
-from .user import User, UserRoles
-from .document_access_request import DocumentAccessRequest
 from .document import Document
-from .solr_doc_event import SolrDocEvent
+from .document_access_request import DocumentAccessRequest
 from .solr_doc import SolrDoc
+from .solr_doc_event import SolrDocEvent
+from .user import User, UserRoles
 
-
-__all__ = ('db', 'User', 'Document', 'DocumentAccessRequest', 'SolrDoc', 'SolrDocEvent')
+__all__ = ("Document", "DocumentAccessRequest", "SolrDoc", "SolrDocEvent", "User", "db")

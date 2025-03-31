@@ -13,10 +13,10 @@
 # limitations under the License.
 """Person search methods."""
 from search_api.services.base_solr.utils import QueryParams
+from search_api.services.business_solr import BusinessSolr
+from search_api.services.business_solr.doc_fields import PartyField
 
 from .add_category_filters import add_category_filters
-from .. import BusinessSolr
-from ..doc_fields import PartyField
 
 
 def parties_search(params: QueryParams, solr: BusinessSolr):
@@ -28,24 +28,24 @@ def parties_search(params: QueryParams, solr: BusinessSolr):
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields)
     # boosts for term order result ordering
-    initial_queries['query'] += f' OR ({PartyField.PARTY_NAME_Q.value}:"{params.query["value"]}"~5^5)'
-    initial_queries['query'] += f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
-    if params.query['value']:
-        initial_queries['query'] += \
+    initial_queries["query"] += f' OR ({PartyField.PARTY_NAME_Q.value}:"{params.query["value"]}"~5^5)'
+    initial_queries["query"] += f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
+    if params.query["value"]:
+        initial_queries["query"] += \
             f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"].split()[0]}"^2)'
     # add defaults
     solr_payload = {
         **initial_queries,
-        'queries': {
-            'parents': f'{PartyField.PARTY_NAME_Q.value}:*',
-            'parentFilters': ' AND '.join(initial_queries['filter'])
+        "queries": {
+            "parents": f"{PartyField.PARTY_NAME_Q.value}:*",
+            "parentFilters": " AND ".join(initial_queries["filter"])
         },
-        'facet': {
+        "facet": {
             **solr.query_builder.build_facet(PartyField.PARENT_TYPE, False),
             **solr.query_builder.build_facet(PartyField.PARENT_STATE, False),
             **solr.query_builder.build_facet(PartyField.PARTY_ROLE, False)
         },
-        'fields': params.fields
+        "fields": params.fields
     }
     # base doc faceted filters
     add_category_filters(solr_payload=solr_payload,
