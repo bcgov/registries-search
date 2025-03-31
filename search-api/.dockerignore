@@ -1,5 +1,6 @@
 Dockerfile
 .dockerignore
+.ruff_cache
 .pytest_cache
 __pycache__
 .venv
@@ -12,3 +13,4 @@ manage.py
 migrations
 tests
 build
+htmlcov
