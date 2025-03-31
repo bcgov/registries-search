@@ -65,7 +65,7 @@ COPY --chown=web:web ./poetry.lock ./pyproject.toml /code/
 COPY --chown=web:web ./src /code/src
 COPY --chown=web:web ./README.md /code
 
-COPY --chown=web:web ./cache /code/cache
+RUN mkdir /code/cache && chown web:web /code/cache
 
 # Project initialization:
 RUN --mount=type=cache,target="$POETRY_CACHE_DIR" \
