@@ -26,20 +26,24 @@ from tests.unit.test_utils import SOLR_TEST_DOCS, create_header
 from tests import integration_solr
 
 
-@pytest.mark.parametrize('test_name,docs', [
-    ('single', [SOLR_TEST_DOCS[0]]),
-    ('multiple', SOLR_TEST_DOCS),
-])
+@pytest.mark.parametrize(
+    "test_name,docs",
+    [
+        ("single", [SOLR_TEST_DOCS[0]]),
+        ("multiple", SOLR_TEST_DOCS),
+    ],
+)
 def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
     """Assert that update operation sends correct payload to solr."""
-    solr_url = app.config.get('SOLR_SVC_LEADER_URL') + '/bor/update?commit=true&overwrite=true&wt=json'
+    solr_url = app.config.get("SOLR_SVC_LEADER_URL") + "/bor/update?commit=true&overwrite=true&wt=json"
     docs_json = [asdict(x) for x in docs]
     with requests_mock.mock() as m:
         m.post(solr_url)
-        api_response = client.put(f'/api/v1/internal/solr/import',
-                                  json={'entities': docs_json},
-                                  headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                               'content-type': 'application/json'}))
+        api_response = client.put(
+            f"/api/v1/internal/solr/import",
+            json={"entities": docs_json},
+            headers=create_header(jwt, [SYSTEM_ROLE], **{"Accept-Version": "v1", "content-type": "application/json"}),
+        )
 
         # check success
         assert api_response.status_code == HTTPStatus.CREATED
@@ -48,13 +52,13 @@ def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
         assert m.called == True
         assert m.call_count == 1  # batch updated all docs
         assert solr_url in m.request_history[0].url
-        
+
         expected = []
         for doc in docs_json:
             update_doc = {**doc}
-            for key in ['entityAddresses', 'nationalities', 'roles', 'taxResidencies']:
+            for key in ["entityAddresses", "nationalities", "roles", "taxResidencies"]:
                 if key_value := update_doc.get(key):
-                    update_doc[key] = {'set': key_value}
+                    update_doc[key] = {"set": key_value}
             expected.append(update_doc)
 
         assert m.request_history[0].json() == expected
@@ -67,28 +71,30 @@ def test_update_solr(session, client, jwt):
     solr.delete_all_docs()
     # import
     docs_json = [asdict(x) for x in SOLR_TEST_DOCS]
-    api_response = client.put(f'/api/v1/internal/solr/import',
-                              json={'entities': docs_json},
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+    api_response = client.put(
+        f"/api/v1/internal/solr/import",
+        json={"entities": docs_json},
+        headers=create_header(jwt, [SYSTEM_ROLE], **{"Accept-Version": "v1", "content-type": "application/json"}),
+    )
     # check
     assert api_response.status_code == HTTPStatus.CREATED
 
     # check solr for updated records
     time.sleep(2)  # wait for solr to register update
     for entity in SOLR_TEST_DOCS:
-        search_response = solr.query(payload={'query': f'id:{entity.id}', 'fields': '*'})
-        assert search_response['response']
-        assert search_response['response']['docs']
-        assert len(search_response['response']['docs']) == 1
+        search_response = solr.query(payload={"query": f"id:{entity.id}", "fields": "*"})
+        assert search_response["response"]
+        assert search_response["response"]["docs"]
+        assert len(search_response["response"]["docs"]) == 1
 
 
 def test_update_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
     docs_json = [asdict(x) for x in SOLR_TEST_DOCS]
-    api_response = client.put(f'/api/v1/internal/solr/import',
-                              json={'entities': docs_json},
-                              headers=create_header(jwt, [], **{'Accept-Version': 'v1',
-                                                                'content-type': 'application/json'}))
+    api_response = client.put(
+        f"/api/v1/internal/solr/import",
+        json={"entities": docs_json},
+        headers=create_header(jwt, [], **{"Accept-Version": "v1", "content-type": "application/json"}),
+    )
     # check
     assert api_response.status_code == HTTPStatus.UNAUTHORIZED

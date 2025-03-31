@@ -28,31 +28,31 @@
 from bor_api.enums.base import BaseEnum
 
 
-class EntityRoleField(BaseEnum):  # pylint: disable=too-few-public-methods
+class EntityRoleField(BaseEnum):
     """Enum of the entity role fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # entity role doc stored fields
-    RELATED_ADDRESSES = 'relatedAddresses'
-    RELATED_BN = 'relatedBN'
-    RELATED_EMAIL = 'relatedEmail'
-    RELATED_ENTITY_TYPE = 'relatedEntityType'
-    RELATED_IDENTIFIER = 'relatedIdentifier'
-    RELATED_LEGAL_TYPE = 'relatedLegalType'
-    RELATED_INTERESTS = 'relatedInterests'
-    RELATED_NAME = 'relatedName'
-    RELATED_STATE = 'relatedState'
-    ROLE_DATES = 'roleDates'
-    ROLE_TYPE = 'roleType'
+    RELATED_ADDRESSES = "relatedAddresses"
+    RELATED_BN = "relatedBN"
+    RELATED_EMAIL = "relatedEmail"
+    RELATED_ENTITY_TYPE = "relatedEntityType"
+    RELATED_IDENTIFIER = "relatedIdentifier"
+    RELATED_LEGAL_TYPE = "relatedLegalType"
+    RELATED_INTERESTS = "relatedInterests"
+    RELATED_NAME = "relatedName"
+    RELATED_STATE = "relatedState"
+    ROLE_DATES = "roleDates"
+    ROLE_TYPE = "roleType"
     # entity role doc query fields
-    RELATED_BN_Q = 'relatedBN_q'
-    RELATED_EMAIL_Q = 'relatedEmail_q'
-    RELATED_IDENTIFIER_Q = 'relatedIdentifier_q'
-    RELATED_NAME_Q = 'relatedName_q'
-    RELATED_NAME_AGRO_Q = 'relatedName_stem_agro_q'
-    RELATED_NAME_SINGLE_Q = 'relatedName_single_term_q'
-    RELATED_NAME_SYN_Q = 'relatedName_synonym_q'
-    RELATED_Q = 'related_q'
+    RELATED_BN_Q = "relatedBN_q"
+    RELATED_EMAIL_Q = "relatedEmail_q"
+    RELATED_IDENTIFIER_Q = "relatedIdentifier_q"
+    RELATED_NAME_Q = "relatedName_q"
+    RELATED_NAME_AGRO_Q = "relatedName_stem_agro_q"
+    RELATED_NAME_SINGLE_Q = "relatedName_single_term_q"
+    RELATED_NAME_SYN_Q = "relatedName_synonym_q"
+    RELATED_Q = "related_q"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

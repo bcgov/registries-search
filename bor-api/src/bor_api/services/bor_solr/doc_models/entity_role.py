@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# pylint: disable=invalid-name
 """Manages dataclass for the solr entity role doc."""
 from dataclasses import dataclass
 
@@ -41,14 +40,14 @@ class EntityRole:
     def __post_init__(self):
         """Set extra solr role search fields dependent on base fields."""
         self.related_q = f"{self.relatedName} {self.relatedIdentifier} {self.relatedBN or ''}".strip()
-        self.roleType = self.roleType.replace('_', ' ').upper()
+        self.roleType = self.roleType.replace("_", " ").upper()
 
         for address in self.relatedAddresses or []:
             # set parent doc to entityRole and remove address_q since we don't search over role addresses
             if isinstance(address, dict):
-                address['parentDoc'] = 'entityRole'
-                if address.get('address_q'):
-                    del address['address_q']
+                address["parentDoc"] = "entityRole"
+                if address.get("address_q"):
+                    del address["address_q"]
             elif isinstance(address, Address):
-                address.parentDoc = 'entityRole'
+                address.parentDoc = "entityRole"
                 address.address_q = None

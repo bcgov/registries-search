@@ -21,24 +21,31 @@ from bor_api.enums import SearchAccessLevel
 from bor_api.models import User, SearchHistory
 
 
-@pytest.mark.parametrize('test_name, username, account_id, access_level', [
-    ('test_all', 'blippity', '456', SearchAccessLevel.PUBLIC),
-    ('test_no_user', None, '234', SearchAccessLevel.LIMITED),
-    ('test_no_account', 'bop', None, SearchAccessLevel.EXTENDED),
-    ('test_no_values', None, None, None),
-])
+@pytest.mark.parametrize(
+    "test_name, username, account_id, access_level",
+    [
+        ("test_all", "blippity", "456", SearchAccessLevel.PUBLIC),
+        ("test_no_user", None, "234", SearchAccessLevel.LIMITED),
+        ("test_no_account", "bop", None, SearchAccessLevel.EXTENDED),
+        ("test_no_values", None, None, None),
+    ],
+)
 def test_search_history(session, test_name, username, account_id, access_level):
     """Assert that a SearchHistory can be stored in the service."""
     user = None
     if username:
-        user = User(username=username, firstname='firstname', lastname='lastname', sub='sub', iss='iss', idp_userid='123')
+        user = User(
+            username=username, firstname="firstname", lastname="lastname", sub="sub", iss="iss", idp_userid="123"
+        )
         session.add(user)
         session.commit()
     # insert SearchHistory for user
-    search = SearchHistory(params={'query': {'value': 'test'}},
-                           results=[{'entityType': 'PERSON','legalName': 'tester','roles': [],'addresses': []}],
-                           submitter_id=user.id if user else None,
-                           submitter_account_id=account_id,
-                           access_level=access_level)
+    search = SearchHistory(
+        params={"query": {"value": "test"}},
+        results=[{"entityType": "PERSON", "legalName": "tester", "roles": [], "addresses": []}],
+        submitter_id=user.id if user else None,
+        submitter_account_id=account_id,
+        access_level=access_level,
+    )
     search.save()
     assert search.id is not None

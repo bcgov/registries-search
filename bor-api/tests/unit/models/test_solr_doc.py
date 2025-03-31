@@ -37,9 +37,9 @@ def test_find_most_recent_by_identifier(session):
     """Assert find_most_recent_by_identifier works as expected."""
     entity_doc_1 = deepcopy(SOLR_TEST_DOCS[0])
     entity_doc_2 = deepcopy(SOLR_TEST_DOCS[0])
-    entity_doc_2.legalName += '2'
+    entity_doc_2.legalName += "2"
     entity_doc_3 = deepcopy(SOLR_TEST_DOCS[0])
-    entity_doc_3.legalName += '3'
+    entity_doc_3.legalName += "3"
 
     SolrDoc(doc=asdict(entity_doc_1), entity_id=entity_doc_1.id).save()
     SolrDoc(doc=asdict(entity_doc_2), entity_id=entity_doc_2.id).save()

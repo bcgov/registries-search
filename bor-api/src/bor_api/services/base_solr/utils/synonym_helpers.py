@@ -31,7 +31,7 @@ def _get_address_synonyms() -> dict[str, list[str]]:
             synonyms[synonym] = synonyms.setdefault(synonym, []) + country_synonym_list
 
     for region in list(pycountry.subdivisions):
-        region_short = region.code.replace(f'{region.country_code}-', '').lower()
+        region_short = region.code.replace(f"{region.country_code}-", "").lower()
         try:
             int(region_short)
             # skip number short forms
@@ -48,18 +48,18 @@ def _get_address_synonyms() -> dict[str, list[str]]:
 
 def _get_name_synonyms() -> dict[str, list[str]]:
     """Return all name synonyms provided in the nickname.csv."""
-    synonyms_by_id = {}
+    synonyms_by_id: dict[str, list[str]] = {}
     path = os.path.dirname(__file__)
-    abs_file_path = os.path.join(path, 'data/nicknames.csv')
-    with open(file=abs_file_path, encoding='UTF-8') as csvfile:
+    abs_file_path = os.path.join(path, "data/nicknames.csv")
+    with open(file=abs_file_path, encoding="UTF-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for item in reader:
-            name = item['name'].lower().strip()
-            synonym_id = item['name_id']
-            synonyms_by_id[synonym_id] = list(set(synonyms_by_id.setdefault(synonym_id, []) + [name]))
+            name = item["name"].lower().strip()
+            synonym_id = item["name_id"]
+            synonyms_by_id[synonym_id] = list({*synonyms_by_id.setdefault(synonym_id, []), name})
 
     synonyms = {}
-    for syn_id, syn_list in synonyms_by_id.items():  # pylint: disable=unused-variable
+    for _syn_id, syn_list in synonyms_by_id.items():
         # add all name synonym mappings to each other
         for synonym in syn_list:
             synonyms[synonym] = list(set(synonyms.setdefault(synonym, []) + syn_list))
@@ -79,7 +79,4 @@ def get_synonyms() -> dict[SolrSynonymType, dict[str, list[str]]]:
     #     else:
     #         name_synonyms[addr_syn] = addr_syn_list
 
-    return {
-        SolrSynonymType.ADDRESS: address_synonyms,
-        SolrSynonymType.NAME: name_synonyms
-    }
+    return {SolrSynonymType.ADDRESS: address_synonyms, SolrSynonymType.NAME: name_synonyms}

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# pylint: disable=invalid-name
 """Manages dataclass for the solr address doc."""
 from dataclasses import dataclass
 
@@ -36,14 +35,19 @@ class Address:
     def __post_init__(self):
         """Set extra solr address search fields dependent on base fields."""
         region_name = None
-        if self.addressCountry:
+        if (self.addressCountry and (country := get_country(self.addressCountry))):
             # attempt to set country by 2 digit code
-            if country := get_country(self.addressCountry):
-                self.addressCountry = country.name
-                # attempt to set region_name with pycountry name
-                if self.addressRegion and (region := get_region(self.addressRegion, country.alpha_2)):
-                    region_name = region.name
+            self.addressCountry = country.name
+            # attempt to set region_name with pycountry name
+            if self.addressRegion and (region := get_region(self.addressRegion, country.alpha_2)):
+                region_name = region.name
 
-        self.address_q = (f"{self.streetAddress or ''} {self.streetAdditional or ''} {self.addressCity or ''} " +
-                          f"{region_name or self.addressRegion or ''} {self.addressCountry or ''} " +
-                          f"{self.postalCode or ''} {self.locationDescription or ''}").replace('  ', ' ').strip()
+        self.address_q = (
+            (
+                f"{self.streetAddress or ''} {self.streetAdditional or ''} {self.addressCity or ''} "
+                + f"{region_name or self.addressRegion or ''} {self.addressCountry or ''} "
+                + f"{self.postalCode or ''} {self.locationDescription or ''}"
+            )
+            .replace("  ", " ")
+            .strip()
+        )

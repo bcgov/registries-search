@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Centralized setup of logging for the service."""
+
+
 class MockResponse:
     def __init__(self, json_data, status_code):
         self.json_data = json_data

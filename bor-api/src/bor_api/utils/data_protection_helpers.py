@@ -1,4 +1,3 @@
-
 # Copyright © 2023 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,14 +21,15 @@ from bor_api.services.bor_solr.utils import SearchParams
 
 def add_prod_protection_params(params: SearchParams, user: User, has_direct_access: bool) -> SearchParams:
     """Return updated SearchParams for users in dev/test environments to prevent visibility of old PROD data."""
-    is_trusted_tester = has_direct_access or user.idp_userid in current_app.config['TRUSTED_TESTER_IDS']
-    is_prod = current_app.config['POD_NAMESPACE'] not in ['dev', 'test']
+    is_trusted_tester = has_direct_access or user.idp_userid in current_app.config["TRUSTED_TESTER_IDS"]
+    is_prod = current_app.config["POD_NAMESPACE"] not in ["dev", "test"]
     if is_prod or is_trusted_tester:
         return params
 
     # Only search over businesses in LEAR or fake generated businesses
     if params.child_categories.get(EntityRoleField.RELATED_LEGAL_TYPE):
-        current_app.logger.warn('Overwiting %s param setting to prevent old prod data visibility.',
-                                EntityRoleField.RELATED_LEGAL_TYPE)
-    params.child_categories[EntityRoleField.RELATED_LEGAL_TYPE] = ['BEN', 'CP', 'SP', 'GP', 'N/A']
+        current_app.logger.warn(
+            "Overwiting %s param setting to prevent old prod data visibility.", EntityRoleField.RELATED_LEGAL_TYPE
+        )
+    params.child_categories[EntityRoleField.RELATED_LEGAL_TYPE] = ["BEN", "CP", "SP", "GP", "N/A"]
     return params

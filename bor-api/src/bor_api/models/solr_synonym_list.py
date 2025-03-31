@@ -14,11 +14,12 @@
 """Manages solr synonym lists (used for prepping solr queries over synonym fields)."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timezone
 
 from sqlalchemy.dialects.postgresql import JSONB
 
 from bor_api.enums import SolrSynonymType
+from bor_api.utils.util import utcnow
 
 from .db import db
 
@@ -26,13 +27,13 @@ from .db import db
 class SolrSynonymList(db.Model):
     """Used to hold solr synonym information."""
 
-    __tablename__ = 'bor_solr_synonym_lists'
+    __tablename__ = "bor_solr_synonym_lists"
 
     id = db.Column(db.Integer, primary_key=True)
     synonym = db.Column(db.String(250), index=True, nullable=False)
     synonym_list = db.Column(JSONB)
     synonym_type = db.Column(db.Enum(SolrSynonymType), default=SolrSynonymType.NAME, index=True)
-    last_update_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    last_update_date = db.Column(db.DateTime(timezone=True), default=utcnow)
 
     @classmethod
     def find_by_synonym(cls, synonym: str, synonym_type: SolrSynonymType) -> SolrSynonymList:
@@ -42,7 +43,7 @@ class SolrSynonymList(db.Model):
     @classmethod
     def find_all_beginning_with_phrase(cls, phrase: str, synonym_type: SolrSynonymType) -> SolrSynonymList:
         """Return all the solr synonym objects for synonyms including the given phrase/word."""
-        return cls.query.filter_by(synonym_type=synonym_type).filter(cls.synonym.ilike(f'{phrase}%')).all()
+        return cls.query.filter_by(synonym_type=synonym_type).filter(cls.synonym.ilike(f"{phrase}%")).all()
 
     def save(self) -> SolrSynonymList:
         """Store the update into the db."""
@@ -53,13 +54,13 @@ class SolrSynonymList(db.Model):
     @staticmethod
     def create_or_replace_all(synonyms: dict[str, list[str]], synonym_type: SolrSynonymType):
         """Add or replace the given synonyms inside the db."""
-        for synonym in synonyms:
-            if synonym_list := SolrSynonymList.find_by_synonym(synonym, synonym_type):
-                synonym_list.synonym_list = synonyms[synonym]
-                synonym_list.last_update_date = datetime.utcnow()
-                db.session.add(synonym_list)
+        for synonym, synonym_list in synonyms.items():
+            if synonym_list_record := SolrSynonymList.find_by_synonym(synonym, synonym_type):
+                synonym_list_record.synonym_list = synonym_list
+                synonym_list_record.last_update_date = datetime.now(UTC)
+                db.session.add(synonym_list_record)
             else:
-                db.session.add(SolrSynonymList(synonym=synonym,
-                                               synonym_list=synonyms[synonym],
-                                               synonym_type=synonym_type))
+                db.session.add(
+                    SolrSynonymList(synonym=synonym, synonym_list=synonym_list, synonym_type=synonym_type)
+                )
         db.session.commit()

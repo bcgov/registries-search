@@ -20,57 +20,61 @@ import xlsxwriter
 from flask import make_response
 
 
-def xlsx_response(results: list):
-    """Return the xlsx response containing the given results."""
-    temp_name = uuid4()
-    workbook = xlsxwriter.Workbook(f'tmp-excel/{temp_name}.xlsx')
-    bold = workbook.add_format({'bold': True})
-
+def _add_results_sheet(results: list, workbook: xlsxwriter.Workbook):
+    """Add the results sheet to the workbook"""
+    bold = workbook.add_format({"bold": True})
     worksheet = workbook.add_worksheet()
-    worksheet.write('A1', 'Name', bold)
-    worksheet.write('B1', 'Address', bold)
-    worksheet.write('C1', 'Postal code', bold)
-    worksheet.write('D1', 'Roles', bold)
-    worksheet.write('E1', 'Effective Dates Starting', bold)
-    worksheet.write('F1', 'Effective Dates Ending', bold)
-    worksheet.write('G1', 'Business Name', bold)
-    worksheet.write('H1', 'Incorporation Number', bold)
-    worksheet.write('I1', 'Business Number', bold)
-    worksheet.write('J1', 'Business State', bold)
-    worksheet.write('K1', 'Business Email', bold)
+    worksheet.write("A1", "Name", bold)
+    worksheet.write("B1", "Address", bold)
+    worksheet.write("C1", "Postal code", bold)
+    worksheet.write("D1", "Roles", bold)
+    worksheet.write("E1", "Effective Dates Starting", bold)
+    worksheet.write("F1", "Effective Dates Ending", bold)
+    worksheet.write("G1", "Business Name", bold)
+    worksheet.write("H1", "Incorporation Number", bold)
+    worksheet.write("I1", "Business Number", bold)
+    worksheet.write("J1", "Business State", bold)
+    worksheet.write("K1", "Business Email", bold)
 
     # Iterate over the data and write it out row by row.
     for index, result in enumerate(results, start=1):
-        worksheet.write(index, 0, result['legalName'])
-        if addresses := result.get('entityAddresses'):
-            street = addresses[0].get('streetAddress') or ''
-            city = addresses[0].get('addressCity') or ''
-            region = addresses[0].get('addressRegion') or ''
-            country = addresses[0].get('addressCountry') or ''
-            worksheet.write(index, 1, f'{street} \n{city} {region} \n{country}')
-            worksheet.write(index, 2, addresses[0].get('postalCode') or '')
-        if roles := result.get('roles'):
-            worksheet.write(index, 3, roles[0]['roleType'])
+        worksheet.write(index, 0, result["legalName"])
+        if addresses := result.get("entityAddresses"):
+            street = addresses[0].get("streetAddress") or ""
+            city = addresses[0].get("addressCity") or ""
+            region = addresses[0].get("addressRegion") or ""
+            country = addresses[0].get("addressCountry") or ""
+            worksheet.write(index, 1, f"{street} \n{city} {region} \n{country}")
+            worksheet.write(index, 2, addresses[0].get("postalCode") or "")
+        if roles := result.get("roles"):
+            worksheet.write(index, 3, roles[0]["roleType"])
             # role dates (lop off the timestamp)
-            start = roles[0]['roleDates'][0].get('start', 'Unknown')[:10]
-            end = roles[0]['roleDates'][0].get('end', 'Current')[:10]
+            start = roles[0]["roleDates"][0].get("start", "Unknown")[:10]
+            end = roles[0]["roleDates"][0].get("end", "Current")[:10]
             worksheet.write(index, 4, start)
             worksheet.write(index, 5, end)
 
             # business details
-            worksheet.write(index, 6, roles[0].get('relatedName') or '')
-            worksheet.write(index, 7, roles[0].get('relatedIdentifier') or '')
-            worksheet.write(index, 8, roles[0].get('relatedBN') or '')
-            worksheet.write(index, 9, roles[0].get('relatedState') or '')
-            worksheet.write(index, 10, roles[0].get('relatedEmail') or '')
+            worksheet.write(index, 6, roles[0].get("relatedName") or "")
+            worksheet.write(index, 7, roles[0].get("relatedIdentifier") or "")
+            worksheet.write(index, 8, roles[0].get("relatedBN") or "")
+            worksheet.write(index, 9, roles[0].get("relatedState") or "")
+            worksheet.write(index, 10, roles[0].get("relatedEmail") or "")
+
+
+def xlsx_response(results: list):
+    """Return the xlsx response containing the given results."""
+    temp_name = uuid4()
+    workbook = xlsxwriter.Workbook(f"tmp_excel/{temp_name}.xlsx")
+    _add_results_sheet(results, workbook)
 
     workbook.close()
 
-    with open(f'tmp-excel/{temp_name}.xlsx', 'rb') as excel_file:
+    with open(f"tmp_excel/{temp_name}.xlsx", "rb") as excel_file:
         resp = make_response(excel_file.read(), HTTPStatus.OK)
         excel_file.close()
-    os.remove(f'tmp-excel/{temp_name}.xlsx')
+    os.remove(f"tmp_excel/{temp_name}.xlsx")
 
-    resp.headers['Content-Disposition'] = 'attachment; filename=director_search.xlsx'
-    resp.headers['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    resp.headers["Content-Disposition"] = "attachment; filename=director_search.xlsx"
+    resp.headers["Content-type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     return resp

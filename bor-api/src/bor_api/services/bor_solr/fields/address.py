@@ -28,22 +28,22 @@
 from bor_api.enums.base import BaseEnum
 
 
-class AddressField(BaseEnum):  # pylint: disable=too-few-public-methods
+class AddressField(BaseEnum):
     """Enum of the address fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # address doc stored fields
-    ADDRESS_TYPE = 'addressType'
-    ADDRESS_CITY = 'addressCity'
-    ADDRESS_COUNTRY = 'addressCountry'
-    ADDRESS_REGION = 'addressRegion'
-    LOCATION_DESC = 'locationDescription'
-    POSTAL_CODE = 'postalCode'
-    STREET_ADDRESS = 'streetAddress'
-    STREET_ADDITIONAL = 'streetAdditional'
+    ADDRESS_TYPE = "addressType"
+    ADDRESS_CITY = "addressCity"
+    ADDRESS_COUNTRY = "addressCountry"
+    ADDRESS_REGION = "addressRegion"
+    LOCATION_DESC = "locationDescription"
+    POSTAL_CODE = "postalCode"
+    STREET_ADDRESS = "streetAddress"
+    STREET_ADDITIONAL = "streetAdditional"
     # address doc query fields
-    ADDRESS_Q = 'address_q'
-    ADDRESS_SYN_Q = 'address_synonym_q'
+    ADDRESS_Q = "address_q"
+    ADDRESS_SYN_Q = "address_synonym_q"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

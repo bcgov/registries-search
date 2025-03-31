@@ -13,44 +13,67 @@
 # limitations under the License.
 """Manages Solr field groupings for a search."""
 from bor_api.enums import SearchAccessLevel
-from bor_api.services.bor_solr.fields import (AddressField, DateRangeField,
-                                              EntityField, EntityRoleField,
-                                              InterestField, InterestPartyField)
-
+from bor_api.services.bor_solr.fields import (
+    AddressField,
+    DateRangeField,
+    EntityField,
+    EntityRoleField,
+    InterestField,
+    InterestPartyField,
+)
 
 ENTITY_PUBLIC: list[str] = [
-    EntityField.BIRTH_DATE.value, EntityField.ENTITY_TYPE.value,
-    EntityField.LEGAL_NAME.value, EntityField.NATIONALITIES.value,
-    EntityField.ROLES.value, EntityField.SCORE.value, '[child]'
+    EntityField.BIRTH_DATE.value,
+    EntityField.ENTITY_TYPE.value,
+    EntityField.LEGAL_NAME.value,
+    EntityField.NATIONALITIES.value,
+    EntityField.ROLES.value,
+    EntityField.SCORE.value,
+    "[child]",
 ]
 ENTITY_LIMITED: list[str] = [EntityField.ENTITY_ADDRESSES.value]
 ENTITY_EXTENDED: list[str] = [
-    EntityField.ALT_NAME.value, EntityField.EMAIL.value, EntityField.IS_PR.value,
-    EntityField.EXTERNAL_INFLUENCE.value, EntityField.PHONE_NUMBER.value,
-    EntityField.TAX_NUMBER.value, EntityField.TAX_RESIDENCIES.value
+    EntityField.ALT_NAME.value,
+    EntityField.EMAIL.value,
+    EntityField.IS_PR.value,
+    EntityField.EXTERNAL_INFLUENCE.value,
+    EntityField.PHONE_NUMBER.value,
+    EntityField.TAX_NUMBER.value,
+    EntityField.TAX_RESIDENCIES.value,
 ]
 
 ROLE_PUBLIC: list[str] = [
-    EntityRoleField.RELATED_BN.value, EntityRoleField.RELATED_ENTITY_TYPE.value,
-    EntityRoleField.RELATED_IDENTIFIER.value, EntityRoleField.RELATED_NAME.value,
-    EntityRoleField.RELATED_STATE.value, EntityRoleField.ROLE_TYPE.value,
-    EntityRoleField.RELATED_LEGAL_TYPE.value
+    EntityRoleField.RELATED_BN.value,
+    EntityRoleField.RELATED_ENTITY_TYPE.value,
+    EntityRoleField.RELATED_IDENTIFIER.value,
+    EntityRoleField.RELATED_NAME.value,
+    EntityRoleField.RELATED_STATE.value,
+    EntityRoleField.ROLE_TYPE.value,
+    EntityRoleField.RELATED_LEGAL_TYPE.value,
 ]
 ROLE_LIMITED: list[str] = [EntityRoleField.RELATED_EMAIL.value, EntityRoleField.ROLE_DATES.value]
 ROLE_EXTENDED: list[str] = [EntityRoleField.RELATED_ADDRESSES.value, EntityRoleField.RELATED_INTERESTS.value]
 
 ADDRESS: list[str] = [
-    AddressField.ADDRESS_CITY.value, AddressField.ADDRESS_COUNTRY.value,
-    AddressField.ADDRESS_REGION.value, AddressField.ADDRESS_TYPE.value,
-    AddressField.POSTAL_CODE.value, AddressField.STREET_ADDRESS.value,
-    AddressField.STREET_ADDITIONAL.value, AddressField.LOCATION_DESC.value
+    AddressField.ADDRESS_CITY.value,
+    AddressField.ADDRESS_COUNTRY.value,
+    AddressField.ADDRESS_REGION.value,
+    AddressField.ADDRESS_TYPE.value,
+    AddressField.POSTAL_CODE.value,
+    AddressField.STREET_ADDRESS.value,
+    AddressField.STREET_ADDITIONAL.value,
+    AddressField.LOCATION_DESC.value,
 ]
 DATE_RANGE: list[str] = [DateRangeField.ACTIVE.value, DateRangeField.START.value, DateRangeField.END.value]
 INTEREST: list[str] = [
-    InterestField.DETAILS.value, InterestField.DIRECT_INDIRECT.value,
-    InterestField.OTHER_REASON.value, InterestField.SHARE_EXACT.value,
-    InterestField.SHARE_MAX.value, InterestField.SHARE_MIN.value,
-    InterestField.TYPE.value, InterestField.RELATED_PARTIES.value
+    InterestField.DETAILS.value,
+    InterestField.DIRECT_INDIRECT.value,
+    InterestField.OTHER_REASON.value,
+    InterestField.SHARE_EXACT.value,
+    InterestField.SHARE_MAX.value,
+    InterestField.SHARE_MIN.value,
+    InterestField.TYPE.value,
+    InterestField.RELATED_PARTIES.value,
 ]
 INTEREST_PARTY: list[str] = [InterestPartyField.UUID.value, InterestPartyField.NAME.value]
 
@@ -61,12 +84,20 @@ def get_search_field_group(access_level: SearchAccessLevel) -> list[str]:
         return ENTITY_PUBLIC + ROLE_PUBLIC
 
     if access_level == SearchAccessLevel.LIMITED:
-        return ENTITY_PUBLIC + ROLE_PUBLIC \
-            + ENTITY_LIMITED + ROLE_LIMITED + ADDRESS + DATE_RANGE
+        return ENTITY_PUBLIC + ROLE_PUBLIC + ENTITY_LIMITED + ROLE_LIMITED + ADDRESS + DATE_RANGE
 
     if access_level == SearchAccessLevel.EXTENDED:
-        return ENTITY_PUBLIC + ROLE_PUBLIC \
-            + ENTITY_LIMITED + ROLE_LIMITED + ADDRESS + DATE_RANGE \
-            + ENTITY_EXTENDED + ROLE_EXTENDED + INTEREST + INTEREST_PARTY
+        return (
+            ENTITY_PUBLIC
+            + ROLE_PUBLIC
+            + ENTITY_LIMITED
+            + ROLE_LIMITED
+            + ADDRESS
+            + DATE_RANGE
+            + ENTITY_EXTENDED
+            + ROLE_EXTENDED
+            + INTEREST
+            + INTEREST_PARTY
+        )
 
     return []

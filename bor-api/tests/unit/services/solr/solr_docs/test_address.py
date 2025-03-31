@@ -20,17 +20,92 @@ from bor_api.services.bor_solr.fields import AddressField
 from bor_api.services.bor_solr.doc_models import Address
 
 
-@pytest.mark.parametrize('test_name,a_type,a_city,a_country,a_region,street,p_code,converted', [
-    ('test_basic_ca_bc', 'DELIVERY', 'North Vancouver', 'CA', 'BC', 'Test Street', 'V0N1G0', { 'country': 'Canada', 'region': 'British Columbia' }),
-    ('test_basic_ca_on', 'DELIVERY', 'North Vancouver', 'CA', 'ON', 'Test Street', 'V0N1G0', { 'country': 'Canada', 'region': 'Ontario' }),
-    ('test_basic_us_la', 'DELIVERY', 'North Vancouver', 'US', 'LA', 'Test Street', 'V0N1G0', { 'country': 'United States', 'region': 'Louisiana' }),
-    ('test_basic_gb_gre', 'DELIVERY', 'North Vancouver', 'GB', 'GRE', 'Test Street', 'V0N1G0', { 'country': 'United Kingdom', 'region': 'Greenwich' }),
-    ('test_full_country_desc', 'DELIVERY', 'North Vancouver', 'canada', 'BC', 'Test Street', 'V0N1G0', { 'country': 'Canada', 'region': 'British Columbia' }),
-    ('test_no_country', 'DELIVERY', 'North Vancouver', None, 'BC', 'Test Street', 'V0N1G0', { 'country': None, 'region': 'BC' }),
-    ('test_no_region', 'DELIVERY', 'North Vancouver', 'CA', None, 'Test Street', 'V0N1G0', { 'country': 'Canada', 'region': None }),
-    ('test_no_country_region', 'DELIVERY', 'North Vancouver', None, None, 'Test Street', 'V0N1G0', { 'country': None, 'region': None }),
-    ('test_only_street', 'DELIVERY', None, None, None, 'Test Street', None, { 'country': None, 'region': None }),
-])
+@pytest.mark.parametrize(
+    "test_name,a_type,a_city,a_country,a_region,street,p_code,converted",
+    [
+        (
+            "test_basic_ca_bc",
+            "DELIVERY",
+            "North Vancouver",
+            "CA",
+            "BC",
+            "Test Street",
+            "V0N1G0",
+            {"country": "Canada", "region": "British Columbia"},
+        ),
+        (
+            "test_basic_ca_on",
+            "DELIVERY",
+            "North Vancouver",
+            "CA",
+            "ON",
+            "Test Street",
+            "V0N1G0",
+            {"country": "Canada", "region": "Ontario"},
+        ),
+        (
+            "test_basic_us_la",
+            "DELIVERY",
+            "North Vancouver",
+            "US",
+            "LA",
+            "Test Street",
+            "V0N1G0",
+            {"country": "United States", "region": "Louisiana"},
+        ),
+        (
+            "test_basic_gb_gre",
+            "DELIVERY",
+            "North Vancouver",
+            "GB",
+            "GRE",
+            "Test Street",
+            "V0N1G0",
+            {"country": "United Kingdom", "region": "Greenwich"},
+        ),
+        (
+            "test_full_country_desc",
+            "DELIVERY",
+            "North Vancouver",
+            "canada",
+            "BC",
+            "Test Street",
+            "V0N1G0",
+            {"country": "Canada", "region": "British Columbia"},
+        ),
+        (
+            "test_no_country",
+            "DELIVERY",
+            "North Vancouver",
+            None,
+            "BC",
+            "Test Street",
+            "V0N1G0",
+            {"country": None, "region": "BC"},
+        ),
+        (
+            "test_no_region",
+            "DELIVERY",
+            "North Vancouver",
+            "CA",
+            None,
+            "Test Street",
+            "V0N1G0",
+            {"country": "Canada", "region": None},
+        ),
+        (
+            "test_no_country_region",
+            "DELIVERY",
+            "North Vancouver",
+            None,
+            None,
+            "Test Street",
+            "V0N1G0",
+            {"country": None, "region": None},
+        ),
+        ("test_only_street", "DELIVERY", None, None, None, "Test Street", None, {"country": None, "region": None}),
+    ],
+)
 def test_address_doc(app, test_name, a_type, a_city, a_country, a_region, street, p_code, converted):
     """Assert the Address solr doc class works as expected."""
     address = Address(
@@ -39,7 +114,7 @@ def test_address_doc(app, test_name, a_type, a_city, a_country, a_region, street
         addressCountry=a_country,
         addressRegion=a_region,
         postalCode=p_code,
-        streetAddress=street
+        streetAddress=street,
     )
     assert address
 
@@ -48,12 +123,12 @@ def test_address_doc(app, test_name, a_type, a_city, a_country, a_region, street
     assert not a_city or address.addressCity in address.address_q
     assert not p_code or address.postalCode in address.address_q
     assert not a_country or address.addressCountry in address.address_q
-    assert not a_region or converted['region'] in address.address_q
+    assert not a_region or converted["region"] in address.address_q
 
     json = asdict(address)
     assert json
     assert json.get(AddressField.ADDRESS_CITY.value) == a_city
-    assert json.get(AddressField.ADDRESS_COUNTRY.value) == converted['country']
+    assert json.get(AddressField.ADDRESS_COUNTRY.value) == converted["country"]
     assert json.get(AddressField.ADDRESS_REGION.value) == a_region
     assert json.get(AddressField.POSTAL_CODE.value) == p_code
     assert json.get(AddressField.STREET_ADDRESS.value) == street

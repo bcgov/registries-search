@@ -28,19 +28,19 @@
 from bor_api.enums.base import BaseEnum
 
 
-class InterestField(BaseEnum):  # pylint: disable=too-few-public-methods
+class InterestField(BaseEnum):
     """Enum of the interest fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # interest doc stored fields
-    TYPE = 'interestType'
-    DETAILS = 'details'
-    DIRECT_INDIRECT = 'directOrIndirect'
-    OTHER_REASON = 'otherReason'
-    RELATED_PARTIES = 'relatedParties'
-    SHARE_EXACT = 'sharesExact'
-    SHARE_MAX = 'sharesMax'
-    SHARE_MIN = 'sharesMin'
+    TYPE = "interestType"
+    DETAILS = "details"
+    DIRECT_INDIRECT = "directOrIndirect"
+    OTHER_REASON = "otherReason"
+    RELATED_PARTIES = "relatedParties"
+    SHARE_EXACT = "sharesExact"
+    SHARE_MAX = "sharesMax"
+    SHARE_MIN = "sharesMin"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

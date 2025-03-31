@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Enum Utilities."""
-from enum import Enum, EnumMeta, auto  # pylint: disable=W0611;# noqa: F401
+from enum import Enum, EnumMeta, auto
 
 
 class BaseMeta(EnumMeta):
     """Meta class for the enum."""
 
-    def __contains__(self, other):  # pylint: disable=C0203
+    def __contains__(self, other):  # noqa: N804
         """Return True if 'in' the Enum."""
         try:
-            self(other)  # pylint: disable=no-value-for-parameter
+            self(other)
         except ValueError:
             return False
 
@@ -47,8 +47,8 @@ class BaseEnum(str, Enum, metaclass=BaseMeta):
                 return enum_value
         return None
 
-    #pragma warning disable S5720; # noqa: E265
+    # pragma warning disable S5720;
     # disable sonar cloud complaining about this signature
-    def _generate_next_value_(name, start, count, last_values):  # pylint: disable=E0213;# noqa: N805
+    def _generate_next_value_(name, start, count, last_values):  # noqa: N805
         """Return the name of the key."""
         return name

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# pylint: disable=invalid-name
 """Manages dataclass for the solr interest doc."""
 from dataclasses import dataclass
 
@@ -37,4 +36,4 @@ class Interest:
         """Post init actions."""
         if self.details and self.details not in InterestDetails:
             self.otherReason = self.details
-            self.details = 'other'
+            self.details = "other"

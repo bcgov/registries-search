@@ -25,10 +25,10 @@ def test_ready_check(session, client, jwt):
     # no setup
 
     # test
-    rv = client.get('/api/v1/ops/readyz')
+    rv = client.get("/api/v1/ops/readyz")
     # check
     assert rv.status_code == HTTPStatus.OK
-    assert rv.json['message'] == 'api is ready'
+    assert rv.json["message"] == "api is ready"
 
 
 @integration_solr
@@ -37,7 +37,7 @@ def test_health_check(session, client, jwt):
     # no setup
 
     # test
-    rv = client.get('/api/v1/ops/healthz')
+    rv = client.get("/api/v1/ops/healthz")
     # check
     assert rv.status_code == HTTPStatus.OK
-    assert rv.json['message'] == 'api is healthy'
+    assert rv.json["message"] == "api is healthy"

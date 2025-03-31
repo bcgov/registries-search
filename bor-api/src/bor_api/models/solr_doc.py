@@ -14,28 +14,33 @@
 """Manages solr doc updates made to the Search Core (tracks updates made via the api)."""
 from __future__ import annotations
 
-from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import backref
 
+from bor_api.utils.util import utcnow
+
 from .db import db
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class SolrDoc(db.Model):
     """Used to hold the solr doc information."""
 
-    __tablename__ = 'bor_solr_docs'
+    __tablename__ = "bor_solr_docs"
 
     id = db.Column(db.Integer, primary_key=True)
     doc = db.Column(JSONB)
     entity_id = db.Column(db.String(50), nullable=False, index=True)
-    submission_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, index=True)
-    _submitter_id = db.Column('submitter_id', db.Integer, db.ForeignKey('users.id'))
+    submission_date = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
+    _submitter_id = db.Column("submitter_id", db.Integer, db.ForeignKey("users.id"))
 
-    submitter = db.relationship('User', backref=backref('submitter', uselist=False), foreign_keys=[_submitter_id])
+    submitter = db.relationship("User", backref=backref("submitter", uselist=False), foreign_keys=[_submitter_id])
 
-    solr_doc_events = db.relationship('SolrDocEvent', lazy='dynamic')
+    solr_doc_events = db.relationship("SolrDocEvent", lazy="dynamic")
 
     def save(self) -> SolrDoc:
         """Store the update into the db."""
@@ -56,6 +61,10 @@ class SolrDoc(db.Model):
     @staticmethod
     def get_updated_entity_ids_after_date(date: datetime) -> list[str]:
         """Return all entity ids with a submitted SolrDoc after the date."""
-        return [x[0] for x in db.session.query(SolrDoc.entity_id)
-                .filter(SolrDoc.submission_date > date)
-                .group_by(SolrDoc.entity_id).all()]
+        return [
+            x[0]
+            for x in db.session.query(SolrDoc.entity_id)
+            .filter(SolrDoc.submission_date > date)
+            .group_by(SolrDoc.entity_id)
+            .all()
+        ]

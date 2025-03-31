@@ -18,8 +18,7 @@ from .backup import bp as backup_bp
 from .imports import bp as import_bp
 from .update import bp as update_bp
 
-
-bp = Blueprint('SOLR', __name__, url_prefix='/solr')  # pylint: disable=invalid-name
+bp = Blueprint("SOLR", __name__, url_prefix="/solr")
 bp.register_blueprint(backup_bp)
 bp.register_blueprint(import_bp)
 bp.register_blueprint(update_bp)

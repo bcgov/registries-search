@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# pylint: disable=invalid-name
 """Manages dataclass for the solr entity doc."""
 from dataclasses import dataclass
 
@@ -48,7 +47,7 @@ class Entity:
 
     def __post_init__(self):
         """Set extra field to support the information filter including tax number, email and address."""
-        self.name_q = f'{self.legalName} {self.alternateName}' if self.alternateName else self.legalName
+        self.name_q = f"{self.legalName} {self.alternateName}" if self.alternateName else self.legalName
 
         if not self.info_q:
             if self.taxNumber:
@@ -66,6 +65,6 @@ class Entity:
 
         for address in self.entityAddresses or []:
             if isinstance(address, dict):
-                address['parentDoc'] = 'entity'
+                address["parentDoc"] = "entity"
             elif isinstance(address, Address):
-                address.parentDoc = 'entity'
+                address.parentDoc = "entity"

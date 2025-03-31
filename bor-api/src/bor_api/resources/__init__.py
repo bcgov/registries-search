@@ -16,8 +16,6 @@ from .constants import EndpointVersionPath
 from .v1 import internal_bp, meta_bp, ops_bp, search_bp
 from .version_endpoint import VersionEndpoint
 
-
-v1_endpoint = VersionEndpoint(  # pylint: disable=invalid-name
-    name='API_V1',
-    path=EndpointVersionPath.API_V1,
-    bps=[internal_bp, meta_bp, ops_bp, search_bp])
+v1_endpoint = VersionEndpoint(
+    name="API_V1", path=EndpointVersionPath.API_V1, bps=[internal_bp, meta_bp, ops_bp, search_bp]
+)

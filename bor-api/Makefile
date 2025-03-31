@@ -1,85 +1,13 @@
-.PHONY: license
-.PHONY: setup
-.PHONY: ci cd
-.PHONY: run
-.PHONY: build
-
-MKFILE_PATH:=$(abspath $(lastword $(MAKEFILE_LIST)))
-CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
-
-PROJECT_NAME:=bor_api
 DOCKER_NAME:=bor-api
 
 #################################################################################
 # COMMANDS -- Setup                                                             #
 #################################################################################
-setup: install install-dev ## Setup the project
-
-clean: clean-build clean-pyc clean-test ## Clean the project
-	rm -rf venv/
-
-clean-build: ## Clean build files
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -fr {} +
-
-clean-pyc: ## Clean cache files
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
-
-clean-test: ## clean test files
-	find . -name '.pytest_cache' -exec rm -fr {} +
-	rm -fr .tox/
-	rm -f .coverage
-	rm -fr htmlcov/
-
-build-req: clean ## Upgrade requirements
-	test -f venv/bin/activate || python3 -m venv  $(CURRENT_ABS_DIR)/venv ;\
-	. venv/bin/activate ;\
-	pip install pip==23.1.2 ;\
-	pip install -Ur requirements/prod.txt ;\
-	pip freeze | sort > requirements.txt ;\
-	cat requirements/bcregistry-libraries.txt >> requirements.txt ;\
-	cat requirements/external-libraries.txt >> requirements.txt ;\
-	pip install -Ur requirements/bcregistry-libraries.txt ;\
-	pip install -Ur requirements/external-libraries.txt
-
-install: clean ## Install python virtrual environment
-	test -f venv/bin/activate || python3 -m venv  $(CURRENT_ABS_DIR)/venv ;\
-	. venv/bin/activate ;\
-	pip install pip==23.1.2 ;\
-	pip install -Ur requirements.txt
-
-install-dev: ## Install local application
-	. venv/bin/activate ; \
-	pip install -Ur requirements/dev.txt; \
-	pip install -e .
 
 #################################################################################
 # COMMANDS - CI                                                                 #
 #################################################################################
-.PHONY: lint # grouped targets for this section
-
-ci: pylint flake8 test ## CI flow
-
-pylint: ## Linting with pylint
-	. venv/bin/activate && pylint --rcfile=setup.cfg src/$(PROJECT_NAME)
-
-flake8: ## Linting with flake8 ## tests
-	. venv/bin/activate && flake8 src/$(PROJECT_NAME)
-
-lint: pylint flake8 ## run all lint type scripts
-
-test: ## Unit testing
-	@echo "RUN_SOLR_TESTS $(RUN_SOLR_TESTS) RUN_LD_TESTS $(RUN_LD_TESTS)";\
-	. venv/bin/activate && pytest
-
-mac-cov: test ## Run the coverage report and display in a browser window (mac)
-	@open -a "Google Chrome" htmlcov/index.html
+.PHONY: build
 
 build: ## Build the docker container
 	docker build . -t $(DOCKER_NAME) \
@@ -93,9 +21,6 @@ build-nc: ## Build the docker container without caching
 #################################################################################
 # COMMANDS - Local                                                              #
 #################################################################################
-
-run: ## Run the project in local
-	. venv/bin/activate && python run.py
 
 #################################################################################
 # Self Documenting Commands                                                     #

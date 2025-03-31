@@ -27,7 +27,7 @@ def get_country(country_code: str):
 
     except (LookupError, AttributeError) as err:
         # Conversion to pycountry name failed. Log error for ops and continue.
-        current_app.logger.warn('Error converting country %s', country_code)
+        current_app.logger.warn("Error converting country %s", country_code)
         current_app.logger.warn(err)
         return None
 
@@ -35,20 +35,20 @@ def get_country(country_code: str):
 def get_region(region_code: str, country_code: str):
     """Return the region from the 2 digit region and country codes."""
     try:
-        region = pycountry.subdivisions.get(code=f'{country_code}-{region_code.upper()}')
+        region = pycountry.subdivisions.get(code=f"{country_code}-{region_code.upper()}")
         if not region:
             # attempt to get it with lookup. This will only return a set if there is more than one match
             region = pycountry.subdivisions.lookup(region_code)
             if isinstance(region, set):
-                region = list(region)[0]
-            if not region.get('country_code', None) or region.country_code != country_code:
-                raise LookupError(f'Region ({region.name}) did not match country ({country_code})')
+                region = next(iter(region))
+            if not region.get("country_code", None) or region.country_code != country_code:
+                raise LookupError(f"Region ({region.name}) did not match country ({country_code})")
         return region
 
     except (LookupError, AttributeError) as err:
         # Conversion to pycountry name failed. Log error for ops and continue.
-        current_app.logger.warn('Error converting region and country. Region: %s, Country: %s',
-                                region_code,
-                                country_code)
+        current_app.logger.warn(
+            "Error converting region and country. Region: %s, Country: %s", region_code, country_code
+        )
         current_app.logger.warn(err)
         return None

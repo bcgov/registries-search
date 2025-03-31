@@ -31,10 +31,10 @@
 from contextlib import suppress
 from http import HTTPStatus
 
+from flask import Flask, current_app
 from requests import Response, Session
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import ConnectionError as SolrConnectionError
-from flask import Flask, current_app
 
 from bor_api.enums import SolrSynonymType
 from bor_api.exceptions import SolrException
@@ -58,12 +58,12 @@ class Solr:
         self.default_rows = 10
 
         # base urls
-        self.reload_url = '{url}/admin/cores?action=RELOAD&core={core}'
-        self.replication_url = '{url}/{core}/replication'
-        self.search_url = '{url}/{core}/query'
-        self.synonyms_url = '{url}/{core}/schema/analysis/synonyms'
-        self.update_url = '{url}/{core}/update?commit=true&overwrite=true&wt=json'
-        self.bulk_update_url = '{url}/{core}/update?overwrite=true&wt=json'
+        self.reload_url = "{url}/admin/cores?action=RELOAD&core={core}"
+        self.replication_url = "{url}/{core}/replication"
+        self.search_url = "{url}/{core}/query"
+        self.synonyms_url = "{url}/{core}/schema/analysis/synonyms"
+        self.update_url = "{url}/{core}/update?commit=true&overwrite=true&wt=json"
+        self.bulk_update_url = "{url}/{core}/update?overwrite=true&wt=json"
 
         if app:
             self.init_app(app)
@@ -73,112 +73,110 @@ class Solr:
         self.app = app
 
         # NOTE: for a single core implementation set leader/follower cores the same
-        self.leader_core = app.config.get('SOLR_SVC_LEADER_CORE')
-        self.follower_core = app.config.get('SOLR_SVC_FOLLOWER_CORE')
+        self.leader_core = app.config.get("SOLR_SVC_LEADER_CORE")
+        self.follower_core = app.config.get("SOLR_SVC_FOLLOWER_CORE")
         # NOTE: for a single node implementation set the leader/follower urls the same
-        self.leader_url = app.config.get('SOLR_SVC_LEADER_URL')
-        self.follower_url = app.config.get('SOLR_SVC_FOLLOWER_URL')
+        self.leader_url = app.config.get("SOLR_SVC_LEADER_URL")
+        self.follower_url = app.config.get("SOLR_SVC_FOLLOWER_URL")
 
-    # pylint: disable=too-many-arguments, too-many-positional-arguments
-    def call_solr(self,
-                  method: str,
-                  query: str,
-                  params: dict = None,
-                  json_data: dict = None,
-                  xml_data: str = None,
-                  leader=True,
-                  timeout=25) -> Response:
+    def call_solr(  # noqa: PLR0913
+        self,
+        method: str,
+        query: str,
+        params: dict | None = None,
+        json_data: dict | None = None,
+        xml_data: str | None = None,
+        leader=True,
+        timeout=25,
+    ) -> Response:
         """Call solr instance with given params."""
         base_url = self.leader_url if leader else self.follower_url
         core = self.leader_core if leader else self.follower_core
         url = query.format(url=base_url, core=core)
-        retries = Retry(total=1,
-                        backoff_factor=1,
-                        status_forcelist=[500, 502, 503, 504],
-                        allowed_methods=['GET', 'POST'])
+        retries = Retry(
+            total=1, backoff_factor=1, status_forcelist=[500, 502, 503, 504], allowed_methods=["GET", "POST"]
+        )
         session = Session()
         session.mount(url, HTTPAdapter(max_retries=retries))
 
         response = None
         try:
-            if method == 'GET':
+            if method == "GET":
                 response = session.get(url, params=params, timeout=timeout)
-            elif method == 'POST' and json_data:
+            elif method == "POST" and json_data:
                 response = session.post(url=url, json=json_data, timeout=timeout)
-            elif method == 'PUT' and json_data:
+            elif method == "PUT" and json_data:
                 response = session.put(url=url, json=json_data, timeout=timeout)
-            elif method == 'POST' and xml_data:
-                headers = {'Content-Type': 'application/xml'}
-                response = session.post(url=url, data=xml_data, headers=headers, timeout=timeout)
+            elif method == "POST" and xml_data:
+                response = session.post(
+                    url=url, data=xml_data, headers={"Content-Type": "application/xml"}, timeout=timeout
+                )
             else:
                 current_app.logger.debug(
-                    f'Invalid function params: {method}, {query}, {params}, {json_data}, {xml_data}')
-                raise Exception('Invalid params given.')  # pylint: disable=broad-exception-raised
+                    f"Invalid function params: {method}, {query}, {params}, {json_data}, {xml_data}"
+                )
+                raise Exception("Invalid params given.")
             # check for error
             if response.status_code != HTTPStatus.OK:
-                error = response.json().get('error', {}).get('msg', 'Error handling Solr request.')
-                raise Exception(error)  # pylint: disable=broad-exception-raised;
+                raise Exception(response.json().get("error", {}).get("msg", "Error handling Solr request."))
 
             return response
 
         except SolrConnectionError as err:
             current_app.logger.debug(err.with_traceback(None))
             raise SolrException(
-                error='Connection error while handling Solr request.',
-                status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
-        except Exception as err:  # noqa B902
+                error="Connection error while handling Solr request.", status_code=HTTPStatus.GATEWAY_TIMEOUT
+            ) from err
+        except Exception as err:
             current_app.logger.debug(err.with_traceback(None))
-            msg = 'Error handling Solr request.'
+            msg = "Error handling Solr request."
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):
                 status_code = response.status_code
-                msg = response.json().get('error', {}).get('msg', msg)
+                msg = response.json().get("error", {}).get("msg", msg)
             current_app.logger.debug(msg)
             raise SolrException(error=msg, status_code=status_code) from err
 
-    def create_or_update_synonyms(self, synonym_type: SolrSynonymType, synonyms: dict[str: list[str]]):
+    def create_or_update_synonyms(self, synonym_type: SolrSynonymType, synonyms: dict[str : list[str]]):
         """Create or update solr docs in the core."""
-        return self.call_solr('PUT', f'{self.synonyms_url}/{synonym_type.value}', json_data=synonyms, timeout=180)
+        return self.call_solr("PUT", f"{self.synonyms_url}/{synonym_type.value}", json_data=synonyms, timeout=180)
 
     def delete_all_docs(self):
         """Delete all solr docs from the core."""
-        payload = '<delete><query>*:*</query></delete>'
-        response = self.call_solr('POST', self.update_url, xml_data=payload, timeout=60)
+        payload = "<delete><query>*:*</query></delete>"
+        response = self.call_solr("POST", self.update_url, xml_data=payload, timeout=60)
         return response
 
     def delete_docs(self, unique_keys: list[str]):
         """Delete solr docs from the core."""
-        payload = '<delete><query>'
+        payload = "<delete><query>"
         if unique_keys:
             # TODO: set unique key in init
-            payload += f'id:{unique_keys[0].upper()}'
+            payload += f"id:{unique_keys[0].upper()}"
         for key in unique_keys[1:]:
-            payload += f' OR id:{key.upper()}'
-        payload += '</query></delete>'
+            payload += f" OR id:{key.upper()}"
+        payload += "</query></delete>"
 
-        response = self.call_solr('POST', self.update_url, xml_data=payload, timeout=60)
+        response = self.call_solr("POST", self.update_url, xml_data=payload, timeout=60)
         return response
 
-    def query(self, payload: dict[str, str], start: int = None, rows: int = None) -> dict:
+    def query(self, payload: dict[str, str], start: int | None = None, rows: int | None = None) -> dict:
         """Return a list of solr docs from the solr query handler for the given params."""
-        payload['offset'] = start if start else self.default_start
-        payload['limit'] = rows if rows else self.default_rows
-        response = self.call_solr('POST', self.search_url, json_data=payload, leader=False)
+        payload["offset"] = start if start else self.default_start
+        payload["limit"] = rows if rows else self.default_rows
+        response = self.call_solr("POST", self.search_url, json_data=payload, leader=False)
         return response.json()
 
     def reload_core(self):
         """Reload the solr core."""
-        current_app.logger.info('Reloading core...')
-        reload = self.call_solr(method='GET', query=self.reload_url)
-        current_app.logger.info('Core reloaded.')
+        current_app.logger.info("Reloading core...")
+        reload = self.call_solr(method="GET", query=self.reload_url)
+        current_app.logger.info("Core reloaded.")
         return reload
 
     def replication(self, command: str, leader=True):
         """Send a replication command to solr."""
         current_app.logger.info(f'Sending {command} command to {"leader" if leader else "follower"}')
-        resp = self.call_solr(method='GET',
-                              query=self.replication_url,
-                              params={'command': command},
-                              leader=leader)
-        current_app.logger.info(f'{command} command executed.')
+        resp = self.call_solr(method="GET", query=self.replication_url, params={"command": command}, leader=leader)
+        current_app.logger.info(f"{command} command executed.")
         return resp

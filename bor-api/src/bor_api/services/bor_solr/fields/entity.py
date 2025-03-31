@@ -28,47 +28,47 @@
 from bor_api.enums.base import BaseEnum
 
 
-class EntityField(BaseEnum):  # pylint: disable=too-few-public-methods
+class EntityField(BaseEnum):
     """Enum of the entity fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # entity doc stored fields (base doc)
-    ALT_NAME = 'alternateName'
-    BIRTH_DATE = 'birthDate'
-    BN = 'bn'
-    DEATH_DATE = 'deathDate'
-    EMAIL = 'email'
-    ENTITY_ADDRESSES = 'entityAddresses'
-    ENTITY_TYPE = 'entityType'
-    EXTERNAL_INFLUENCE = 'externalInfluence'
-    IDENTIFIER = 'identifier'
-    IS_PR = 'isPermanentResident'
-    LEGAL_NAME = 'legalName'
-    LEGAL_TYPE = 'legalType'
-    NATIONALITIES = 'nationalities'
-    PHONE_NUMBER = 'phoneNumber'
-    ROLES = 'roles'
-    STATE = 'state'
-    TAX_NUMBER = 'taxNumber'
-    TAX_RESIDENCIES = 'taxResidencies'
+    ALT_NAME = "alternateName"
+    BIRTH_DATE = "birthDate"
+    BN = "bn"
+    DEATH_DATE = "deathDate"
+    EMAIL = "email"
+    ENTITY_ADDRESSES = "entityAddresses"
+    ENTITY_TYPE = "entityType"
+    EXTERNAL_INFLUENCE = "externalInfluence"
+    IDENTIFIER = "identifier"
+    IS_PR = "isPermanentResident"
+    LEGAL_NAME = "legalName"
+    LEGAL_TYPE = "legalType"
+    NATIONALITIES = "nationalities"
+    PHONE_NUMBER = "phoneNumber"
+    ROLES = "roles"
+    STATE = "state"
+    TAX_NUMBER = "taxNumber"
+    TAX_RESIDENCIES = "taxResidencies"
     # entity doc query fields
-    ALT_NAME_Q = 'alternateName_q'
-    ALT_NAME_AGRO_Q = 'alternateName_stem_agro_q'
-    ALT_NAME_SINGLE_Q = 'alternateName_single_term_q'
-    ALT_NAME_SYN_Q = 'alternateName_synonym_q'
-    ALT_NAME_XTRA_Q = 'alternateName_xtra_q'
-    EMAIL_Q = 'email_q'
-    INFO_Q = 'info_q'
-    LEGAL_NAME_Q = 'legalName_q'
-    LEGAL_NAME_AGRO_Q = 'legalName_stem_agro_q'
-    LEGAL_NAME_SINGLE_Q = 'legalName_single_term_q'
-    LEGAL_NAME_SYN_Q = 'legalName_synonym_q'
-    LEGAL_NAME_XTRA_Q = 'legalName_xtra_q'
-    NAME_Q = 'name_q'
-    TAX_NUMBER_Q = 'taxNumber_q'
+    ALT_NAME_Q = "alternateName_q"
+    ALT_NAME_AGRO_Q = "alternateName_stem_agro_q"
+    ALT_NAME_SINGLE_Q = "alternateName_single_term_q"
+    ALT_NAME_SYN_Q = "alternateName_synonym_q"
+    ALT_NAME_XTRA_Q = "alternateName_xtra_q"
+    EMAIL_Q = "email_q"
+    INFO_Q = "info_q"
+    LEGAL_NAME_Q = "legalName_q"
+    LEGAL_NAME_AGRO_Q = "legalName_stem_agro_q"
+    LEGAL_NAME_SINGLE_Q = "legalName_single_term_q"
+    LEGAL_NAME_SYN_Q = "legalName_synonym_q"
+    LEGAL_NAME_XTRA_Q = "legalName_xtra_q"
+    NAME_Q = "name_q"
+    TAX_NUMBER_Q = "taxNumber_q"
     # business entity specific
-    BN_Q = 'bn_q'
-    IDENTIFIER_Q = 'identifier_q'
+    BN_Q = "bn_q"
+    IDENTIFIER_Q = "identifier_q"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

@@ -14,27 +14,28 @@
 """Manages solr doc updates made to the Search Core (tracks updates made via the api)."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timezone
 
 from sqlalchemy import event
 
 from bor_api.enums import SolrDocEventStatus, SolrDocEventType
+from bor_api.utils.util import utcnow
 
 from .db import db
 
 
-class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
+class SolrDocEvent(db.Model):
     """Used to hold event information for a solr doc."""
 
-    __tablename__ = 'solr_doc_events'
+    __tablename__ = "solr_doc_events"
 
     id = db.Column(db.Integer, primary_key=True)
-    event_date = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-    event_last_update = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    event_date = db.Column(db.DateTime(timezone=True), default=utcnow)
+    event_last_update = db.Column(db.DateTime(timezone=True), default=utcnow)
     event_status = db.Column(db.Enum(SolrDocEventStatus), default=SolrDocEventStatus.PENDING, index=True)
     event_type = db.Column(db.Enum(SolrDocEventType), nullable=False)
 
-    solr_doc_id = db.Column(db.Integer, db.ForeignKey('bor_solr_docs.id'), index=True)
+    solr_doc_id = db.Column(db.Integer, db.ForeignKey("bor_solr_docs.id"), index=True)
 
     def save(self) -> SolrDocEvent:
         """Store the update into the db."""
@@ -43,11 +44,13 @@ class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
         return self
 
     @classmethod
-    def get_events_by_status(cls,
-                             statuses: list[SolrDocEventStatus],
-                             event_types: list[SolrDocEventType] = None,
-                             start_date: datetime = None,
-                             limit: int = None) -> list[SolrDocEvent]:
+    def get_events_by_status(
+        cls,
+        statuses: list[SolrDocEventStatus],
+        event_types: list[SolrDocEventType] | None = None,
+        start_date: datetime | None = None,
+        limit: int | None = None,
+    ) -> list[SolrDocEvent]:
         """Update the status of the given events."""
         query = cls.query.filter(cls.event_status.in_(statuses))
         if event_types:
@@ -70,7 +73,7 @@ class SolrDocEvent(db.Model):  # pylint: disable=too-few-public-methods
         db.session.commit()
 
 
-@event.listens_for(SolrDocEvent, 'before_update')
-def receive_before_change(mapper, connection, target: SolrDocEvent):  # pylint: disable=unused-argument
+@event.listens_for(SolrDocEvent, "before_update")
+def receive_before_change(mapper, connection, target: SolrDocEvent):
     """Set the last updated value."""
-    target.event_last_update = datetime.utcnow()
+    target.event_last_update = datetime.now(UTC)

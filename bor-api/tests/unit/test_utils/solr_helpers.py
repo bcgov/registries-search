@@ -15,20 +15,22 @@
 from bor_api.services.bor_solr.doc_models import Address, DateRange, Entity, EntityRole
 
 
-def create_entity(name: str,
-                  alternate_name: str = None,
-                  addresses: list[Address] = None,
-                  birthdate: str = None,
-                  bn: str = None,
-                  tax_number: str = None,
-                  email: str = None,
-                  entity_type: str = 'PERSON',
-                  entity_id: str = 'LEAR1234567',
-                  legal_type: str = None,
-                  nationalities: list[str] = None,
-                  phone_number: str = None,
-                  roles: list[EntityRole] = None,
-                  state: str = None) -> Entity:
+def create_entity(
+    name: str,
+    alternate_name: str | None = None,
+    addresses: list[Address] | None = None,
+    birthdate: str | None = None,
+    bn: str | None = None,
+    tax_number: str | None = None,
+    email: str | None = None,
+    entity_type: str = "PERSON",
+    entity_id: str = "LEAR1234567",
+    legal_type: str | None = None,
+    nationalities: list[str] | None = None,
+    phone_number: str | None = None,
+    roles: list[EntityRole] | None = None,
+    state: str | None = None,
+) -> Entity:
     """Create a base entity doc."""
     return Entity(
         alternateName=alternate_name,
@@ -39,47 +41,48 @@ def create_entity(name: str,
         entityAddresses=addresses,
         entityType=entity_type,
         id=entity_id,
-        identifier=None if entity_type == 'PERSON' else entity_id,
+        identifier=None if entity_type == "PERSON" else entity_id,
         legalName=name,
         legalType=legal_type,
         nationalities=nationalities,
         phoneNumber=phone_number,
         roles=roles,
-        state=state
+        state=state,
     )
 
-def factory_entity_default(name: str = 'Entity Default', entity_type: str = 'PERSON'):
+
+def factory_entity_default(name: str = "Entity Default", entity_type: str = "PERSON"):
     """Create a default Entity with addresses and roles."""
     address = Address(
-        addressType='DELIVERY',
-        addressCity='City',
-        addressCountry='Country',
-        addressRegion='Region',
-        postalCode='V8P 2T3',
-        streetAddress='Street'
+        addressType="DELIVERY",
+        addressCity="City",
+        addressCountry="Country",
+        addressRegion="Region",
+        postalCode="V8P 2T3",
+        streetAddress="Street",
     )
     role = EntityRole(
-        id='LEAR1234567/roles0',
-        relatedEmail='default@email.com',
-        relatedEntityType='BUSINESS',
-        relatedIdentifier='BC1234567',
-        relatedLegalType='BEN',
-        relatedName='Related Name',
-        relatedState='ACTIVE',
-        roleDates=[DateRange(start='2021-03-05T21:01:45Z', end=None)],
-        roleType='DIRECTOR',
+        id="LEAR1234567/roles0",
+        relatedEmail="default@email.com",
+        relatedEntityType="BUSINESS",
+        relatedIdentifier="BC1234567",
+        relatedLegalType="BEN",
+        relatedName="Related Name",
+        relatedState="ACTIVE",
+        roleDates=[DateRange(start="2021-03-05T21:01:45Z", end=None)],
+        roleType="DIRECTOR",
     )
-    if entity_type == 'BUSINESS':
-        role.roleType = 'INCORPORATOR'
+    if entity_type == "BUSINESS":
+        role.roleType = "INCORPORATOR"
         return create_entity(
             name=name,
-            email='test@email.com',
+            email="test@email.com",
             entity_type=entity_type,
             addresses=[address],
             roles=[role],
-            entity_id='BC0234567',
-            legal_type='BEN',
-            state='ACTIVE'
+            entity_id="BC0234567",
+            legal_type="BEN",
+            state="ACTIVE",
         )
-    
+
     return create_entity(name=name, entity_type=entity_type, addresses=[address], roles=[role])

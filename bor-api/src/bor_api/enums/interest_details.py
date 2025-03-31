@@ -18,18 +18,18 @@ from .base import BaseEnum
 class InterestDetails(BaseEnum):
     """Enum of the interest details of a significant individual."""
 
-    DIR_DIRECT = 'controlType.directors.directControl'
-    DIR_INCONCERT = 'controlType.directors.inConcertControl'
-    DIR_INDIRECT = 'controlType.directors.indirectControl'
-    DIR_JOINTLY = 'controlType.directors.actingJointly'
-    DIR_SIG_INFL = 'controlType.directors.significantInfluence'
-    SHARES_BEN_OWNER = 'controlType.shares.beneficialOwner'
-    SHARES_INCONCERT = 'controlType.shares.inConcertControl'
-    SHARES_INDIRECT = 'controlType.shares.indirectControl'
-    SHARES_JOINTLY = 'controlType.shares.actingJointly'
-    SHARES_REG_OWNER = 'controlType.shares.registeredOwner'
-    VOTES_BEN_OWNER = 'controlType.votes.beneficialOwner'
-    VOTES_INCONCERT = 'controlType.votes.inConcertControl'
-    VOTES_INDIRECT = 'controlType.votes.indirectControl'
-    VOTES_JOINTLY = 'controlType.votes.actingJointly'
-    VOTES_REG_OWNER = 'controlType.votes.registeredOwner'
+    DIR_DIRECT = "controlType.directors.directControl"
+    DIR_INCONCERT = "controlType.directors.inConcertControl"
+    DIR_INDIRECT = "controlType.directors.indirectControl"
+    DIR_JOINTLY = "controlType.directors.actingJointly"
+    DIR_SIG_INFL = "controlType.directors.significantInfluence"
+    SHARES_BEN_OWNER = "controlType.shares.beneficialOwner"
+    SHARES_INCONCERT = "controlType.shares.inConcertControl"
+    SHARES_INDIRECT = "controlType.shares.indirectControl"
+    SHARES_JOINTLY = "controlType.shares.actingJointly"
+    SHARES_REG_OWNER = "controlType.shares.registeredOwner"
+    VOTES_BEN_OWNER = "controlType.votes.beneficialOwner"
+    VOTES_INCONCERT = "controlType.votes.inConcertControl"
+    VOTES_INDIRECT = "controlType.votes.indirectControl"
+    VOTES_JOINTLY = "controlType.votes.actingJointly"
+    VOTES_REG_OWNER = "controlType.votes.registeredOwner"

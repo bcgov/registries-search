@@ -16,6 +16,5 @@ from flask import Blueprint
 
 from .solr import bp as solr_bp
 
-
-bp = Blueprint('INTERNAL', __name__, url_prefix='/internal')  # pylint: disable=invalid-name
+bp = Blueprint("INTERNAL", __name__, url_prefix="/internal")
 bp.register_blueprint(solr_bp)

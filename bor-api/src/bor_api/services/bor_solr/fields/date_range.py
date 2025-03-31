@@ -28,14 +28,14 @@
 from bor_api.enums.base import BaseEnum
 
 
-class DateRangeField(BaseEnum):  # pylint: disable=too-few-public-methods
+class DateRangeField(BaseEnum):
     """Enum of the date range fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # date range fields
-    START = 'start'
-    END = 'end'
-    ACTIVE = 'active'
+    START = "start"
+    END = "end"
+    ACTIVE = "active"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"

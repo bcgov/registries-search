@@ -22,15 +22,14 @@ from bor_api.services.bor_solr.doc_models import Entity
 from tests.unit.test_utils.solr_helpers import factory_entity_default
 
 
-@pytest.mark.parametrize('test_name,name,entity_type', [
-    ('test_person', 'Tester', 'PERSON'),
-    ('test_business', 'Test Inc.', 'BUSINESS')
-])
+@pytest.mark.parametrize(
+    "test_name,name,entity_type", [("test_person", "Tester", "PERSON"), ("test_business", "Test Inc.", "BUSINESS")]
+)
 def test_entity_doc(test_name, name, entity_type):
     """Assert the Entity solr doc class works as expected."""
     entity = factory_entity_default(name=name, entity_type=entity_type)
     assert entity
-    if entity_type == 'PERSON':
+    if entity_type == "PERSON":
         assert entity.identifier == None
     else:
         assert entity.identifier == entity.identifier
@@ -41,8 +40,8 @@ def test_entity_doc(test_name, name, entity_type):
     assert json.get(EntityField.ENTITY_TYPE.value) == entity_type
     assert json.get(EntityField.ENTITY_ADDRESSES.value)
     assert json.get(EntityField.ROLES.value)
-    
-    if entity_type == 'BUSINESS':
+
+    if entity_type == "BUSINESS":
         assert json.get(EntityField.IDENTIFIER.value)
         assert json.get(EntityField.LEGAL_TYPE.value)
         assert json.get(EntityField.STATE.value)
@@ -51,13 +50,13 @@ def test_entity_doc(test_name, name, entity_type):
 def test_entity_doc_invalid():
     """Assert the Entity solr doc class does not initialize when required fields are missing."""
     # assert minimum valid case
-    assert Entity(entityAddresses=[], entityType='PERSON', legalName='name', id='LEAR123456')
+    assert Entity(entityAddresses=[], entityType="PERSON", legalName="name", id="LEAR123456")
     # legal name missing
     with pytest.raises(TypeError):
-        Entity(entityAddresses=[], entityType='PERSON', id='1')
+        Entity(entityAddresses=[], entityType="PERSON", id="1")
     # entity type missing
     with pytest.raises(TypeError):
-        Entity(entityAddresses=[], legalName='name', id='1')
+        Entity(entityAddresses=[], legalName="name", id="1")
     # entity id missing
     with pytest.raises(TypeError):
-        Entity(entityAddresses=[], entityType='PERSON', legalName='name')
+        Entity(entityAddresses=[], entityType="PERSON", legalName="name")

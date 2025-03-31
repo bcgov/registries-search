@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoint for resyncing entity records in solr."""
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta, timezone
 from http import HTTPStatus
 
 from flask import Blueprint, current_app, jsonify, request
@@ -23,25 +23,24 @@ from bor_api.models import SolrDoc
 from bor_api.services import SYSTEM_ROLE, jwt
 from bor_api.services.solr_update_helper import resync_bor_solr
 
+bp = Blueprint("RESYNC", __name__, url_prefix="/resync")
 
-bp = Blueprint('RESYNC', __name__, url_prefix='/resync')  # pylint: disable=invalid-name
 
-
-@bp.post('')
-@cross_origin(origin='*')
+@bp.post("")
+@cross_origin(origins="*")
 @jwt.requires_roles([SYSTEM_ROLE])
 def resync_solr():
     """Resync solr docs from the given date or identifiers given."""
     try:
         request_json = request.json
-        from_datetime = datetime.utcnow()
-        minutes_offset = request_json.get('minutesOffset', None)
-        identifiers_to_resync = request_json.get('identifiers', None)
+        from_datetime = datetime.now(UTC)
+        minutes_offset = request_json.get("minutesOffset", None)
+        identifiers_to_resync = request_json.get("identifiers", None)
         if not minutes_offset and not identifiers_to_resync:
             return bad_request_response('Missing required field "minutesOffset" or "identifiers".')
         try:
             minutes_offset = float(minutes_offset)
-        except:  # pylint: disable=bare-except # noqa F841;
+        except:
             if not identifiers_to_resync:
                 return bad_request_response('Invalid value for field "minutesOffset". Expecting a number.')
 
@@ -51,12 +50,12 @@ def resync_solr():
             identifiers_to_resync = SolrDoc.get_updated_entity_ids_after_date(resync_date)
 
         if identifiers_to_resync:
-            current_app.logger.debug(f'Resyncing: {identifiers_to_resync}')
+            current_app.logger.debug(f"Resyncing: {identifiers_to_resync}")
             resync_bor_solr(identifiers_to_resync)
         else:
-            current_app.logger.debug('No records to resync.')
+            current_app.logger.debug("No records to resync.")
 
-        return jsonify({'message': 'Resync successful.'}), HTTPStatus.CREATED
+        return jsonify({"message": "Resync successful."}), HTTPStatus.CREATED
 
-    except Exception as exception:  # noqa: B902
+    except Exception as exception:
         return exception_response(exception)

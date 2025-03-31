@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This module manages util methods for the BOR solr service."""
-from .search_helpers import entities_search
 from .search_field_groups import get_search_field_group
+from .search_helpers import entities_search
 from .search_params import SearchParams
 from .xlsx_helpers import xlsx_response

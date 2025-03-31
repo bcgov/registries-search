@@ -23,12 +23,11 @@ from bor_api.models import SolrSynonymList
 from bor_api.services import SYSTEM_ROLE, jwt, solr
 from bor_api.services.base_solr.utils import get_synonyms
 
+bp = Blueprint("SYNONYMS", __name__, url_prefix="/synonyms")
 
-bp = Blueprint('SYNONYMS', __name__, url_prefix='/synonyms')  # pylint: disable=invalid-name
 
-
-@bp.put('')
-@cross_origin(origin='*')
+@bp.put("")
+@cross_origin(origins="*")
 @jwt.requires_roles([SYSTEM_ROLE])
 def update_synonyms():
     """Add/trigger update to synonyms lists."""
@@ -49,10 +48,10 @@ def update_synonyms():
         # reload the solr core (so it will register any changes)
         solr.reload_core()
         # update db synonym lists
-        for synonym_type in synonyms:
-            SolrSynonymList.create_or_replace_all(synonyms=synonyms[synonym_type], synonym_type=synonym_type)
+        for synonym_type, synonym_lists in synonyms.items():
+            SolrSynonymList.create_or_replace_all(synonyms=synonym_lists, synonym_type=synonym_type)
 
-        return jsonify({'message': 'Update successful'}), HTTPStatus.OK
+        return jsonify({"message": "Update successful"}), HTTPStatus.OK
 
-    except Exception as exception:  # noqa: B902
+    except Exception as exception:
         return exception_response(exception)

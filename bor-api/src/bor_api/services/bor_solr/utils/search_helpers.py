@@ -15,19 +15,26 @@
 from bor_api.services.bor_solr import BorSolr
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
-from .query_builders import (PRE_CHILD_FILTER_CLAUSE, build_child_query,
-                             build_facet, build_facet_query, build_base_query)
+from .query_builders import (
+    PRE_CHILD_FILTER_CLAUSE,
+    build_base_query,
+    build_child_query,
+    build_facet,
+    build_facet_query,
+)
 from .search_params import SearchParams
 
 
-def _add_category_filters(solr_payload: dict,
-                          categories: dict[AddressField | EntityField | EntityRoleField | InterestField, list[str]],
-                          is_nested: bool):
+def _add_category_filters(
+    solr_payload: dict,
+    categories: dict[AddressField | EntityField | EntityRoleField | InterestField, list[str]],
+    is_nested: bool,
+):
     """Attach filter queries for categories to the params."""
-    for category in categories:
-        if category_filters := categories[category]:
+    for category, category_filters in categories.items():
+        if category_filters:
             filter_str = build_facet_query(category, category_filters, is_nested)
-            solr_payload['filter'].append(filter_str)
+            solr_payload["filter"].append(filter_str)
 
 
 def entities_search(params: SearchParams, solr: BorSolr):
@@ -38,38 +45,42 @@ def entities_search(params: SearchParams, solr: BorSolr):
         fields=params.query_fields,
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields,
-        synonym_fields=params.query_synonym_fields)
+        synonym_fields=params.query_synonym_fields,
+    )
 
     # boosts for term order result ordering
-    initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
-    initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
-    initial_queries['query'] += f' OR ({EntityField.LEGAL_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
-    if params.query['value']:
-        initial_queries['query'] += \
-            f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
+    initial_queries["query"] += f' OR ({EntityField.LEGAL_NAME_Q.value}:"{params.query["value"]}"~5^5)'
+    initial_queries["query"] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
+    initial_queries["query"] += f' OR ({EntityField.LEGAL_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
+    if params.query["value"]:
+        initial_queries[
+            "query"
+        ] += f' OR ({EntityField.LEGAL_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
     # Only add alternate name boost if it is specified in the query
     if EntityField.ALT_NAME_Q.value in params.query_fields:
-        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_Q.value}:"{params.query["value"]}"~5^5)'
-        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
-        initial_queries['query'] += f' OR ({EntityField.ALT_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
-        if params.query['value']:
-            initial_queries['query'] += \
-                f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
+        initial_queries["query"] += f' OR ({EntityField.ALT_NAME_Q.value}:"{params.query["value"]}"~5^5)'
+        initial_queries["query"] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"]}"~10^3)'
+        initial_queries["query"] += f' OR ({EntityField.ALT_NAME_SYN_Q.value}:"{params.query["value"]}"~10^3)'
+        if params.query["value"]:
+            initial_queries[
+                "query"
+            ] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults
     solr_payload = {
         **initial_queries,
-        'queries': {
-            'parents': f'{EntityField.ENTITY_TYPE.value}:*',
-            'parentFilters': ' AND '.join(initial_queries['filter'])},
-        'facet': {
+        "queries": {
+            "parents": f"{EntityField.ENTITY_TYPE.value}:*",
+            "parentFilters": " AND ".join(initial_queries["filter"]),
+        },
+        "facet": {
             # facets for roles
             **build_facet(EntityRoleField.RELATED_ENTITY_TYPE, True),
             **build_facet(EntityRoleField.RELATED_LEGAL_TYPE, True),
             **build_facet(EntityRoleField.RELATED_STATE, True),
-            **build_facet(EntityRoleField.ROLE_TYPE, True)
+            **build_facet(EntityRoleField.ROLE_TYPE, True),
         },
-        'fields': params.fields
+        "fields": params.fields,
     }
 
     # base doc faceted filters
@@ -77,7 +88,7 @@ def entities_search(params: SearchParams, solr: BorSolr):
 
     # child filter queries
     if child_query := build_child_query(params.child_query):
-        solr_payload['filter'].append(child_query)
+        solr_payload["filter"].append(child_query)
 
     # child doc faceted filter queries
     _add_category_filters(solr_payload=solr_payload, categories=params.child_categories, is_nested=True)
@@ -89,11 +100,13 @@ def entities_search(params: SearchParams, solr: BorSolr):
         end_date = params.child_date_ranges[DateRangeField.END]
         # set filters for start / end overlapp
         # start is before end date OR None AND end is after start date OR active (end date is None)
-        start_qry = f'({DateRangeField.START.value}:[* TO {end_date}] OR ({DateRangeField.ACTIVE.value}:*' \
-            f' AND NOT {DateRangeField.START.value}:*))'
-        end_qry = f'({DateRangeField.END.value}:[{start_date} TO *] OR ({DateRangeField.ACTIVE.value}:* AND NOT end:*))'
+        start_qry = (
+            f"({DateRangeField.START.value}:[* TO {end_date}] OR ({DateRangeField.ACTIVE.value}:*"
+            f" AND NOT {DateRangeField.START.value}:*))"
+        )
+        end_qry = f"({DateRangeField.END.value}:[{start_date} TO *] OR ({DateRangeField.ACTIVE.value}:* AND NOT end:*))"
         # put it together
-        date_filter = f'{PRE_CHILD_FILTER_CLAUSE}{start_qry} AND {end_qry}'
-        solr_payload['filter'].append(date_filter)
+        date_filter = f"{PRE_CHILD_FILTER_CLAUSE}{start_qry} AND {end_qry}"
+        solr_payload["filter"].append(date_filter)
 
     return solr.query(solr_payload, params.start, params.rows)

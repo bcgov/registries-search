@@ -18,7 +18,7 @@ from bor_api.services.bor_solr.fields import AddressField, DateRangeField, Entit
 
 
 @dataclass
-class SearchParams:  # pylint: disable=too-few-public-methods
+class SearchParams:
     """Class definition of search params."""
 
     query: dict[str, str]

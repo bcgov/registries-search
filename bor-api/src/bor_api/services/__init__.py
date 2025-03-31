@@ -14,12 +14,10 @@
 """This module wraps the calls to external services used by the API."""
 from flask_jwt_oidc import JwtManager
 
-from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, get_role, is_staff, is_system
+from .authz import BASIC_USER, SBC_STAFF, STAFF_ROLE, SYSTEM_ROLE, is_staff, is_system
 from .bor_solr import BorSolr
 from .flags import Flags
 
-
-# pylint: disable=invalid-name; shared variables are lower case by Flask convention.
 solr = BorSolr()
 flags = Flags()
 jwt = JwtManager()

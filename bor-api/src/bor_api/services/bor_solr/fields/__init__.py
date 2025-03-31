@@ -27,7 +27,7 @@
 """Manages BOR solr fields for search solr."""
 from .address import AddressField
 from .date_range import DateRangeField
-from .entity_role import EntityRoleField
 from .entity import EntityField
+from .entity_role import EntityRoleField
 from .interest import InterestField
 from .interest_party import InterestPartyField

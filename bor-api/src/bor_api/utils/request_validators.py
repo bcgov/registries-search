@@ -13,11 +13,12 @@
 # limitations under the License.
 """The class manages methods to validate a request."""
 from flask import current_app, request
+from flask.globals import request_ctx
 
 from bor_api.enums import SearchAccessLevel
 from bor_api.exceptions import AuthorizationException
 from bor_api.models import User
-from bor_api.services import jwt, flags
+from bor_api.services import flags, jwt
 from bor_api.services.authz import account_products
 from bor_api.services.bor_solr.fields import EntityField, EntityRoleField
 from bor_api.services.bor_solr.utils import get_search_field_group
@@ -29,44 +30,47 @@ def _validate_search_request(access_level: SearchAccessLevel) -> tuple[dict, lis
     """Validate the search request headers / payload."""
     errors = []
     request_json = request.get_json()
-    query_json = request_json.get('query', {})
-    value = query_json.get('value', None)
+    query_json = request_json.get("query", {})
+    value = query_json.get("value", None)
     # TODO: validate the rest of the payload
     if not value or not isinstance(value, str):
-        errors.append({'Invalid payload': "Expected a string for 'value'."})
+        errors.append({"Invalid payload": "Expected a string for 'value'."})
 
     try:
-        int(request_json.get('start', 0))
-        int(request_json.get('rows', 0))
+        int(request_json.get("start", 0))
+        int(request_json.get("rows", 0))
     except ValueError:  # catch invalid start/row entry
-        errors.append({'Invalid payload': "Expected integer for params: 'start', 'rows'"})
+        errors.append({"Invalid payload": "Expected integer for params: 'start', 'rows'"})
 
-    accepted_types = ['application/json', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+    accepted_types = ["application/json", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
     if (content_type := str(request.accept_mimetypes)) and not [x for x in accepted_types if x in content_type]:
         msg = f'Invalid Accept header. Expected {" or ".join(accepted_types)} but received {content_type}'
-        errors.append({'Invalid header': msg})
+        errors.append({"Invalid header": msg})
 
-    if access_level == SearchAccessLevel.PUBLIC:
-        # Public search has limited access to roles (only allowed to see: partner, proprietor, sis)
-        if role_types := request_json.get('categories', {})\
-            .get(EntityField.ROLES.value, {})\
-                .get(EntityRoleField.ROLE_TYPE.value, []):
+    # Public search has limited access to roles (only allowed to see: partner, proprietor, sis)
+    if access_level == SearchAccessLevel.PUBLIC and (
+        role_types := request_json.get("categories", {})
+        .get(EntityField.ROLES.value, {})
+        .get(EntityRoleField.ROLE_TYPE.value, [])
+    ):
 
             if not isinstance(role_types, list):
-                errors.append({
-                    'invalid payload':
-                        'Expected a list of strings for ' +
-                        f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}'"
-                })
+                errors.append(
+                    {
+                        "invalid payload": "Expected a list of strings for "
+                        + f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}'"
+                    }
+                )
 
-            elif any(x for x in role_types if x not in ['PARTNER', 'PROPRIETOR', 'SIGNIFICANT INDIVIDUAL']):
-                errors.append({
-                    'invalid payload':
-                        'Unexpected values provided for ' +
-                        f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}': " +
-                        "Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. " +
-                        'Other role types are not available.'
-                })
+            elif any(x for x in role_types if x not in ["PARTNER", "PROPRIETOR", "SIGNIFICANT INDIVIDUAL"]):
+                errors.append(
+                    {
+                        "invalid payload": "Unexpected values provided for "
+                        + f"'categories/{EntityField.ROLES.value}/{EntityRoleField.ROLE_TYPE.value}': "
+                        + "Accepted values are 'PARTNER', 'PROPRIETOR', and 'SIGNIFICANT INDIVIDUAL'. "
+                        + "Other role types are not available."
+                    }
+                )
 
     return request_json, errors
 
@@ -79,35 +83,37 @@ def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -
 
     errors = []
 
-    account_id = request.headers.get('Account-Id', None)
-    if not request.headers.get('Account-Id', None):
-        errors.append({'Missing header': 'Account-Id'})
+    account_id = request.headers.get("Account-Id", None)
+    if not request.headers.get("Account-Id", None):
+        errors.append({"Missing header": "Account-Id"})
 
     # check access
-    current_app.logger.debug('Checking user access...')
+    current_app.logger.debug("Checking user access...")
     access_flag_name = None
     access_codes = []
     if access_level == SearchAccessLevel.EXTENDED:
-        access_flag_name = 'enable-comp-auth-search'
-        access_codes = ['CA_SEARCH']
+        access_flag_name = "enable-comp-auth-search"
+        access_codes = ["CA_SEARCH"]
     elif access_level == SearchAccessLevel.LIMITED:
-        access_flag_name = 'enable-director-search'
-        access_codes = ['NDS', 'CA_SEARCH']
+        access_flag_name = "enable-director-search"
+        access_codes = ["NDS", "CA_SEARCH"]
     else:
-        current_app.logger.error('Unhandled access level: %s', access_level)
-        errors.append({'Error evaluating search access.'})
+        current_app.logger.error("Unhandled access level: %s", access_level)
+        errors.append({"Error evaluating search access."})
 
-    has_direct_access = jwt.contains_role(['system']) or flags.value(access_flag_name, {'key': user.sub})
+    has_direct_access = jwt.contains_role(request_ctx.current_user, ["system"]) or flags.value(
+        access_flag_name, {"key": user.sub}
+    )
     if not has_direct_access:
         # Direct access not enabled for user so check if account has the product subscription.
-        current_app.logger.debug('Direct access denied, checking account access...')
+        current_app.logger.debug("Direct access denied, checking account access...")
         products = account_products(token=jwt.get_token_auth_header(), account_id=account_id)
         if not isinstance(products, list):
             current_app.logger.debug(products)
-            raise AuthorizationException(f'Error collecting information from Auth service. {products}')
-        if not any(p['code'] in access_codes and p['subscriptionStatus'] == 'ACTIVE' for p in products):
-            raise AuthorizationException('This account is not authorized for this level of search.')
-    current_app.logger.debug('Access granted.')
+            raise AuthorizationException(f"Error collecting information from Auth service. {products}")
+        if not any(p["code"] in access_codes and p["subscriptionStatus"] == "ACTIVE" for p in products):
+            raise AuthorizationException("This account is not authorized for this level of search.")
+    current_app.logger.debug("Access granted.")
 
     return has_direct_access, errors
 
@@ -120,30 +126,30 @@ def validate_search(user: User, access_level: SearchAccessLevel) -> tuple[dict, 
     return request_json, get_search_field_group(access_level), has_direct_access, request_errors + access_errors
 
 
-def validate_solr_update_request(request_json: dict):  # pylint: disable=too-many-branches,too-many-statements
+def validate_solr_update_request(request_json: dict):  # noqa: PLR0912
     """Validate solr doc update request."""
     err = []
     # validate business info
-    if not request_json.get('business'):
-        err.append({'error': 'Business Object is required.', 'path': '/business'})
+    if not request_json.get("business"):
+        err.append({"error": "Business Object is required.", "path": "/business"})
         return err
 
-    identifier_path = '/business/identifier'
+    identifier_path = "/business/identifier"
     if get_str(request_json, identifier_path) is None:
-        err.append({'error': 'Identifier is required.', 'path': identifier_path})
+        err.append({"error": "Identifier is required.", "path": identifier_path})
 
-    business_name_path = '/business/legalName'
+    business_name_path = "/business/legalName"
     if get_str(request_json, business_name_path) is None:
-        err.append({'error': 'Business Name is required.', 'path': business_name_path})
+        err.append({"error": "Business Name is required.", "path": business_name_path})
 
-    business_type_path = '/business/legalType'
+    business_type_path = "/business/legalType"
     if get_str(request_json, business_type_path) is None:
-        err.append({'error': 'Business Type is required.', 'path': business_type_path})
+        err.append({"error": "Business Type is required.", "path": business_type_path})
 
-    business_status_path = '/business/state'
+    business_status_path = "/business/state"
     business_status = get_str(request_json, business_status_path)
-    if business_status is None or business_status not in ['ACTIVE', 'HISTORICAL']:
-        err.append({'error': 'A valid business state is required.', 'path': business_status_path})
+    if business_status is None or business_status not in ["ACTIVE", "HISTORICAL"]:
+        err.append({"error": "A valid business state is required.", "path": business_status_path})
 
     # validate address info
     # NOTE: uncomment below once business addresses are used
@@ -165,40 +171,36 @@ def validate_solr_update_request(request_json: dict):  # pylint: disable=too-man
     #         err.append({'error': f'{field} field is required.', 'path': path})
 
     # validate parties info
-    for index, party in enumerate(request_json.get('parties', [])):
-        if not party.get('source'):
-            err.append({'error': 'Party Source is required.', 'path': f'/parties/{index}/source'})
-        elif party['source'] not in ['LEAR', 'COLIN', 'BTR']:
-            err.append({'error': 'A valid Party Source is required.', 'path': f'/parties/{index}/source'})
+    for index, party in enumerate(request_json.get("parties", [])):
+        if not party.get("source"):
+            err.append({"error": "Party Source is required.", "path": f"/parties/{index}/source"})
+        elif party["source"] not in ["LEAR", "COLIN", "BTR"]:
+            err.append({"error": "A valid Party Source is required.", "path": f"/parties/{index}/source"})
 
-        if not party.get('roles'):
-            err.append({'error': 'Party Roles is required.', 'path': f'/parties/{index}/roles'})
+        if not party.get("roles"):
+            err.append({"error": "Party Roles is required.", "path": f"/parties/{index}/roles"})
             return err
-        for role_index, role in enumerate(party['roles']):
-            if not role.get('roleType'):
-                err.append(
-                    {'error': 'Role Type is required.', 'path': f'/parties/{index}/roles/{role_index}/roleType'})
+        for role_index, role in enumerate(party["roles"]):
+            if not role.get("roleType"):
+                err.append({"error": "Role Type is required.", "path": f"/parties/{index}/roles/{role_index}/roleType"})
 
-        officer_path = f'/parties/{index}/officer'
-        officer = party.get('officer', {})
+        officer_path = f"/parties/{index}/officer"
+        officer = party.get("officer", {})
 
-        if not officer.get('id'):
-            err.append({'error': 'Party ID is required.', 'path': f'{officer_path}/id'})
+        if not officer.get("id"):
+            err.append({"error": "Party ID is required.", "path": f"{officer_path}/id"})
 
-        party_type = officer.get('partyType')
+        party_type = officer.get("partyType")
         if not party_type:
-            err.append({'error': 'Party Type is required.', 'path': f'{officer_path}/partyType'})
+            err.append({"error": "Party Type is required.", "path": f"{officer_path}/partyType"})
             return err
 
-        if party_type == 'organization':
-            if not officer.get('organizationName'):
-                err.append({'error': 'Organization name is required.',
-                            'path': f'{officer_path}/organizationName'})
-        elif party_type == 'person':
-            if not (officer.get('firstName') or officer.get('middleInitial') or officer.get('lastName')):
-                err.append({'error': 'First name or middle name or last name is required.',
-                            'path': f'{officer_path}'})
+        if party_type == "organization":
+            if not officer.get("organizationName"):
+                err.append({"error": "Organization name is required.", "path": f"{officer_path}/organizationName"})
+        elif party_type == "person":
+            if not (officer.get("firstName") or officer.get("middleInitial") or officer.get("lastName")):
+                err.append({"error": "First name or middle name or last name is required.", "path": f"{officer_path}"})
         else:
-            err.append({'error': 'Invalid party type.',
-                        'path': f'{officer_path}/partyType'})
+            err.append({"error": "Invalid party type.", "path": f"{officer_path}/partyType"})
     return err

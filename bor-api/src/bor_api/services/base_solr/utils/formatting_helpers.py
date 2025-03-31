@@ -17,30 +17,30 @@ import re
 
 def parse_facets(facet_data: dict) -> dict:
     """Return formatted solr facet response data."""
-    facet_info = facet_data.get('facets', {})
+    facet_info = facet_data.get("facets", {})
     facets = {}
     for category in facet_info:
-        if category == 'count':
+        if category == "count":
             continue
         facets[category] = []
-        for item in facet_info[category]['buckets']:
-            new_category = {'value': item['val'], 'count': item['count']}
-            if parent_count := item.get('by_parent', None):
-                new_category['parentCount'] = parent_count
+        for item in facet_info[category]["buckets"]:
+            new_category = {"value": item["val"], "count": item["count"]}
+            if parent_count := item.get("by_parent", None):
+                new_category["parentCount"] = parent_count
             facets[category].append(new_category)
 
-    return {'fields': facets}
+    return {"fields": facets}
 
 
 def prep_query_str(query: str) -> str:
     """Return the query string prepped for solr call."""
     # replace solr specific special chars
     if not query:
-        return ''
-    rmv_spec_chars_rgx = r'([\[\]!()\"~*?:/\\={}^%`#|<>,.@$;_\-])'
-    handled_spec_chars_rgx = r'([&+]+)'
-    query = re.sub(rmv_spec_chars_rgx, ' ', query.lower())
-    return re.sub(handled_spec_chars_rgx, r' \\\1 ', query) if not query.isspace() else r'\*'
+        return ""
+    rmv_spec_chars_rgx = r"([\[\]!()\"~*?:/\\={}^%`#|<>,.@$;_\-])"
+    handled_spec_chars_rgx = r"([&+]+)"
+    query = re.sub(rmv_spec_chars_rgx, " ", query.lower())
+    return re.sub(handled_spec_chars_rgx, r" \\\1 ", query) if not query.isspace() else r"\*"
 
 
 def prep_query_str_adv(query: str) -> str:
@@ -54,15 +54,15 @@ def prep_query_str_adv(query: str) -> str:
         - lowercase: all
     """
     if not query:
-        return ''
+        return ""
 
-    rmv_doubles = r'([&+]){2,}'
-    rmv_all = r'([()^{}|\\])'
-    esc_begin = r'(^|\s)([+\-/!])'
-    esc_all = r'([:~<>?\"\[\]])'
+    rmv_doubles = r"([&+]){2,}"
+    rmv_all = r"([()^{}|\\])"
+    esc_begin = r"(^|\s)([+\-/!])"
+    esc_all = r"([:~<>?\"\[\]])"
 
-    query = re.sub(rmv_doubles, r'\1', query.lower())
-    query = re.sub(rmv_all, '', query)
-    query = re.sub(esc_begin, r'\1\\\2', query)
-    query = re.sub(esc_all, r'\\\1', query)
+    query = re.sub(rmv_doubles, r"\1", query.lower())
+    query = re.sub(rmv_all, "", query)
+    query = re.sub(esc_begin, r"\1\\\2", query)
+    query = re.sub(esc_all, r"\\\1", query)
     return query.lower().strip()

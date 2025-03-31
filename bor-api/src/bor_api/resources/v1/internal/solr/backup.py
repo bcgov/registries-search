@@ -18,12 +18,11 @@ from flask_cors import cross_origin
 from bor_api.exceptions import bad_request_response, exception_response
 from bor_api.services import SYSTEM_ROLE, jwt, solr
 
+bp = Blueprint("BACKUP", __name__, url_prefix="/backup")
 
-bp = Blueprint('BACKUP', __name__, url_prefix='/backup')  # pylint: disable=invalid-name
 
-
-@bp.post('')
-@cross_origin(origin='*')
+@bp.post("")
+@cross_origin(origins="*")
 @jwt.requires_roles([SYSTEM_ROLE])
 def backup():
     """Backup/restore an index in solr."""
@@ -31,18 +30,19 @@ def backup():
         request_json: dict = request.json
 
         # validate payload
-        if not (command := request_json.get('command')):
-            return bad_request_response('Invalid payload.',
-                                        [{'Missing Required Field': 'Expected "command" in payload.'}])
+        if not (command := request_json.get("command")):
+            return bad_request_response(
+                "Invalid payload.", [{"Missing Required Field": 'Expected "command" in payload.'}]
+            )
 
-        valid_commands = ['backup', 'details', 'restore', 'restorestatus']
+        valid_commands = ["backup", "details", "restore", "restorestatus"]
         if command not in valid_commands:
-            return bad_request_response('Invalid payload.',
-                                        [{'error': f'Expected value to be one of {valid_commands}',
-                                          'path': '/command'}])
+            return bad_request_response(
+                "Invalid payload.", [{"error": f"Expected value to be one of {valid_commands}", "path": "/command"}]
+            )
 
         resp = solr.replication(command)
         return jsonify(resp.json()), resp.status_code
 
-    except Exception as exception:  # noqa: B902
+    except Exception as exception:
         return exception_response(exception)

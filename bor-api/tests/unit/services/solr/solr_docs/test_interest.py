@@ -21,37 +21,68 @@ from bor_api.services.bor_solr.fields import InterestField, InterestPartyField
 from bor_api.services.bor_solr.doc_models import Interest, InterestParty
 
 
-@pytest.mark.parametrize('test_name,interest_info', [
-    ('test_1', {'details': 'bla'}),
-    ('test_2', {'details': InterestDetails.DIR_DIRECT.value, 'directOrIndirect': 'direct'}),
-    ('test_3', {'details': InterestDetails.SHARES_BEN_OWNER.value, 'directOrIndirect': 'direct', 'interestType': 'shareholding'}),
-    ('test_4', {'details': InterestDetails.VOTES_REG_OWNER.value, 'directOrIndirect': 'direct', 'interestType': 'votingRights', 'sharesMax': 50, 'sharesMin': 25}),
-    ('test_5', {'details': InterestDetails.VOTES_JOINTLY.value, 'directOrIndirect': 'direct', 'interestType': 'votingRights', 'sharesMax': 50, 'sharesMin': 25, 'relatedParties': [InterestParty(interestPartyID='123', interestPartyName='Bob')]}),
-])
+@pytest.mark.parametrize(
+    "test_name,interest_info",
+    [
+        ("test_1", {"details": "bla"}),
+        ("test_2", {"details": InterestDetails.DIR_DIRECT.value, "directOrIndirect": "direct"}),
+        (
+            "test_3",
+            {
+                "details": InterestDetails.SHARES_BEN_OWNER.value,
+                "directOrIndirect": "direct",
+                "interestType": "shareholding",
+            },
+        ),
+        (
+            "test_4",
+            {
+                "details": InterestDetails.VOTES_REG_OWNER.value,
+                "directOrIndirect": "direct",
+                "interestType": "votingRights",
+                "sharesMax": 50,
+                "sharesMin": 25,
+            },
+        ),
+        (
+            "test_5",
+            {
+                "details": InterestDetails.VOTES_JOINTLY.value,
+                "directOrIndirect": "direct",
+                "interestType": "votingRights",
+                "sharesMax": 50,
+                "sharesMin": 25,
+                "relatedParties": [InterestParty(interestPartyID="123", interestPartyName="Bob")],
+            },
+        ),
+    ],
+)
 def test_interest_doc(test_name, interest_info):
     """Assert the Interest solr doc class works as expected."""
-    interest = Interest(details=interest_info.get('details'),
-                        directOrIndirect=interest_info.get('directOrIndirect'),
-                        interestType=interest_info.get('interestType'),
-                        relatedParties=interest_info.get('relatedParties'),
-                        sharesExact=interest_info.get('sharesExact'),
-                        sharesMax=interest_info.get('sharesMax'),
-                        sharesMin=interest_info.get('sharesMin'))
+    interest = Interest(
+        details=interest_info.get("details"),
+        directOrIndirect=interest_info.get("directOrIndirect"),
+        interestType=interest_info.get("interestType"),
+        relatedParties=interest_info.get("relatedParties"),
+        sharesExact=interest_info.get("sharesExact"),
+        sharesMax=interest_info.get("sharesMax"),
+        sharesMin=interest_info.get("sharesMin"),
+    )
 
     assert interest
 
     json = asdict(interest)
     assert json
-    if interest_info.get('details') == 'bla':
-        assert json.get(InterestField.DETAILS.value) == 'other'
-        assert json.get(InterestField.OTHER_REASON.value) == 'bla'
+    if interest_info.get("details") == "bla":
+        assert json.get(InterestField.DETAILS.value) == "other"
+        assert json.get(InterestField.OTHER_REASON.value) == "bla"
     else:
-        assert json.get(InterestField.DETAILS.value) == interest_info.get('details')
+        assert json.get(InterestField.DETAILS.value) == interest_info.get("details")
         assert json.get(InterestField.OTHER_REASON.value) == None
-    assert json.get(InterestField.DIRECT_INDIRECT.value) == interest_info.get('directOrIndirect')
-    assert json.get(InterestField.TYPE.value) == interest_info.get('interestType')
-    assert json.get(InterestField.SHARE_EXACT.value) == interest_info.get('sharesExact')
-    assert json.get(InterestField.SHARE_MAX.value) == interest_info.get('sharesMax')
-    assert json.get(InterestField.SHARE_MIN.value) == interest_info.get('sharesMin')
+    assert json.get(InterestField.DIRECT_INDIRECT.value) == interest_info.get("directOrIndirect")
+    assert json.get(InterestField.TYPE.value) == interest_info.get("interestType")
+    assert json.get(InterestField.SHARE_EXACT.value) == interest_info.get("sharesExact")
+    assert json.get(InterestField.SHARE_MAX.value) == interest_info.get("sharesMax")
+    assert json.get(InterestField.SHARE_MIN.value) == interest_info.get("sharesMin")
     if related_parties := json.get(InterestField.RELATED_PARTIES.value):
-        assert related_parties == [asdict(x) for x in interest_info['relatedParties']]
+        assert related_parties == [asdict(x) for x in interest_info["relatedParties"]]

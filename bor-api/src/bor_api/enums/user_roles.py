@@ -18,5 +18,5 @@ from .base import BaseEnum
 class UserRoles(BaseEnum):
     """Enum of the roles used across the domain."""
 
-    SYSTEM = 'system'
-    STAFF = 'staff'
+    SYSTEM = "system"
+    STAFF = "staff"

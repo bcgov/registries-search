@@ -32,42 +32,44 @@ def not_raises(exception):
     try:
         yield
     except exception:
-        raise pytest.fail(f'DID RAISE {exception}')
+        raise pytest.fail(f"DID RAISE {exception}")
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def ld():
     """LaunchDarkly TestData source."""
     td = TestData.data_source()
     yield td
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app(ld):
     """Return a session-wide application configured in TEST mode."""
-    _app = create_app('testing', **{'ld_test_data': ld})
-    
+    _app = create_app("testing", **{"ld_test_data": ld})
+
     with _app.app_context():
         yield _app
 
 
-@pytest.fixture(scope='function')
-def client(app):  # pylint: disable=redefined-outer-name
+@pytest.fixture(scope="function")
+def client(app):
     """Return a function-wide Flask test client."""
     return app.test_client()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def jwt():
     """Return a session-wide jwt manager."""
     return _jwt
 
 
-@pytest.fixture(scope='session')
-def db(app, request):  # pylint: disable=redefined-outer-name, invalid-name
+@pytest.fixture(scope="session")
+def db(app, request):
     """Session-wide test database."""
+
     def teardown():
         _db.drop_all()
+
     _db.app = app
 
     _db.create_all()
@@ -75,18 +77,22 @@ def db(app, request):  # pylint: disable=redefined-outer-name, invalid-name
     return _db
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def session(db, request):
     """Return a function-scoped session."""
     db.session.begin_nested()
+
     def commit():
         db.session.flush()
+
     # patch commit method
     old_commit = db.session.commit
     db.session.commit = commit
+
     def teardown():
         db.session.rollback()
         db.session.close()
         db.session.commit = old_commit
+
     request.addfinalizer(teardown)
     return db.session

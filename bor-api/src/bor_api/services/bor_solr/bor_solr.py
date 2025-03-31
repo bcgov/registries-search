@@ -22,7 +22,7 @@ from bor_api.services.bor_solr.fields import EntityField
 class BorSolr(Solr):
     """Wrapper around the solr instance for BOR."""
 
-    def create_or_replace_docs(self, docs: list[Entity] = None, raw_docs: list[dict] = None, timeout=25, additive=True):
+    def create_or_replace_docs(self, docs: list[Entity] | None = None, raw_docs: list[dict] | None = None, timeout=25, additive=True):
         """Create or replace solr docs in the core."""
         update_list = raw_docs if raw_docs else [asdict(doc) for doc in docs]
 
@@ -31,18 +31,18 @@ class BorSolr(Solr):
             for entity_dict in update_list:
                 # addresses
                 if addresses := entity_dict.get(EntityField.ENTITY_ADDRESSES.value, None):
-                    entity_dict[EntityField.ENTITY_ADDRESSES.value] = {'set': addresses}
+                    entity_dict[EntityField.ENTITY_ADDRESSES.value] = {"set": addresses}
                 # roles
                 if roles := entity_dict.get(EntityField.ROLES.value, None):
-                    entity_dict[EntityField.ROLES.value] = {'set': roles}
+                    entity_dict[EntityField.ROLES.value] = {"set": roles}
                 # nationalities
                 if nationalities := entity_dict.get(EntityField.NATIONALITIES.value, None):
-                    entity_dict[EntityField.NATIONALITIES.value] = {'set': nationalities}
+                    entity_dict[EntityField.NATIONALITIES.value] = {"set": nationalities}
                 # tax residencies
                 if tax_residencies := entity_dict.get(EntityField.TAX_RESIDENCIES.value, None):
-                    entity_dict[EntityField.TAX_RESIDENCIES.value] = {'set': tax_residencies}
+                    entity_dict[EntityField.TAX_RESIDENCIES.value] = {"set": tax_residencies}
 
-        url = self.update_url if len(update_list) < 1000 else self.bulk_update_url
+        url = self.update_url if len(update_list) < 1000 else self.bulk_update_url  # noqa: PLR2004
 
-        response = self.call_solr('POST', url, json_data=update_list, timeout=timeout)
+        response = self.call_solr("POST", url, json_data=update_list, timeout=timeout)
         return response

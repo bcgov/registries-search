@@ -24,7 +24,7 @@ from http import HTTPStatus
 
 
 @dataclass
-class BaseExceptionE(Exception):
+class BaseException(Exception):  # noqa: N818
     """Base exception class for custom exceptions."""
 
     error: str
@@ -33,54 +33,54 @@ class BaseExceptionE(Exception):
 
 
 @dataclass
-class AuthorizationException(BaseExceptionE):
+class AuthorizationException(BaseException):
     """Authorization exception."""
 
     def __post_init__(self):
         """Return a valid AuthorizationException."""
-        self.error = f'{self.error}, {self.status_code}'
-        self.message = 'Unauthorized access.'
+        self.error = f"{self.error}, {self.status_code}"
+        self.message = "Unauthorized access."
         self.status_code = HTTPStatus.UNAUTHORIZED
 
 
 @dataclass
-class BusinessException(BaseExceptionE):
+class BusinessException(BaseException):
     """Business rules exception."""
 
     def __post_init__(self):
         """Return a valid BusinessException."""
         if not self.message:
-            self.message = 'Business exception.'
+            self.message = "Business exception."
 
 
 @dataclass
-class DatabaseException(BaseExceptionE):
+class DatabaseException(BaseException):
     """Database insert/update exception."""
 
     def __post_init__(self):
         """Return a valid DatabaseException."""
-        self.message = 'Database error while processing request.'
+        self.message = "Database error while processing request."
         self.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @dataclass
-class ExternalServiceException(BaseExceptionE):
+class ExternalServiceException(BaseException):
     """3rd party service exception."""
 
     def __post_init__(self):
         """Return a valid ExternalServiceException."""
-        self.message = '3rd party service error while processing request.'
-        self.error = f'{self.error}, {self.status_code}'
+        self.message = "3rd party service error while processing request."
+        self.error = f"{self.error}, {self.status_code}"
         self.status_code = HTTPStatus.SERVICE_UNAVAILABLE
 
 
 @dataclass
-class SolrException(BaseExceptionE):
+class SolrException(BaseException):
     """Solr search/update/delete exception."""
 
     def __post_init__(self):
         """Return a valid SolrException."""
         if self.status_code != HTTPStatus.SERVICE_UNAVAILABLE:
-            self.error += f', {self.status_code}'
+            self.error += f", {self.status_code}"
             self.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-        self.message = 'Solr service error while processing request.'
+        self.message = "Solr service error while processing request."

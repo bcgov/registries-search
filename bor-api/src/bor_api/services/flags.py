@@ -15,22 +15,23 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from typing import Union
+from typing import TYPE_CHECKING
 
 import ldclient
-from ldclient import LDClient, Config
-from ldclient.integrations.test_data import TestData
-from flask import current_app
-from flask import Flask
+from flask import Flask, current_app
+from ldclient import Config, LDClient
+
+if TYPE_CHECKING:
+    from ldclient.integrations.test_data import TestData
 
 
-class Flags():
+class Flags:
     """Wrapper around the feature flag system.
 
     1 client per application.
     """
 
-    COMPONENT_NAME = 'featureflags'
+    COMPONENT_NAME = "featureflags"
 
     def __init__(self, app: Flask = None):
         """Initialize this object."""
@@ -46,9 +47,9 @@ class Flags():
         Provide TD for TestData.
         """
         self.app = app
-        self.sdk_key = app.config.get('LD_SDK_KEY')
+        self.sdk_key = app.config.get("LD_SDK_KEY")
         if td:
-            client = LDClient(config=Config('testing', update_processor_class=td))
+            client = LDClient(config=Config("testing", update_processor_class=td))
         elif self.sdk_key:
             ldclient.set_config(Config(self.sdk_key))
             client = ldclient.get()
@@ -58,8 +59,8 @@ class Flags():
             if client and client.is_initialized():  # pylint: disable=possibly-used-before-assignment
                 app.extensions[Flags.COMPONENT_NAME] = client
                 app.teardown_appcontext(self.teardown)
-        except Exception as err:  # noqa: B902
-            app.logger.warn('issue registering flag service %s', err)
+        except Exception as err:
+            app.logger.warn("issue registering flag service %s", err)
 
     def teardown(self, exception):  # pylint: disable=unused-argument; flask method signature
         """Destroy all objects created by this extension.
@@ -79,31 +80,27 @@ class Flags():
 
         try:
             return ldclient.get()
-        except Exception:  # noqa: B902
+        except Exception:
             return None
 
     @staticmethod
     def get_anonymous_user():
         """Return an anonymous key."""
-        return {'key': 'anonymous'}
+        return {"key": "anonymous"}
 
     @staticmethod
     def value(flag: str, user=None):
         """Retrieve the value  of the (flag, user) tuple."""
         try:
             client = Flags.get_client()
-            if user:
-                flag_user = user
-            else:
-                flag_user = Flags.get_anonymous_user()
+            flag_user = user if user else Flags.get_anonymous_user()
             return client.variation(flag, flag_user, None)
-        except Exception as err:  # noqa: B902
-            # pylint: disable=consider-using-f-string
-            current_app.logger.error('Unable to read flags: %s' % repr(err), exc_info=True)
+        except Exception as err:
+            current_app.logger.error("Unable to read flags: %s", repr(err), exc_info=True)
             return None
 
     @staticmethod
-    def detail(flag: str, user=None) -> Union[bool, int, str]:  # pylint: disable=E1136
+    def detail(flag: str, user=None) -> bool | int | str:  # pylint: disable=E1136
         """Return the full flag and meta info."""
         client = current_app.extensions[Flags.COMPONENT_NAME]
         link = client.variation_detail(flag, user, False)

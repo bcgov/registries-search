@@ -20,12 +20,15 @@ from bor_api.services.bor_solr.fields import DateRangeField
 from bor_api.services.bor_solr.doc_models import DateRange
 
 
-@pytest.mark.parametrize('test_name,start,end', [
-    ('test_1', '2022-03-21T14:24:02Z', '2023-04-11T06:44:52Z'),
-    ('test_2', '2019-12-01T02:44:56Z', None),
-    ('test_3', None, '2023-04-11T06:44:52Z'),
-    ('test_4', None, None),
-])
+@pytest.mark.parametrize(
+    "test_name,start,end",
+    [
+        ("test_1", "2022-03-21T14:24:02Z", "2023-04-11T06:44:52Z"),
+        ("test_2", "2019-12-01T02:44:56Z", None),
+        ("test_3", None, "2023-04-11T06:44:52Z"),
+        ("test_4", None, None),
+    ],
+)
 def test_date_range_doc(test_name, start, end):
     """Assert the Date Range solr doc class works as expected."""
     date_range = DateRange(start=start, end=end)

@@ -12,25 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""CORS pre-flight decorator.
+"""Helpful util methods."""
+from datetime import UTC, datetime
 
-A simple decorator to add the options method to a Request Class.
-"""
 import dpath.util
-
-
-def cors_preflight(methods: str = 'GET'):
-    """Render an option method on the class."""
-    def wrapper(f):  # pylint: disable=invalid-name
-        def options(self, *args, **kwargs):  # pylint: disable=unused-argument
-            return {'Allow': 'GET'}, 200, \
-                   {'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': methods,
-                    'Access-Control-Allow-Headers': 'Authorization, Content-Type'}
-
-        setattr(f, 'options', options)
-        return f
-    return wrapper
 
 
 def get_str(payload: dict, path: str) -> str:
@@ -52,3 +37,10 @@ def get_str(payload: dict, path: str) -> str:
         return str(raw)
     except (IndexError, KeyError, TypeError, ValueError):
         return None
+
+
+def utcnow():
+    """Get the current datetime in utc.
+    
+    Helpful for model datetime defaults."""
+    return datetime.now(UTC)

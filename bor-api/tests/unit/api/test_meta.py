@@ -19,12 +19,13 @@ from http import HTTPStatus
 
 from bor_api.utils.run_version import get_run_version
 
+
 def test_info(session, client, jwt):
     """Assert that ops ready check endpoint works."""
     # no setup
 
     # test
-    rv = client.get('/api/v1/meta/info')
+    rv = client.get("/api/v1/meta/info")
     # check
     assert rv.status_code == HTTPStatus.OK
-    assert rv.json['API'] == f'bor_api/{get_run_version()}'
+    assert rv.json["API"] == f"bor_api/{get_run_version()}"

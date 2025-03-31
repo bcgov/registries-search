@@ -28,13 +28,13 @@
 from bor_api.enums.base import BaseEnum
 
 
-class InterestPartyField(BaseEnum):  # pylint: disable=too-few-public-methods
+class InterestPartyField(BaseEnum):
     """Enum of the interest party fields available in the BOR solr search core."""
 
     # unique key for all docs
-    UNIQUE_KEY = 'id'
+    UNIQUE_KEY = "id"
     # interest party doc stored fields
-    UUID = 'interestPartyID'
-    NAME = 'interestPartyName'
+    UUID = "interestPartyID"
+    NAME = "interestPartyName"
     # common built in across docs
-    SCORE = 'score'
+    SCORE = "score"
