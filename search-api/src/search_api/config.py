@@ -136,6 +136,9 @@ class Config:  # pylint: disable=too-few-public-methods
     JWT_OIDC_USERNAME = os.getenv("JWT_OIDC_USERNAME", "username")
     JWT_OIDC_FIRSTNAME = os.getenv("JWT_OIDC_FIRSTNAME", "firstname")
     JWT_OIDC_LASTNAME = os.getenv("JWT_OIDC_LASTNAME", "lastname")
+    JWT_OIDC_ACCOUNT_ID = os.getenv("JWT_OIDC_ACCOUNT_ID", "Account-Id")
+    JWT_OIDC_LOGIN_SOURCE = os.getenv("JWT_OIDC_LOGIN_SOURCE", "loginSource")
+    JWT_OIDC_API_GW = os.getenv("JWT_OIDC_API_GW", "API_GW")
 
     # service accounts
     ACCOUNT_SVC_AUTH_URL = os.getenv("ACCOUNT_SVC_AUTH_URL")

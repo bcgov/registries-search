@@ -16,7 +16,7 @@ from http import HTTPStatus
 
 import requests
 from flask import current_app
-from flask.globals import request_ctx
+from flask.globals import request_ctx, request
 from flask_caching import Cache
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
@@ -187,9 +187,18 @@ def get_cache_key(jwt_token: str, account_id: str):
 @auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
 def does_user_have_account(jwt_token: str, account_id: str) -> bool:
     """Return True if the user belongs to the account with account id."""
-    if not jwt_token or not account_id:
+    if not account_id:
         return False
 
+    if (
+        (jwt_info := request_ctx.current_user) and
+        (jwt_account_id := jwt_info.get(current_app.config['JWT_OIDC_ACCOUNT_ID'])) and
+        jwt_info.get(current_app.config['JWT_OIDC_LOGIN_SOURCE']) == current_app.config['JWT_OIDC_API_GW']
+    ):
+        # account id request context matches the provided account id
+        return jwt_account_id == account_id
+
+    # For non api gw users account id isn't in the jwt
     orgs = user_orgs(jwt_token)
     if orgs and "orgs" in orgs:
         orgs = orgs["orgs"]
