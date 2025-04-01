@@ -13,8 +13,7 @@
 # limitations under the License.
 """Enum Utilities."""
 
-from enum import Enum, EnumMeta, auto  # pylint: disable=W0611;
-from typing import Optional
+from enum import Enum, EnumMeta  # pylint: disable=W0611;
 
 
 class BaseMeta(EnumMeta):

@@ -16,7 +16,7 @@ from http import HTTPStatus
 
 import requests
 from flask import current_app
-from flask.globals import request, request_ctx
+from flask.globals import request_ctx
 from flask_caching import Cache
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter

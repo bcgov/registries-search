@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """API endpoint for resyncing entity records in solr."""
-from datetime import datetime, timedelta
+from datetime import timedelta
 from http import HTTPStatus
 
 from flask import Blueprint, current_app, jsonify, request

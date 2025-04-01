@@ -18,7 +18,6 @@ here as a convenience for audit and db reporting.
 """
 from __future__ import annotations
 
-from datetime import datetime
 from enum import Enum
 
 from flask import current_app

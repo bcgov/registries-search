@@ -15,7 +15,7 @@
 
 Common constants/utilities used across models.
 """
-from datetime import UTC, date, time, timedelta, timezone
+from datetime import UTC, date, time, timedelta
 from datetime import datetime as _datetime
 
 import pytz
