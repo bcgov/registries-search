@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from typing import Final, Union
+from typing import Final
 
 from flask import Flask, current_app
 from google.cloud import pubsub
@@ -86,7 +86,7 @@ class Queue:
             if isinstance(msg, str):
                 data = msg.encode("utf8")
 
-            future = _queue.publish(subject, data)
+            _queue.publish(subject, data)
 
     @staticmethod
     def create_subject(

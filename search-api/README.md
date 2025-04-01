@@ -12,62 +12,93 @@ For BC Registries Gateway API configuration see [Gateway Search Proxy](https://g
 - Python, Flask
 - Postgres - SQLAlchemy, psycopg2-binary & alembic
 - SOLR
-- CloudBuild
-- CloudRun
+- Poetry
 
-## Third-Party Products/Libraries used and the the License they are covert by
+## Development Setup
 
-## Project Status
-
-## Documnentation
-
-GitHub Pages (https://guides.github.com/features/pages/) are a neat way to document you application/project.
-
-## Security
-
-## Files in this repository
-
-## Environment Variables
-
-See .env.sample
-
-## Windows Development Pre-Setup
+### Windows Development Pre-Setup
 
 Follow the instructions of the [Development Readme](https://github.com/bcgov/entity/blob/master/docs/development.md)
 to setup your local development environment.
 
-## Development Setup
+### Setup
+Clone the repo and submit a PR from a new branch.
 
-1. Open the ppr-api directory in VS Code to treat it as a project (or WSL projec). To prevent version clashes, set up a virtual environment to install the Python packages used by this project.
-1. Run `make setup`
-1. Run `pip install .`
-1. Update the .env file to add your local environment variables including the database configuration. A sample .env file is provided.
-1. Run a local instance of the Postgres PPR database.
+Set to use the local repo for the virtual environment
+```bash
+poetry config virtualenvs.in-project true
+```
+Install the dependencies
+```bash
+poetry install
+```
+
+Configure the .env (see .env.sample)
+
+### Setup the DB
+Run a local instance of the Postgres BOR database.
    1. Pull postgres image from docker
    1. `docker run --name local-db -e POSTGRES_PASSWORD=tiger -d -p 5432:5432 postgres`
    1. `docker exec -it local-db psql -U postgres -W postgres`
    1. create a database for development and a database for unit tests
    1. update your .env DATABASE_NAME/DATABASE_TEST_NAME/PASSWORD values to match
-   1. In your `venv` environment run: `flask db upgrade`
-1. Run a local solr instance: https://github.com/bcgov/registries-search/tree/main/search-solr
+   1. upgrade the db
+      ```bash
+      eval $(poetry env activate)
+      ```
 
-### Running the SEARCH-API
+      NOTE: Default COMMAND is 'upgrade' and 'REVISION' is optional
+      ```bash
+      ./update_db.sh $COMMAND $REVISION
+      ```
 
-Start the flask server with `(python -m flask run -p 5000)`
+### Run the search-api
+```bash
+eval $(poetry env activate)
+```
 
-### Running Linting
+```bash
+flask run -p 5000
+```
 
-Run `make lint`
+### Run Linting
+```bash
+eval $(poetry env activate)
+```
+```bash
+ruff check --fix
+```
 
-### Running Unit Tests
+### Run Unit Tests
 
-- For all tests run `pytest -v -s`
-- For an individual file run `pytest -v -s ./tests/unit/api/filename.py` or `pytest -v -s ./tests/unit/models/filename.py`
-- For an individual test case run `pytest -v -s ./tests/unit/api/filename.py::test-case-name`
+- Ensure you have the following setup/configured:
+   - test database
+   - test solr instance or set RUN_SOLR_TESTS=False
+      - default config points to docker-compose.yml
+      - see https://github.com/bcgov-registries/beneficial-ownership/tree/main/bor-solr for more info on *bor-solr-leader* image
+- ```
+   eval $(poetry env activate)
+   ```
+- For all unit tests:
+   ```
+   pytest
+   ```
+- For an individual file:
+   ```
+   pytest tests/unit/api/filename.py 
+   ```
+- For an individual test case:
+   ```
+   pytest tests/unit/api/filename.py::test-case-name
+   ```
 
-## Deployment (GCP)
+### Run Integration (postman) Tests
 
-## Getting Help or Reporting an Issue
+1. Start your local application(s).
+2. Open postman applicaiton.
+3. Import the [Integration tests environment configrations](./tests/postman/bor-api-LOCAL.postman_environment.json) and fill the values to match your applicaiton.
+4. Import the [integration tests collection](./tests/postman/bor-api.postman_collection.json).
+5. Run the collection.
 
 ## How to Contribute
 

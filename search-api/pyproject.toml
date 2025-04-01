@@ -117,6 +117,7 @@ select = [
     "TCH", # flake8-type-checking
     "TID", # flake8-tidy-imports
     "UP",  # pyupgrade
+    "F", # pyflakes
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

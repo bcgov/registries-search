@@ -14,7 +14,7 @@
 """API endpoints for Search Credit Card (CC) payments."""
 import dataclasses
 import json
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from http import HTTPStatus
 
 from dateutil.relativedelta import relativedelta
