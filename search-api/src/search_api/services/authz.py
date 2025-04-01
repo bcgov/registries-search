@@ -16,7 +16,7 @@ from http import HTTPStatus
 
 import requests
 from flask import current_app
-from flask.globals import request_ctx, request
+from flask.globals import request, request_ctx
 from flask_caching import Cache
 from requests import Session, exceptions
 from requests.adapters import HTTPAdapter
@@ -192,8 +192,8 @@ def does_user_have_account(jwt_token: str, account_id: str) -> bool:
 
     if (
         (jwt_info := request_ctx.current_user) and
-        (jwt_account_id := jwt_info.get(current_app.config['JWT_OIDC_ACCOUNT_ID'])) and
-        jwt_info.get(current_app.config['JWT_OIDC_LOGIN_SOURCE']) == current_app.config['JWT_OIDC_API_GW']
+        (jwt_account_id := jwt_info.get(current_app.config["JWT_OIDC_ACCOUNT_ID"])) and
+        jwt_info.get(current_app.config["JWT_OIDC_LOGIN_SOURCE"]) == current_app.config["JWT_OIDC_API_GW"]
     ):
         # account id request context matches the provided account id
         return jwt_account_id == account_id
