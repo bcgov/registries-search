@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Enum for logging level."""
-from .base import BaseEnum, auto
+from enum import auto
+
+from .base import BaseEnum
 
 
 class LogLevel(BaseEnum):

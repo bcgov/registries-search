@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Enum Utilities."""
-from enum import Enum, EnumMeta, auto
+from enum import Enum, EnumMeta
 
 
 class BaseMeta(EnumMeta):

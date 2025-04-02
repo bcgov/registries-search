@@ -18,8 +18,6 @@ here as a convenience for audit and db reporting.
 """
 from __future__ import annotations
 
-from datetime import datetime
-
 from flask import current_app
 
 from bor_api.exceptions import BusinessException
