@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING
 
 import ldclient
 from flask import Flask, current_app
-from ldclient import Config, LDClient
+from ldclient import Config, Context, LDClient
 
 if TYPE_CHECKING:
     from ldclient.integrations.test_data import TestData
@@ -94,13 +94,14 @@ class Flags:
         try:
             client = Flags.get_client()
             flag_user = user if user else Flags.get_anonymous_user()
-            return client.variation(flag, flag_user, None)
+            flag_context = Context.from_dict({**flag_user, "kind": "user"})
+            return client.variation(flag, flag_context, None)
         except Exception as err:
             current_app.logger.error("Unable to read flags: %s", repr(err), exc_info=True)
             return None
 
     @staticmethod
-    def detail(flag: str, user=None) -> bool | int | str:  # pylint: disable=E1136
+    def detail(flag: str, user=None) -> bool | int | str:
         """Return the full flag and meta info."""
         client = current_app.extensions[Flags.COMPONENT_NAME]
         link = client.variation_detail(flag, user, False)
