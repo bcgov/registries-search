@@ -640,4 +640,24 @@
       <str name="compression">internal</str>
     </lst>
   </requestHandler>
+
+  <!-- Update Request Processors
+       https://solr.apache.org/guide/solr/latest/configuration-guide/update-request-processors.html
+
+       Chains or individual Update Request Processor Factories can be declared and referenced
+       to preprocess documents sent to Update Request Handlers.
+    -->
+
+
+  <!-- Response Writers
+
+       https://solr.apache.org/guide/solr/latest/query-guide/response-writers.html
+
+       Request responses will be written using the writer specified by
+       the 'wt' request parameter matching the name of a registered
+       writer.
+
+       The "default" writer is the default and will be used if 'wt' is
+       not specified in the request.
+    -->
 </config>
