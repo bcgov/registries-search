@@ -19,7 +19,7 @@ import os
 from http import HTTPStatus
 from uuid import uuid4
 
-from flask import Flask, redirect
+from flask import Flask, current_app, redirect, request
 from flask_migrate import Migrate
 
 from search_api import errorhandlers, models
@@ -54,7 +54,7 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
 
     else:
         # td is testData instance passed in to support testing
-        td = kwargs.get("ld_test_data");
+        td = kwargs.get("ld_test_data")
         Flags().init_app(app, td)
 
         errorhandlers.init_app(app)
@@ -68,11 +68,19 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         auth_cache.init_app(app)
 
     @app.route("/")
-    def be_nice_swagger_redirect():  # pylint: disable=unused-variable
+    def be_nice_swagger_redirect():
         return redirect("/api/v1", code=HTTPStatus.MOVED_PERMANENTLY)
 
+    @app.before_request
+    def add_logger_context():
+        current_app.logger.debug("path: %s, app_name: %s, account_id: %s, api_key: %s",
+                                 request.path,
+                                 request.headers.get("app-name"),
+                                 request.headers.get("account-id"),
+                                 request.headers.get("x-apikey"))
+
     @app.after_request
-    def add_version(response):  # pylint: disable=unused-variable
+    def add_version(response):
         version = get_run_version()
         response.headers["API"] = f"search_api/{version}"
         return response
@@ -99,6 +107,7 @@ def register_shellcontext(app):
             "app": app,
             "jwt": jwt,
             "db": db,
-            "models": models}  # pragma: no cover
+            "models": models,
+            "test": "custom context"}
 
     app.shell_context_processor(shell_context)

@@ -23,7 +23,7 @@ import json
 import os
 
 
-class Config:  # pylint: disable=too-few-public-methods
+class Config:
     """Base class configuration that should set reasonable defaults.
 
     Used as the base for all the other configurations.
