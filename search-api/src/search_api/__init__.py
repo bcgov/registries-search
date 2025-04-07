@@ -107,7 +107,6 @@ def register_shellcontext(app):
             "app": app,
             "jwt": jwt,
             "db": db,
-            "models": models,
-            "test": "custom context"}
+            "models": models}
 
     app.shell_context_processor(shell_context)
