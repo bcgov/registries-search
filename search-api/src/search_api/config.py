@@ -45,6 +45,9 @@ class Config:
     SOLR_SVC_BUS_LEADER_URL = os.getenv("SOLR_SVC_BUS_LEADER_URL", "http://localhost:8873/solr")
     SOLR_SVC_BUS_FOLLOWER_URL = os.getenv("SOLR_SVC_BUS_FOLLOWER_URL", "http://localhost:8873/solr")
     SOLR_SVC_BUS_MAX_ROWS = int(os.getenv("SOLR_SVC_BUS_MAX_ROWS", "10000"))
+    # Retry settings
+    SOLR_RETRY_TOTAL = int(os.getenv("SOLR_RETRY_TOTAL", "2"))
+    SOLR_RETRY_BACKOFF_FACTOR = int(os.getenv("SOLR_RETRY_BACKOFF_FACTOR", "5"))
 
     PAYMENT_SVC_URL = os.getenv("PAYMENT_SVC_URL", "http://")
     AUTH_SVC_URL = os.getenv("AUTH_SVC_URL", "http://")
@@ -55,8 +58,6 @@ class Config:
     FLASK_PUB_DEFAULT_SUBJECT = "projects/unique-project-id/topics/simpleTopicName"
     QUEUE_PROJECT_ID = os.getenv("QUEUE_PROJECT_ID", "12345")
     QUEUE_TOPIC = os.getenv("QUEUE_TOPIC", "doc-test")
-
-    POD_NAMESPACE = os.getenv("POD_NAMESPACE", "unknown")
 
     # Cache stuff # flask cache uses these internally as defaults when instantiating cache with no config options
     # e.g. like this: Cache()
@@ -188,13 +189,13 @@ class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
     SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv("SOLR_SVC_BUS_FOLLOWER_TEST_CORE", "business")
     SOLR_SVC_BUS_LEADER_URL = os.getenv("SOLR_SVC_BUS_LEADER_TEST_URL", "http://localhost:8980/solr")
     SOLR_SVC_BUS_FOLLOWER_URL = os.getenv("SOLR_SVC_BUS_FOLLOWER_TEST_URL", "http://localhost:8980/solr")
+    SOLR_RETRY_TOTAL = 0
     # POSTGRESQL
     DB_USER = os.getenv("DATABASE_TEST_USERNAME", "")
     DB_PASSWORD = os.getenv("DATABASE_TEST_PASSWORD", "")
     DB_NAME = os.getenv("DATABASE_TEST_NAME", "")
     DB_HOST = os.getenv("DATABASE_TEST_HOST", "")
     DB_PORT = os.getenv("DATABASE_TEST_PORT", "5432")
-    # pylint: disable=consider-using-f-string;
     SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{int(DB_PORT)}/{DB_NAME}"
 
     # JWT OIDC settings
