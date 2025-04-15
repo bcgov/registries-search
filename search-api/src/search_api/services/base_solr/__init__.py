@@ -92,15 +92,15 @@ class Solr:
         base_url = self.leader_url if leader else self.follower_url
         core = self.leader_core if leader else self.follower_core
         url = query.format(url=base_url, core=core)
-        retries = Retry(total=self.app.config['SOLR_RETRY_TOTAL'],
-                        backoff_factor=self.app.config['SOLR_RETRY_BACKOFF_FACTOR'],
+        retries = Retry(total=self.app.config["SOLR_RETRY_TOTAL"],
+                        backoff_factor=self.app.config["SOLR_RETRY_BACKOFF_FACTOR"],
                         status_forcelist=[413, 429, 500, 502, 503, 504],
                         allowed_methods=["GET", "POST"])
         session = Session()
         session.mount(url, HTTPAdapter(max_retries=retries))
 
         response = None
-        current_app.logger.debug('now')
+        current_app.logger.debug("now")
         try:
             if method == "GET":
                 response = session.get(url, params=params, timeout=timeout)
