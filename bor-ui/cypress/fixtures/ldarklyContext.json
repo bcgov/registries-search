@@ -19,5 +19,12 @@
       "value": false,
       "variation": 1,
       "version": 1
+  },
+  "sentry-enable": {
+      "flagVersion": 5,
+      "trackEvents": false,
+      "value": false,
+      "variation": 1,
+      "version": 1
   }
 }

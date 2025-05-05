@@ -52,7 +52,7 @@ def handle_uncaught_error(_error: Exception):
     """Handle any uncaught exceptions.
 
     Since the handler suppresses the actual exception, log it explicitly to
-    ensure it's logged
+    ensure it's logged and recorded in Sentry.
     """
     current_app.logger.error("Uncaught exception", exc_info=sys.exc_info())
     response = jsonify({"message": "Internal server error"})
