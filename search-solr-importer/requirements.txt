@@ -12,6 +12,7 @@ itsdangerous==2.2.0
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 requests==2.31.0
+sentry-sdk==2.10.0
 urllib3==1.26.16
 git+https://github.com/bcgov/registry-schemas.git@1.5.3#egg=registry_schemas
 git+https://github.com/bcgov/registries-search.git#egg=search_api&subdirectory=search-api
