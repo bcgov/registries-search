@@ -8,6 +8,12 @@
         ]
     },
     {
+        "vault": "sentry",
+        "application": [
+             "registries-search-backend"
+        ]
+    },
+    {
         "vault": "API",
         "application": [
             "legal-api",
