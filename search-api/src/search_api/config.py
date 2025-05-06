@@ -69,8 +69,6 @@ class Config:
         CACHE_DEFAULT_TIMEOUT = 300
 
     LD_SDK_KEY = os.getenv("LD_SDK_KEY", None)
-    SENTRY_DSN = os.getenv("SENTRY_DSN", None)
-    SENTRY_TSR = os.getenv("SENTRY_TSR", "1.0")
 
     # Flag Names
     FF_QUEUE_DOC_REQUEST_NAME = os.getenv("FF_QUEUE_DOC_REQUEST_NAME", None)

@@ -1,6 +1,4 @@
 // External
-import * as Sentry from '@sentry/vue'
-import { BrowserTracing } from '@sentry/tracing'
 import { createApp } from 'vue'
 import Hotjar from 'vue-hotjar'
 
@@ -46,28 +44,6 @@ async function start() {
   }
 
   const router = createVueRouter()
-
-  // init sentry if applicable
-  if (getFeatureFlag('sentry-enable')) {
-    console.info('Initializing Sentry...') // eslint-disable-line no-console
-    Sentry.init({
-      app,
-      dsn: window.sentryDsn,
-      environment: sessionStorage.getItem('POD_NAMESPACE'),
-      integrations: [
-        new BrowserTracing({
-          routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-          tracingOrigins: [window.location.hostname, window.location.origin, /^\//],
-        }),
-      ],
-      logErrors: true,
-      release: 'search-ui@' + process.env.VUE_APP_VERSION,
-      // Set tracesSampleRate to 1.0 to capture 100%
-      // of transactions for performance monitoring.
-      // We recommend adjusting this value in production
-      tracesSampleRate: window.sentryTSR,
-    })
-  }
 
   // Initialize Hotjar
   if (window['hotjarId']) {

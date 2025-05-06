@@ -17,8 +17,6 @@ This module is the API for the BC Registries Registry Search system.
 """
 import os
 
-import sentry_sdk  # noqa: I001; pylint: disable=ungrouped-imports; conflicts with Flake8
-from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: I001
 from flask import Flask  # noqa: I001
 from search_api.services import business_solr
 
@@ -27,7 +25,6 @@ from search_solr_importer.logging import setup_logging
 from search_solr_importer.oracle import oracle_db
 from search_solr_importer.translations import babel
 from search_solr_importer.version import __version__
-# noqa: I003; the sentry import creates a bad line count in isort
 
 setup_logging(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf'))  # important to do this first
 
@@ -57,15 +54,6 @@ def create_app(config_name: str = os.getenv('APP_ENV') or 'production'):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-
-    # Configure Sentry
-    if dsn := app.config.get('SENTRY_DSN'):
-        sentry_sdk.init(  # pylint: disable=E0110
-            dsn=dsn,
-            integrations=[FlaskIntegration()],
-            environment=app.config.get('POD_NAMESPACE'),
-            release=f'search-solr-importer@{get_run_version()}',
-            traces_sample_rate=app.config.get('SENTRY_TSR'))
 
     # db.init_app(app)
     oracle_db.init_app(app)

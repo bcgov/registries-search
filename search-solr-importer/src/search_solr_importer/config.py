@@ -52,8 +52,6 @@ class Config():  # pylint: disable=too-few-public-methods
     POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
 
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
-    SENTRY_DSN = os.getenv('SENTRY_DSN', None)
-    SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
     BATCH_SIZE = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'

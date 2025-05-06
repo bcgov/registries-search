@@ -30,13 +30,10 @@ from typing import Dict
 
 import nats
 import requests
-import sentry_sdk
 from entity_queue_common.service import QueueServiceManager
 from entity_queue_common.service_utils import QueueException
 from flask import Flask  # pylint: disable=wrong-import-order
 from requests import exceptions
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
 
 from search_solr_updater import config
 from search_solr_updater.logging import logger
@@ -55,7 +52,6 @@ async def cb_nr_subscription_handler(msg: nats.aio.client.Msg):
         logger.error('search-solr-updater: %s', err)
     except Exception as err:  # noqa pylint: disable=broad-except
         logger.debug(err.with_traceback(None))
-        # NB: sentry breadcrumb will contain event msg already
         logger.error('search-solr-updater: Unhandled error')
 
 
@@ -150,16 +146,3 @@ qsm = QueueServiceManager()  # pylint: disable=invalid-name
 APP_CONFIG = config.get_named_config(os.getenv('DEPLOYMENT_ENV', 'production'))
 FLASK_APP = Flask(__name__)
 FLASK_APP.config.from_object(APP_CONFIG)
-
-# Configure Sentry
-if APP_CONFIG.SENTRY_DSN and APP_CONFIG.SENTRY_ENABLE.lower() == 'true':
-    SENTRY_LOGGING = LoggingIntegration(
-        event_level=logging.ERROR  # Send errors as events
-    )
-    sentry_sdk.init(
-        dsn=APP_CONFIG.SENTRY_DSN,
-        integrations=[FlaskIntegration(), SENTRY_LOGGING],
-        environment=APP_CONFIG.POD_NAMESPACE,
-        release=f'search-solr-updater@{get_run_version()}',
-        traces_sample_rate=APP_CONFIG.SENTRY_TSR
-    )

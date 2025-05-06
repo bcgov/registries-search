@@ -27,11 +27,5 @@
             "base",
             "business-search-service-account"
         ]
-    },
-    {
-        "vault": "sentry",
-        "application": [
-            "registries-search-backend"
-        ]
     }
 ]

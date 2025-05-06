@@ -53,16 +53,6 @@ export async function fetchConfig(): Promise<any> {
     (<any>window).ldClientId = ldClientId
   }
 
-  const sentryDsn = process.env.VUE_APP_SENTRY_DSN
-  if (sentryDsn) {
-    (<any>window).sentryDsn = sentryDsn
-  }
-
-  const sentryTSR = process.env.VUE_APP_SENTRY_TRACE_SAMPLE_RATE
-  if (sentryTSR) {
-    (<any>window).sentryTSR = sentryTSR
-  }
-
   const hotjarId: string = process.env.VUE_APP_HOTJAR_ID
   if (hotjarId) {
     (<any>window).hotjarId = hotjarId
