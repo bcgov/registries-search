@@ -6,7 +6,7 @@ import Hotjar from 'vue-hotjar'
 import App from '@/App.vue'
 import { createVueRouter } from '@/router'
 import store from '@/store'
-import { fetchConfig, getFeatureFlag, initLdClient } from '@/utils'
+import { fetchConfig, initLdClient } from '@/utils'
 import vuetify from './plugins/vuetify'
 
 // Styles
