@@ -50,8 +50,6 @@ class Config:
     TRUSTED_TESTER_IDS = os.getenv("TRUSTED_TESTER_IDS", "").split(",")
 
     LD_SDK_KEY = os.getenv("LD_SDK_KEY", None)
-    SENTRY_DSN = os.getenv("SENTRY_DSN", None)
-    SENTRY_TSR = os.getenv("SENTRY_TSR", "1.0")
 
     # Used by /sync endpoint
     MAX_BATCH_UPDATE_NUM = int(os.getenv("MAX_BATCH_UPDATE_NUM", "1000"))

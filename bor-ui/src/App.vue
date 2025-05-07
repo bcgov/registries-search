@@ -69,11 +69,10 @@ const handleError = (error: ErrorI) => {
         errorInfo.value.text = 'This account does not have access to this application.'
         errorInfo.value.textExtra = [
           'Please contact the BC Registries Ops team to request access.']
-        // don't send error to sentry for ^
+        // don't send error for ^
       } else {
         errorInfo.value.text = 'We are unable to determine your account access at this ' +
           'time. Please try again later.'
-        // Sentry.captureException(error)
       }
       errorContactInfo.value = true
       errorDisplay.value = true
@@ -82,23 +81,19 @@ const handleError = (error: ErrorI) => {
       errorInfo.value = getDefaultError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      // Sentry.captureException(error)
       break
     case ErrorCategoryE.SEARCH_EXPORT:
       errorInfo.value = getDownloadFileError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      // Sentry.captureException(error)
       break
     case ErrorCategoryE.SEARCH:
       // handled inline
-      // Sentry.captureException(error)
       break
     default:
       errorInfo.value = getDefaultError()
       errorContactInfo.value = true
       errorDisplay.value = true
-      // Sentry.captureException(error)
   }
 }
 
