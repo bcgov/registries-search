@@ -51,7 +51,6 @@
 <script setup lang="ts">
 // External
 import { computed, onMounted, ref, Ref, watch } from 'vue'
-import * as Sentry from '@sentry/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { StatusCodes } from 'http-status-codes'
 // BC Registry
@@ -220,11 +219,10 @@ const handleError = (error: ErrorI) => {
         errorInfo.value.text = 'This account does not have Business Search selected as an active product.'
         errorInfo.value.textExtra = [
           'Please ensure Business Search is selected in account settings and try again.']
-        // don't send error to sentry for ^
+        // don't send error for ^
       } else {
         errorInfo.value.text = 'We are unable to determine your account access at this ' +
           'time. Please try again later.'
-        Sentry.captureException(error)
       }
       errorContactInfo.value = true
       errorDisplay.value = true
@@ -233,7 +231,6 @@ const handleError = (error: ErrorI) => {
       errorInfo.value = {...DefaultError}
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
       break
     case ErrorCategories.DOCUMENT_ACCESS_REQUEST_CREATE:
       if (error.statusCode === StatusCodes.PAYMENT_REQUIRED) {
@@ -257,11 +254,9 @@ const handleError = (error: ErrorI) => {
         errorContactInfo.value = true
         errorDisplay.value = true
       }
-      Sentry.captureException(error)
       break
     case ErrorCategories.DOCUMENT_ACCESS_REQUEST_HISTORY:
       // handled inline
-      Sentry.captureException(error)
       break
     case ErrorCategories.ENTITY_BASIC:
       errorInfo.value = {...EntityLoadError}
@@ -270,25 +265,20 @@ const handleError = (error: ErrorI) => {
       }
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
       break
     case ErrorCategories.ENTITY_FILINGS:
-      Sentry.captureException(error)
       // handled inline
       break
     case ErrorCategories.FEE_INFO:
       // handled inline
-      Sentry.captureException(error)
       break
     case ErrorCategories.REPORT_GENERATION:
       errorInfo.value = {...ReportError}
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
       break
     case ErrorCategories.SEARCH:
       // handled inline
-      Sentry.captureException(error)
       break
     case ErrorCategories.SEARCH_UNAVAILABLE:
     case ErrorCategories.DOCUMENT_ACCESS_PAYMENT_ERROR:
@@ -298,7 +288,6 @@ const handleError = (error: ErrorI) => {
       errorInfo.value = {...DefaultError}
       errorContactInfo.value = true
       errorDisplay.value = true
-      Sentry.captureException(error)
   }
 }
 
