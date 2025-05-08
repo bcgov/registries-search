@@ -63,7 +63,7 @@ serialPipeline:
       service-name: "search-solr-updater-test"
       container-name: "search-solr-updater-test"
       service-account: "sa-api@k973yf-test.iam.gserviceaccount.com"
- - targetId: k973yf-integration
+ - targetId: k973yf-sandbox
    profiles: [sandbox]
    strategy:
     standard:

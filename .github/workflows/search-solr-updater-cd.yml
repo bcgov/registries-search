@@ -1,4 +1,4 @@
-name: Search Updater CD
+name: Search Solr Updater CD
 
 on:
   # Manual for now
