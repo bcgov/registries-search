@@ -51,14 +51,13 @@ class _Config:
 
     LEAR_SVC_URL = os.getenv("BUSINESS_API_URL", "http://") + os.getenv("BUSINESS_API_VERSION_2", "/api/v2")
     LEAR_SVC_TIMEOUT = int(os.getenv("BUSINESS_SVC_TIMEOUT", "20"))
-    SEARCH_SVC_URL = os.getenv("REGISTRIES_SEARCH_API_INTERNAL_URL") \
-        + os.getenv("REGISTRIES_SEARCH_API_VERSION", "/api/v1")
+    SEARCH_SVC_URL = os.getenv("SEARCH_API_INTERNAL_URL") + os.getenv("SEARCH_API_VERSION", "/api/v1")
     SEARCH_SVC_TIMEOUT = int(os.getenv("SEARCH_SVC_TIMEOUT", "30"))
 
     # Service account details
-    ACCOUNT_SVC_AUTH_URL = os.getenv("KEYCLOAK_AUTH_TOKEN_URL", None)
-    ACCOUNT_SVC_CLIENT_ID = os.getenv("BUSINESS_SEARCH_SERVICE_ACCOUNT_CLIENT_ID", None)
-    ACCOUNT_SVC_CLIENT_SECRET = os.getenv("BUSINESS_SEARCH_SERVICE_ACCOUNT_SECRET", None)
+    ACCOUNT_SVC_AUTH_URL = os.getenv("ACCOUNT_SVC_AUTH_URL", None)
+    ACCOUNT_SVC_CLIENT_ID = os.getenv("ACCOUNT_SVC_CLIENT_ID", None)
+    ACCOUNT_SVC_CLIENT_SECRET = os.getenv("ACCOUNT_SVC_CLIENT_SECRET", None)
     ACCOUNT_SVC_TIMEOUT = int(os.getenv("ACCOUNT_SVC_TIMEOUT", "20"))
 
     # pub/sub
