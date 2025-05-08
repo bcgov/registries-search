@@ -31,29 +31,28 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+"""Exception responses."""
+from http import HTTPStatus
 
-"""Version of this service in PEP440.
+from flask import current_app, jsonify
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-import os
-
-__version__ = "2.0.0"
-
-def _get_commit_hash():
-    """Return the containers ref if present."""
-    if (commit_hash := os.getenv("VCS_REF", None)) and commit_hash != "missing":
-        return commit_hash
-    return None
+from .exceptions import BaseException
 
 
-def get_run_version():
-    """Return a formatted version string for this service."""
-    if commit_hash := _get_commit_hash():
-        return f"{__version__}-{commit_hash}"
-    return __version__
+def bad_request_response(message: str, errors: list[dict[str, str]] | None = None):
+    """Build generic bad request response."""
+    return jsonify({"message": message, "details": errors or []}), HTTPStatus.BAD_REQUEST
+
+
+def exception_response(exception: BaseException):
+    """Build exception error response."""
+    details = repr(exception)
+    current_app.logger.error(details)
+    try:
+        message = exception.message or "Error processing request."
+        status_code = exception.status_code or HTTPStatus.INTERNAL_SERVER_ERROR
+    except Exception:
+        current_app.logger.warning("Uncaught exception.")
+        message = "Error processing request."
+        status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    return jsonify({"message": message, "detail": details}), status_code

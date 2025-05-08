@@ -1,92 +1,41 @@
-name: SEARCH UPDATER CD
+name: Search Updater CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "queue-services/search-solr-updater/**"
-
+  # Manual for now
+  # push:
+  #   branches:
+  #     - main
+  #     - feature*
+  #     - hotfix*
+  #   paths:
+  #     - "queue-services/search-solr-updater/**"
   workflow_dispatch:
     inputs:
-      environment:
-        description: "Environment (dev/test/prod)"
+      target:
+        description: "Deploy To"
         required: true
-        default: "dev"
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ./queue-services/search-solr-updater
-
-env:
-  APP_NAME: "registries-search-solr-updater"
-  TAG_NAME: "dev"
+        type: choice
+        options:
+          - "dev"
+          - "test"
+          - "sandbox"
+          - "prod"
+      redeploy:
+        description: "Redeploy Application"
+        required: true
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
-  search-solr-updater-cd-by-push:
-    runs-on: ubuntu-24.04
-
-    if: github.event_name == 'push' && github.repository == 'bcgov/registries-search'
-    environment:
-      name: "dev"
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install CLI tools from OpenShift
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-
-      - name: Login Openshift
-        shell: bash
-        run: |
-          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT4_SA_TOKEN}}
-
-      - name: CD Flow
-        shell: bash
-        env:
-          OPS_REPOSITORY: ${{ secrets.OPS_REPOSITORY }}
-          OPENSHIFT_DOCKER_REGISTRY: ${{ secrets.OPENSHIFT4_DOCKER_REGISTRY }}
-          OPENSHIFT_SA_NAME: ${{ secrets.OPENSHIFT4_SA_NAME }}
-          OPENSHIFT_SA_TOKEN: ${{ secrets.OPENSHIFT4_SA_TOKEN }}
-          OPENSHIFT_REPOSITORY: ${{ secrets.OPENSHIFT_REPOSITORY4_QUEUE_SERVICE }}
-          TAG_NAME: ${{ env.TAG_NAME }}
-        run: |
-          make cd
-
-  search-solr-updater-cd-by-dispatch:
-    runs-on: ubuntu-24.04
-
-    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/registries-search'
-    environment:
-      name: "${{ github.event.inputs.environment }}"
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set env by input
-        run: |
-          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-
-      - name: Install CLI tools from OpenShift
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-
-      - name: Login Openshift
-        shell: bash
-        run: |
-          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT4_SA_TOKEN}}
-
-      - name: CD Flow
-        shell: bash
-        env:
-          OPS_REPOSITORY: ${{ secrets.OPS_REPOSITORY }}
-          OPENSHIFT_DOCKER_REGISTRY: ${{ secrets.OPENSHIFT4_DOCKER_REGISTRY }}
-          OPENSHIFT_SA_NAME: ${{ secrets.OPENSHIFT4_SA_NAME }}
-          OPENSHIFT_SA_TOKEN: ${{ secrets.OPENSHIFT4_SA_TOKEN }}
-          OPENSHIFT_REPOSITORY: ${{ secrets.OPENSHIFT_REPOSITORY4_QUEUE_SERVICE }}
-          TAG_NAME: ${{ env.TAG_NAME }}
-        run: |
-          make cd
+  search-updater-cd:
+    uses: bcgov/bcregistry-sre/.github/workflows/backend-cd.yaml@main
+    with:
+      target: ${{ inputs.target }}
+      app_name: "search-solr-updater"
+      working_directory: "./queue-services/search-solr-updater"
+      redeploy: ${{ inputs.redeploy }}
+    secrets:
+      WORKLOAD_IDENTIFY_POOLS_PROVIDER: ${{ secrets.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
+      GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}

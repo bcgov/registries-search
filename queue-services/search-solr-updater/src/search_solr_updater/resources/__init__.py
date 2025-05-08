@@ -31,29 +31,6 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-"""Version of this service in PEP440.
-
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-import os
-
-__version__ = "2.0.0"
-
-def _get_commit_hash():
-    """Return the containers ref if present."""
-    if (commit_hash := os.getenv("VCS_REF", None)) and commit_hash != "missing":
-        return commit_hash
-    return None
-
-
-def get_run_version():
-    """Return a formatted version string for this service."""
-    if commit_hash := _get_commit_hash():
-        return f"{__version__}-{commit_hash}"
-    return __version__
+"""Exposes the api endpoints."""
+from .ops import bp as ops_bp
+from .worker import bp as worker_bp

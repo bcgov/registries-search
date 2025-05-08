@@ -32,28 +32,62 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Version of this service in PEP440.
-
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-import os
-
-__version__ = "2.0.0"
-
-def _get_commit_hash():
-    """Return the containers ref if present."""
-    if (commit_hash := os.getenv("VCS_REF", None)) and commit_hash != "missing":
-        return commit_hash
-    return None
-
-
-def get_run_version():
-    """Return a formatted version string for this service."""
-    if commit_hash := _get_commit_hash():
-        return f"{__version__}-{commit_hash}"
-    return __version__
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+ name: search-updater-pipeline
+description: Deployment pipeline
+serialPipeline:
+ stages:
+ - targetId: k973yf-dev
+   profiles: [dev]
+   strategy:
+    standard:
+      verify: false
+   deployParameters:
+   - values:
+      deploy-env: "development"
+      deploy-project-id: "k973yf-dev"
+      service-name: "search-solr-updater-dev"
+      container-name: "search-solr-updater-dev"
+      service-account: "sa-api@k973yf-dev.iam.gserviceaccount.com"
+ - targetId: k973yf-test
+   profiles: [test]
+   strategy:
+    standard:
+      verify: false
+   deployParameters:
+   - values:
+      deploy-env: "development"
+      deploy-project-id: "k973yf-test"
+      service-name: "search-solr-updater-test"
+      container-name: "search-solr-updater-test"
+      service-account: "sa-api@k973yf-test.iam.gserviceaccount.com"
+ - targetId: k973yf-integration
+   profiles: [sandbox]
+   strategy:
+    standard:
+      verify: false
+   deployParameters:
+   - values:
+      deploy-env: "sandbox"
+      deploy-project-id: "k973yf-integration"
+      service-name: "search-solr-updater-sandbox"
+      container-name: "search-solr-updater-sandbox"
+      service-account: "sa-api@k973yf-integration.iam.gserviceaccount.com"
+ - targetId: k973yf-prod
+   profiles: [prod]
+   strategy:
+    standard:
+      verify: false
+   deployParameters:
+   - values:
+      deploy-env: "production"
+      deploy-project-id: "k973yf-prod"
+      service-name: "search-solr-updater-prod"
+      container-name: "search-solr-updater-prod"
+      container-concurrency: "60"
+      resources-cpu: "8000m"
+      resources-memory: "4Gi"
+      service-account: "sa-api@k973yf-prod.iam.gserviceaccount.com"
+      max-scale: "10"

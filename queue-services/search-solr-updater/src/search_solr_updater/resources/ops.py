@@ -31,29 +31,29 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+"""Endpoints to check and manage the health of the service."""
+from http import HTTPStatus
 
-"""Version of this service in PEP440.
+from flask import Blueprint, current_app
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-import os
-
-__version__ = "2.0.0"
-
-def _get_commit_hash():
-    """Return the containers ref if present."""
-    if (commit_hash := os.getenv("VCS_REF", None)) and commit_hash != "missing":
-        return commit_hash
-    return None
+bp = Blueprint("OPS", __name__, url_prefix="/ops")
 
 
-def get_run_version():
-    """Return a formatted version string for this service."""
-    if commit_hash := _get_commit_hash():
-        return f"{__version__}-{commit_hash}"
-    return __version__
+@bp.get("/healthz")
+def healthy():
+    """Return a JSON object stating the health of the Service and dependencies."""
+    try:
+        # Nothing to check currently
+        pass
+    except Exception as default_exception:
+        current_app.logger.error("Health check failed:" + repr(default_exception))
+        return {"message": "api is down"}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+    # made it here, so all checks passed
+    return {"message": "api is healthy"}, HTTPStatus.OK
+
+
+@bp.get("/readyz")
+def ready():
+    """Return a JSON object that identifies if the service is setupAnd ready to work."""
+    return {"message": "api is ready"}, HTTPStatus.OK

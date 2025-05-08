@@ -31,29 +31,47 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-"""Version of this service in PEP440.
-
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-import os
-
-__version__ = "2.0.0"
-
-def _get_commit_hash():
-    """Return the containers ref if present."""
-    if (commit_hash := os.getenv("VCS_REF", None)) and commit_hash != "missing":
-        return commit_hash
-    return None
+"""Application Specific Exceptions"""
+from dataclasses import dataclass
+from http import HTTPStatus
 
 
-def get_run_version():
-    """Return a formatted version string for this service."""
-    if commit_hash := _get_commit_hash():
-        return f"{__version__}-{commit_hash}"
-    return __version__
+@dataclass
+class BaseException(Exception):  # noqa: N818
+    """Base exception class for custom exceptions."""
+
+    error: str
+    message: str = None
+    status_code: HTTPStatus = None
+
+
+@dataclass
+class AuthorizationException(BaseException):
+    """Authorization exception."""
+
+    def __post_init__(self):
+        """Return a valid AuthorizationException."""
+        self.error = f"{self.error}, {self.status_code}"
+        self.message = "Unauthorized access."
+        self.status_code = HTTPStatus.UNAUTHORIZED
+
+
+@dataclass
+class BusinessException(BaseException):
+    """Business rules exception."""
+
+    def __post_init__(self):
+        """Return a valid BusinessException."""
+        if not self.message:
+            self.message = "Business exception."
+
+
+@dataclass
+class ExternalServiceException(BaseException):
+    """3rd party service exception."""
+
+    def __post_init__(self):
+        """Return a valid ExternalServiceException."""
+        self.message = "3rd party service error while processing request."
+        self.error = f"{self.error}, {self.status_code}"
+        self.status_code = HTTPStatus.SERVICE_UNAVAILABLE
