@@ -45,49 +45,49 @@ from search_solr_updater.services.search import update_search
 
 def process_business_event(ce: SimpleCloudEvent):
     """Process business events."""
-    if not 'bc.registry.business' in ce.type:
+    if not "bc.registry.business" in ce.type:
         # expecting bc.registry.business.<anything>
-        current_app.logger.debug('skipping event based on ce.type')
+        current_app.logger.debug("skipping event based on ce.type")
         return
-    current_app.logger.debug('>>>>>>>process_business_event>>>>>')
+    current_app.logger.debug(">>>>>>>process_business_event>>>>>")
     # get identifier
-    identifier = ce.data.get('identifier')
+    identifier = ce.data.get("identifier")
     if not identifier:
-        raise BusinessException('Unable to parse identifier from message payload.')
+        raise BusinessException("Unable to parse identifier from message payload.")
 
     with suppress(Exception):
-        if (filings := ce.data.get('filing', {}).get('legalFilings', [])) and 'alteration' in filings:
+        if (filings := ce.data.get("filing", {}).get("legalFilings", [])) and "alteration" in filings:
             # if alteration, then give it 5 seconds (lear will still be processing it in some cases)
             sleep(5)
   
     # get extra data from lear
-    business_info_path = f'/businesses/{identifier}'
-    parties_info_path = f'/businesses/{identifier}/parties'
+    business_info_path = f"/businesses/{identifier}"
+    parties_info_path = f"/businesses/{identifier}/parties"
     business_resp = get_entity_info(business_info_path)
     parties_resp = get_entity_info(parties_info_path)
     # only add parties that are currently stored in solr
-    solr_party_roles = ['partner', 'proprietor']  # solr does not store other parties
+    solr_party_roles = ["partner", "proprietor"]  # solr does not store other parties
     parties = []
-    for party in parties_resp.json().get('parties'):
-        valid_roles = [x for x in party.get('roles') if x['roleType'].lower() in solr_party_roles]
+    for party in parties_resp.json().get("parties"):
+        valid_roles = [x for x in party.get("roles") if x["roleType"].lower() in solr_party_roles]
         if valid_roles:
-            party['roles'] = valid_roles
+            party["roles"] = valid_roles
             parties.append(party)
 
     # update solr via search-api
     def convert_business(business: dict):
         """Return the business info with the expected legal name."""
-        if business['legalType'] in ['SP', 'GP']:
-            for name in business.get('alternateNames', []):
-                if name['identifier'] == business['identifier']:
-                    business['legalName'] = name['name']
+        if business["legalType"] in ["SP", "GP"]:
+            for name in business.get("alternateNames", []):
+                if name["identifier"] == business["identifier"]:
+                    business["legalName"] = name["name"]
                     break
         return business
 
     update_payload = {
-      'business': convert_business(business_resp.json()['business']),
-      'parties': parties
+      "business": convert_business(business_resp.json()["business"]),
+      "parties": parties
     }
     update_search(update_payload)
 
-    current_app.logger.debug('<<<<<<<process_business_event<<<<<<<<<<')
+    current_app.logger.debug("<<<<<<<process_business_event<<<<<<<<<<")

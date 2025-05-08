@@ -36,7 +36,6 @@ from http import HTTPStatus
 
 import requests
 from flask import current_app
-from flask_caching import Cache
 from requests import exceptions
 
 from search_solr_updater.exceptions import ExternalServiceException
@@ -47,28 +46,28 @@ def update_search(payload: dict):
     """Send data to search for update."""
     try:
         headers = {
-          'Authorization': 'Bearer ' + get_bearer_token(),
-          'Content-Type': 'application/json'
+          "Authorization": "Bearer " + get_bearer_token(),
+          "Content-Type": "application/json"
         }
-        url = current_app.config['SEARCH_SVC_URL'] + '/internal/solr/update'
+        url = current_app.config["SEARCH_SVC_URL"] + "/internal/solr/update"
         resp = requests.put(url=url,
                             headers=headers,
                             json=payload,
-                            timeout=current_app.config['SEARCH_SVC_TIMEOUT'])
+                            timeout=current_app.config["SEARCH_SVC_TIMEOUT"])
 
         if resp.status_code not in [HTTPStatus.OK, HTTPStatus.ACCEPTED]:
             current_app.logger.debug(resp.json())
-            raise ExternalServiceException(error='Unable send business data to search-api.',
+            raise ExternalServiceException(error="Unable send business data to search-api.",
                                            status_code=resp.status_code)
         return resp
     except (exceptions.ConnectionError, exceptions.Timeout) as err:
-        current_app.logger.debug('SEARCH API connection failure: %s', err)
-        raise ExternalServiceException(error='Unable send business data to search-api.',
-                                       status_code=resp.status_code)
+        current_app.logger.debug("SEARCH API connection failure: %s", err)
+        raise ExternalServiceException(error="Unable send business data to search-api.",
+                                       status_code=resp.status_code) from err
     except ExternalServiceException as err:
         # pass along
         raise err
     except Exception as err:
-        current_app.logger.debug('SEARCH API connection failure: %s', err.with_traceback(None))
-        raise ExternalServiceException(error='Unable send business data to search-api.',
-                                       status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
+        current_app.logger.debug("SEARCH API connection failure: %s", err.with_traceback(None))
+        raise ExternalServiceException(error="Unable send business data to search-api.",
+                                       status_code=HTTPStatus.INTERNAL_SERVER_ERROR) from err

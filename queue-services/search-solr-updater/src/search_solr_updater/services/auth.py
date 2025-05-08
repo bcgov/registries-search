@@ -43,7 +43,6 @@ from requests import exceptions
 
 from search_solr_updater.exceptions import BusinessException, ExternalServiceException
 
-
 auth_cache = Cache()
 
 
@@ -64,37 +63,37 @@ def verify_gcp_jwt():
             raise BusinessException(f"Invalid service account or email not verified for email: {claim['email']}")
 
     except Exception as err:
-        raise BusinessException(f"Invalid token: {err}")
+        raise BusinessException(f"Invalid token: {err}") from err
 
 
-@auth_cache.cached(timeout=300, key_prefix='view/token')
+@auth_cache.cached(timeout=300, key_prefix="view/token")
 def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
-    data = 'grant_type=client_credentials'
+    data = "grant_type=client_credentials"
     try:
         res = requests.post(
-            url=current_app.config['ACCOUNT_SVC_AUTH_URL'],
+            url=current_app.config["ACCOUNT_SVC_AUTH_URL"],
             data=data,
-            headers={'content-type': 'application/x-www-form-urlencoded'},
-            auth=(current_app.config['ACCOUNT_SVC_CLIENT_ID'], current_app.config['ACCOUNT_SVC_CLIENT_SECRET']),
-            timeout=current_app.config['ACCOUNT_SVC_TIMEOUT']
+            headers={"content-type": "application/x-www-form-urlencoded"},
+            auth=(current_app.config["ACCOUNT_SVC_CLIENT_ID"], current_app.config["ACCOUNT_SVC_CLIENT_SECRET"]),
+            timeout=current_app.config["ACCOUNT_SVC_TIMEOUT"]
         )
         if res.status_code != HTTPStatus.OK:
-            raise ConnectionError({'statusCode': res.status_code, 'json': res.json()})
-        return res.json().get('access_token')
+            raise ConnectionError({"statusCode": res.status_code, "json": res.json()})
+        return res.json().get("access_token")
     except exceptions.Timeout as err:
-        current_app.logger.debug('Account service connection timeout: %s', err.with_traceback(None))
+        current_app.logger.debug("Account service connection timeout: %s", err.with_traceback(None))
         raise ExternalServiceException(
             status_code=HTTPStatus.GATEWAY_TIMEOUT,
             error=err.with_traceback(None),
-            message='Unable to get service account token.',
+            message="Unable to get service account token.",
         ) from err
     except Exception as err:
-        current_app.logger.debug('Account service connection failure: %s', err.with_traceback(None))
+        current_app.logger.debug("Account service connection failure: %s", err.with_traceback(None))
         raise ExternalServiceException(
             status_code=HTTPStatus.GATEWAY_TIMEOUT,
             error=err.with_traceback(None),
-            message='Unable to get service account token.',
+            message="Unable to get service account token.",
         ) from err
 
 

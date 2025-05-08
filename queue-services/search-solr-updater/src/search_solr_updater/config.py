@@ -37,7 +37,6 @@ import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-
 # this will load all the envars from a .env file located in the project root (api)
 load_dotenv(find_dotenv())
 
@@ -50,10 +49,10 @@ class _Config:
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    LEAR_SVC_URL = os.getenv('BUSINESS_API_URL', 'http://') + os.getenv('BUSINESS_API_VERSION_2', '/api/v2')
+    LEAR_SVC_URL = os.getenv("BUSINESS_API_URL", "http://") + os.getenv("BUSINESS_API_VERSION_2", "/api/v2")
     LEAR_SVC_TIMEOUT = int(os.getenv("BUSINESS_SVC_TIMEOUT", "20"))
-    SEARCH_SVC_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL') \
-        + os.getenv('REGISTRIES_SEARCH_API_VERSION', '/api/v1')
+    SEARCH_SVC_URL = os.getenv("REGISTRIES_SEARCH_API_INTERNAL_URL") \
+        + os.getenv("REGISTRIES_SEARCH_API_VERSION", "/api/v1")
     SEARCH_SVC_TIMEOUT = int(os.getenv("SEARCH_SVC_TIMEOUT", "30"))
 
     # Service account details
@@ -88,9 +87,9 @@ class TestConfig(_Config):
     DEBUG = True
     TESTING = True
 
-    LEAR_SVC_URL = os.getenv('TEST_LEGAL_API_URL', 'http://legal_api_url.test')
-    SEARCH_API_URL = os.getenv('TEST_REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://search_api_url.test')
-    ACCOUNT_SVC_AUTH_URL = os.getenv('TEST_KEYCLOAK_AUTH_TOKEN_URL', 'http://kc_url.test')
+    LEAR_SVC_URL = os.getenv("TEST_LEGAL_API_URL", "http://legal_api_url.test")
+    SEARCH_API_URL = os.getenv("TEST_REGISTRIES_SEARCH_API_INTERNAL_URL", "http://search_api_url.test")
+    ACCOUNT_SVC_AUTH_URL = os.getenv("TEST_KEYCLOAK_AUTH_TOKEN_URL", "http://kc_url.test")
 
 
 class ProdConfig(_Config):
@@ -99,7 +98,7 @@ class ProdConfig(_Config):
 
     if not SECRET_KEY:
         SECRET_KEY = os.urandom(24)
-        print("WARNING: SECRET_KEY being set as a one-shot", file=sys.stderr)
+        print("WARNING: SECRET_KEY being set as a one-shot", file=sys.stderr)  # noqa: T201
 
     TESTING = False
     DEBUG = False
