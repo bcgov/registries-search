@@ -51,7 +51,7 @@ class _Config:
 
     LEAR_SVC_URL = os.getenv("BUSINESS_API_URL", "http://") + os.getenv("BUSINESS_API_VERSION_2", "/api/v2")
     LEAR_SVC_TIMEOUT = int(os.getenv("BUSINESS_SVC_TIMEOUT", "20"))
-    SEARCH_SVC_URL = os.getenv("SEARCH_API_INTERNAL_URL") + os.getenv("SEARCH_API_VERSION", "/api/v1")
+    SEARCH_SVC_URL = os.getenv("SEARCH_API_INTERNAL_URL", "http://") + os.getenv("SEARCH_API_VERSION", "/api/v1")
     SEARCH_SVC_TIMEOUT = int(os.getenv("SEARCH_SVC_TIMEOUT", "30"))
 
     # Service account details
@@ -86,9 +86,9 @@ class TestConfig(_Config):
     DEBUG = True
     TESTING = True
 
-    LEAR_SVC_URL = os.getenv("TEST_LEGAL_API_URL", "http://legal_api_url.test")
-    SEARCH_API_URL = os.getenv("TEST_REGISTRIES_SEARCH_API_INTERNAL_URL", "http://search_api_url.test")
-    ACCOUNT_SVC_AUTH_URL = os.getenv("TEST_KEYCLOAK_AUTH_TOKEN_URL", "http://kc_url.test")
+    LEAR_SVC_URL = os.getenv("TEST_LEAR_SVC_URL", "http://legal_api_url.test")
+    SEARCH_SVC_URL = os.getenv("TEST_SEARCH_SVC_URLL", "http://search_api_url.test")
+    ACCOUNT_SVC_AUTH_URL = os.getenv("TEST_ACCOUNT_SVC_AUTH_URL", "http://kc_url.test")
 
 
 class ProdConfig(_Config):
