@@ -50,6 +50,7 @@ serialPipeline:
       deploy-project-id: "k973yf-dev"
       service-name: "search-solr-updater-dev"
       container-name: "search-solr-updater-dev"
+      cloudsql-instances: ""
       service-account: "sa-api@k973yf-dev.iam.gserviceaccount.com"
  - targetId: k973yf-test
    profiles: [test]
@@ -62,6 +63,7 @@ serialPipeline:
       deploy-project-id: "k973yf-test"
       service-name: "search-solr-updater-test"
       container-name: "search-solr-updater-test"
+      cloudsql-instances: ""
       service-account: "sa-api@k973yf-test.iam.gserviceaccount.com"
  - targetId: k973yf-sandbox
    profiles: [sandbox]
@@ -74,6 +76,7 @@ serialPipeline:
       deploy-project-id: "k973yf-integration"
       service-name: "search-solr-updater-sandbox"
       container-name: "search-solr-updater-sandbox"
+      cloudsql-instances: ""
       service-account: "sa-api@k973yf-integration.iam.gserviceaccount.com"
  - targetId: k973yf-prod
    profiles: [prod]
@@ -86,6 +89,7 @@ serialPipeline:
       deploy-project-id: "k973yf-prod"
       service-name: "search-solr-updater-prod"
       container-name: "search-solr-updater-prod"
+      cloudsql-instances: ""
       container-concurrency: "60"
       resources-cpu: "8000m"
       resources-memory: "4Gi"
