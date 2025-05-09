@@ -1,4 +1,4 @@
-name: Search Updater CI
+name: Search Solr Updater CI
 
 on:
   pull_request:
@@ -22,4 +22,3 @@ jobs:
       app_name: "search-solr-updater"
       working_directory: "./queue-services/search-solr-updater"
       codecov_flag: "search-solr-updater"
-
