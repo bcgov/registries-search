@@ -45,7 +45,7 @@ from search_solr_updater.services.search import update_search
 
 def process_business_event(ce: SimpleCloudEvent):
     """Process business events."""
-    if not "bc.registry.business" in ce.type:
+    if not ce.type or not "bc.registry.business" in ce.type:
         # expecting bc.registry.business.<anything>
         current_app.logger.debug("skipping event based on ce.type")
         return
