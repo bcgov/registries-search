@@ -87,7 +87,7 @@ class TestConfig(_Config):
     TESTING = True
 
     LEAR_SVC_URL = os.getenv("TEST_LEAR_SVC_URL", "http://legal_api_url.test")
-    SEARCH_SVC_URL = os.getenv("TEST_SEARCH_SVC_URLL", "http://search_api_url.test")
+    SEARCH_SVC_URL = os.getenv("TEST_SEARCH_SVC_URL", "http://search_api_url.test")
     ACCOUNT_SVC_AUTH_URL = os.getenv("TEST_ACCOUNT_SVC_AUTH_URL", "http://kc_url.test")
 
 
