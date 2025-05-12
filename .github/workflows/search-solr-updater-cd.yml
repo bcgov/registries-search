@@ -1,14 +1,13 @@
 name: Search Solr Updater CD
 
 on:
-  # Manual for now
-  # push:
-  #   branches:
-  #     - main
-  #     - feature*
-  #     - hotfix*
-  #   paths:
-  #     - "queue-services/search-solr-updater/**"
+  push:
+    branches:
+      - main
+      - feature*
+      - hotfix*
+    paths:
+      - "queue-services/search-solr-updater/**"
   workflow_dispatch:
     inputs:
       target:
