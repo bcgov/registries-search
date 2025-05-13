@@ -33,8 +33,9 @@ from search_solr_importer.utils import (
 )
 
 
-def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,too-many-branches; will update
+def load_search_core():  # noqa: PLR0915, PLR0912
     """Load data from LEAR and COLIN into the search core."""
+    # TODO: update to remove noqa
     try:
         is_reindex = current_app.config.get("REINDEX_CORE")
         is_preload = current_app.config.get("PRELOADER_JOB")
@@ -109,7 +110,8 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
                 btr_data_descs = []
                 loop_count = 0
 
-                while loop_count < 100:  # NOTE: should never get to this condition
+                while loop_count < 100:  # noqa: PLR2004
+                    # NOTE: should never get to this condition
                     loop_count += 1
                     current_app.logger.debug("********** Collecting BTR data **********")
                     btr_data_cur = collect_btr_data(batch_limit, btr_fetch_count)
@@ -172,8 +174,8 @@ def load_search_core():  # pylint: disable=too-many-statements,too-many-locals,t
 
 
 if __name__ == "__main__":
-    print("Starting data importer...")
-    app = create_app()  # pylint: disable=invalid-name
+    print("Starting data importer...")  # noqa: T201
+    app = create_app()
     with app.app_context():
         load_search_core()
         sys.exit(0)

@@ -1,4 +1,4 @@
-name: SEARCH IMPORTER CD
+name: Search Solr Importer CD
 
 on:
   push:
