@@ -20,7 +20,7 @@ import os
 from flask import Flask
 
 from search_api.services import business_solr
-from search_solr_importer.config import DevelopmentConfig, UnitTestingConfig, ProductionConfig
+from search_solr_importer.config import DevelopmentConfig, ProductionConfig, UnitTestingConfig
 from search_solr_importer.oracle import oracle_db
 from search_solr_importer.translations import babel
 from search_solr_importer.version import __version__
@@ -28,14 +28,14 @@ from structured_logging import StructuredLogging
 
 
 def _get_build_openshift_commit_hash():
-    return os.getenv('OPENSHIFT_BUILD_COMMIT', None)
+    return os.getenv("OPENSHIFT_BUILD_COMMIT", None)
 
 
 def get_run_version():
     """Return a formatted version string for this service."""
     commit_hash = _get_build_openshift_commit_hash()
     if commit_hash:
-        return f'{__version__}-{commit_hash}'
+        return f"{__version__}-{commit_hash}"
     return __version__
 
 
@@ -43,19 +43,19 @@ def register_shellcontext(app):
     """Register shell context objects."""
     def shell_context():
         """Shell context objects."""
-        return {'app': app}
+        return {"app": app}
 
     app.shell_context_processor(shell_context)
 
 
 config = {  # pylint: disable=invalid-name; Keeping name consistent with our other apps
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': UnitTestingConfig,
+    "development": DevelopmentConfig,
+    "production": ProductionConfig,
+    "testing": UnitTestingConfig,
 }
 
 
-def create_app(config_name: str = os.getenv('DEPLOYMENT_ENV', 'production') or 'production'):
+def create_app(config_name: str = os.getenv("DEPLOYMENT_ENV", "production") or "production"):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, ProductionConfig))
