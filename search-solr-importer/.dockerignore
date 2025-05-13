@@ -1,3 +1,5 @@
+Dockerfile
+.dockerignore
 .ruff_cache
 .pytest_cache
 __pycache__
@@ -7,5 +9,6 @@ __pycache__
 .eggs
 Makefile
 devops
-test_data
 tests
+build
+htmlcov

@@ -28,7 +28,7 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 
 
-class Config():  # pylint: disable=too-few-public-methods
+class Config():
     """Base class configuration that should set reasonable defaults.
 
     Used as the base for all the other configurations.
@@ -49,11 +49,7 @@ class Config():  # pylint: disable=too-few-public-methods
     SEARCH_API_URL = os.getenv('REGISTRIES_SEARCH_API_INTERNAL_URL', 'http://')
     SEARCH_API_V1 = os.getenv('REGISTRIES_SEARCH_API_VERSION', '')
 
-    POD_NAMESPACE = os.getenv('POD_NAMESPACE', 'unknown')
-
     LD_SDK_KEY = os.getenv('LD_SDK_KEY', None)
-    SENTRY_DSN = os.getenv('SENTRY_DSN', None)
-    SENTRY_TSR = os.getenv('SENTRY_TSR', '1.0')
 
     BATCH_SIZE = int(os.getenv('SOLR_BATCH_UPDATE_SIZE', '1000'))
     REINDEX_CORE = os.getenv('REINDEX_CORE', 'False') == 'True'
@@ -71,8 +67,6 @@ class Config():  # pylint: disable=too-few-public-methods
     RESYNC_OFFSET = os.getenv('RESYNC_OFFSET', '130')
 
     BTR_BATCH_LIMIT = int(os.getenv('BTR_BATCH_LIMIT', '100000'))
-
-    MODERNIZED_LEGAL_TYPES = os.getenv('MODERNIZED_LEGAL_TYPES', 'BEN,CBEN,CP,GP,SP').upper().split(',')
 
     # TODO: or not include btr
     IS_PARTIAL_IMPORT = not INCLUDE_COLIN_LOAD or not INCLUDE_LEAR_LOAD
@@ -95,20 +89,12 @@ class Config():  # pylint: disable=too-few-public-methods
 
     # POSTGRESQL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DB_LOCATION = os.getenv('DATABASE_LOCATION', 'OCP')
 
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', '')
     DB_NAME = os.getenv('DATABASE_NAME', '')
     DB_HOST = os.getenv('DATABASE_HOST_LEAR', '')
     DB_PORT = os.getenv('DATABASE_PORT', '5432')
-
-    if DB_LOCATION == 'GCP':
-        DB_USER = os.getenv('DATABASE_USERNAME_GCP', '')
-        DB_PASSWORD = os.getenv('DATABASE_PASSWORD_GCP', '')
-        DB_NAME = os.getenv('DATABASE_NAME_GCP', '')
-        DB_HOST = os.getenv('DATABASE_HOST_GCP', '')
-        DB_PORT = os.getenv('DATABASE_PORT_GCP', '5432')
 
     BTR_DB_USER = os.getenv('DATABASE_USERNAME_BTR', '')
     BTR_DB_PASSWORD = os.getenv('DATABASE_PASSWORD_BTR', '')
@@ -135,7 +121,7 @@ class Config():  # pylint: disable=too-few-public-methods
     EVENT_MAX_RETRIES: int = int(os.getenv('EVENT_MAX_RETRIES', '3'))
 
 
-class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
+class DevelopmentConfig(Config):
     """Config object for development environment."""
 
     DEBUG = True
@@ -143,7 +129,7 @@ class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     TESTING = False
 
 
-class UnitTestingConfig(Config):  # pylint: disable=too-few-public-methods
+class UnitTestingConfig(Config):
     """Config object for unit testing environment."""
 
     DEBUG = True
@@ -214,16 +200,9 @@ NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
 -----END RSA PRIVATE KEY-----"""
 
 
-class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
+class ProductionConfig(Config):
     """Config object for production environment."""
 
     DEBUG = False
     DEVELOPMENT = False
     TESTING = False
-
-
-config = {  # pylint: disable=invalid-name; Keeping name consistent with our other apps
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'unitTesting': UnitTestingConfig,
-}

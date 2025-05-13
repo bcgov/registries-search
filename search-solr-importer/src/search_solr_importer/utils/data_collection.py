@@ -64,9 +64,6 @@ def collect_colin_data():
 
 def collect_lear_data():
     """Collect data from LEAR."""
-    if current_app.config.get('DB_LOCATION') == 'GCP':
-        return _collect_lear_data_gcp()
-
     current_app.logger.debug('Connecting to OCP Postgres instance...')
     conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
                             port=current_app.config.get('DB_PORT'),
@@ -85,53 +82,6 @@ def collect_lear_data():
                        AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
             LEFT JOIN parties p on p.id = pr.party_id
         WHERE b.legal_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
-        """)
-    return cur
-
-
-def _collect_lear_data_gcp():
-    """Collect data from LEAR."""
-    current_app.logger.debug('Connecting to GCP Postgres instance...')
-    conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
-                            port=current_app.config.get('DB_PORT'),
-                            database=current_app.config.get('DB_NAME'),
-                            user=current_app.config.get('DB_USER'),
-                            password=current_app.config.get('DB_PASSWORD'))
-    cur = conn.cursor()
-    current_app.logger.debug('Collecting LEAR data...')
-    cur.execute(f"""
-        SELECT le.identifier,le.legal_name,le.entity_type as legal_type,le.founding_date,
-            le.restoration_expiry_date,le.last_ar_date,alt.name as legal_name_alt,
-            er.role_type as role,er.appointment_date,
-            rle.first_name,rle.middle_initial,rle.last_name,rle.id as party_id,rle.legal_name as organization_name,
-            rle_alt.name as organization_name_alt,
-            rle_colin.organization_name as organization_name_colin,rle_colin.id as party_id_colin,
-            CASE WHEN rle.entity_type != 'person'
-                 THEN 'organization'
-                 ELSE 'person'
-                 END party_type,
-            CASE WHEN le.state = 'LIQUIDATION'
-                 THEN 'ACTIVE'
-                 ELSE le.state
-                 END state,
-            CASE WHEN alt.bn15 IS NOT NULL
-                 THEN alt.bn15
-                 ELSE le.tax_id
-                 END tax_id
-        FROM legal_entities le
-            LEFT JOIN alternate_names alt
-                ON alt.legal_entity_id = le.id
-                    AND alt.name_type = 'OPERATING'
-                    AND alt.end_date IS NULL
-            LEFT JOIN entity_roles er ON er.legal_entity_id = le.id
-            LEFT JOIN legal_entities rle ON rle.id = er.related_entity_id
-            LEFT JOIN alternate_names rle_alt
-                ON rle_alt.legal_entity_id = rle.id
-                    AND rle_alt.name_type = 'OPERATING'
-                    AND rle_alt.end_date IS NULL
-            LEFT JOIN colin_entities rle_colin ON rle_colin.id = er.related_colin_entity_id
-        WHERE le.entity_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
-            AND er.cessation_date IS NULL
         """)
     return cur
 
