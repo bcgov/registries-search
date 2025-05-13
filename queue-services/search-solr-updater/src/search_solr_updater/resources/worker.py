@@ -50,7 +50,7 @@ def worker():
     try:
         if not request.data:
             return {}, HTTPStatus.OK
-        if msg := verify_gcp_jwt(request):
+        if msg := verify_gcp_jwt():
             current_app.logger.info(msg)
             return {}, HTTPStatus.FORBIDDEN
 
