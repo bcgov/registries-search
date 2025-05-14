@@ -41,8 +41,8 @@ class OracleDB:
     @staticmethod
     def teardown(exc=None):
         """Oracle session pool cleans up after itself."""
-        print(f'teardown {exc}')
-        pool = g.pop('_oracle_pool', None)
+        print(f"teardown {exc}")  # noqa: T201
+        pool = g.pop("_oracle_pool", None)
 
         if pool is not None:
             try:
@@ -60,15 +60,13 @@ class OracleDB:
             cursor = conn.cursor()
             cursor.execute("alter session set TIME_ZONE = 'America/Vancouver'")
 
-        return cx_Oracle.SessionPool(user=current_app.config.get('ORACLE_USER'),  # pylint:disable=c-extension-no-member
-                                     password=current_app.config.get('ORACLE_PASSWORD'),
-                                     dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),  # noqa: E501; pylint:disable=consider-using-f-string
-                                                              current_app.config.get('ORACLE_PORT'),
-                                                              current_app.config.get('ORACLE_DB_NAME')),
+        return cx_Oracle.SessionPool(user=current_app.config.get("ORACLE_USER"),
+                                     password=current_app.config.get("ORACLE_PASSWORD"),
+                                     dsn="%s:%s/%s",
                                      min=1,
                                      max=10,
                                      increment=1,
-                                     getmode=cx_Oracle.SPOOL_ATTRVAL_NOWAIT,  # pylint:disable=c-extension-no-member
+                                     getmode=cx_Oracle.SPOOL_ATTRVAL_NOWAIT,
                                      wait_timeout=1500,
                                      timeout=3600,
                                      session_callback=init_session)
@@ -82,11 +80,11 @@ class OracleDB:
         and then return an acquired session
         :return: cx_Oracle.connection type
         """
-        if '_oracle_pool' not in g:
-            g._oracle_pool = self._create_pool()  # pylint: disable=protected-access, assigning-non-slot
+        if "_oracle_pool" not in g:
+            g._oracle_pool = self._create_pool()
 
-        return g._oracle_pool.acquire()  # pylint: disable=protected-access
+        return g._oracle_pool.acquire()
 
 
 # export instance of this class
-oracle_db = OracleDB()  # pylint: disable=invalid-name;
+oracle_db = OracleDB()

@@ -21,16 +21,16 @@ from search_solr_importer import oracle_db
 def _get_stringified_list_for_sql(config_value: str) -> str:
     """Return the values from the config in a format usable for the execute statement."""
     if items := current_app.config.get(config_value, []):
-        return ','.join([f"'{x}'" for x in items]).replace(')', '')
+        return ",".join([f"'{x}'" for x in items]).replace(")", "")
 
-    return ''
+    return ""
 
 
 def collect_colin_data():
     """Collect data from COLIN."""
-    current_app.logger.debug('Connecting to Oracle instance...')
+    current_app.logger.debug("Connecting to Oracle instance...")
     cursor = oracle_db.connection.cursor()
-    current_app.logger.debug('Collecting COLIN data...')
+    current_app.logger.debug("Collecting COLIN data...")
     cursor.execute(f"""
         SELECT c.corp_num as identifier, c.corp_typ_cd as legal_type, c.bn_15 as tax_id,
             c.last_ar_filed_dt as last_ar_date, c.recognition_dts as founding_date, c.transition_dt,
@@ -64,17 +64,14 @@ def collect_colin_data():
 
 def collect_lear_data():
     """Collect data from LEAR."""
-    if current_app.config.get('DB_LOCATION') == 'GCP':
-        return _collect_lear_data_gcp()
-
-    current_app.logger.debug('Connecting to OCP Postgres instance...')
-    conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
-                            port=current_app.config.get('DB_PORT'),
-                            database=current_app.config.get('DB_NAME'),
-                            user=current_app.config.get('DB_USER'),
-                            password=current_app.config.get('DB_PASSWORD'))
+    current_app.logger.debug("Connecting to OCP Postgres instance...")
+    conn = psycopg2.connect(host=current_app.config.get("DB_HOST"),
+                            port=current_app.config.get("DB_PORT"),
+                            database=current_app.config.get("DB_NAME"),
+                            user=current_app.config.get("DB_USER"),
+                            password=current_app.config.get("DB_PASSWORD"))
     cur = conn.cursor()
-    current_app.logger.debug('Collecting LEAR data...')
+    current_app.logger.debug("Collecting LEAR data...")
     cur.execute(f"""
         SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id,b.last_ar_date,
             b.founding_date,b.restoration_expiry_date,pr.role,
@@ -89,72 +86,25 @@ def collect_lear_data():
     return cur
 
 
-def _collect_lear_data_gcp():
-    """Collect data from LEAR."""
-    current_app.logger.debug('Connecting to GCP Postgres instance...')
-    conn = psycopg2.connect(host=current_app.config.get('DB_HOST'),
-                            port=current_app.config.get('DB_PORT'),
-                            database=current_app.config.get('DB_NAME'),
-                            user=current_app.config.get('DB_USER'),
-                            password=current_app.config.get('DB_PASSWORD'))
-    cur = conn.cursor()
-    current_app.logger.debug('Collecting LEAR data...')
-    cur.execute(f"""
-        SELECT le.identifier,le.legal_name,le.entity_type as legal_type,le.founding_date,
-            le.restoration_expiry_date,le.last_ar_date,alt.name as legal_name_alt,
-            er.role_type as role,er.appointment_date,
-            rle.first_name,rle.middle_initial,rle.last_name,rle.id as party_id,rle.legal_name as organization_name,
-            rle_alt.name as organization_name_alt,
-            rle_colin.organization_name as organization_name_colin,rle_colin.id as party_id_colin,
-            CASE WHEN rle.entity_type != 'person'
-                 THEN 'organization'
-                 ELSE 'person'
-                 END party_type,
-            CASE WHEN le.state = 'LIQUIDATION'
-                 THEN 'ACTIVE'
-                 ELSE le.state
-                 END state,
-            CASE WHEN alt.bn15 IS NOT NULL
-                 THEN alt.bn15
-                 ELSE le.tax_id
-                 END tax_id
-        FROM legal_entities le
-            LEFT JOIN alternate_names alt
-                ON alt.legal_entity_id = le.id
-                    AND alt.name_type = 'OPERATING'
-                    AND alt.end_date IS NULL
-            LEFT JOIN entity_roles er ON er.legal_entity_id = le.id
-            LEFT JOIN legal_entities rle ON rle.id = er.related_entity_id
-            LEFT JOIN alternate_names rle_alt
-                ON rle_alt.legal_entity_id = rle.id
-                    AND rle_alt.name_type = 'OPERATING'
-                    AND rle_alt.end_date IS NULL
-            LEFT JOIN colin_entities rle_colin ON rle_colin.id = er.related_colin_entity_id
-        WHERE le.entity_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
-            AND er.cessation_date IS NULL
-        """)
-    return cur
-
-
-def collect_btr_data(limit: int = None, offset: int = None):
+def collect_btr_data(limit: int | None = None, offset: int | None = None):
     """Collect data from BTR."""
-    limit_clause = ''
+    limit_clause = ""
     if limit:
-        limit_clause = f'LIMIT {limit}'
+        limit_clause = f"LIMIT {limit}"
     if offset:
-        limit_clause += f' OFFSET {offset}'
+        limit_clause += f" OFFSET {offset}"
     if limit_clause:
         # NOTE: needed in order to make sure we get every record when doing batch loads
-        limit_clause = f'ORDER BY p.id {limit_clause}'
+        limit_clause = f"ORDER BY p.id {limit_clause}"
 
-    current_app.logger.debug('Connecting to BTR GCP Postgres instance...')
-    conn = psycopg2.connect(host=current_app.config.get('BTR_DB_HOST'),
-                            port=current_app.config.get('BTR_DB_PORT'),
-                            database=current_app.config.get('BTR_DB_NAME'),
-                            user=current_app.config.get('BTR_DB_USER'),
-                            password=current_app.config.get('BTR_DB_PASSWORD'))
+    current_app.logger.debug("Connecting to BTR GCP Postgres instance...")
+    conn = psycopg2.connect(host=current_app.config.get("BTR_DB_HOST"),
+                            port=current_app.config.get("BTR_DB_PORT"),
+                            database=current_app.config.get("BTR_DB_NAME"),
+                            user=current_app.config.get("BTR_DB_USER"),
+                            password=current_app.config.get("BTR_DB_PASSWORD"))
     cur = conn.cursor()
-    current_app.logger.debug('Collecting BTR data...')
+    current_app.logger.debug("Collecting BTR data...")
     cur.execute(f"""
                 SELECT s.business_identifier, p.person_json
                 FROM submission s

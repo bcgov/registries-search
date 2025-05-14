@@ -18,8 +18,8 @@ from enum import Enum
 class ColinPartyTypeCode(str, Enum):
     """Enum of the party type codes in colin."""
 
-    DIRECTOR = 'DIR'
-    FIRM_IND_OWNER = 'FIO'
-    FIRM_BUS_OWNER = 'FBO'
-    FIRM_COMP_PARTY = 'FCP'
-    INCORPORATOR = 'INC'
+    DIRECTOR = "DIR"
+    FIRM_IND_OWNER = "FIO"
+    FIRM_BUS_OWNER = "FBO"
+    FIRM_COMP_PARTY = "FCP"
+    INCORPORATOR = "INC"
