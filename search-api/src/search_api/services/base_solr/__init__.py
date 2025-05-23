@@ -94,13 +94,12 @@ class Solr:
         url = query.format(url=base_url, core=core)
         retries = Retry(total=self.app.config["SOLR_RETRY_TOTAL"],
                         backoff_factor=self.app.config["SOLR_RETRY_BACKOFF_FACTOR"],
-                        status_forcelist=[413, 429, 500, 502, 503, 504],
+                        status_forcelist=[413, 429, 502, 503, 504],
                         allowed_methods=["GET", "POST"])
         session = Session()
         session.mount(url, HTTPAdapter(max_retries=retries))
 
         response = None
-        current_app.logger.debug("now")
         try:
             if method == "GET":
                 response = session.get(url, params=params, timeout=timeout)
@@ -129,6 +128,8 @@ class Solr:
                 status_code=HTTPStatus.GATEWAY_TIMEOUT) from err
         except Exception as err:
             current_app.logger.debug(err.with_traceback(None))
+            current_app.logger.debug("method: %s, query: %s, params: %s, data: %s",
+                                     method, query, params, xml_data or json_data)
             msg = "Error handling Solr request."
             status_code = HTTPStatus.INTERNAL_SERVER_ERROR
             with suppress(Exception):
