@@ -44,6 +44,9 @@ class Config:
     SOLR_SVC_BUS_LEADER_URL = os.getenv("SOLR_SVC_BUS_LEADER_URL", "http://localhost:8873/solr")
     SOLR_SVC_BUS_FOLLOWER_URL = os.getenv("SOLR_SVC_BUS_FOLLOWER_URL", "http://localhost:8874/solr")
     HAS_FOLLOWER = SOLR_SVC_BUS_FOLLOWER_URL != SOLR_SVC_BUS_LEADER_URL
+    # Retry settings
+    SOLR_RETRY_TOTAL = int(os.getenv("SOLR_RETRY_TOTAL", "2"))
+    SOLR_RETRY_BACKOFF_FACTOR = int(os.getenv("SOLR_RETRY_BACKOFF_FACTOR", "5"))
 
     SEARCH_API_URL = os.getenv("REGISTRIES_SEARCH_API_INTERNAL_URL", "http://")
     SEARCH_API_V1 = os.getenv("REGISTRIES_SEARCH_API_VERSION", "")

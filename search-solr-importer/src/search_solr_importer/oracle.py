@@ -18,7 +18,7 @@ These will get initialized by the application.
 from __future__ import annotations
 
 import cx_Oracle
-from flask import current_app, g
+from flask import Flask, current_app, g
 
 
 class OracleDB:
@@ -29,7 +29,7 @@ class OracleDB:
         if app is not None:
             self.init_app(app)
 
-    def init_app(self, app):
+    def init_app(self, app: Flask):
         """Create setup for the extension.
 
         :param app: Flask app
@@ -56,13 +56,15 @@ class OracleDB:
 
         :return: an instance of the OCI Session Pool
         """
-        def init_session(conn, *args):  # pylint: disable=unused-argument; Extra var being passed with call
+        def init_session(conn, *args):
             cursor = conn.cursor()
             cursor.execute("alter session set TIME_ZONE = 'America/Vancouver'")
 
         return cx_Oracle.SessionPool(user=current_app.config.get("ORACLE_USER"),
                                      password=current_app.config.get("ORACLE_PASSWORD"),
-                                     dsn="%s:%s/%s",
+                                     dsn="{0}:{1}/{2}".format(current_app.config.get("ORACLE_HOST"),  # noqa: UP030
+                                                              current_app.config.get("ORACLE_PORT"),
+                                                              current_app.config.get("ORACLE_DB_NAME")),
                                      min=1,
                                      max=10,
                                      increment=1,
