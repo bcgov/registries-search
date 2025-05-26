@@ -62,9 +62,9 @@ class OracleDB:
 
         return cx_Oracle.SessionPool(user=current_app.config.get("ORACLE_USER"),
                                      password=current_app.config.get("ORACLE_PASSWORD"),
-                                     dsn='{0}:{1}/{2}'.format(current_app.config.get('ORACLE_HOST'),
-                                                              current_app.config.get('ORACLE_PORT'),
-                                                              current_app.config.get('ORACLE_DB_NAME')),
+                                     dsn="{0}:{1}/{2}".format(current_app.config.get("ORACLE_HOST"),  # noqa: UP030
+                                                              current_app.config.get("ORACLE_PORT"),
+                                                              current_app.config.get("ORACLE_DB_NAME")),
                                      min=1,
                                      max=10,
                                      increment=1,

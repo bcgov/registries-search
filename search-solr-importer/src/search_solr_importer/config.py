@@ -83,9 +83,6 @@ class Config:
 
     # ORACLE - CDEV/CTST/CPRD
     ORACLE_USER = os.getenv("ORACLE_USER", "")
-    print('config here 1')
-    print(ORACLE_USER)
-    print('config here 2')
     ORACLE_PASSWORD = os.getenv("ORACLE_PASSWORD", "")
     ORACLE_DB_NAME = os.getenv("ORACLE_DB_NAME", "")
     ORACLE_HOST = os.getenv("ORACLE_HOST", "")
