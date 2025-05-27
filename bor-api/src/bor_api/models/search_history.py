@@ -14,11 +14,10 @@
 """Manages user search history."""
 from __future__ import annotations
 
-from datetime import UTC, datetime
-
 from sqlalchemy.dialects.postgresql import JSONB
 
 from bor_api.enums import SearchAccessLevel
+from bor_api.utils.util import utcnow
 
 from .db import db
 
@@ -31,7 +30,7 @@ class SearchHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     params = db.Column(JSONB)
     results = db.Column(JSONB)
-    search_date = db.Column(db.DateTime(timezone=True), default=datetime.now(UTC), index=True)
+    search_date = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
     submitter_id = db.Column(db.Integer, db.ForeignKey("users.id"), index=True, nullable=True)
     submitter_account_id = db.Column(db.Integer, index=True, nullable=True)
     access_level = db.Column(db.Enum(SearchAccessLevel), index=True, nullable=True)

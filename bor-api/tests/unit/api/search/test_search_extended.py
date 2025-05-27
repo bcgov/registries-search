@@ -22,7 +22,7 @@ import requests_mock
 from bor_api.enums import SolrSynonymType
 from bor_api.models import SolrSynonymList
 from bor_api.services import solr
-from bor_api.services.authz import BASIC_USER, auth_cache
+from bor_api.services.authz import BASIC_USER, SYSTEM_ROLE, auth_cache
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
 from tests import integration_solr
@@ -6556,6 +6556,38 @@ def test_search_product_access(
         data=json.dumps({"query": {"value": "a"}}),
         headers=create_header(
             jwt, [BASIC_USER], **{"Accept-Version": "v1", "content-type": "application/json", "Account-Id": 1}
+        ),
+    )
+    # test
+    assert resp.status_code == expected
+
+
+@pytest.mark.parametrize(
+    "test_name,flag_value,roles,is_allowed,expected",
+    [
+        ("test_flag_authorized", True, [BASIC_USER], True, HTTPStatus.OK),
+        ("test_flag_authorized_not_allowed", True, [BASIC_USER], False, HTTPStatus.UNAUTHORIZED),
+        ("test_system_authorized", False, [SYSTEM_ROLE], True, HTTPStatus.OK),
+        ("test_system_authorized_not_allowed", False, [SYSTEM_ROLE], False, HTTPStatus.UNAUTHORIZED),
+    ],
+)
+def test_search_individual_access(
+    app, client, session, jwt, monkeypatch, requests_mock, test_name, flag_value, roles, is_allowed, expected
+):
+    """Assert access is granted/denied based on the ldflag, user roles, and config."""
+    # setup mocks
+    monkeypatch.setattr("bor_api.utils.request_validators.account_products", lambda *args, **kwargs: [{"code": "CA_SEARCH", "subscriptionStatus": "INACTIVE"}])
+    monkeypatch.setattr("bor_api.utils.request_validators.flags.value", lambda *args, **kwargs: flag_value)
+    app.config['ALLOW_INDIVIDUAL_ACCESS'] = is_allowed
+    requests_mock.post(
+        f"{app.config.get('SOLR_SVC_LEADER_URL')}/bor/query", json={"response": {"docs": [], "numFound": 0, "start": 0}}
+    )
+    # call search
+    resp = client.post(
+        f"/api/v1/search/extended",
+        data=json.dumps({"query": {"value": "a"}}),
+        headers=create_header(
+            jwt, roles, **{"Accept-Version": "v1", "content-type": "application/json", "Account-Id": 1}
         ),
     )
     # test

@@ -101,9 +101,9 @@ def _validate_search_access_level(user: User, access_level: SearchAccessLevel) -
         current_app.logger.error("Unhandled access level: %s", access_level)
         errors.append({"Error evaluating search access."})
 
-    has_direct_access = jwt.contains_role(request_ctx.current_user, ["system"]) or flags.value(
-        access_flag_name, {"key": user.sub}
-    )
+    has_direct_access = (current_app.config["ALLOW_INDIVIDUAL_ACCESS"] and
+                         (jwt.contains_role(request_ctx.current_user, ["system"]) or
+                          flags.value(access_flag_name, {"key": user.sub})))
     if not has_direct_access:
         # Direct access not enabled for user so check if account has the product subscription.
         current_app.logger.debug("Direct access denied, checking account access...")

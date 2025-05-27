@@ -48,6 +48,7 @@ class Config:
 
     POD_NAMESPACE = os.getenv("POD_NAMESPACE", "unknown")
     TRUSTED_TESTER_IDS = os.getenv("TRUSTED_TESTER_IDS", "").split(",")
+    ALLOW_INDIVIDUAL_ACCESS = os.getenv("ALLOW_INDIVIDUAL_ACCESS", "False") == "True"
 
     LD_SDK_KEY = os.getenv("LD_SDK_KEY", None)
 
