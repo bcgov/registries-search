@@ -48,8 +48,8 @@ class Config:
     SOLR_RETRY_TOTAL = int(os.getenv("SOLR_RETRY_TOTAL", "2"))
     SOLR_RETRY_BACKOFF_FACTOR = int(os.getenv("SOLR_RETRY_BACKOFF_FACTOR", "5"))
 
-    SEARCH_API_URL = os.getenv("REGISTRIES_SEARCH_API_INTERNAL_URL", "http://")
-    SEARCH_API_V1 = os.getenv("REGISTRIES_SEARCH_API_VERSION", "")
+    SEARCH_API_URL = os.getenv("SEARCH_API_INTERNAL_URL", "http://")
+    SEARCH_API_V1 = os.getenv("SEARCH_API_VERSION", "")
 
     LD_SDK_KEY = os.getenv("LD_SDK_KEY", None)
 
