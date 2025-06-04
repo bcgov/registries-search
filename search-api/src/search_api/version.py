@@ -22,4 +22,4 @@ Post-release segment: .postN
 Development release segment: .devN
 """
 
-__version__ = "2.0.8"
+__version__ = "2.1.0"
