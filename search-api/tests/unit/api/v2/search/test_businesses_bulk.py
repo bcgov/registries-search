@@ -160,7 +160,7 @@ def test_search_bulk_error(app, session, client, requests_mock):
     ('test_invalid_names', {'names': 'wrong'}, [{'Invalid payload': "Expected 'names' and 'identifiers' to be a list of strings."}]),
     ('test_invalid_identifiers', {'identifiers': 1}, [{'Invalid payload': "Expected 'names' and 'identifiers' to be a list of strings."}]),
     ('test_invalid_rows_1', {'identifiers': ['BC1234567'], 'rows': '10'}, [{'Invalid payload': "Expected 'rows' to be an integer."}]),
-    ('test_invalid_rows_2', {'identifiers': ['BC1234567'], 'rows': 3000}, [{'Invalid payload': "Expected 'rows' to be <= 2000."}]),
+    ('test_invalid_rows_2', {'identifiers': ['BC1234567'], 'rows': 10001}, [{'Invalid payload': "Expected 'rows' to be <= 10000."}]),
 ])
 def test_search_bulk_bad_request(app, session, client, test_name, payload, errors):
     """Assert that the business search call validates the payload."""
