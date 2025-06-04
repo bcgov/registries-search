@@ -14,7 +14,7 @@
 """API endpoints for Search."""
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
@@ -127,12 +127,12 @@ def businesses_bulk():
             errors.append({"Invalid payload": "Expected 'names' and 'identifiers' to be a list of strings."})
         elif requested_amount := (len(names) + len(identifiers)) == 0:
             errors.append({"Invalid payload": "Expected at least 1 value in 'names' or 'identifiers'."})
-        elif requested_amount > 1000:
-            errors.append({"Invalid payload": "Expected combined length of 'names' and 'identifiers' to be <= 1000."})
+        elif (max_amount := current_app.config["MAX_BULK_SEARCH_VALUES"]) < requested_amount:
+            errors.append({"Invalid payload": f"Expected combined length of 'names' and 'identifiers' to be <= {max_amount}."})
         if not isinstance(rows, int):
             errors.append({"Invalid payload": "Expected 'rows' to be an integer."})
-        elif rows > 2000:
-            errors.append({"Invalid payload": "Expected 'rows' to be <= 2000."})
+        elif (max_rows := current_app.config["SOLR_SVC_BUS_MAX_ROWS"]) < rows:
+            errors.append({"Invalid payload": f"Expected 'rows' to be <= {max_rows}."})
         if len(errors) > 0:
             return resource_utils.bad_request_response("Errors processing request.", errors)
 

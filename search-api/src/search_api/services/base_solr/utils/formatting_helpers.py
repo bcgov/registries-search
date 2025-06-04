@@ -62,15 +62,15 @@ def prep_query_str(query: str, dash: str | None = None, replace_and = True) -> s
     if replace_and:
         query = re.sub(special_and, r" and ", query)
     if dash:
-        if dash == 'replace':
+        if dash == "replace":
             query = re.sub(rmv_dash, r" ", query)
-        if dash == 'remove':
+        if dash == "remove":
             query = re.sub(rmv_dash, r"", query)
-        if dash == 'pad':
+        if dash == "pad":
             query = re.sub(pad_dash, r"\1 \2 \3", query)
-        if dash == 'tighten':
+        if dash == "tighten":
             query = re.sub(tighten_dash, r"\2", query)
-        if dash == 'tighten-remove':
+        if dash == "tighten-remove":
             query = re.sub(tighten_dash, r"", query)
 
     query = re.sub(esc_begin, r"\1\\\2", query)
