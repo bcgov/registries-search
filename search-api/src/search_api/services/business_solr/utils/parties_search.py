@@ -28,6 +28,7 @@ def parties_search(params: QueryParams, solr: BusinessSolr):
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields)
     # boosts for term order result ordering
+    # TODO: use full_query_boosts to set this
     initial_queries["query"] += f' OR ({PartyField.PARTY_NAME_Q.value}:"{params.query["value"]}"~5^5)'
     initial_queries["query"] += f' OR ({PartyField.PARTY_NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
     if params.query["value"]:

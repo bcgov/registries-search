@@ -362,146 +362,40 @@
 			"name": "search",
 			"item": [
 				{
-					"name": "suggest",
+					"name": "facets",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Account-Id",
-								"value": "{{account_id}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=113456&rows=20&highlight=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{version}}",
-								"businesses",
-								"search",
-								"suggest"
-							],
-							"query": [
+						"auth": {
+							"type": "bearer",
+							"bearer": [
 								{
-									"key": "query",
-									"value": "113456"
-								},
-								{
-									"key": "rows",
-									"value": "20"
-								},
-								{
-									"key": "highlight",
-									"value": "true"
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
 								}
 							]
 						},
-						"description": "Get drafts example."
-					},
-					"response": [
-						{
-							"name": "suggest",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "Account-Id",
-										"value": "{{account_id}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/{{version}}/businesses/search/suggest?query=113456&rows=20&highlight=true",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"{{version}}",
-										"businesses",
-										"search",
-										"suggest"
-									],
-									"query": [
-										{
-											"key": "query",
-											"value": "113456"
-										},
-										{
-											"key": "rows",
-											"value": "20"
-										},
-										{
-											"key": "highlight",
-											"value": "true"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Werkzeug/3.0.3 Python/3.11.4"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 23 Jul 2024 22:37:14 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "185"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "API",
-									"value": "search_api/2.0.0a1"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"queryInfo\": {\n        \"highlight\": false,\n        \"query\": \"113456\",\n        \"rows\": 5\n    },\n    \"results\": [\n        {\n            \"type\": \"bn\",\n            \"value\": \"113456789BC0001\"\n        }\n    ],\n    \"warnings\": [\n        \"This call is depreciated. Please use \\\"/facets\\\" instead.\"\n    ]\n}"
-						}
-					]
-				},
-				{
-					"name": "facets",
-					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "account-id",
+								"value": "{{account_id}}",
+								"type": "text"
+							},
+							{
+								"key": "x-apikey",
+								"value": "{{api_key}}",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{internal_url}}/{{version}}/businesses/search/facets?query=value:test&categories=status:ACTIVE&start=0&rows=15&parties=true",
+							"raw": "{{base_url}}/{{version}}/businesses/search/facets?start=0&query=value:tes&rows=100",
 							"host": [
-								"{{internal_url}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"{{version}}",
@@ -511,24 +405,21 @@
 							],
 							"query": [
 								{
-									"key": "query",
-									"value": "value:test"
-								},
-								{
 									"key": "categories",
-									"value": "status:ACTIVE"
+									"value": "status:ACTIVE",
+									"disabled": true
 								},
 								{
 									"key": "start",
 									"value": "0"
 								},
 								{
-									"key": "rows",
-									"value": "15"
+									"key": "query",
+									"value": "value:tes"
 								},
 								{
-									"key": "parties",
-									"value": "true"
+									"key": "rows",
+									"value": "100"
 								}
 							]
 						},
@@ -2001,7 +1892,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n   \"business\":{\r\n      \"goodStanding\": true,\r\n      \"identifier\":\"CP1233338\",\r\n      \"legalName\":\"Kyle stuffing tests\",\r\n      \"legalType\":\"CP\",\r\n      \"taxId\":\"113456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
+									"raw": "{\r\n   \"business\":{\r\n      \"goodStanding\": true,\r\n      \"identifier\":\"BC0887801\",\r\n      \"legalName\":\"Kyle stuffing tests\",\r\n      \"legalType\":\"BC\",\r\n      \"taxId\":\"113456789BC0001\",\r\n      \"state\":\"ACTIVE\"\r\n   }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2080,9 +1971,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/{{version}}/internal/solr/update",
+									"raw": "{{internal_url}}/{{version}}/internal/solr/update",
 									"host": [
-										"{{base_url}}"
+										"{{internal_url}}"
 									],
 									"path": [
 										"{{version}}",
@@ -2738,6 +2629,536 @@
 								}
 							},
 							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "v2",
+			"item": [
+				{
+					"name": "search",
+					"item": [
+						{
+							"name": "businesses",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									},
+									{
+										"key": "x-apikey",
+										"value": "{{api_key}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"special - match\"\n    },\n    \"rows\": 100,\n    \"start\": 0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/api/v2/search/businesses",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"search",
+										"businesses"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "businesses",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"business\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/api/v2/search/businesses",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"search",
+												"businesses"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 06 Aug 2024 20:40:44 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1884"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "search_api/2.0.0a1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 7,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 3,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 9,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 2,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": null,\n                \"status\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"\",\n                \"name\": \"\",\n                \"value\": \"business\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"BN00012334\",\n                \"goodStanding\": true,\n                \"identifier\": \"CP1234567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business one 1\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"09876K\",\n                \"goodStanding\": true,\n                \"identifier\": \"CP0234567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business two 2\",\n                \"score\": 13.131177,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"goodStanding\": true,\n                \"identifier\": \"CP0034567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business three 3\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"00987766800988\",\n                \"goodStanding\": false,\n                \"identifier\": \"BC0004567\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business four 4\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"BN9000776557\",\n                \"identifier\": \"BC0000567\",\n                \"legalType\": \"BC\",\n                \"name\": \"business five 5\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"test si\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 13.131177,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"bn\": \"123456785BC0001\",\n                \"identifier\": \"BC0030023\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business twelve 12 special-match\",\n                \"score\": 12.323038,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"242217\",\n                \"identifier\": \"BC0000067\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business six 6 special and match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"124221\",\n                \"identifier\": \"BC0000007\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business seven 7 special & match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"1255323221\",\n                \"identifier\": \"BC0020047\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business eight 8 special&match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"123456786BC0001\",\n                \"identifier\": \"BC0030024\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business thirteen 13 special - match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 11\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "businesses complex",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"business\",\n        \"name\": \"bus\",\n        \"identfier\": \"567\",\n        \"bn\": \"0\",\n        \"parties\": {\n            \"partyName\": \"test\"\n        }\n    },\n    \"categories\": {\n        \"legalType\": [\"BEN\", \"CP\", \"BC\"],\n        \"status\": [\"ACTIVE\", \"HISTORICAL\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/api/v2/search/businesses",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"search",
+										"businesses"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "businesses complex",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"business\",\n        \"name\": \"bus\",\n        \"identfier\": \"567\",\n        \"bn\": \"0\",\n        \"parties\": {\n            \"partyName\": \"test\"\n        }\n    },\n    \"categories\": {\n        \"legalType\": [\"BEN\", \"CP\", \"BC\"],\n        \"status\": [\"ACTIVE\", \"HISTORICAL\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/api/v2/search/businesses",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"search",
+												"businesses"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 06 Aug 2024 20:50:46 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "571"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "search_api/2.0.0a1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": [\n                    \"BEN\",\n                    \"CP\",\n                    \"BC\"\n                ],\n                \"status\": [\n                    \"ACTIVE\",\n                    \"HISTORICAL\"\n                ]\n            },\n            \"query\": {\n                \"bn\": \"0\",\n                \"identifier\": \"\",\n                \"name\": \"bus\",\n                \"value\": \"business\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"BN9000776557\",\n                \"identifier\": \"BC0000567\",\n                \"legalType\": \"BC\",\n                \"name\": \"business five 5\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"test si\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 13.131177,\n                \"status\": \"HISTORICAL\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "businesses bulk",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Account-Id",
+										"value": "{{account_id}}",
+										"type": "text"
+									},
+									{
+										"key": "x-apikey",
+										"value": "{{api_key}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"names\": [\"01 solr special && char\",\"b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\\\;:'\\\",<>./\", \"business thirteen 13 special - match\", \"business twelve 12 special-match\"],\n    \"identifiers\":[\"CP1234567\",\"BC0030011\",\"FM0004018\",\"BC0030012\"],\n    \"rows\": 1000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/api/v2/search/businesses/bulk",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"search",
+										"businesses",
+										"bulk"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "businesses",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"business\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/api/v2/search/businesses",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"search",
+												"businesses"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 06 Aug 2024 20:40:44 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1884"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "search_api/2.0.0a1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"legalType\": [\n                {\n                    \"count\": 7,\n                    \"value\": \"BEN\"\n                },\n                {\n                    \"count\": 3,\n                    \"value\": \"CP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"BC\"\n                }\n            ],\n            \"status\": [\n                {\n                    \"count\": 9,\n                    \"value\": \"ACTIVE\"\n                },\n                {\n                    \"count\": 2,\n                    \"value\": \"HISTORICAL\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"legalType\": null,\n                \"status\": null\n            },\n            \"query\": {\n                \"bn\": \"\",\n                \"identifier\": \"\",\n                \"name\": \"\",\n                \"value\": \"business\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"bn\": \"BN00012334\",\n                \"goodStanding\": true,\n                \"identifier\": \"CP1234567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business one 1\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"09876K\",\n                \"goodStanding\": true,\n                \"identifier\": \"CP0234567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business two 2\",\n                \"score\": 13.131177,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"goodStanding\": true,\n                \"identifier\": \"CP0034567\",\n                \"legalType\": \"CP\",\n                \"name\": \"business three 3\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"00987766800988\",\n                \"goodStanding\": false,\n                \"identifier\": \"BC0004567\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business four 4\",\n                \"score\": 13.131177,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"BN9000776557\",\n                \"identifier\": \"BC0000567\",\n                \"legalType\": \"BC\",\n                \"name\": \"business five 5\",\n                \"parties\": [\n                    {\n                        \"partyName\": \"test si\",\n                        \"partyRoles\": [\n                            \"significant individual\"\n                        ],\n                        \"partyType\": \"person\",\n                        \"score\": 0\n                    }\n                ],\n                \"score\": 13.131177,\n                \"status\": \"HISTORICAL\"\n            },\n            {\n                \"bn\": \"123456785BC0001\",\n                \"identifier\": \"BC0030023\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business twelve 12 special-match\",\n                \"score\": 12.323038,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"242217\",\n                \"identifier\": \"BC0000067\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business six 6 special and match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"124221\",\n                \"identifier\": \"BC0000007\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business seven 7 special & match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"1255323221\",\n                \"identifier\": \"BC0020047\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business eight 8 special&match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            },\n            {\n                \"bn\": \"123456786BC0001\",\n                \"identifier\": \"BC0030024\",\n                \"legalType\": \"BEN\",\n                \"name\": \"business thirteen 13 special - match\",\n                \"score\": 11.078212,\n                \"status\": \"ACTIVE\"\n            }\n        ],\n        \"totalResults\": 11\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parties",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"test\"\n    },\n    \"categories\": {\n        \"partyRoles\": [\"partner\", \"proprietor\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/api/v2/search/parties",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"search",
+										"parties"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "parties",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"person\"\n    },\n    \"categories\": {\n        \"partyRoles\": [\"partner\", \"proprietor\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/api/v2/search/parties",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"search",
+												"parties"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 06 Aug 2024 20:58:09 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "900"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "search_api/2.0.0a1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"GP\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 2,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"partner\"\n                },\n                {\n                    \"count\": 1,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": null,\n                \"parentStatus\": null,\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"\",\n                \"parentIdentifier\": \"\",\n                \"parentName\": \"\",\n                \"partyName\": \"\",\n                \"value\": \"person\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"123\",\n                \"parentIdentifier\": \"FM1000028\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"firm nine 9 special + match\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"person one\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            },\n            {\n                \"parentIdentifier\": \"FM0004018\",\n                \"parentLegalType\": \"GP\",\n                \"parentName\": \"firm eleven 11 periods y.z. xk\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"person two\",\n                \"partyRoles\": [\n                    \"partner\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 2\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "parties complex",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": {\n        \"value\": \"person\",\n        \"partyName\": \"per\",\n        \"parentIdentifier\": \"FM\",\n        \"parentName\": \"firm\",\n        \"parentBN\": \"123\"\n    },\n    \"categories\": {\n        \"partyRoles\": [\"partner\", \"proprietor\"],\n        \"parentStatus\": [\"ACTIVE\", \"HISTORICAL\"],\n        \"parentLegalType\": [\"SP\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{internal_url}}/api/v2/search/parties",
+									"host": [
+										"{{internal_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"search",
+										"parties"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "parties complex",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"query\": {\n        \"value\": \"person\",\n        \"partyName\": \"per\",\n        \"parentIdentifier\": \"FM\",\n        \"parentName\": \"firm\",\n        \"parentBN\": \"123\"\n    },\n    \"categories\": {\n        \"partyRoles\": [\"partner\", \"proprietor\"],\n        \"parentStatus\": [\"ACTIVE\", \"HISTORICAL\"],\n        \"parentLegalType\": [\"SP\"]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{internal_url}}/api/v2/search/parties",
+											"host": [
+												"{{internal_url}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"search",
+												"parties"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "Werkzeug/2.3.6 Python/3.11.4"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 06 Aug 2024 21:03:50 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "681"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "API",
+											"value": "search_api/2.0.0a1"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"facets\": {\n        \"fields\": {\n            \"parentLegalType\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"SP\"\n                }\n            ],\n            \"parentStatus\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"ACTIVE\"\n                }\n            ],\n            \"partyRoles\": [\n                {\n                    \"count\": 1,\n                    \"value\": \"proprietor\"\n                }\n            ]\n        }\n    },\n    \"searchResults\": {\n        \"queryInfo\": {\n            \"categories\": {\n                \"parentLegalType\": [\n                    \"SP\"\n                ],\n                \"parentStatus\": [\n                    \"ACTIVE\",\n                    \"HISTORICAL\"\n                ],\n                \"partyRoles\": [\n                    \"partner\",\n                    \"proprietor\"\n                ]\n            },\n            \"query\": {\n                \"parentBN\": \"123\",\n                \"parentIdentifier\": \"fm\",\n                \"parentName\": \"firm\",\n                \"partyName\": \"per\",\n                \"value\": \"person\"\n            },\n            \"rows\": 10,\n            \"start\": 0\n        },\n        \"results\": [\n            {\n                \"parentBN\": \"123\",\n                \"parentIdentifier\": \"FM1000028\",\n                \"parentLegalType\": \"SP\",\n                \"parentName\": \"firm nine 9 special + match\",\n                \"parentStatus\": \"ACTIVE\",\n                \"partyName\": \"person one\",\n                \"partyRoles\": [\n                    \"proprietor\"\n                ],\n                \"partyType\": \"person\"\n            }\n        ],\n        \"totalResults\": 1\n    }\n}"
+								}
+							]
 						}
 					]
 				}

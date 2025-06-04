@@ -28,12 +28,15 @@ def business_search(params: QueryParams, solr: BusinessSolr):
         fields=params.query_fields,
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields)
-    # boosts for term order result ordering
-    initial_queries["query"] += f' OR ({BusinessField.NAME_Q.value}:"{params.query["value"]}"~5^5)'
-    initial_queries["query"] += f' OR ({BusinessField.NAME_STEM_AGRO.value}:"{params.query["value"]}"~10^3)'
-    initial_queries["query"] += f' OR ({BusinessField.IDENTIFIER_Q_EDGE.value}:"{params.query["value"]}"^5)'
 
-    # add defaults
+    # boosts for term order result ordering
+    for info in params.full_query_boosts:
+        initial_queries["query"] += f' OR ({info["field"].value}:"{info["value"]}"'
+        if fuzzy := info.get("fuzzy"):
+            initial_queries["query"] += f'~{fuzzy}^{info["boost"]})'
+        else:
+            initial_queries["query"] += f'^{info["boost"]})'
+
     solr_payload = _get_solr_payload(params, solr, initial_queries)
     try:
         return solr.query(solr_payload, params.start, params.rows)
@@ -54,6 +57,7 @@ def business_search(params: QueryParams, solr: BusinessSolr):
 
 def _get_solr_payload(params: QueryParams, solr: BusinessSolr, initial_queries: dict):
     """Return the payload for the business search solr call."""
+    # add defaults
     solr_payload = {
         **initial_queries,
         "queries": {
