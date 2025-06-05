@@ -62,6 +62,7 @@ def prep_query_str(query: str, dash: str | None = None, replace_and = True) -> s
     if replace_and:
         query = re.sub(special_and, r" and ", query)
     if dash:
+        # TODO: set enum for this (#28850)
         if dash == "replace":
             query = re.sub(rmv_dash, r" ", query)
         if dash == "remove":

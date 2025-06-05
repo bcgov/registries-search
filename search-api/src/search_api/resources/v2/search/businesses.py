@@ -120,7 +120,7 @@ def businesses_bulk():
         request_json = request.json
         names: list[str] = request_json.get("names", [])
         identifiers: list[str] = request_json.get("identifiers", [])
-        rows = request_json.get("rows", 2000)
+        rows = request_json.get("rows", current_app.config["SOLR_SVC_BUS_MAX_ROWS"])
         # validation
         errors: list[dict[str, str]] = []
         if not isinstance(names, list) or not isinstance(identifiers, list):
