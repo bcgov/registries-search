@@ -83,7 +83,7 @@ def facets():  # noqa: PLR0912
             )
         # clean query values
         query = {
-            "value": prep_query_str(value, True),
+            "value": prep_query_str(value, "replace"),
             BusinessField.NAME_SINGLE.value: prep_query_str(name),
             BusinessField.IDENTIFIER_Q.value: prep_query_str(identifier),
             BusinessField.BN_Q.value: prep_query_str(bn)
@@ -119,6 +119,7 @@ def facets():  # noqa: PLR0912
         fields = business_solr.business_fields
         if request.args.get("parties") == "true":
             fields = business_solr.business_with_parties_fields
+
         # create solr search params obj from parsed params
         params = QueryParams(query=query,
                              start=start,
@@ -142,7 +143,8 @@ def facets():  # noqa: PLR0912
                                  BusinessField.NAME_SINGLE: {"short": 1, "long": 2}},
                              child_query=child_query,
                              child_categories={},
-                             child_date_ranges={})
+                             child_date_ranges={},
+                             full_query_boosts=business_solr.get_business_search_full_query_boost(value))
         # execute search
         results = business_search(params, business_solr)
         response = {
@@ -208,7 +210,7 @@ def parties():  # noqa: PLR0912, PLR0911
             )
         # clean query values
         query = {
-            "value": prep_query_str(value, True),
+            "value": prep_query_str(value, "replace"),
             PartyField.PARTY_NAME_SINGLE.value: prep_query_str(party_name),
             PartyField.PARENT_NAME_SINGLE.value: prep_query_str(parent_name),
             PartyField.PARENT_IDENTIFIER_Q.value: prep_query_str(parent_identifier),
@@ -266,7 +268,8 @@ def parties():  # noqa: PLR0912, PLR0911
                                  PartyField.PARTY_NAME_SINGLE: {"short": 1, "long": 2}},
                              child_query={},
                              child_categories={},
-                             child_date_ranges={})
+                             child_date_ranges={},
+                             full_query_boosts=[])
         results = parties_search(params, business_solr)
         response = {
             "facets": parse_facets(results),

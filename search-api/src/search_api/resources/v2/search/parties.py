@@ -40,7 +40,7 @@ def parties():
         query_json: dict = request_json.get("query", {})
         value = query_json.get("value")
         query = {
-            "value": prep_query_str(value, True),
+            "value": prep_query_str(value, "replace"),
             PartyField.PARTY_NAME_SINGLE.value: prep_query_str(query_json.get(PartyField.PARTY_NAME.value, "")),
             PartyField.PARENT_NAME_SINGLE.value: prep_query_str(query_json.get(PartyField.PARENT_NAME.value, "")),
             PartyField.PARENT_IDENTIFIER_Q.value: prep_query_str(query_json.get(
@@ -89,7 +89,8 @@ def parties():
                                  PartyField.PARTY_NAME_SINGLE: {"short": 1, "long": 2}},
                              child_query={},
                              child_categories={},
-                             child_date_ranges={})
+                             child_date_ranges={},
+                             full_query_boosts=[])
         results = parties_search(params, business_solr)
         response = {
             "facets": parse_facets(results),

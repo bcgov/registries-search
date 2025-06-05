@@ -98,6 +98,8 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0030023', 'business twelve 12 special-match', 'ACTIVE', 'BEN', '123456785BC0001'),
     create_solr_doc('BC0030024', 'business thirteen 13 special - match', 'ACTIVE', 'BEN', '123456786BC0001'),
     create_solr_doc('BC0030014', 'b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\;:\'",<>./', 'ACTIVE', 'BEN', '123456776BC0001'),
+    create_solr_doc('BC0030025', 'business specialmatch', 'ACTIVE', 'BEN', '123456790BC0001'),
+    create_solr_doc('BC0030026', 'business special match', 'ACTIVE', 'BEN', '123456791BC0001'),
     create_solr_doc('BC0030001', '01 solr special && char', 'ACTIVE', 'BEN', '123456789BC0001'),
     create_solr_doc('BC0030002', '02 solr special || char', 'ACTIVE', 'BEN', '123456788BC0001'),
     create_solr_doc('BC0030003', '03 solr special: char', 'ACTIVE', 'BEN', '123456787BC0001'),

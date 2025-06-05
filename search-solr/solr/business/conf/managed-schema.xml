@@ -211,7 +211,7 @@
   </fieldType>
   <fieldType name="base_ngram" class="solr.TextField">
     <analyzer type="index">
-      <charFilter name="patternReplace" pattern="([()^{}\|])" replacement=""/>
+      <charFilter name="patternReplace" pattern="([()^{}\\|])" replacement=""/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
       <filter name="nGram" maxGramSize="50" minGramSize="1"/>
@@ -241,7 +241,7 @@
       <filter name="lowercase"/>
       <filter name="wordDelimiterGraph" generateWordParts="0" splitOnNumerics="0" catenateAll="1" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
-      <filter name="edgeNGram" maxGramSize="15" minGramSize="1"/>
+      <filter name="edgeNGram" maxGramSize="30" minGramSize="1"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="keyword"/>
@@ -251,7 +251,7 @@
   </fieldType>
   <fieldType name="multi_word_ngram" class="solr.TextField">
     <analyzer type="index">
-      <charFilter name="patternReplace" pattern="([()^{}\|])" replacement=""/>
+      <charFilter name="patternReplace" pattern="([()^{}\\|])" replacement=""/>
       <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
@@ -268,7 +268,7 @@
   </fieldType>
   <fieldType name="text_stemmed" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
-      <charFilter name="patternReplace" pattern="([()^{}\|])" replacement=""/>
+      <charFilter name="patternReplace" pattern="([()^{}\\|])" replacement=""/>
       <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
@@ -287,7 +287,7 @@
   </fieldType>
   <fieldType name="text_stemmed_agro" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
-      <charFilter name="patternReplace" pattern="([()^{}\|])" replacement=""/>
+      <charFilter name="patternReplace" pattern="([()^{}\\|])" replacement=""/>
       <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
@@ -306,7 +306,7 @@
   </fieldType>
   <fieldType name="text_extra" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
-      <charFilter name="patternReplace" pattern="([()^{}\|.])" replacement=""/>
+      <charFilter name="patternReplace" pattern="([()^{}\\|.])" replacement=""/>
       <charFilter name="patternReplace" pattern="([&amp;+]+)" replacement=" and "/>
       <tokenizer name="whitespace"/>
       <filter name="lowercase"/>
@@ -336,6 +336,7 @@
   <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
   <field name="name" type="string" indexed="false" stored="true"/>
   <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>
+  <field name="name_q_exact" type="single_word_edgeNgram" indexed="true" stored="false"/>
   <field name="name_single_term" type="multi_word_ngram" indexed="true" stored="false"/>
   <field name="name_stem_agro" type="text_stemmed_agro" indexed="true" stored="false"/>
   <field name="name_suggest" type="phrase_basic" indexed="true" stored="false"/>
@@ -402,9 +403,9 @@
   <copyField source="identifier" dest="identifier_q"/>
   <copyField source="identifier" dest="identifier_q_edge"/>
   <copyField source="name" dest="name_q"/>
+  <copyField source="name" dest="name_q_exact"/>
   <copyField source="name" dest="name_single_term"/>
   <copyField source="name" dest="name_stem_agro"/>
-  <copyField source="name" dest="name_suggest"/>
   <copyField source="name" dest="name_xtra_q"/>
   <copyField source="partyName" dest="partyName_q"/>
   <copyField source="partyName" dest="partyName_single_term"/>

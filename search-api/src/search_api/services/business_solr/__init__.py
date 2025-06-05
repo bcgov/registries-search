@@ -17,7 +17,7 @@ from dataclasses import asdict
 from flask import Flask
 
 from search_api.services.base_solr import Solr
-from search_api.services.base_solr.utils import QueryBuilder
+from search_api.services.base_solr.utils import QueryBuilder, prep_query_str
 
 from .doc_fields import BusinessField, PartyField
 from .doc_models import BusinessDoc
@@ -66,3 +66,65 @@ class BusinessSolr(Solr):
 
         url = self.update_url if len(update_list) < 1000 else self.bulk_update_url  # noqa: PLR2004
         return self.call_solr("POST", url, json_data=update_list, timeout=timeout)
+
+    @staticmethod
+    def get_business_search_full_query_boost(query_value: str):
+        """Return the list of full query boost information intended for business search."""
+        full_query_boosts = [
+            {
+                "field": BusinessField.NAME_Q_EXACT,
+                "value": prep_query_str(query_value),
+                "boost": "3",
+            },
+            {
+                "field": BusinessField.NAME_SINGLE,
+                "value": prep_query_str(query_value),
+                "boost": "2",
+            },
+            {
+                "field": BusinessField.NAME_Q,
+                "value": prep_query_str(query_value),
+                "boost": "5",
+                "fuzzy": "5"
+            },
+            {
+                "field": BusinessField.NAME_STEM_AGRO,
+                "value": prep_query_str(query_value),
+                "boost": "3",
+                "fuzzy": "10"
+            },
+            {
+                "field": BusinessField.IDENTIFIER_Q_EDGE,
+                "value": prep_query_str(query_value),
+                "boost": "10",
+            }
+        ]
+        # add more boost clauses if a dash is in the query
+        if "-" in query_value:
+            full_query_boosts += [
+                {
+                    "field": BusinessField.NAME_Q,
+                    "value": prep_query_str(query_value, "remove"),
+                    "boost": "3",
+                    "fuzzy": "5"
+                },
+                {
+                    "field": BusinessField.NAME_Q,
+                    "value": prep_query_str(query_value, "pad"),
+                    "boost": "7",
+                    "fuzzy": "5"
+                },
+                {
+                    "field": BusinessField.NAME_Q,
+                    "value": prep_query_str(query_value, "tighten"),
+                    "boost": "7",
+                    "fuzzy": "5"
+                },
+                {
+                    "field": BusinessField.NAME_Q,
+                    "value": prep_query_str(query_value, "tighten-remove"),
+                    "boost": "3",
+                    "fuzzy": "5"
+                }
+            ]
+        return full_query_boosts

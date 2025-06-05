@@ -45,6 +45,7 @@ class BusinessField(BaseEnum):  # pylint: disable=too-few-public-methods
     IDENTIFIER_Q = "identifier_q"
     IDENTIFIER_Q_EDGE = "identifier_q_edge"
     NAME_Q = "name_q"
+    NAME_Q_EXACT = "name_q_exact"
     NAME_SINGLE = "name_single_term"
     NAME_STEM_AGRO = "name_stem_agro"
     NAME_SUGGEST = "name_suggest"

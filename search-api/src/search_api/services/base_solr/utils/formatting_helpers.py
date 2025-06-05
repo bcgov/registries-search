@@ -32,8 +32,8 @@ def parse_facets(facet_data: dict) -> dict:
     return {"fields": facets}
 
 
-def prep_query_str(query: str, replace_specials=False) -> str:
-    r"""Return the query string prepped for solr call (more advanced method).
+def prep_query_str(query: str, dash: str | None = None, replace_and = True) -> str:
+    r"""Return the query string prepped for solr call.
 
     Rules:
         - no doubles: &,+
@@ -41,6 +41,9 @@ def prep_query_str(query: str, replace_specials=False) -> str:
         - escape everywhere: ",:,[,],*,~,<,>,?,\
         - remove: (,),^,{,},|,\
         - lowercase: all
+        - (default) replace &,+ with ' and '
+        - (optional) replace - with '', ' ', or ' - '
+        - (optional) replace ' - ' with '-'
     """
     if not query:
         return ""
@@ -50,13 +53,27 @@ def prep_query_str(query: str, replace_specials=False) -> str:
     esc_begin = r"(^|\s)([+\-/!])"
     esc_all = r'([:~<>?\"\[\]])'
     special_and = r"([&+])"
-    special_dash = r"(\S)(-)(\S)"
+    rmv_dash = r"(-)"
+    pad_dash = r"(\S)(-)(\S)"
+    tighten_dash = r"(\s+)(-)(\s+)"
 
     query = re.sub(rmv_doubles, r"\1", query.lower())
     query = re.sub(rmv_all, "", query)
-    if replace_specials:
+    if replace_and:
         query = re.sub(special_and, r" and ", query)
-        query = re.sub(special_dash, r" - ", query)
+    if dash:
+        # TODO: set enum for this (#28850)
+        if dash == "replace":
+            query = re.sub(rmv_dash, r" ", query)
+        if dash == "remove":
+            query = re.sub(rmv_dash, r"", query)
+        if dash == "pad":
+            query = re.sub(pad_dash, r"\1 \2 \3", query)
+        if dash == "tighten":
+            query = re.sub(tighten_dash, r"\2", query)
+        if dash == "tighten-remove":
+            query = re.sub(tighten_dash, r"", query)
+
     query = re.sub(esc_begin, r"\1\\\2", query)
     query = re.sub(esc_all, r"\\\1", query)
     return query.lower().replace("  ", " ").strip()

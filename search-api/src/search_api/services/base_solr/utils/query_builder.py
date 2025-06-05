@@ -94,7 +94,7 @@ class QueryBuilder:
         return filter_q
 
     def build_base_query(self,
-                         query: dict[str, str],  # pylint: disable=too-many-arguments,too-many-branches
+                         query: dict[str, str],
                          fields: dict[BaseEnum, str],
                          boost_fields: dict[BaseEnum, int],
                          fuzzy_fields: dict[BaseEnum, dict[str, int]]) -> dict[str, list[str]]:

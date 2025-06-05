@@ -14,7 +14,7 @@
 """API endpoints for Search."""
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, current_app, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
@@ -39,8 +39,8 @@ def businesses():
         # set base query params
         query_json: dict = request_json.get("query", {})
         query = {
-            "value": prep_query_str(query_json["value"], True),
-            BusinessField.NAME_SINGLE.value: prep_query_str(query_json.get(BusinessField.NAME.value, ""), True),
+            "value": prep_query_str(query_json["value"], "replace"),
+            BusinessField.NAME_SINGLE.value: prep_query_str(query_json.get(BusinessField.NAME.value, "")),
             BusinessField.IDENTIFIER_Q.value: prep_query_str(query_json.get(BusinessField.IDENTIFIER.value, "")),
             BusinessField.BN_Q.value: prep_query_str(query_json.get(BusinessField.BN.value, ""))
         }
@@ -59,6 +59,7 @@ def businesses():
         fields = business_solr.business_with_parties_fields
         # create solr search params obj from parsed params
         params = QueryParams(query=query,
+                             full_query_boosts=business_solr.get_business_search_full_query_boost(query_json["value"]),
                              start=request_json.get("start", business_solr.default_start),
                              rows=request_json.get("rows", business_solr.default_rows),
                              categories=categories,
@@ -103,6 +104,54 @@ def businesses():
                 "results": results.get("response", {}).get("docs")},
             }
 
+        return jsonify(response), HTTPStatus.OK
+
+    except SolrException as solr_exception:
+        return resource_utils.exception_response(solr_exception)
+    except Exception as default_exception:
+        return resource_utils.default_exception_response(default_exception)
+
+
+@bp.post("/bulk")
+@cross_origin(origins="*")
+def businesses_bulk():
+    """Return a list of business results based all the given payload options."""
+    try:
+        request_json = request.json
+        names: list[str] = request_json.get("names", [])
+        identifiers: list[str] = request_json.get("identifiers", [])
+        rows = request_json.get("rows", current_app.config["SOLR_SVC_BUS_MAX_ROWS"])
+        # validation
+        errors: list[dict[str, str]] = []
+        if not isinstance(names, list) or not isinstance(identifiers, list):
+            errors.append({"Invalid payload": "Expected 'names' and 'identifiers' to be a list of strings."})
+        elif requested_amount := (len(names) + len(identifiers)) == 0:
+            errors.append({"Invalid payload": "Expected at least 1 value in 'names' or 'identifiers'."})
+        elif (max_amount := current_app.config["MAX_BULK_SEARCH_VALUES"]) < requested_amount:
+            errors.append({"Invalid payload": f"Expected combined length of 'names' and 'identifiers' to be <= {max_amount}."})
+        if not isinstance(rows, int):
+            errors.append({"Invalid payload": "Expected 'rows' to be an integer."})
+        elif (max_rows := current_app.config["SOLR_SVC_BUS_MAX_ROWS"]) < rows:
+            errors.append({"Invalid payload": f"Expected 'rows' to be <= {max_rows}."})
+        if len(errors) > 0:
+            return resource_utils.bad_request_response("Errors processing request.", errors)
+
+        # build bulk query
+        queries = [f'{BusinessField.NAME_Q_EXACT.value}:"{prep_query_str(x, None, False)}"' for x in names] + \
+            [f"{BusinessField.IDENTIFIER_Q_EDGE.value}: {x}" for x in identifiers]
+        solr_payload = {
+            "query": " OR ".join(queries),
+            "queries": {
+                "parents": f"{BusinessField.IDENTIFIER.value}:*",
+            },
+            "fields": business_solr.business_fields
+        }
+        # execute search
+        results = business_solr.query(solr_payload, 0, rows)
+        response = {
+            "totalResults": results.get("response", {}).get("numFound"),
+            "results": results.get("response", {}).get("docs"),
+        }
         return jsonify(response), HTTPStatus.OK
 
     except SolrException as solr_exception:
