@@ -51,8 +51,8 @@ class Config:
     SOLR_RETRY_TOTAL = int(os.getenv("SOLR_RETRY_TOTAL", "2"))
     SOLR_RETRY_BACKOFF_FACTOR = int(os.getenv("SOLR_RETRY_BACKOFF_FACTOR", "5"))
 
-    PAYMENT_SVC_URL = os.getenv("PAYMENT_SVC_URL", "http://")
-    AUTH_SVC_URL = os.getenv("AUTH_SVC_URL", "http://")
+    PAYMENT_SVC_URL = os.getenv("PAY_API_URL", "http://") + os.getenv("PAY_API_VERSION", "/api/v1")
+    AUTH_SVC_URL = os.getenv("AUTH_API_URL", "http://") + os.getenv("AUTH_API_VERSION", "/api/v1")
     LEAR_SVC_URL = os.getenv("LEGAL_API_URL", "http://") + os.getenv("LEGAL_API_VERSION_2", "/api/v2")
 
     # Flask-Pub
