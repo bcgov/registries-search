@@ -9,12 +9,17 @@
         {{ item.email }}
       </div>
     </div>
-    <div v-if="item.entityAddresses" class="flex">
-      <div>
-        <UIcon class="text-[20px]" name="i-mdi-email-outline" />
+    <span v-if="item.entityAddresses">
+      <div v-for="(address, index) in item.entityAddresses" :key="index" class="flex">
+        <div>
+          <UIcon
+            class="text-[20px]"
+            :name="address.addressType === LOCATION_ADDRESS_TYPE ? 'i-mdi-map-marker-outline' : 'i-mdi-email-outline'"
+          />
+        </div>
+        <BcrosAddressDisplay class="ml-1" :address="address" />
       </div>
-      <BcrosAddressDisplay class="ml-1" :address="item.entityAddresses[0]" />
-    </div>
+    </span>
     <div v-if="item.phoneNumber" class="flex">
       <div>
         <UIcon class="text-[20px]" name="i-mdi-phone" />
@@ -45,6 +50,7 @@
 <script setup lang="ts">
 const prop = defineProps<{ item: SearchResultI }>()
 const taxResidency = prop.item.taxResidencies ? (prop.item.taxResidencies[0] === 'CA' ? 'Canada' : 'Other') : ''
+const LOCATION_ADDRESS_TYPE = 'RESIDENCE'
 
 </script>
 

@@ -3907,6 +3907,51 @@ def test_search_solr_mock(app, session, client, jwt, requests_mock, test_name, q
             ],
         ),
         (
+            "test_basic_address2_match",
+            {"value": "124 Fake St."},
+            {},
+            [
+                {
+                    "entityAddresses": [
+                        {
+                            "addressCity": "Saanich",
+                            "addressCountry": "Canada",
+                            "addressRegion": "ON",
+                            "addressType": "DELIVERY",
+                            "postalCode": "B2C 3D4",
+                            "score": 0.0,
+                            "streetAddress": "321 Fake St.",
+                        },
+                        {
+                            "addressCity": "Esquimalt",
+                            "addressCountry": "Canada",
+                            "addressRegion": "ON",
+                            "addressType": "MAILING",
+                            "postalCode": "A1B 2C3",
+                            "score": 0.0,
+                            "streetAddress": "124 Fake St.",
+                        }
+                    ],
+                    "entityType": "PERSON",
+                    "legalName": "completelyUnusedIrrelevantName",
+                    "roles": [
+                        {
+                            "relatedBN": "BN00012335",
+                            "relatedEmail": "abcde@email.com",
+                            "relatedEntityType": "BUSINESS",
+                            "relatedIdentifier": "CP2234568",
+                            "relatedLegalType": "CP",
+                            "relatedName": "test 2234567890",
+                            "relatedState": "ACTIVE",
+                            "roleDates": [{"active": True, "score": 0.0, "start": "2020-08-04T00:03:54Z"}],
+                            "roleType": "DIRECTOR",
+                            "score": 0.0,
+                        }
+                    ],
+                }
+            ],
+        ),
+        (
             "test_basic_address_match_partial",
             {"value": "waleby way"},
             {},

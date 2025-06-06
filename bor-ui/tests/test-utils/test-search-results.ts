@@ -113,6 +113,14 @@ export const testSearchResults: SearchResultI[] = [
       postalCode: 'V6L 4V9',
       streetAddress: '99 Waffles street',
       locationDescription: 'Unit 201, Building A'
+    },
+    {
+      addressCity: 'Vancouver2',
+      addressCountry: 'Canada2',
+      addressRegion: 'BC2',
+      postalCode: 'V6L 5V9',
+      streetAddress: '100 Waffles street',
+      locationDescription: 'Unit 202, Building A'
     }],
     entityType: 'PERSON',
     isPR: false,

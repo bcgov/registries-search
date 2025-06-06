@@ -97,6 +97,15 @@ TEST_BUSINESSES = [
         entity_type="BUSINESS",
         state="ACTIVE",
     ),
+    create_entity(
+        name="test 2234567890",
+        bn="BN00012335",
+        email="abcde@email.com",
+        entity_id="CP2234568",
+        legal_type="CP",
+        entity_type="BUSINESS",
+        state="ACTIVE",
+    ),
 ]
 
 TEST_PERSONS = [
@@ -516,7 +525,7 @@ TEST_PERSONS = [
     ),
     create_entity(
         name="person twelve proprietor",
-        entity_id="proprietor12",
+        entity_id="SI12",
         roles=[
             EntityRole(
                 id="proprietor12/roles0",
@@ -568,6 +577,42 @@ TEST_PERSONS = [
                 streetAddress="404 Fake Street",
                 postalCode="F4K 3S7",
             )
+        ],
+    ),
+    create_entity(
+        name="completelyUnusedIrrelevantName",
+        entity_id="LEAR14",
+        roles=[
+            EntityRole(
+                id="LEAR1/roles0",
+                relatedBN=TEST_BUSINESSES[10].bn,
+                relatedEmail=TEST_BUSINESSES[10].email,
+                relatedEntityType="BUSINESS",
+                relatedIdentifier=TEST_BUSINESSES[10].identifier,
+                relatedLegalType=TEST_BUSINESSES[10].legalType,
+                relatedName=TEST_BUSINESSES[10].legalName,
+                relatedState=TEST_BUSINESSES[10].state,
+                roleType="DIRECTOR",
+                roleDates=[DateRange(start="2020-08-04T00:03:54Z", end=None)],
+            )
+        ],
+        addresses=[
+            Address(
+                addressCity="Saanich",
+                addressCountry="Canada",
+                addressRegion="ON",
+                addressType="DELIVERY",
+                streetAddress="321 Fake St.",
+                postalCode="B2C 3D4",
+            ),
+            Address(
+                addressCity="Esquimalt",
+                addressCountry="Canada",
+                addressRegion="ON",
+                addressType="MAILING",
+                streetAddress="124 Fake St.",
+                postalCode="A1B 2C3",
+            ),
         ],
     ),
 ]

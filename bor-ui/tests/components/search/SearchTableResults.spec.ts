@@ -138,6 +138,9 @@ describe('SearchResults tests', () => {
           ? (record.taxResidencies[0] === 'CA' ? 'Canada' : 'Other')
           : undefined
         const address = record.entityAddresses ? record.entityAddresses[0] : undefined
+        const address2 = record.entityAddresses && record.entityAddresses.length > 1
+          ? record.entityAddresses[1]
+          : undefined
         const countries = record.nationalities || []
         const roles = record.roles
         let imgs = []
@@ -172,6 +175,7 @@ describe('SearchResults tests', () => {
             expect(items[itemIndx].text()).toContain(taxNumber || '')
             expect(items[itemIndx].text()).toContain(email || '')
             verifyAddress(items[itemIndx].text(), address)
+            verifyAddress(items[itemIndx].text(), address2)
             if (taxResidency) {
               expect(items[itemIndx].text()).toContain('Tax Residency')
             }

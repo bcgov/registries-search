@@ -164,15 +164,13 @@ def get_btr_owner(owner_info: dict[str, str | dict], business: Entity):
         if identifier["scheme"] == "CAN-TAXID":
             tax_number = identifier["id"]
 
-    address = None
-    if (addresses := party.get("addresses")) and len(addresses) > 0:
-        address = get_btr_address(addresses[0], "RESIDENCE")
+    return_addresses = [get_btr_address(address, "RESIDENCE") for address in party["addresses"]] if party.get("addresses") else None
 
     entity_id = party["statementID"]
     role_id = entity_id + business.identifier + "SIGNIFICANT_INDIVIDUAL"
     return Entity(
         id=entity_id,
-        entityAddresses=[address] if address else None,
+        entityAddresses=return_addresses,
         entityType="PERSON",
         externalInfluence=party.get("externalInfluence"),
         legalName=names_dict.get("individual"),
