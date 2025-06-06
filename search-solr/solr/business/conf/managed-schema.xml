@@ -241,7 +241,8 @@
       <filter name="lowercase"/>
       <filter name="wordDelimiterGraph" generateWordParts="0" splitOnNumerics="0" catenateAll="1" generateNumberParts="0"/>
       <filter name="flattenGraph"/>
-      <filter name="edgeNGram" maxGramSize="30" minGramSize="1"/>
+      <!-- NOTE: should be long enough for the longest business name -->
+      <filter name="edgeNGram" maxGramSize="1000" minGramSize="1"/>
     </analyzer>
     <analyzer type="query">
       <tokenizer name="keyword"/>

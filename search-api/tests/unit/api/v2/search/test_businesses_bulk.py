@@ -48,15 +48,17 @@ def test_businesses_bulk_solr_mock(app, session, client, requests_mock, test_nam
 
 
 @integration_solr
-@pytest.mark.parametrize('test_name,names,identifiers,expected', [
+@pytest.mark.parametrize('test_name,names,identifiers,state,expected', [
     ('test_name',  # NOTE: test setup checks for 'test_name' on the first run
      ['business one 1'],
      [],
+     None,
      [{'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'}]
     ),
     ('test_name_multiple',
      ['business one 1', 'business two 2', 'business four 4'],
      [],
+     None,
      [{'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'},
       {'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'},
       {'bn': '00987766800988', 'goodStanding': False, 'identifier': 'BC0004567', 'legalType': 'BEN', 'name': 'business four 4', 'status': 'ACTIVE'}]
@@ -64,36 +66,43 @@ def test_businesses_bulk_solr_mock(app, session, client, requests_mock, test_nam
     ('test_name_spec_char',
      ['b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\;:\'",<>./'],
      [],
+     None,
      [{'bn': '123456776BC0001', 'identifier': 'BC0030014', 'legalType': 'BEN', 'name': 'b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\;:\'",<>./', 'status': 'ACTIVE'}]
     ),
     ('test_name_partial_no_match',
      ['usiness one'],
      ['34567'],
+     None,
      []
     ),
     ('test_name_spellcheck_no_match',
      ['basiness two 2'],
      [],
+     None,
      []
     ),
     ('test_name_stem_no_match',
      ['businesses two 2'],
      [],
+     None,
      []
     ),
     ('test_name_swap_no_match',
      ['one business 1'],
      [],
+     None,
      []
     ),
     ('test_identifier',
      [],
      ['CP1234567'],
+     None,
      [{'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'}]
     ),
     ('test_identifier_multiple',
      [],
      ['CP1234567', 'CP0234567', 'BC0004567'],
+     None,
      [{'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'},
       {'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'},
       {'bn': '00987766800988', 'goodStanding': False, 'identifier': 'BC0004567', 'legalType': 'BEN', 'name': 'business four 4', 'status': 'ACTIVE'}]
@@ -101,19 +110,35 @@ def test_businesses_bulk_solr_mock(app, session, client, requests_mock, test_nam
     ('test_mix',
      ['business two 2'],
      ['CP1234567'],
+     None,
      [{'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'},
       {'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'}]
     ),
     ('test_mix_multiple',
      ['business two 2', 'business four 4'],
      ['CP1234567', 'CP0034567'],
+     None,
      [{'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'},
       {'bn': '00987766800988', 'goodStanding': False, 'identifier': 'BC0004567', 'legalType': 'BEN', 'name': 'business four 4', 'status': 'ACTIVE'},
       {'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'},
       {'goodStanding': True, 'identifier': 'CP0034567', 'legalType': 'CP', 'name': 'business three 3', 'status': 'ACTIVE'}]
     ),
+    ('test_mix_multiple_active',
+     ['business two 2', 'business four 4'],
+     ['CP1234567', 'CP0034567'],
+     'ACTIVE',
+     [{'bn': '00987766800988', 'goodStanding': False, 'identifier': 'BC0004567', 'legalType': 'BEN', 'name': 'business four 4', 'status': 'ACTIVE'},
+      {'bn': 'BN00012334', 'goodStanding': True, 'identifier': 'CP1234567', 'legalType': 'CP', 'name': 'business one 1', 'status': 'ACTIVE'},
+      {'goodStanding': True, 'identifier': 'CP0034567', 'legalType': 'CP', 'name': 'business three 3', 'status': 'ACTIVE'}]
+    ),
+    ('test_mix_multiple_historical',
+     ['business two 2', 'business four 4'],
+     ['CP1234567', 'CP0034567'],
+     'HISTORICAL',
+     [{'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'}]
+    ),
 ])
-def test_businesses_bulk(app, session, client, test_name, names, identifiers, expected):
+def test_businesses_bulk(app, session, client, test_name, names, identifiers, state, expected):
     """Assert that the business search call works returns successfully."""
     # test setup
     if test_name == 'test_name':
@@ -126,7 +151,7 @@ def test_businesses_bulk(app, session, client, test_name, names, identifiers, ex
     # call search
     resp = client.post('/api/v2/search/businesses/bulk',
                        headers={'content-type': 'application/json'},
-                       json={'names': names, 'identifiers': identifiers})
+                       json={'names': names, 'identifiers': identifiers, 'state': state})
     # test
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.json
@@ -161,6 +186,9 @@ def test_search_bulk_error(app, session, client, requests_mock):
     ('test_invalid_identifiers', {'identifiers': 1}, [{'Invalid payload': "Expected 'names' and 'identifiers' to be a list of strings."}]),
     ('test_invalid_rows_1', {'identifiers': ['BC1234567'], 'rows': '10'}, [{'Invalid payload': "Expected 'rows' to be an integer."}]),
     ('test_invalid_rows_2', {'identifiers': ['BC1234567'], 'rows': 10001}, [{'Invalid payload': "Expected 'rows' to be <= 10000."}]),
+    ('test_invalid_state_1', {'identifiers': ['BC1234567'], 'state': 1}, [{'Invalid payload': "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."}]),
+    ('test_invalid_state_2', {'identifiers': ['BC1234567'], 'state': ['ACTIVE', 'HISTORICAL']}, [{'Invalid payload': "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."}]),
+    ('test_invalid_state_3', {'identifiers': ['BC1234567'], 'state': 'invalid'}, [{'Invalid payload': "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."}]),
 ])
 def test_search_bulk_bad_request(app, session, client, test_name, payload, errors):
     """Assert that the business search call validates the payload."""

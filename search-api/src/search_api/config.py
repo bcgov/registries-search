@@ -39,7 +39,7 @@ class Config:
     MAX_BATCH_UPDATE_NUM = int(os.getenv("MAX_BATCH_UPDATE_NUM", "1000"))
     # Used by /sync heartbeat
     LAST_REPLICATION_THRESHOLD = int(os.getenv("LAST_REPLICATION_THRESHOLD", "24"))  # hours
-    # Used by /businesses/bulk endpoint
+    # Used by /businesses/bulk endpoint (NOTE: this value must be less than the solr instance max boolean clauses - default: 1024)
     MAX_BULK_SEARCH_VALUES = int(os.getenv("MAX_BULK_SEARCH_VALUES", "1000"))
 
     SOLR_SVC_BUS_LEADER_CORE = os.getenv("SOLR_SVC_BUS_LEADER_CORE", "business")
