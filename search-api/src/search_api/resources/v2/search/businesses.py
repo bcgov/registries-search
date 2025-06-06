@@ -130,7 +130,7 @@ def businesses_bulk():
             errors.append({"Invalid payload": "Expected at least 1 value in 'names' or 'identifiers'."})
         elif (max_amount := current_app.config["MAX_BULK_SEARCH_VALUES"]) < requested_amount:
             errors.append({"Invalid payload": f"Expected combined length of 'names' and 'identifiers' to be <= {max_amount}."})
-        if (state and not isinstance(state, str)) or state.upper() not in ["ACTIVE", "HISTORICAL"]:
+        if state and (not isinstance(state, str) or state.upper() not in ["ACTIVE", "HISTORICAL"]):
             errors.append({"Invalid payload": "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."})
         if not isinstance(rows, int):
             errors.append({"Invalid payload": "Expected 'rows' to be an integer."})
