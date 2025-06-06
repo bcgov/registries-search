@@ -7,7 +7,7 @@ on:
       - feature*
       - hotfix*
     paths:
-      - "./search-solr-importer/**"
+      - "search-solr-importer/**"
   workflow_dispatch:
     inputs:
       target:

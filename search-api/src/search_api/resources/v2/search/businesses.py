@@ -121,6 +121,7 @@ def businesses_bulk():
         names: list[str] = request_json.get("names", [])
         identifiers: list[str] = request_json.get("identifiers", [])
         rows = request_json.get("rows", current_app.config["SOLR_SVC_BUS_MAX_ROWS"])
+        state: str = request_json.get("state")
         # validation
         errors: list[dict[str, str]] = []
         if not isinstance(names, list) or not isinstance(identifiers, list):
@@ -129,18 +130,23 @@ def businesses_bulk():
             errors.append({"Invalid payload": "Expected at least 1 value in 'names' or 'identifiers'."})
         elif (max_amount := current_app.config["MAX_BULK_SEARCH_VALUES"]) < requested_amount:
             errors.append({"Invalid payload": f"Expected combined length of 'names' and 'identifiers' to be <= {max_amount}."})
+        if state and not isinstance(state, str) or state.upper() not in ['ACTIVE', 'HISTORICAL']:
+            errors.append({"Invalid payload": "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."})
         if not isinstance(rows, int):
             errors.append({"Invalid payload": "Expected 'rows' to be an integer."})
         elif (max_rows := current_app.config["SOLR_SVC_BUS_MAX_ROWS"]) < rows:
             errors.append({"Invalid payload": f"Expected 'rows' to be <= {max_rows}."})
         if len(errors) > 0:
             return resource_utils.bad_request_response("Errors processing request.", errors)
-
         # build bulk query
         queries = [f'{BusinessField.NAME_Q_EXACT.value}:"{prep_query_str(x, None, False)}"' for x in names] + \
             [f"{BusinessField.IDENTIFIER_Q_EDGE.value}: {x}" for x in identifiers]
+        query = " OR ".join(queries)
+        if state:
+            query = f"({BusinessField.STATE.value}:{state.upper()}) AND ({query})"
+
         solr_payload = {
-            "query": " OR ".join(queries),
+            "query": query,
             "queries": {
                 "parents": f"{BusinessField.IDENTIFIER.value}:*",
             },
