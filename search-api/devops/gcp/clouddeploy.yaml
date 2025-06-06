@@ -48,8 +48,8 @@ serialPipeline:
    - values:
       deploy-env: "development"
       deploy-project-id: "k973yf-dev"
-      service-name: "search-api"
-      container-name: "search-api"
+      service-name: "search-api-dev"
+      container-name: "search-api-dev"
       cloudsql-instances: "k973yf-dev:northamerica-northeast1:search-db-dev"
       service-account: "sa-api@k973yf-dev.iam.gserviceaccount.com"
  - targetId: k973yf-test
@@ -61,8 +61,8 @@ serialPipeline:
    - values:
       deploy-env: "development"
       deploy-project-id: "k973yf-test"
-      service-name: "search-api"
-      container-name: "search-api"
+      service-name: "search-api-test"
+      container-name: "search-api-test"
       cloudsql-instances: "k973yf-test:northamerica-northeast1:search-db-test"
       service-account: "sa-api@k973yf-test.iam.gserviceaccount.com"
  - targetId: k973yf--tools
@@ -74,8 +74,8 @@ serialPipeline:
    - values:
       deploy-env: "sandbox"
       deploy-project-id: "k973yf--tools"
-      service-name: "search-api"
-      container-name: "search-api"
+      service-name: "search-api-sandbox"
+      container-name: "search-api-sandbox"
       cloudsql-instances: "k973yf--tools:northamerica-northeast1:search-db-sandbox"
       service-account: "sa-api@k973yf--tools.iam.gserviceaccount.com"
  - targetId: k973yf-prod
@@ -87,8 +87,8 @@ serialPipeline:
    - values:
       deploy-env: "production"
       deploy-project-id: "k973yf-prod"
-      service-name: "search-api"
-      container-name: "search-api"
+      service-name: "search-api-prod"
+      container-name: "search-api-prod"
       container-concurrency: "60"
       resources-cpu: "8000m"
       resources-memory: "4Gi"
