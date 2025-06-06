@@ -74,9 +74,8 @@ def collect_lear_data():
     current_app.logger.debug("Collecting LEAR data...")
     cur.execute(f"""
         SELECT b.identifier,b.legal_name,b.legal_type,b.tax_id,b.last_ar_date,
-            b.founding_date,b.restoration_expiry_date,pr.role,
-            p.first_name,p.middle_initial,p.last_name,p.organization_name,p.party_type,p.id as party_id,
-            CASE when b.state = 'LIQUIDATION' then 'ACTIVE' else b.state END state
+            b.founding_date,b.restoration_expiry_date,b.state,pr.role,
+            p.first_name,p.middle_initial,p.last_name,p.organization_name,p.party_type,p.id as party_id
         FROM businesses b
             LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
                        AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
