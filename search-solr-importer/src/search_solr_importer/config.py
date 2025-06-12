@@ -137,6 +137,10 @@ class UnitTestingConfig(Config):
     DEBUG = True
     DEVELOPMENT = False
     TESTING = True
+    # TODO: update these when tests are ready
+    INCLUDE_BTR_LOAD = False
+    INCLUDE_COLIN_LOAD = False
+    INCLUDE_LEAR_LOAD = False
     # SOLR
     SOLR_SVC_BUS_LEADER_CORE = os.getenv("TEST_SOLR_SVC_BUS_LEADER_CORE", "business")
     SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv("TEST_SOLR_SVC_BUS_FOLLOWER_CORE", "business_follower")
