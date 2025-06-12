@@ -86,7 +86,7 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                 current_app.logger.debug("---------- Mapping LEAR data ----------")
                 prepped_lear_data = prep_data(
                     data=lear_data,
-                    data_descs=[desc[0].lower() for desc in lear_data_cur.description],
+                    data_descs=lear_data_cur.keys(),
                     source="LEAR",
                 )
                 current_app.logger.debug(f"{len(prepped_lear_data)} LEAR records ready for import.")
@@ -107,7 +107,6 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                 current_app.logger.debug("---------- Collecting/Importing BTR Data ----------")
                 btr_fetch_count = 0
                 batch_limit = current_app.config.get("BTR_BATCH_LIMIT")
-                btr_data_descs = []
                 loop_count = 0
 
                 while loop_count < 100:  # noqa: PLR2004
@@ -122,10 +121,7 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                         break
 
                     current_app.logger.debug("********** Mapping BTR data **********")
-                    if not btr_data_descs:
-                        # just need to do once
-                        btr_data_descs = [desc[0].lower() for desc in btr_data_cur.description]
-                    prepped_btr_data = prep_data_btr(btr_data, btr_data_descs)
+                    prepped_btr_data = prep_data_btr(btr_data, btr_data_cur.keys())
                     current_app.logger.debug(f"{len(prepped_btr_data)} BTR records ready for import.")
 
                     current_app.logger.debug("********** Importing BTR entities **********")
