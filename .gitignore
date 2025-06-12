@@ -143,3 +143,6 @@ __pycache__
 
 # ruff cache
 **/.ruff_cache
+
+# sa secrets
+**/sa-secret/**

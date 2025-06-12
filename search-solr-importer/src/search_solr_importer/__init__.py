@@ -21,7 +21,7 @@ from flask import Flask
 
 from search_api.services import business_solr
 from search_solr_importer.config import DevelopmentConfig, ProductionConfig, UnitTestingConfig
-from search_solr_importer.oracle import oracle_db
+from search_solr_importer.services import btr_db, lear_db, oracle_db
 from search_solr_importer.translations import babel
 from search_solr_importer.version import __version__
 from structured_logging import StructuredLogging
@@ -63,6 +63,10 @@ def create_app(config_name: str = os.getenv("DEPLOYMENT_ENV", "production") or "
     oracle_db.init_app(app)
     business_solr.init_app(app)
     babel.init_app(app)
+    if app.config["INCLUDE_LEAR_LOAD"]:
+        lear_db.init_app(app)
+    if app.config["INCLUDE_BTR_LOAD"]:
+        btr_db.init_app(app)
 
     register_shellcontext(app)
 

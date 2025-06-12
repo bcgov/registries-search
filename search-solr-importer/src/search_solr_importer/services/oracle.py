@@ -86,7 +86,3 @@ class OracleDB:
             g._oracle_pool = self._create_pool()
 
         return g._oracle_pool.acquire()
-
-
-# export instance of this class
-oracle_db = OracleDB()
