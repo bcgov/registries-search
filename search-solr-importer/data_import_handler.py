@@ -107,7 +107,6 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                 current_app.logger.debug("---------- Collecting/Importing BTR Data ----------")
                 btr_fetch_count = 0
                 batch_limit = current_app.config.get("BTR_BATCH_LIMIT")
-                btr_data_descs = []
                 loop_count = 0
 
                 while loop_count < 100:  # noqa: PLR2004

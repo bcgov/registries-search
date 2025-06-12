@@ -64,7 +64,7 @@ class LearDB:
             self.db = BaseDB(db_config, test_connection)
 
         except Exception as e:
-            app.logger.error(f"LEAR db init failed: {str(e)}")
+            app.logger.error(f"LEAR db init failed: {e!s}")
             if self.db and self.db.connector:
                 self.db.connector.close()
             raise

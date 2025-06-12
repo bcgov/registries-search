@@ -61,7 +61,7 @@ class BaseDB:
     def __init__(self, db_config: DBConfig, test_connection=True):
         """Initialize the db connection."""
         if not db_config.instance_connection_name:
-            connect_string = f'postgresql://{db_config.user}:{db_config.password}@{db_config.host}:{db_config.port}/{db_config.database}'
+            connect_string = f"postgresql://{db_config.user}:{db_config.password}@{db_config.host}:{db_config.port}/{db_config.database}"
             self.engine = create_engine(connect_string)
         else:
             # NOTE: GOOGLE_APPLICATION_CREDENTIALS is used during the connector init
@@ -99,7 +99,7 @@ class BaseDB:
         with self.engine.connect() as conn:
             # Wrap the SQL string in text() for proper execution
             result = conn.execute(text("SELECT version()")).fetchone()
-            print(f"Connection successful. Database version: {result[0]}")
+            print(f"Connection successful. Database version: {result[0]}")  # noqa: T201
 
     def teardown(self, exception=None):
         """Clean up resources."""

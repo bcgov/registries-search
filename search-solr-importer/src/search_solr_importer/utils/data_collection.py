@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Data collection functions."""
-from sqlalchemy import CursorResult, text
 from flask import current_app
+from sqlalchemy import CursorResult, text
 
 from search_solr_importer import btr_db, lear_db, oracle_db
 
