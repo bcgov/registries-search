@@ -52,7 +52,7 @@ serialPipeline:
       container-name: "search-api-dev"
       cloudsql-instances: "k973yf-dev:northamerica-northeast1:search-db-dev"
       service-account: "sa-api@k973yf-dev.iam.gserviceaccount.com"
-      resources-cpu: "8000m"
+      resources-cpu: "1000m"
       resources-memory: "1Gi"
  - targetId: k973yf-test
    profiles: [test]
@@ -67,7 +67,7 @@ serialPipeline:
       container-name: "search-api-test"
       cloudsql-instances: "k973yf-test:northamerica-northeast1:search-db-test"
       service-account: "sa-api@k973yf-test.iam.gserviceaccount.com"
-      resources-cpu: "8000m"
+      resources-cpu: "1000m"
       resources-memory: "1Gi"
  - targetId: k973yf-sandbox
    profiles: [sandbox]
@@ -82,7 +82,7 @@ serialPipeline:
       container-name: "search-api-sandbox"
       cloudsql-instances: "k973yf--tools:northamerica-northeast1:search-db-sandbox"
       service-account: "sa-api@k973yf--tools.iam.gserviceaccount.com"
-      resources-cpu: "8000m"
+      resources-cpu: "1000m"
       resources-memory: "1Gi"
  - targetId: k973yf-prod
    profiles: [prod]
