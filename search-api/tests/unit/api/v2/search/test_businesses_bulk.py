@@ -184,6 +184,9 @@ def test_search_bulk_error(app, session, client, requests_mock):
     ('test_no_names_identifier', {'rows': 10}, [{'Invalid payload': "Expected at least 1 value in 'names' or 'identifiers'."}]),
     ('test_invalid_names', {'names': 'wrong'}, [{'Invalid payload': "Expected 'names' and 'identifiers' to be a list of strings."}]),
     ('test_invalid_identifiers', {'identifiers': 1}, [{'Invalid payload': "Expected 'names' and 'identifiers' to be a list of strings."}]),
+    ('test_too_many_names', {'names': [f"{x}" for x in range(1001)]}, [{'Invalid payload': "Expected combined length of 'names' and 'identifiers' to be <= 1000."}]),
+    ('test_too_many_identifiers', {'identifiers': [f"{x}" for x in range(1001)]}, [{'Invalid payload': "Expected combined length of 'names' and 'identifiers' to be <= 1000."}]),
+    ('test_too_many_combined', {'identifiers': [f"{x}" for x in range(500)], 'names': [f"{x}" for x in range(501)]}, [{'Invalid payload': "Expected combined length of 'names' and 'identifiers' to be <= 1000."}]),
     ('test_invalid_rows_1', {'identifiers': ['BC1234567'], 'rows': '10'}, [{'Invalid payload': "Expected 'rows' to be an integer."}]),
     ('test_invalid_rows_2', {'identifiers': ['BC1234567'], 'rows': 10001}, [{'Invalid payload': "Expected 'rows' to be <= 10000."}]),
     ('test_invalid_state_1', {'identifiers': ['BC1234567'], 'state': 1}, [{'Invalid payload': "Expected 'state' to be either 'ACTIVE' or 'HISTORICAL'."}]),
@@ -192,6 +195,7 @@ def test_search_bulk_error(app, session, client, requests_mock):
 ])
 def test_search_bulk_bad_request(app, session, client, test_name, payload, errors):
     """Assert that the business search call validates the payload."""
+    app.config["MAX_BULK_SEARCH_VALUES"] = 1000
     # call search
     resp = client.post('/api/v2/search/businesses/bulk',
                        headers={'content-type': 'application/json'},

@@ -126,7 +126,7 @@ def businesses_bulk():
         errors: list[dict[str, str]] = []
         if not isinstance(names, list) or not isinstance(identifiers, list):
             errors.append({"Invalid payload": "Expected 'names' and 'identifiers' to be a list of strings."})
-        elif requested_amount := (len(names) + len(identifiers)) == 0:
+        elif (requested_amount := (len(names) + len(identifiers))) == 0:
             errors.append({"Invalid payload": "Expected at least 1 value in 'names' or 'identifiers'."})
         elif (max_amount := current_app.config["MAX_BULK_SEARCH_VALUES"]) < requested_amount:
             errors.append({"Invalid payload": f"Expected combined length of 'names' and 'identifiers' to be <= {max_amount}."})
