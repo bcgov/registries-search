@@ -16,9 +16,9 @@ defaults:
     working-directory: ./search-solr-importer
 
 jobs:
-  search-updater-ci:
+  search-solr-importer-ci:
     uses: bcgov/bcregistry-sre/.github/workflows/backend-ci.yaml@main
     with:
-      app_name: "search-solr-updater"
+      app_name: "search-solr-importer"
       working_directory: "./search-solr-importer"
       codecov_flag: "search-solr-importer"

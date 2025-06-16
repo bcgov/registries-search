@@ -64,7 +64,7 @@ def collect_colin_data():
 
 def collect_lear_data() -> CursorResult:
     """Collect data from LEAR."""
-    current_app.logger.debug("Connecting to OCP Postgres instance...")
+    current_app.logger.debug("Connecting to LEAR Postgres instance...")
     conn = lear_db.db.engine.connect()
     current_app.logger.debug("Collecting LEAR data...")
     return conn.execute(text(f"""
@@ -91,7 +91,7 @@ def collect_btr_data(limit: int | None = None, offset: int | None = None) -> Cur
         # NOTE: needed in order to make sure we get every record when doing batch loads
         limit_clause = f"ORDER BY p.id {limit_clause}"
 
-    current_app.logger.debug("Connecting to BTR GCP Postgres instance...")
+    current_app.logger.debug("Connecting to BTR Postgres instance...")
     conn = btr_db.db.engine.connect()
     current_app.logger.debug("Collecting BTR data...")
     return conn.execute(text(
