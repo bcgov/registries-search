@@ -100,6 +100,11 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0030014', 'b!u(si)ness fou}l{rt-een ~`@#$%^-_=[]|\\;:\'",<>./', 'ACTIVE', 'BEN', '123456776BC0001'),
     create_solr_doc('BC0030025', 'business specialmatch', 'ACTIVE', 'BEN', '123456790BC0001'),
     create_solr_doc('BC0030026', 'business special match', 'ACTIVE', 'BEN', '123456791BC0001'),
+    # TODO: uncomment for 29043
+    # create_solr_doc('BC0030027', 'business special.period.match.', 'ACTIVE', 'BEN', '123456792BC0001'),
+    # create_solr_doc('BC0030028', 'business special. period. match.', 'ACTIVE', 'BEN', '123456793BC0001'),
+    # create_solr_doc('BC0030029', 'business specialperiodmatch', 'ACTIVE', 'BEN', '123456794BC0001'),
+    # create_solr_doc('BC0030030', 'business special period match', 'ACTIVE', 'BEN', '123456795BC0001'),
     create_solr_doc('BC0030001', '01 solr special && char', 'ACTIVE', 'BEN', '123456789BC0001'),
     create_solr_doc('BC0030002', '02 solr special || char', 'ACTIVE', 'BEN', '123456788BC0001'),
     create_solr_doc('BC0030003', '03 solr special: char', 'ACTIVE', 'BEN', '123456787BC0001'),

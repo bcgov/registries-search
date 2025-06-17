@@ -37,7 +37,8 @@ CONFIG_MAP = {
     "development": DevelopmentConfig,
     "testing": UnitTestingConfig,
     "migration": MigrationConfig,
-    "production": ProductionConfig
+    "sandbox": ProductionConfig,
+    "production": ProductionConfig,
 }
 
 
@@ -45,7 +46,7 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
     app.logger = StructuredLogging(app).get_logger().new(worker_id=str(uuid4()))
-    app.config.from_object(CONFIG_MAP.get(environment, "production"))
+    app.config.from_object(CONFIG_MAP.get(environment, ProductionConfig))
 
     db.init_app(app)
 

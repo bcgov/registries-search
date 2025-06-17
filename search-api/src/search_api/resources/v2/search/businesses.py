@@ -69,6 +69,7 @@ def businesses():
                                  BusinessField.NAME_STEM_AGRO: "parent",
                                  BusinessField.NAME_SINGLE: "parent",
                                  BusinessField.NAME_XTRA_Q: "parent",
+                                 BusinessField.NAME_Q_EXACT: "parent",
                                  BusinessField.BN_Q: "parent",
                                  BusinessField.IDENTIFIER_Q: "parent"},
                              query_boost_fields={
