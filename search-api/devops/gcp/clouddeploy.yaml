@@ -80,7 +80,7 @@ serialPipeline:
       deploy-project-id: "k973yf--tools"
       service-name: "search-api-sandbox"
       container-name: "search-api-sandbox"
-      cloudsql-instances: "k973yf--tools:northamerica-northeast1:search-db-sandbox"
+      cloudsql-instances: "k973yf--tools:northamerica-northeast1:search-db-integration"
       service-account: "sa-api@k973yf--tools.iam.gserviceaccount.com"
       resources-cpu: "1000m"
       resources-memory: "1Gi"

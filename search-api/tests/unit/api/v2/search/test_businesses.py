@@ -201,6 +201,27 @@ def test_businesses_solr_mock(app, session, client, requests_mock, test_name, qu
      {},
      [{'identifier': 'FM0004018', 'legalType': 'GP', 'name': 'firm eleven 11 periods y.z. xk', 'parties': [{'partyName': 'organization two y.z. xk', 'partyRoles': ['partner'], 'partyType': 'organization', 'score': 0.0}, {'partyName': 'person two', 'partyRoles': ['partner'], 'partyType': 'person', 'score': 0.0}], 'status': 'ACTIVE'}]
     ),
+    # TODO: update in 29043
+    # ('test_basic_name_._5',
+    #  {'value': 'special.period.match.'},
+    #  {},
+    #  [{},{},{},{},{}]
+    # ),
+    # ('test_basic_name_._6',
+    #  {'value': 'special. period. match.'},
+    #  {},
+    #  [{},{},{},{},{}]
+    # ),
+    # ('test_basic_name_._7',
+    #  {'value': 'special period match'},
+    #  {},
+    #  [{},{},{},{},{}]
+    # ),
+    # ('test_basic_name_._8',
+    #  {'value': 'specialperiodmatch'},
+    #  {},
+    #  [{},{},{},{},{}]
+    # ),
     ('test_basic_name_-_1',
      {'value': 'special - match'},
      {},
