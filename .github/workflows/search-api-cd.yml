@@ -35,6 +35,7 @@ jobs:
       app_name: "search-api"
       working_directory: "./search-api"
       redeploy: ${{ inputs.redeploy }}
+      cd_runner_version: "1.0.4"
     secrets:
       WORKLOAD_IDENTIFY_POOLS_PROVIDER: ${{ secrets.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
