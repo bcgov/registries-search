@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """BOR solr search functions."""
+from bor_api.exceptions import SolrException
 from bor_api.services.bor_solr import BorSolr
 from bor_api.services.bor_solr.fields import AddressField, DateRangeField, EntityField, EntityRoleField, InterestField
 
@@ -67,6 +68,28 @@ def entities_search(params: SearchParams, solr: BorSolr):
             ] += f' OR ({EntityField.ALT_NAME_AGRO_Q.value}:"{params.query["value"].split()[0]}"^2)'
 
     # add defaults
+    solr_payload = _get_solr_payload(params, initial_queries)
+    try:
+        return solr.query(solr_payload, params.start, params.rows)
+    except SolrException as err:
+        if "Query contains too many nested clauses" in err.error:
+            # retry with a simpler query
+            simplified_queries = build_base_query(
+                query=params.query,
+                fields=params.query_fields,
+                boost_fields={},
+                fuzzy_fields={},
+                synonym_fields={}
+            )
+            retry_payload = _get_solr_payload(params, simplified_queries)
+            return solr.query(retry_payload, params.start, params.rows)
+        # else pass exception along
+        raise err
+
+
+def _get_solr_payload(params: SearchParams, initial_queries: dict):
+    """Return the payload for the search solr call."""
+    # add defaults
     solr_payload = {
         **initial_queries,
         "queries": {
@@ -82,7 +105,6 @@ def entities_search(params: SearchParams, solr: BorSolr):
         },
         "fields": params.fields,
     }
-
     # base doc faceted filters
     _add_category_filters(solr_payload=solr_payload, categories=params.categories, is_nested=False)
 
@@ -109,4 +131,4 @@ def entities_search(params: SearchParams, solr: BorSolr):
         date_filter = f"{PRE_CHILD_FILTER_CLAUSE}{start_qry} AND {end_qry}"
         solr_payload["filter"].append(date_filter)
 
-    return solr.query(solr_payload, params.start, params.rows)
+    return solr_payload
