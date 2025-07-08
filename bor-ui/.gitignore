@@ -25,3 +25,6 @@ logs
 
 # other
 cypress/screenshots
+
+# local stuff
+.local

@@ -1,6 +1,7 @@
 export enum ErrorCategoryE {
   ACCOUNT_ACCESS = 'account-access',
   ACCOUNT_LIST = 'account-list',
+  ACCOUNT_PRODUCTS = 'account-products',
   ACCOUNT_SETTINGS = 'account-settings',
   DOC_ACCESS_CREATE = 'doc-access-create',
   DOC_ACCESS_HISTORY = 'doc-access-history',

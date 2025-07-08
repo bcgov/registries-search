@@ -1,7 +1,63 @@
 {
+  "breadcrumb": {
+    "accountDashboard": "BC Registries Dashboard",
+    "registryDashboard": "My Business Registry"
+  },
+  "button": {
+    "general": {
+      "ok": "OK",
+      "change": "Change"
+    },
+    "header": {
+      "createAccount": "Create account",
+      "login": "Log in"
+    }
+  },
+  "title": {
+    "header": "BC Registry and Online Services",
+    "menu": {
+      "header": {
+        "accountSettings": "Account Settings",
+        "selectLogin": "Select log in method",
+        "switchAccount": "Switch Account"
+      }
+    }
+  },
   "appHeader": "Business and Person Search",
   "label": {
+    "general": {
+      "email": "Email",
+      "phone": "Phone",
+      "unknownCompany": "Unknown Company"
+    },
+    "footer": {
+      "version": "A BC Online Application"
+    },
+    "header": {
+      "accountInfo": "Account Info",
+      "createAccount": "Create Account",
+      "editProfile": "Edit Profile",
+      "logOut": "Log Out",
+      "teamMembers": "Team Members",
+      "transactions": "Transactions"
+    },
+    "service": {
+      "bcsc": "BC Services Card",
+      "bceid": "BCeID",
+      "idir": "IDIR"
+    },
     "business": {
+      "businessNum": "Business Number",
+      "legalTypes": {
+        "BEN": "BC Benefit Company",
+        "BC": "BC Limited Company",
+        "CP": "BC Cooperative Association",
+        "SP": "BC Sole Proprietorship",
+        "GP": "BC General Partnership",
+        "undefined": "N/A"
+      },
+      "incorporationNum": "Incorporation Number",
+      "registrationNum": "Registration Number",
       "status": {
         "active": "Active",
         "historical": "Historical"
@@ -65,6 +121,19 @@
     }
   },
   "text": {
+    "general": {
+      "nA": "Not Available",
+      "saveAsAbove": "Same as above",
+      "notEntered": "(Not entered)",
+      "from": "From"
+    },
+    "dialog": {
+      "error": {
+        "contact": "If this issue persists, please contact us.",
+        "default": "The Business Dashboard application is currently unavailable. Please try again later.",
+        "download": "File cannot be downloaded due to an application error. Please try again later."
+      }
+    },
     "control": {
       "percentage": "At least {min}% and up to {max}%",
       "icon": {

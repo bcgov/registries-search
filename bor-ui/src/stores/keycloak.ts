@@ -11,21 +11,7 @@ const DEFAULT_REFRESH_MIN_VALIDITY = 120
 export const useBcrosKeycloak = defineStore('bcros/keycloak', () => {
   const kc: Ref<Keycloak> = ref({} as Keycloak)
 
-  const kcUser = computed((): KCUserI => {
-    if (kc.value?.tokenParsed) {
-      return {
-        firstName: kc.value.tokenParsed.firstname,
-        lastName: kc.value.tokenParsed.lastname,
-        fullName: kc.value.tokenParsed.name,
-        userName: kc.value.tokenParsed.username,
-        email: kc.value.tokenParsed.email,
-        keycloakGuid: kc.value.tokenParsed.sub || '',
-        loginSource: kc.value.tokenParsed.loginSource,
-        roles: kc.value.tokenParsed.realm_access?.roles || []
-      }
-    }
-    return {} as KCUserI
-  })
+  const kcUser: Ref<KCUserI> = ref({} as KCUserI)
   const kcUserKeycloakGuid = computed(() => kcUser.value.keycloakGuid)
   const kcUserLoginSource = computed(() => kcUser.value.loginSource)
   const kcUserRoles = computed(() => kcUser.value.roles || [])
@@ -71,6 +57,22 @@ export const useBcrosKeycloak = defineStore('bcros/keycloak', () => {
       kc.value.onTokenExpired = function () {
         kc.value?.updateToken(300)
         syncSessionStorage()
+      }
+
+      kc.value.onReady = function () {
+        const tokenParsed = kc.value?.tokenParsed
+        if (tokenParsed) {
+          kcUser.value = {
+            firstName: tokenParsed.firstname,
+            lastName: tokenParsed.lastname,
+            fullName: tokenParsed.name,
+            userName: tokenParsed.username,
+            email: tokenParsed.email,
+            keycloakGuid: tokenParsed.sub || '',
+            loginSource: tokenParsed.loginSource,
+            roles: tokenParsed.realm_access?.roles || []
+          }
+        }
       }
     }
     const kcOptions: KeycloakInitOptions = {

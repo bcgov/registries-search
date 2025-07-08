@@ -1,6 +1,6 @@
 {
   "name": "bor-ui",
-  "version": "2.4.6",
+  "version": "2.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,6 +20,8 @@
     "test:e2e:chrome": "cypress run chrome"
   },
   "dependencies": {
+    "@bcrs-shared-components/enums": "1.1.10",
+    "@bcrs-shared-components/interfaces": "1.1.15",
     "@headlessui/vue": "^1.7.22",
     "@iconify-json/mdi": "^1.1.66",
     "@mdi/font": "^7.4.47",
