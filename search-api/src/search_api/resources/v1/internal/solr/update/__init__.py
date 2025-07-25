@@ -106,7 +106,7 @@ def _parse_business(request_json: dict) -> BusinessDoc:
                 # the business is modernized
                 business_info["modernized"] = True
         except Exception as err:
-            current_app.logger.error("Could not determine modernization for %s.", identifier)
+            current_app.logger.error("Could not determine modernization for %s. %s", identifier, err)
         
     business_doc = BusinessDoc(
         bn=business_info.get("taxId"),

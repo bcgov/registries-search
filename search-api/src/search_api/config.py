@@ -259,9 +259,9 @@ NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
     PAY_AUDIENCE_SUB = "/api/v2/payments"
     VERIFY_PUBSUB_EMAILS = ["test@goole.email.com"]  # noqa: RUF012
     
-    PAYMENT_SVC_URL = 'http://PAYMENT_SVC_URL.test'
-    AUTH_SVC_URL = 'http://AUTH_SVC_URL.test'
-    LEAR_SVC_URL = 'http://LEAR_SVC_URL.test'
+    PAYMENT_SVC_URL = "http://PAYMENT_SVC_URL.test"
+    AUTH_SVC_URL = "http://AUTH_SVC_URL.test"
+    LEAR_SVC_URL = "http://LEAR_SVC_URL.test"
 
 
 class ProductionConfig(Config):  # pylint: disable=too-few-public-methods
