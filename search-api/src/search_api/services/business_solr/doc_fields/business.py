@@ -36,6 +36,7 @@ class BusinessField(BaseEnum):  # pylint: disable=too-few-public-methods
     # stored fields
     BN = "bn"
     IDENTIFIER = "identifier"
+    MODERNIZED = "modernized"
     NAME = "name"
     PARTIES = "parties"
     STATE = "status"

@@ -334,6 +334,7 @@
   <field name="identifier" type="string" indexed="true" stored="true"/>
   <field name="identifier_q" type="single_word_ngram" indexed="true" stored="false"/>
   <field name="identifier_q_edge" type="single_word_edgeNgram" indexed="true" stored="false"/>
+  <field name="modernized" type="boolean" docValues="true" indexed="true" stored="true"/>
   <field name="legalType" type="string" docValues="true" indexed="true" stored="true"/>
   <field name="name" type="string" indexed="false" stored="true"/>
   <field name="name_q" type="text_stemmed" indexed="true" stored="false"/>

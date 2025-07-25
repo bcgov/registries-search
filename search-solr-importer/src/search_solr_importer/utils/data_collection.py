@@ -75,7 +75,7 @@ def collect_lear_data() -> CursorResult:
             LEFT JOIN (SELECT * FROM party_roles WHERE cessation_date is null
                        AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
             LEFT JOIN parties p on p.id = pr.party_id
-        WHERE b.legal_type in ({_get_stringified_list_for_sql('MODERNIZED_LEGAL_TYPES')})
+        WHERE b.identifier not in ({_get_stringified_list_for_sql('BUSINESSES_MANAGED_BY_COLIN')})
         """
     ))
 

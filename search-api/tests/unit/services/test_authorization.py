@@ -51,7 +51,6 @@ def test_user_orgs_mock(client, session, jwt):
     """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
     # setup
     current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
-    # print('env auth-api url=' + current_app.config.get('AUTH_SVC_URL'))
     token = helper_create_jwt(jwt, [authz.PPR_ROLE])
 
     # test

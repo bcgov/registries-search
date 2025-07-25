@@ -123,10 +123,15 @@ def test_business_event(mock_get_event: MagicMock, mock_verify: MagicMock, app: 
         assert m.request_history[1].url == bus_url
         assert m.request_history[2].url == parties_url
         assert m.request_history[3].url == search_url
+        expected_business_json = {
+            'business': {
+                **(business['business']),
+                'modernized': True
+            }
+        }
         if not is_firm:
-            assert m.last_request.json() == { **business, 'parties': [] }
+            assert m.last_request.json() == { **expected_business_json, 'parties': [] }
         else:
-            expected_business_json = { **business }
             expected_business_json['business']['legalName'] = FIRM_PRIMARY_NAME
             expected_parties = {
                 'parties': [{

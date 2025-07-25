@@ -16,6 +16,7 @@ from http import HTTPStatus
 
 import requests
 from flask import current_app
+from flask_caching import Cache
 from requests import exceptions
 
 from search_api.enums import DocumentType
@@ -29,6 +30,9 @@ DOCUMENT_NAME = {
     DocumentType.CERTIFICATE_OF_STATUS: "cstat",
     DocumentType.LETTER_UNDER_SEAL: "lseal"
 }
+
+
+entity_cache = Cache()
 
 
 def get_business_document(identifier: str, document_type: DocumentType, content_type: str):
@@ -112,6 +116,12 @@ def get_business_filing_document_list(identifier: str, filing_id: int):
     return lear_response
 
 
+def get_business_cache_key(identifier: str):
+    """Return the cache key for the given args."""
+    return "entity" + identifier
+
+
+@entity_cache.cached(timeout=600, make_cache_key=get_business_cache_key)
 def get_business(identifier: str):
     """Get the business json for the given identifier."""
     lear_svc_url = current_app.config.get("LEAR_SVC_URL") + f"/businesses/{identifier}"

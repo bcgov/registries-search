@@ -27,6 +27,7 @@ class BusinessDoc:
     legalType: str
     name: str
     status: str
-    goodStanding: bool = None
     bn: str | None = None
+    goodStanding: bool = None
+    modernized: bool = None
     parties: list[PartyDoc] | None = None

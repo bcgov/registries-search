@@ -28,6 +28,7 @@ from search_api.models import db
 from search_api.resources import v1_endpoint, v2_endpoint
 from search_api.services import Flags, business_solr, queue
 from search_api.services.authz import auth_cache
+from search_api.services.entity import entity_cache
 from search_api.translations import babel
 from search_api.utils.auth import jwt
 from search_api.utils.run_version import get_run_version
@@ -67,6 +68,7 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         v2_endpoint.init_app(app)
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
+        entity_cache.init_app(app)
 
     @app.route("/")
     def be_nice_swagger_redirect():

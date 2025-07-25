@@ -158,7 +158,8 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
                 "identifier": identifier,
                 "name": _get_business_name(item_dict),
                 "status": item_dict["state"],
-                "bn": item_dict["tax_id"]
+                "bn": item_dict["tax_id"],
+                "modernized": source != "COLIN"
             }
             if party_id:
                 # add party doc to base doc

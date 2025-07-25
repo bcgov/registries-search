@@ -131,7 +131,7 @@
                   >
                     <template v-slot:activator="{ props }">
                       <v-row v-bind="props" no-gutters>
-                        <v-col v-bind="props" cols="auto">
+                        <v-col cols="auto">
                           <v-checkbox
                             density="compact"
                             :disabled="!item.active"
@@ -139,9 +139,10 @@
                             @change="toggleFee($event, item)"
                           />
                         </v-col>
-                        <v-col v-bind="props">
-                          <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                            {{ item.label }}</span><span>{{item.description}}</span>
+                        <v-col>
+                          <p :class="item.active ? 'active-text' : 'disabled-text'">
+                            {{ item.label }} {{item.description}}
+                          </p>
                         </v-col>
                       </v-row>
                     </template>
@@ -157,8 +158,9 @@
                       />
                     </v-col>
                     <v-col>
-                      <span v-bind="props" :class="item.active ? 'active-text' : 'disabled-text'">
-                        {{ item.label }}</span> <span>{{item.description}}</span>
+                      <p :class="item.active ? 'active-text' : 'disabled-text'">
+                        {{ item.label }} {{item.description}}
+                      </p>
                     </v-col>
                   </v-row>
                 </div>
@@ -264,7 +266,7 @@ const paymentError = computed(() => {
 })
 
 const { isStaff, isStaffSBC } = useAuth()
-const { entity, clearEntity, loadEntity, isFirm, isCoop, isBC, isActive, isBComp, warnings } = useEntity()
+const { entity, clearEntity, loadEntity, isFirm, isCoop, isActive, isBComp, warnings } = useEntity()
 const { filingHistory, loadFilingHistory, clearFilingHistory } = useFilingHistory()
 const { fees, addFeeItem, clearFees, getFeeInfo, displayFee, removeFeeItem } = useFeeCalculator()
 const { documentAccessRequest, createAccessRequest, loadAccessRequestHistory } = useDocumentAccessRequest()
@@ -418,30 +420,32 @@ const loadPurchasableDocs = async () => {
     // set fee preselect serviceFee based on service fee of first item in fees
     feePreSelectItem.value.serviceFee = feeData[0].serviceFee
   }
+  const summary_active = isBComp.value || isCoop.value || isFirm.value
   purchasableDocs.value.push({
     code: bsrchCode.value,
     fee: displayFee(feeData[0].fee, false, true),
     label: 'Business Summary and Filing History Documents',
     documentType: DocumentType.BUSINESS_SUMMARY_FILING_HISTORY,
-    active: true,
-    tooltip: '',
+    active: summary_active,
+    tooltip: summary_active ? '' : 'These documents will be available soon in this application. ' +
+      'Access these documents now through BC Online.',
     description: '(paper-only copies are not included)'
   })
 
-  if (isCogsAvailable()) {
+  if (!isFirm.value && isActive.value) {
     purchasableDocs.value.push({
       code: FeeCodes.CGOOD,
       fee: displayFee(feeData[1].fee, false, true),
       label: 'Certificate of Good Standing',
       documentType: DocumentType.CERTIFICATE_OF_GOOD_STANDING,
       active: entity.goodStanding,
-      tooltip: !entity.goodStanding ? 'The Certificate of Good Standing ' +
-        'is only available if the business is in Good Standing.' : '',
+      tooltip: entity.goodStanding ? '' : 'The Certificate of Good Standing ' +
+        'is only available if the business is in Good Standing.',
       description: ''
     })
   }
 
-  if (isCstatAvailable()) {
+  if (!isFirm.value && isActive.value) {
     purchasableDocs.value.push({
       code: FeeCodes.CSTAT,
       fee: displayFee(feeData[2].fee, false, true),
@@ -462,14 +466,6 @@ const loadPurchasableDocs = async () => {
     tooltip: '',
     description: ''
   })
-}
-
-const isCogsAvailable = () => {
-  return !isFirm.value && isActive.value
-}
-
-const isCstatAvailable = () => {
-  return (isBC.value || isCoop.value || isBComp.value) && isActive.value
 }
 
 const toggleFee = (event: any, item: any) => {

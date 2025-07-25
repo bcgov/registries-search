@@ -36,12 +36,12 @@ class BusinessSolr(Solr):
         self.business_fields = [
             BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
             BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
-            BusinessField.SCORE.value
+            BusinessField.MODERNIZED.value, BusinessField.SCORE.value
         ]
         self.business_with_parties_fields = [
             BusinessField.BN.value, BusinessField.IDENTIFIER.value, BusinessField.NAME.value,
             BusinessField.STATE.value, BusinessField.TYPE.value, BusinessField.GOOD_STANDING.value,
-            BusinessField.PARTIES.value, "[child]", BusinessField.SCORE.value,
+            BusinessField.PARTIES.value, BusinessField.MODERNIZED.value, "[child]", BusinessField.SCORE.value,
             PartyField.PARTY_NAME.value, PartyField.PARTY_ROLE.value, PartyField.PARTY_TYPE.value
         ]
         self.party_fields = [

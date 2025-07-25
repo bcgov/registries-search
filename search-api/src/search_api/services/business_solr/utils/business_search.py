@@ -74,6 +74,7 @@ def _get_solr_payload(params: QueryParams, solr: BusinessSolr, initial_queries: 
                          categories=params.categories,
                          is_nested=False,
                          solr=solr)
+
     # child filter queries
     if child_query := solr.query_builder.build_child_query(params.child_query):
         solr_payload["filter"].append(child_query)

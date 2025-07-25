@@ -41,6 +41,7 @@ SOLR_UPDATE_REQUEST_TEMPLATE_FIRM = {
         "identifier": "FM1233334",
         "legalName": "Test ABC",
         "legalType": "SP",
+        "modernized": True,
         "taxId": "123456789",
         "state": "ACTIVE"
    },
@@ -54,7 +55,7 @@ SOLR_UPDATE_REQUEST_TEMPLATE_FIRM = {
     }]
 }
 
-def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None, goodStanding=None) -> BusinessDoc:
+def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None, goodStanding=None, modernized=None) -> BusinessDoc:
     solr_parties = None
     if parties:
         solr_parties = []
@@ -79,7 +80,8 @@ def create_solr_doc(identifier, name, state, legal_type, bn=None, parties=None, 
         status=state,
         goodStanding=goodStanding,
         bn=bn,
-        parties=solr_parties
+        parties=solr_parties,
+        modernized=modernized
     )
 
 
@@ -120,5 +122,6 @@ SOLR_TEST_DOCS = [
     create_solr_doc('BC0030013', '13 solr special / char', 'ACTIVE', 'BEN', '123456777BC0001'),
     create_solr_doc('BC0030015', 'special OR AND NOT operators', 'ACTIVE', 'BEN', '123456775BC0001'),
     create_solr_doc('BC0030016', 'DIVINE ÉBÉNISTERIE INC.', 'ACTIVE', 'BEN', 'BN00012388'),
-    create_solr_doc('C0004569', 'c_identifier', 'ACTIVE', 'C', '111111111BC0001')
+    create_solr_doc('C0004569', 'c_identifier', 'ACTIVE', 'C', '111111111BC0001'),
+    create_solr_doc('BC0030017', 'Modernized flag set', 'ACTIVE', 'BC', '111111112BC0001', None, True, True)
 ]

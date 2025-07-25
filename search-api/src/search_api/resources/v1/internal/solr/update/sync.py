@@ -56,7 +56,8 @@ def _is_synced(actual_doc: dict, expected_doc: dict):
     """Return if True if the actual_doc and expected_doc are synced."""
     fields = [
         BusinessField.NAME, BusinessField.IDENTIFIER, BusinessField.TYPE,
-        BusinessField.STATE, BusinessField.GOOD_STANDING, BusinessField.BN
+        BusinessField.STATE, BusinessField.GOOD_STANDING, BusinessField.BN,
+        BusinessField.MODERNIZED
     ]
     for field in fields:
         if actual_doc.get(field.value) != expected_doc.get(field.value):
