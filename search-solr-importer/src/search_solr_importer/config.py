@@ -122,6 +122,9 @@ class Config:
     # Event tracking max retries before human intervention.
     EVENT_MAX_RETRIES: int = int(os.getenv("EVENT_MAX_RETRIES", "3"))
 
+    # temp migration vars
+    BUSINESSES_MANAGED_BY_COLIN = (os.getenv("BUSINESSES_MANAGED_BY_COLIN", "")).split(",")
+
 
 class DevelopmentConfig(Config):
     """Config object for development environment."""

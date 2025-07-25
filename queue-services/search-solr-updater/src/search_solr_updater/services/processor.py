@@ -54,6 +54,9 @@ def process_business_event(ce: SimpleCloudEvent):
     identifier = ce.data.get("identifier")
     if not identifier:
         raise BusinessException("Unable to parse identifier from message payload.")
+    if identifier in current_app.config["BUSINESSES_MANAGED_BY_COLIN"]:
+        current_app.logger.warning("Business is managed by COLIN. Skipping update for %s", identifier)
+        return
 
     with suppress(Exception):
         if (filings := ce.data.get("filing", {}).get("legalFilings", [])) and "alteration" in filings:
@@ -74,7 +77,6 @@ def process_business_event(ce: SimpleCloudEvent):
             party["roles"] = valid_roles
             parties.append(party)
 
-    # update solr via search-api
     def convert_business(business: dict):
         """Return the business info with the expected legal name."""
         if business["legalType"] in ["SP", "GP"]:
@@ -82,8 +84,10 @@ def process_business_event(ce: SimpleCloudEvent):
                 if name["identifier"] == business["identifier"]:
                     business["legalName"] = name["name"]
                     break
+        business['modernized'] = True
         return business
 
+    # update solr via search-api
     update_payload = {
       "business": convert_business(business_resp.json()["business"]),
       "parties": parties

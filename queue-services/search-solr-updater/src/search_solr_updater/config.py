@@ -69,6 +69,9 @@ class _Config:
     CACHE_DIR = os.getenv("CACHE_DIR", "cache")
     CACHE_DEFAULT_TIMEOUT = int(os.getenv("CACHE_DEFAULT_TIMEOUT", "300"))
 
+    # temp migration vars
+    BUSINESSES_MANAGED_BY_COLIN = (os.getenv("BUSINESSES_MANAGED_BY_COLIN", "")).split(",")
+
 
 class DevConfig(_Config):
     """Creates the Development Config object."""

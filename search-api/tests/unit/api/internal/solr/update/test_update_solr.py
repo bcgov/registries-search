@@ -77,6 +77,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'name': 'Benefit test comp',
                     'status': 'ACTIVE',
                     'goodStanding': False,
+                    'modernized': None,
                     'bn': '987654321BC0001',
                     'parties': None
                 }
@@ -90,6 +91,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
                     'name': 'Test ABC',
                     'status': 'ACTIVE',
                     'goodStanding': None,
+                    'modernized': True,
                     'bn': '123456789',
                     'parties': {
                         'set': [

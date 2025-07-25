@@ -40,6 +40,12 @@ SBC_STAFF = "sbc_staff"
 auth_cache = Cache()
 
 
+def get_auth_cache_key(path: str, token: str):
+    """Return the cache key for the given args."""
+    return "auth" + str(path) + str(token)
+
+
+@auth_cache.cached(timeout=600, make_cache_key=get_auth_cache_key)
 def _call_auth_api(path: str, token: str) -> dict:
     """Return the auth api response for the given endpoint path."""
     response = None
@@ -71,6 +77,7 @@ def _call_auth_api(path: str, token: str) -> dict:
     return response
 
 
+@auth_cache.cached(timeout=300)
 def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
     token_url = current_app.config.get("ACCOUNT_SVC_AUTH_URL")
@@ -179,12 +186,6 @@ def get_role(jwt: JwtManager, account_id) -> str:
     return role
 
 
-def get_cache_key(jwt_token: str, account_id: str):
-    """Return the cache key for the given args."""
-    return "auth" + str(account_id) + str(jwt_token)
-
-
-@auth_cache.cached(timeout=600, make_cache_key=get_cache_key)
 def does_user_have_account(jwt_token: str, account_id: str) -> bool:
     """Return True if the user belongs to the account with account id."""
     if not account_id:
