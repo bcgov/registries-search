@@ -84,7 +84,7 @@ def process_business_event(ce: SimpleCloudEvent):
                 if name["identifier"] == business["identifier"]:
                     business["legalName"] = name["name"]
                     break
-        business['modernized'] = True
+        business["modernized"] = True
         return business
 
     # update solr via search-api
