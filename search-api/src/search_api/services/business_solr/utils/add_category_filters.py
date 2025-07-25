@@ -22,8 +22,6 @@ def add_category_filters(solr_payload: dict,
                          solr: BusinessSolr):
     """Attach filter queries for categories to the params."""
     for category, category_filters in categories.items():
-        print(category)
-        print(category_filters)
         if category_filters:
             filter_str = solr.query_builder.build_facet_query(category, category_filters, is_nested)
             solr_payload["filter"].append(filter_str)
