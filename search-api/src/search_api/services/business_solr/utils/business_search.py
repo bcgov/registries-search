@@ -23,12 +23,13 @@ from .add_category_filters import add_category_filters
 def business_search(params: QueryParams, solr: BusinessSolr):
     """Return the list of businesses from Solr that match the query."""
     # initialize payload with base doc query (init query / filter)
+    print(5)
     initial_queries = solr.query_builder.build_base_query(
         query=params.query,
         fields=params.query_fields,
         boost_fields=params.query_boost_fields,
         fuzzy_fields=params.query_fuzzy_fields)
-
+    print(6)
     # boosts for term order result ordering
     for info in params.full_query_boosts:
         initial_queries["query"] += f' OR ({info["field"].value}:"{info["value"]}"'
@@ -37,7 +38,9 @@ def business_search(params: QueryParams, solr: BusinessSolr):
         else:
             initial_queries["query"] += f'^{info["boost"]})'
 
+    print(7)
     solr_payload = _get_solr_payload(params, solr, initial_queries)
+    print(8)
     try:
         return solr.query(solr_payload, params.start, params.rows)
     except SolrException as err:
@@ -70,10 +73,12 @@ def _get_solr_payload(params: QueryParams, solr: BusinessSolr, initial_queries: 
         "fields": params.fields
     }
     # base doc faceted filters
+    print(7)
     add_category_filters(solr_payload=solr_payload,
                          categories=params.categories,
                          is_nested=False,
                          solr=solr)
+    print(8)
     # child filter queries
     if child_query := solr.query_builder.build_child_query(params.child_query):
         solr_payload["filter"].append(child_query)

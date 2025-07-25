@@ -50,10 +50,13 @@ def businesses():
         }
         # set faceted category params
         categories_json: dict = request_json.get("categories", {})
+        print(1)
         categories = {
             BusinessField.TYPE: categories_json.get(BusinessField.TYPE.value, None),
-            BusinessField.STATE: categories_json.get(BusinessField.STATE.value, None)
+            BusinessField.STATE: categories_json.get(BusinessField.STATE.value, None),
+            BusinessField.MODERNIZED: categories_json.get(BusinessField.MODERNIZED.value, None)
         }
+        print(2)
 
         # set doc fields to return
         fields = business_solr.business_with_parties_fields
@@ -83,8 +86,10 @@ def businesses():
                              child_query=child_query,
                              child_categories={},
                              child_date_ranges={})
+        print(3)
         # execute search
         results = business_search(params, business_solr)
+        print(4)
         response = {
             "facets": parse_facets(results),
             "searchResults": {
