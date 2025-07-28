@@ -22,6 +22,8 @@ export interface RegSearchResultI {
   bn: string
   status: BusinessStateE.ACTIVE | BusinessStateE.HISTORICAL
   legalType: BusinessTypeE
+  goodstanding?: boolean
+  modernized?: boolean
 }
 
 // api responses

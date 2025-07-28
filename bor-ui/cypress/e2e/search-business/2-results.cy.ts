@@ -80,7 +80,7 @@ context('Search Business - results', () => {
           // NOTE: will be added back in later
           // expect(cols.eq(5), 'Significant Individuals column').to.have
           //   .text('Company indicated no significant individuals')
-          if (['BEN', 'CP', 'SP', 'GP'].includes(results[i].legalType)) {
+          if (results[i].modernized) {
             expect(cols.eq(5), 'Actions column').to.have.text('Open')
           } else {
             expect(cols.eq(5), 'Actions column').to.have.text('')

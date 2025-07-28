@@ -29,9 +29,9 @@
     <template #item-slot-action="{ item } : { item: RegSearchResultI }">
       <CommonItemsAction
         class="flex grow justify-center"
-        :show-btn="ModernizedTypes.includes(item.legalType)"
+        :show-btn="item.modernized"
         :tooltip-msg="tooltipMsg"
-        @action="goToOpenBusiness(item.identifier, item.legalType)"
+        @action="goToOpenBusiness(item.identifier, item.modernized)"
       />
     </template>
     <template #item-slot-significant-individuals="{ item } : { item: RegSearchResultI }">

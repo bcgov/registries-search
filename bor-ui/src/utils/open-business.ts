@@ -1,10 +1,8 @@
-import type { BusinessTypeE } from '#imports'
-
-export const goToOpenBusiness = (identifier: string, legalType: BusinessTypeE) => {
+export const goToOpenBusiness = (identifier: string, modernized = false) => {
   const { accessLevel } = useBcrosSearchAccess()
   const { bcolURL, businessDashURL, businessSearchURL } = useRuntimeConfig().public
 
-  if (ModernizedTypes.includes(legalType)) {
+  if (modernized) {
     if (accessLevel !== SearchAccessE.EXTENDED) {
       // will redirect to business search document purchase page for given identifier
       useBcrosNavigate().redirect(businessSearchURL, { identifier }, '_blank')

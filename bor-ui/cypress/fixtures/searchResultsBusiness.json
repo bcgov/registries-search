@@ -76,14 +76,16 @@
                 "legalType": "SP",
                 "name": "TEST TEST RITVICK",
                 "score": 252.72418,
-                "status": "HISTORICAL"
+                "status": "HISTORICAL",
+                "modernized": true
             },
             {
                 "identifier": "XS1000621",
                 "legalType": "XS",
                 "name": "TEST",
                 "score": 247.30763,
-                "status": "ACTIVE"
+                "status": "ACTIVE",
+                "modernized": false
             },
             {
                 "bn": "123",
@@ -92,7 +94,8 @@
                 "legalType": "BC",
                 "name": "TEST LTD",
                 "score": 217.08148,
-                "status": "ACTIVE"
+                "status": "ACTIVE",
+                "modernized": true
             },
             {
                 "bn": "123",
@@ -109,7 +112,8 @@
                 "legalType": "BC",
                 "name": "TEST LTD",
                 "score": 217.08148,
-                "status": "ACTIVE"
+                "status": "ACTIVE",
+                "modernized": false
             },
             {
                 "identifier": "S1000248",
