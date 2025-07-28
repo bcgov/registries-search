@@ -52,7 +52,8 @@ def businesses():
         categories_json: dict = request_json.get("categories", {})
         categories = {
             BusinessField.TYPE: categories_json.get(BusinessField.TYPE.value, None),
-            BusinessField.STATE: categories_json.get(BusinessField.STATE.value, None)
+            BusinessField.STATE: categories_json.get(BusinessField.STATE.value, None),
+            BusinessField.MODERNIZED: categories_json.get(BusinessField.MODERNIZED.value, None)
         }
 
         # set doc fields to return

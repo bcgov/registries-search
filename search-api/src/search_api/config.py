@@ -169,6 +169,9 @@ class Config:
     except:
         DOCUMENT_REQUEST_DAYS_DURATION = 14
 
+    # temp migration vars
+    BUSINESSES_MANAGED_BY_COLIN = (os.getenv("BUSINESSES_MANAGED_BY_COLIN", "")).split(",")
+
 
 class DevelopmentConfig(Config):  # pylint: disable=too-few-public-methods
     """Config object for development environment."""
@@ -255,6 +258,10 @@ NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
     # cc gcloud listener payments vars
     PAY_AUDIENCE_SUB = "/api/v2/payments"
     VERIFY_PUBSUB_EMAILS = ["test@goole.email.com"]  # noqa: RUF012
+    
+    PAYMENT_SVC_URL = "http://PAYMENT_SVC_URL.test"
+    AUTH_SVC_URL = "http://AUTH_SVC_URL.test"
+    LEAR_SVC_URL = "http://LEAR_SVC_URL.test"
 
 
 class ProductionConfig(Config):  # pylint: disable=too-few-public-methods

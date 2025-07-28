@@ -353,6 +353,11 @@ def test_businesses_solr_mock(app, session, client, requests_mock, test_name, qu
      {BusinessField.TYPE.value: ['CP']},
      [{'bn': '09876K', 'goodStanding': True, 'identifier': 'CP0234567', 'legalType': 'CP', 'name': 'business two 2', 'status': 'HISTORICAL'}]
     ),
+    ('test_categories_modernized',
+     {'value': 'i'},
+     {BusinessField.MODERNIZED.value: [True]},
+     [{'bn': '111111112BC0001', 'goodStanding': True, 'identifier': 'BC0030017', 'legalType': 'BC', 'modernized': True, 'name': 'Modernized flag set', 'status': 'ACTIVE'}]
+    ),
     ('test_categories_no_match',
      {'value': 'business two'},
      {BusinessField.TYPE.value: ['BEN']},

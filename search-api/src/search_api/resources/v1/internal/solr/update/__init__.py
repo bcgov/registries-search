@@ -16,14 +16,14 @@ import re
 from dataclasses import asdict
 from http import HTTPStatus
 
-from flask import Blueprint, g, jsonify, request
+from flask import Blueprint, current_app, g, jsonify, request
 from flask_cors import cross_origin
 
 import search_api.resources.utils as resource_utils
 from search_api.enums import SolrDocEventType
 from search_api.exceptions import SolrException
 from search_api.models import SolrDoc, SolrDocEvent, User
-from search_api.services import SYSTEM_ROLE
+from search_api.services import SYSTEM_ROLE, entity
 from search_api.services.business_solr.doc_models import BusinessDoc, PartyDoc
 from search_api.services.validator import RequestValidator
 from search_api.utils.auth import jwt
@@ -93,6 +93,21 @@ def _parse_business(request_json: dict) -> BusinessDoc:
     if needs_bc_prefix(identifier, legal_type):
         identifier = f"BC{identifier}"
 
+    # Temporary code while migration is in progress
+    if (
+        "modernized" not in business_info \
+        and identifier not in current_app.config["BUSINESSES_MANAGED_BY_COLIN"] \
+        and legal_type in ["BC", "A", "C", "ULC", "CUL"]
+    ):
+        # make legal-api call to check current 'modernized' status
+        try:
+            lear_record = entity.get_business(identifier)
+            if lear_record.status_code == HTTPStatus.OK:
+                # the business is modernized
+                business_info["modernized"] = True
+        except Exception as err:
+            current_app.logger.error("Could not determine modernization for %s. %s", identifier, err)
+        
     business_doc = BusinessDoc(
         bn=business_info.get("taxId"),
         id=identifier,
@@ -100,8 +115,8 @@ def _parse_business(request_json: dict) -> BusinessDoc:
         legalType=legal_type,
         name=business_info["legalName"].strip(),
         status=business_info["state"],
-        goodStanding=business_info.get("goodStanding"))
-
+        goodStanding=business_info.get("goodStanding"),
+        modernized=business_info.get("modernized"))
     if party_info:
         party_list = []
         # add party doc to base doc
