@@ -39,10 +39,10 @@ class Config:
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    SOLR_SVC_BUS_LEADER_CORE = os.getenv("SOLR_SVC_BUS_LEADER_CORE", "business")
-    SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv("SOLR_SVC_BUS_FOLLOWER_CORE", "business_follower")
-    SOLR_SVC_BUS_LEADER_URL = os.getenv("SOLR_SVC_BUS_LEADER_URL", "http://localhost:8873/solr")
-    SOLR_SVC_BUS_FOLLOWER_URL = os.getenv("SOLR_SVC_BUS_FOLLOWER_URL", "http://localhost:8874/solr")
+    SOLR_SVC_BUS_LEADER_CORE = os.getenv("SOLR_SVC_LEADER_CORE", "business")
+    SOLR_SVC_BUS_FOLLOWER_CORE = os.getenv("SOLR_SVC_FOLLOWER_CORE", "business_follower")
+    SOLR_SVC_BUS_LEADER_URL = os.getenv("SOLR_SVC_LEADER_URL", "http://localhost:8873/solr")
+    SOLR_SVC_BUS_FOLLOWER_URL = os.getenv("SOLR_SVC_FOLLOWER_URL", "http://localhost:8874/solr")
     HAS_FOLLOWER = SOLR_SVC_BUS_FOLLOWER_URL != SOLR_SVC_BUS_LEADER_URL
     # Retry settings
     SOLR_RETRY_TOTAL = int(os.getenv("SOLR_RETRY_TOTAL", "2"))
