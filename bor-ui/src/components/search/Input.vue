@@ -49,12 +49,23 @@ const searchTypeOptions = ref([
   }
 ])
 
-onMounted(() => {
+onMounted(async () => {
+  await useBcrosLaunchdarkly().ldClient?.waitUntilReady()
+
   if (hasExtendedAccess.value || hasLimitedAccess.value) {
     searchTypeOptions.value.push({
       value: SearchTypeE.DIRECTOR,
       label: t('label.search.searchDirectors')
     })
+  }
+
+  const disabledOptions = (useBcrosLaunchdarkly().getStoredFlag('disabled-search-types') as string || '').split(',')
+  searchTypeOptions.value = searchTypeOptions.value.filter(option => !disabledOptions.includes(option.value))
+  if (searchTypeOptions.value.length) {
+    searchType.value = searchTypeOptions.value[0].value
+  } else {
+    console.error('No enabled search types. UI should be closed.')
+    searchType.value = undefined
   }
 })
 
