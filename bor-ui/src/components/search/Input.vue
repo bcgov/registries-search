@@ -42,10 +42,11 @@ const searchHint = computed(() => t(`text.search.${searchType.value}.${accessLev
 const searchPlaceholder = computed(() => t(`text.search.${searchType.value}.${accessLevel.value}.placeholder`))
 
 const searchTypeOptions = ref([
-  { value: SearchTypeE.BUSINESS, label: t('label.search.searchBusinesses') },
+  { value: SearchTypeE.BUSINESS, label: t('label.search.searchBusinesses'), disabled: false },
   {
     value: SearchTypeE.PERSON,
-    label: t('label.search.searchPeople')
+    label: t('label.search.searchPeople'),
+    disabled: false
   }
 ])
 
@@ -55,17 +56,17 @@ onMounted(async () => {
   if (hasExtendedAccess.value || hasLimitedAccess.value) {
     searchTypeOptions.value.push({
       value: SearchTypeE.DIRECTOR,
-      label: t('label.search.searchDirectors')
+      label: t('label.search.searchDirectors'),
+      disabled: false
     })
   }
 
   const disabledOptions = (useBcrosLaunchdarkly().getStoredFlag('disabled-search-types') as string || '').split(',')
-  searchTypeOptions.value = searchTypeOptions.value.filter(option => !disabledOptions.includes(option.value))
-  if (searchTypeOptions.value.length) {
-    searchType.value = searchTypeOptions.value[0].value
-  } else {
-    console.error('No enabled search types. UI should be closed.')
-    searchType.value = undefined
+  for (const option of searchTypeOptions.value) {
+    if (disabledOptions.includes(option.value)) {
+      option.disabled = true
+      option.label = option.label + ' (disabled)'
+    }
   }
 })
 
