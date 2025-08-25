@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Change for follower vs leader and per env
+## dev/test/sandbox: 1g
+## prod follower: 1g, prod leader: 2g
+JVM_MEM="1g"
+
+# Change for follower vs leader
+IMAGE="business-solr-leader"
+
+# Change per env
+ENV="dev"
+LABEL="Development"
+
+# Change per app
+IMAGE_PROJECT="**--tools"
+IMAGE_REPO="business-solr"
+
+CONTAINER_NAME="solr-container"
+ZONE="northamerica-northeast1"
+IMAGE_PATH="${ZONE}-docker.pkg.dev/${IMAGE_PROJECT}/${IMAGE_REPO}/${IMAGE}"
+SOLR_ENV_SETTINGS="${ENV},label=${LABEL}"
+
+sudo useradd -m solr
+
+# Stop and remove container if it already exists
+docker stop $CONTAINER_NAME || true
+docker rm $CONTAINER_NAME || true
+
+# Set home directory to save docker credentials
+export HOME="/home/solr"
+
+sudo chmod 777 $HOME
+
+# Configure docker with credentials for gcr.io and pkg.dev
+docker-credential-gcr configure-docker --registries=northamerica-northeast1-docker.pkg.dev
+
+# Set volume path for host
+HOST_COPY_PATH=$HOME/volume
+HOST_MOUNT_PATH=$HOST_COPY_PATH/data
+HOST_MOUNT_PATH_ENV=$HOST_COPY_PATH/default
+
+# Set volume path for docker container
+CONTAINER_MOUNT_PATH=/var/solr/data
+CONTAINER_MOUNT_PATH_ENV=/etc/default
+
+if [ -d "$HOST_MOUNT_PATH" ]; then
+  echo "Solr already initialized previously. Using existing data."
+else
+  echo "Initializing solr..."
+  mkdir -p "${HOST_MOUNT_PATH}"
+
+  # Run docker container without volume
+  docker run -d --name=$CONTAINER_NAME --log-driver=gcplogs -p 8983:8983 $IMAGE_PATH:$ENV
+
+  echo "Waiting 60s for solr to initialize..."
+  sleep 60
+
+  echo "Solr initialized. Copying files to host..."
+
+  # Stop container and copy files into host (so that we can apply a volume onto it)
+  docker stop $CONTAINER_NAME
+  
+  # copy initialzed files
+  docker cp $CONTAINER_NAME:$CONTAINER_MOUNT_PATH $HOST_COPY_PATH
+  docker cp $CONTAINER_NAME:$CONTAINER_MOUNT_PATH_ENV $HOST_COPY_PATH
+  
+  # set solr user as the owner so that it has needed permissions
+  sudo chown -R solr: $HOME/*/**
+  sudo chmod -R 777 $HOME/*/**
+
+  # Remove the existing container
+  docker rm $CONTAINER_NAME
+  echo "Files copied to host. Updating env overrides..."
+  # Set 'SOLR_OPTS_VAR' to ensure existing SOLR_OPTS in the solr config are not overwritten
+  SOLR_OPTS_VAR='$SOLR_OPTS'
+  echo SOLR_OPTS=\"$SOLR_OPTS_VAR -Dsolr.environment=$SOLR_ENV_SETTINGS\" >> $HOST_MOUNT_PATH_ENV/solr.in.sh
+  echo SOLR_JAVA_MEM=\"-Xms$JVM_MEM -Xmx$JVM_MEM\" >> $HOST_MOUNT_PATH_ENV/solr.in.sh
+  echo "Updated env overrides."
+fi
+
+# Start the container again with the volume so that the data persists
+echo "Running solr container..."
+docker run -d --name=$CONTAINER_NAME --log-driver=gcplogs -v $HOST_MOUNT_PATH:$CONTAINER_MOUNT_PATH -v $HOST_MOUNT_PATH_ENV:$CONTAINER_MOUNT_PATH_ENV -p 8983:8983 $IMAGE_PATH:$ENV
