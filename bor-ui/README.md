@@ -1,17 +1,13 @@
-# Nuxt 3 Minimal Starter
-
-# bor-ui
+# Business and Person Search UI (bor-ui)
 
 ## Project configuration
-- Node 20
-- Nuxt 3
-- Vite
-- Vue 3
+- Node 24
+- Nuxt 4
 - Nuxt/ui
 - Tailwind
 - Typescript
+- Playwright
 - Vitest
-- Eslint
 
 
 ## Project setup
@@ -34,12 +30,17 @@ pnpm generate
 pnpm preview
 ```
 
-### Run your unit tests
+### Run e2e tests
+```
+pnpm test:e2e
+```
+
+### Run unit tests
 ```
 pnpm test:unit
 ```
 
-### Lints and fixes files
+### Lint check
 ```
 pnpm lint
 ```

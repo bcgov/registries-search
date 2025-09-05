@@ -1,5 +1,0 @@
-export enum BusinessStateE {
-  ACTIVE = 'ACTIVE',
-  HISTORICAL = 'HISTORICAL',
-  LIQUIDATION = 'LIQUIDATION'
-}

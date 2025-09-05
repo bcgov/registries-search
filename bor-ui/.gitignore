@@ -1,30 +1,33 @@
-# Nuxt dev/build outputs
+node_modules
+*.log
+.nuxt
+nuxt.d.ts
 .output
 .data
-.nuxt
-.nitro
-.cache
-dist
-
-# Node dependencies
-node_modules
-
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
 .env
-.env.*
-!.env.example
+package-lock.json
+framework
+dist
+.DS_Store
 
-# other
-cypress/screenshots
+# Yarn
+.yarn/cache
+.yarn/*state*
+
+# Local History
+.history
+
+# VSCode
+.vscode/
+
+# JetBrains/WebStorm
+.idea/
+
+# playwright e2e test
+**/test-results
+**/tests/e2e/.auth/**
+**/playwright-report
+**/blob-report
 
 # local stuff
 .local

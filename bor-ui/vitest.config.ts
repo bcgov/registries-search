@@ -1,18 +1,18 @@
-import { fileURLToPath } from 'node:url'
+// vitest.config.ts
 import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
-    dir: 'tests',
     environment: 'nuxt',
+    dir: './tests/unit',
+    include: ['**/*.test.ts'],
     environmentOptions: {
       nuxt: {
-        rootDir: fileURLToPath(new URL('./', import.meta.url)),
-        domEnvironment:
-          (process.env.VITEST_DOM_ENV as 'happy-dom' | 'jsdom') ?? 'happy-dom'
+        domEnvironment: 'happy-dom', // 'happy-dom' (default) or 'jsdom'
+        overrides: {
+          // other Nuxt config you want to pass
+        }
       }
-    },
-    setupFiles: ['./tests/setup.ts'],
-    globals: true
+    }
   }
 })
