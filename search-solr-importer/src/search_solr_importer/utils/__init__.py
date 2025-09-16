@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manages util functions for the importer."""
-from .data_collection import collect_btr_data, collect_colin_data, collect_lear_data
+from .data_collection import collect_btr_data, collect_colin_data, collect_lear_data, collect_lear_businesses_requiring_transition
 from .data_parsing import prep_data, prep_data_btr
 from .reindex import reindex_post, reindex_prep, reindex_recovery
 from .update_solr import resync, update_solr

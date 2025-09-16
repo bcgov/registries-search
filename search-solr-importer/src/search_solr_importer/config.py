@@ -121,6 +121,11 @@ class Config:
 
     # Event tracking max retries before human intervention.
     EVENT_MAX_RETRIES: int = int(os.getenv("EVENT_MAX_RETRIES", "3"))
+    
+    # Valid legal types to check for transition required
+    TRANSITION_APPLICATION_LEGAL_TYPES = (
+        os.getenv("TRANSITION_APPLICATION_LEGAL_TYPES", "BEN,BC,CC,ULC,CBEN,C,CCC,CUL")
+    ).split(",")
 
     # temp migration vars
     BUSINESSES_MANAGED_BY_COLIN = (os.getenv("BUSINESSES_MANAGED_BY_COLIN", "")).split(",")

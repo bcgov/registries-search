@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Data collection functions."""
+from typing import Final
+
 from flask import current_app
 from sqlalchemy import CursorResult, text
 
@@ -76,6 +78,32 @@ def collect_lear_data() -> CursorResult:
                        AND role in ('partner', 'proprietor')) as pr on pr.business_id = b.id
             LEFT JOIN parties p on p.id = pr.party_id
         WHERE b.identifier not in ({_get_stringified_list_for_sql('BUSINESSES_MANAGED_BY_COLIN')})
+        """
+    ))
+
+
+def collect_lear_businesses_requiring_transition() -> CursorResult:
+    current_app.logger.debug("Connecting to LEAR Postgres instance...")
+    conn = lear_db.db.engine.connect()
+    current_app.logger.debug("Collecting LEAR businesses that require a transition application...")
+    return conn.execute(text(f"""
+        SELECT b.identifier
+        FROM businesses b
+        JOIN (
+            SELECT * FROM filings
+            WHERE filing_type in ('restoration','resotrationApplication') AND status = 'COMPLETED'
+        ) as rf on rf.business_id = b.id
+        WHERE b.legal_type in ({_get_stringified_list_for_sql('TRANSITION_APPLICATION_LEGAL_TYPES')})
+            AND b.founding_date < '2004-03-29 00:00:00+00:00'
+            AND b.state = 'ACTIVE'
+            AND NOT EXISTS (
+                SELECT * FROM filings
+                WHERE business_id = b.id
+                    AND filing_type = 'transition'
+                    AND status = 'COMPLETED'
+                    AND effective_date > rf.effective_date
+            )
+        GROUP BY b.identifier
         """
     ))
 
