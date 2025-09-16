@@ -34,7 +34,7 @@ def _is_good_standing(item_dict: dict, source: str, requires_transition: list[st
         if item_dict.get("restoration_expiry_date"):
             # A business in limited restoration is not in good standing according to LEAR
             return False
-        if item_dict['identifier'] in requires_transition:
+        if item_dict["identifier"] in requires_transition:
             return False
         # rule directly from LEAR code
         last_file_date = item_dict["last_ar_date"] or item_dict["founding_date"]
