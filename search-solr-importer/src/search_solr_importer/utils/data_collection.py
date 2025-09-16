@@ -89,7 +89,9 @@ def collect_lear_businesses_requiring_transition() -> CursorResult:
         FROM businesses b
         JOIN (
             SELECT * FROM filings
-            WHERE filing_type in ('restoration','restorationApplication') AND status = 'COMPLETED'
+            WHERE filing_type in ('restoration','restorationApplication')
+                AND filing_sub_type not in ('limitedRestoration','limitedRestorationExtension')
+                AND status = 'COMPLETED'
         ) as rf on rf.business_id = b.id
         WHERE b.legal_type in ({_get_stringified_list_for_sql('TRANSITION_APPLICATION_LEGAL_TYPES')})
             AND b.founding_date < '2004-03-29 00:00:00+00:00'
