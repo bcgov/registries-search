@@ -39,15 +39,19 @@ const resetFiltersTrigger = ref(false)
       </div>
     </template>
     <template #item-slot-details="{ item }">
-      <div v-for="role, i in item.roles" :key="'child-role-' + i">
-        <div class="inner-row-div flex w-full">
+      <div
+        v-for="role, i in item.roles"
+        :key="'child-role-' + i"
+        class="mt-3"
+      >
+        <div class="flex w-full" data-testid="inner-row-div">
           <div
-            class="inner-col-div"
             :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
+            data-testid="inner-col-div"
           >
             <SearchTableCommonItemsBusinessDetails :role="role" />
           </div>
-          <div class="inner-col-div" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+          <div :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }" data-testid="inner-col-div">
             {{ capFirstLetter(`${role.roleType}`) }}
           </div>
         </div>

@@ -65,6 +65,7 @@ export interface SearchPayload {
   categories: {
     entityType?: BusinessType[]
     legalType?: BusinessType[]
+    nationalities?: string[]
     roles?: {
       relatedEntityType?: BusinessType[]
       relatedState?: BusinessState[]
@@ -85,13 +86,14 @@ export interface Facet {
 
 export interface FacetsResult {
   fields?: {
-    entityType: Facet[]
-    legalType: Facet[]
-    relatedEntityType: Facet[]
-    relatedLegalType: Facet[]
-    relatedState: Facet[]
-    roleType: Facet[]
-    state: Facet[]
+    entityType?: Facet[]
+    legalType?: Facet[]
+    relatedEntityType?: Facet[]
+    relatedLegalType?: Facet[]
+    relatedState?: Facet[]
+    roleType?: Facet[]
+    status?: Facet[]
+    state?: Facet[]
   }
 }
 

@@ -17,11 +17,12 @@ export interface BusinessSearchPayload {
 export interface BusinessSearchResult {
   name: string
   identifier: string
-  bn: string
+  bn?: string
   status: BusinessState
   legalType: BusinessType
-  goodstanding?: boolean
+  goodStanding?: boolean
   modernized?: boolean
+  score?: number
 }
 
 // api responses

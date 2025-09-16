@@ -69,26 +69,38 @@ const isVitestRunning = !!process.env.VITEST_WORKER_ID
     </template>
     <template #item-slot-details="{ item }">
       <div
-        v-for="role, i in item.roles"
-        :key="'child-role-' + i"
-        class="child-row-item"
+        class="divide-y divide-dotted divide-line-muted *:py-3 *:first:pt-0 *:last:pb-0"
       >
-        <div class="inner-row-div flex w-full">
+        <div
+          v-for="role, i in item.roles"
+          :key="'child-role-' + i"
+          class="flex w-full"
+          data-testid="inner-row-div"
+        >
           <div
-            class="inner-col-div"
             :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
+            data-testid="inner-col-div"
           >
             <SearchTableCommonItemsBusinessDetails :role="role" />
           </div>
-          <div class="inner-col-div pl-1" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+          <div
+            class="pl-1"
+            :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }"
+            data-testid="inner-col-div"
+          >
             {{ capFirstLetter(`${role.roleType}`) }}
           </div>
-          <div class="inner-col-div pl-2" :style="{ width: getChildHeaderWidth(headers, 'Details', childHeaders) }">
+          <div
+            class="pl-2"
+            :style="{ width: getChildHeaderWidth(headers, 'Details', childHeaders) }"
+            data-testid="inner-col-div"
+          >
             <SearchTableCommonItemsPersonControl v-if="!isVitestRunning" :role="role" />
           </div>
           <div
-            class="inner-col-div mr-0"
+            class="mr-0"
             :style="{ width: getChildHeaderWidth(headers, 'Effective Dates', childHeaders) }"
+            data-testid="inner-col-div"
           >
             <SearchTableCommonItemsEffectiveDates :role="role" />
           </div>

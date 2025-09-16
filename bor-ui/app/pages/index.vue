@@ -18,7 +18,17 @@ const tabs = [
 
 definePageMeta({
   layout: 'connect-auth',
-  middleware: 'connect-auth',
+  middleware: [
+    // Mock auth if playwright is running
+    'mock-connect-auth',
+    // Check for login redirect
+    'connect-auth',
+    // Initialize search access
+    async () => {
+      const searchAccess = useSearchAccessStore()
+      await searchAccess.init()
+    }
+  ],
   onAccountChange: (_oldAccount: ConnectAccount, newAccount: ConnectAccount) => {
     useConnectAccountStore().switchCurrentAccount(newAccount.id)
     useBcrosNavigate().redirect(useRuntimeConfig().public.baseUrl)

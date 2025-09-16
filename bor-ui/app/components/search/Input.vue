@@ -30,8 +30,6 @@ onMounted(async () => {
   if (activeSearch.value.val) {
     searchVal.value = activeSearch.value.val
   }
-  const { getStoredFlag } = useConnectLaunchDarkly()
-  await searchAccess.init()
   if (hasExtendedAccess.value || hasLimitedAccess.value) {
     searchTypeOptions.value.push({
       value: SearchType.DIRECTOR,
@@ -39,7 +37,7 @@ onMounted(async () => {
       disabled: false
     })
   }
-
+  const { getStoredFlag } = useConnectLaunchDarkly()
   const disabledOptions = (getStoredFlag<string>('disabled-search-types').value || '').split(',')
   for (const option of searchTypeOptions.value) {
     if (disabledOptions.includes(option.value)) {

@@ -1,6 +1,6 @@
 {
   "name": "@bcreg/search-business-person",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "private": true,
   "scripts": {
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@nuxt/eslint-config": "^1.9.0",
     "@nuxt/test-utils": "^3.19.2",
+    "@playwright/test": "^1.55.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^18.0.1",
     "vitest": "^3.2.4",

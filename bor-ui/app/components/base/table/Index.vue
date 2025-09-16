@@ -301,6 +301,7 @@ watch(() => localProps.setItems, (val) => {
               'focus-visible:bg-shade-highlighted focus-visible:ring-primary focus-visible:ring-1',
             ]"
             tabindex="0"
+            data-testid="base-table-result-row"
           >
             <slot name="body-row">
               <td
@@ -312,6 +313,7 @@ watch(() => localProps.setItems, (val) => {
                   (header.itemColspan && header.itemColspan > 1) ? 'pl-0' : '',
                 ]"
                 :colspan="header.itemColspan || 1"
+                data-testid="base-table-result-row-item"
               >
                 <slot
                   :header="header"
@@ -328,7 +330,7 @@ watch(() => localProps.setItems, (val) => {
             </slot>
           </tr>
           <tr v-if="sortedItems?.length === 0">
-            <td colspan="12">
+            <td colspan="12" data-testid="base-table-item-empty">
               <slot name="body-empty">
                 <p class="my-[100px] text-center">
                   {{ emptyText }}

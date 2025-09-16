@@ -5,8 +5,8 @@ const getEffectiveDates = (role: SearchResultRole) => {
   const effectiveDates = []
 
   for (const startEndDates of role.roleDates) {
-    const start = startEndDates.start ? toDateStr(new Date(startEndDates.start)) : undefined
-    const end = startEndDates.end ? toDateStr(new Date(startEndDates.end)) : undefined
+    const start = startEndDates.start ? startEndDates.start.substring(0, 10) : undefined
+    const end = startEndDates.end ? startEndDates.end.substring(0, 10) : undefined
     let dateRange = ''
     if (role.roleType === SearchRoleType.INCORPORATOR) {
       dateRange += start
@@ -18,7 +18,12 @@ const getEffectiveDates = (role: SearchResultRole) => {
   }
 
   // sort effectiveDates by start date
-  effectiveDates.sort((a, b) => b.start.localeCompare(a.start))
+  effectiveDates.sort((a, b) => {
+    if (a.start && b.start) {
+      return b.start.localeCompare(a.start)
+    }
+    return -1
+  })
   return effectiveDates
 }
 

@@ -168,14 +168,14 @@ export default {
         beneficialOwnerDisplay: 'Beneficial owner of shares or votes',
         directControl: 'Direct control',
         directControlDisplay: 'Direct control of directors',
-        indirectControl: 'Indirect control of shares or votes',
+        indirectControl: 'Indirect control (e.g., through another business)',
         indirectControlDir: 'Indirect control of directors',
-        indirectControlDisplay: 'Indirect control (e.g., through another business)',
+        indirectControlDisplay: 'Indirect control of shares or votes',
         other: 'Any other reason(s) this individual is a significant individual',
         registeredOwner: 'Registered owner',
         registeredOwnerDisplay: 'Registered owner of shares or votes',
-        significantInfluence: 'Significant influence of directors',
-        significantInfluenceDisplay: 'Significant influence control'
+        significantInfluence: 'Significant influence control',
+        significantInfluenceDisplay: 'Significant influence of directors'
       }
     },
     dialog: {

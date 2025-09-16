@@ -60,7 +60,8 @@ export default defineNuxtConfig({
       registriesSearchApiVersion2: '',
       registriesSearchApiKey: '',
       registriesSearchUrl: '',
-      searchRows: ''
+      searchRows: '',
+      playwright: process.env.playwright === 'true'
     }
   }
 })

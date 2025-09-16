@@ -86,7 +86,7 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
           'text-ellipsis text-left font-normal cursor-pointer',
         ],
       }"
-      data-testid="control-filter"
+      data-testid="base-table-header-filter"
     >
       <template #trailing>
         <UButton

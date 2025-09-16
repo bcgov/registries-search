@@ -93,7 +93,7 @@ export const testSearchResultInterest: SearchResult[] = [
           interestType: 'appointmentOfBoard'
         }
       ],
-      roleDates: [{ start: new Date('2022-06-28T00:00:00') }],
+      roleDates: [{ start: '2022-06-28T00:00' }],
       roleType: 'DIRECTOR'
     }]
   }
@@ -149,8 +149,8 @@ export const testSearchResults: SearchResult[] = [
       relatedName: 'AA 0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
       roleDates: [
-        { start: new Date('2020-06-28T00:00:00') },
-        { start: new Date('2019-02-19T00:00:00'), end: new Date('2019-06-09T00:00:00') }
+        { start: '2020-06-28T00:00:00' },
+        { start: '2019-02-19T00:00:00', end: '2019-06-09T00:00:00' }
       ],
       roleType: 'SIGNIFICANT INDIVIDUAL'
     },
@@ -189,9 +189,9 @@ export const testSearchResults: SearchResult[] = [
       relatedName: 'BB 0871106 B.C. LTD.',
       relatedState: 'ACTIVE',
       roleDates: [
-        { start: new Date('2010-01-10T00:00:00'), end: new Date('2016-07-11T00:00:00') },
-        { start: new Date('2022-01-10T00:00:00') },
-        { start: new Date('2018-02-21T00:00:00'), end: new Date('2019-05-11T00:00:00') }
+        { start: '2010-01-10T00:00', end: '2016-07-11T00:00' },
+        { start: '2022-01-10T00:00' },
+        { start: '2018-02-21T00:00', end: '2019-05-11T00:00' }
       ],
       roleType: 'DIRECTOR'
     },
@@ -210,7 +210,7 @@ export const testSearchResults: SearchResult[] = [
       relatedLegalType: 'BC',
       relatedName: 'CC 0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
-      roleDates: [{ start: new Date('2020-06-29T00:00:00Z') }],
+      roleDates: [{ start: '2020-06-29T00:00' }],
       roleType: 'SIGNIFICANT INDIVIDUAL'
     }],
     taxNumber: '123 456 789',
@@ -236,7 +236,7 @@ export const testSearchResults: SearchResult[] = [
       relatedLegalType: 'BC',
       relatedName: '0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
-      roleDates: [{ start: new Date('2022-06-28T00:00:00') }],
+      roleDates: [{ start: '2022-06-28T00:00' }],
       roleType: 'DIRECTOR'
     }]
   },
@@ -266,8 +266,8 @@ export const testSearchResults: SearchResult[] = [
       relatedName: '0871105 B.C. LTD.',
       relatedState: 'ACTIVE',
       roleDates: [{
-        start: new Date('2016-03-28T00:00:00'),
-        end: new Date('2023-03-28T00:00:00')
+        start: '2016-03-28T00:00',
+        end: '2023-03-28T00:00'
       }],
       roleType: 'OFFICER'
     }]
@@ -292,7 +292,7 @@ export const testSearchResults: SearchResult[] = [
       relatedLegalType: 'CP',
       relatedName: 'KIALS COOP',
       relatedState: 'ACTIVE',
-      roleDates: [{ start: new Date('2022-06-28T00:00:00') }],
+      roleDates: [{ start: '2022-06-28T00:00' }],
       roleType: 'DIRECTOR'
     }]
   },

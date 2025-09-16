@@ -39,14 +39,14 @@ export const getBusinessHeaders = (): BaseTableHeader[] => {
       filter: {
         clearable: true,
         filterApiFn: (filterVal: string | undefined) => filterSearch(['query', 'bn'], filterVal),
-        label: t('label.businessNum'),
+        label: t('label.craBN'),
         type: 'text',
         value: undefined
       },
       hasFilter: true,
       hasSort: false,
-      itemFn: (val: BusinessSearchResult) => highlightMatch(val.bn),
-      value: t('label.businessNum'),
+      itemFn: (val: BusinessSearchResult) => highlightMatch(val.bn || ''),
+      value: t('label.craBN'),
       width: '16%'
     },
     {
@@ -84,8 +84,7 @@ export const getBusinessHeaders = (): BaseTableHeader[] => {
       width: '12%'
     }
   ]
-
-  if (ldarkly.getStoredFlag('enable-business-si-column')) {
+  if (ldarkly.getStoredFlag('enable-business-si-column').value) {
     columns.push({
       col: 'Significant Individuals',
       filter: {

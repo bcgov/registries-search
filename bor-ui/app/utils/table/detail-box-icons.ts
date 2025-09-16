@@ -56,9 +56,9 @@ export const convertDetailsToIcon = (details: string | undefined): ControlColumn
     case PersonControlType.DIRS_INDIRECT: {
       return {
         src: DirectorsIndirectControlIcon,
-        alt: t('text.control.icon.indirectControlDir'),
-        tooltip: t('text.control.icon.indirectControlDir'),
-        displayName: t('text.control.icon.indirectControlDisplay')
+        alt: t('text.control.icon.indirectControl'),
+        tooltip: t('text.control.icon.indirectControl'),
+        displayName: t('text.control.icon.indirectControlDir')
       }
     }
     case PersonControlType.DIRS_SIG_INFL: {

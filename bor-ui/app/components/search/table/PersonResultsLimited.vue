@@ -49,35 +49,39 @@ const dateRangeReset = ref(false)
       <div
         v-for="role, i in item.roles"
         :key="'child-role-' + i"
-        class="child-row-item"
+        class="mt-3"
       >
-        <div class="inner-row-div flex w-full">
-          <div class="inner-col-div" :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }">
+        <div class="flex w-full" data-testid="inner-row-div">
+          <div :style="{ width: getChildHeaderWidth(headers, 'Roles', childHeaders) }" data-testid="inner-col-div">
             <div>
               {{ capFirstLetter(`${role.roleType}`) }}
             </div>
           </div>
           <div
-            class="inner-col-div pl-2 mr-0"
+            class="pl-2 mr-0"
             :style="{ width: getChildHeaderWidth(headers, 'Effective Dates', childHeaders) }"
+            data-testid="inner-col-div"
           >
             <SearchTableCommonItemsEffectiveDates :role="role" />
           </div>
           <div
-            class="inner-col-div pl-2"
+            class="pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Details', childHeaders) }"
+            data-testid="inner-col-div"
           >
             <SearchTableCommonItemsBusinessDetails :role="role" />
           </div>
           <div
-            class="inner-col-div pl-2"
+            class="pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Status', childHeaders) }"
+            data-testid="inner-col-div"
           >
             {{ capFirstLetter(`${role.relatedState}`) }}
           </div>
           <div
-            class="inner-col-div pl-2"
+            class="pl-2"
             :style="{ width: getChildHeaderWidth(headers, 'Business Email', childHeaders) }"
+            data-testid="inner-col-div"
           >
             {{ role.relatedEmail || '' }}
           </div>

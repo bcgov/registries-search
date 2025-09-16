@@ -22,6 +22,7 @@ const countries = prop.item.nationalities ?? []
         :country="code"
         size="normal"
         style="margin-top: -5px"
+        :data-testid="'country-flag-' + code"
       />
     </UTooltip>
   </div>

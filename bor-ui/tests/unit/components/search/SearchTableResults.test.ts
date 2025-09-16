@@ -82,15 +82,14 @@ describe('SearchResults tests', () => {
     const filters = wrapper.findAll('[data-testid="base-table-header-filter"]')
     let filterIndex = 0
     for (const i in headerConfig) {
-      if (!headerConfig[i]?.hasFilter) {
-        continue
-      }
-      const header = headerConfig[i]
-      // check filter type
-      if (header?.filter?.type === 'select') {
-        expect(filters[filterIndex]?.text()).toBe(header?.filter?.label)
-      } else {
-        expect(filters[filterIndex]?.attributes('placeholder')).toBe(header?.filter?.label)
+      if (headerConfig[i]?.hasFilter) {
+        const header = headerConfig[i]
+        // check filter type
+        if (header?.filter?.type === 'select') {
+          expect(filters[filterIndex]?.text()).toBe(header?.filter?.label)
+        } else {
+          expect(filters[filterIndex]?.attributes('placeholder')).toBe(header?.filter?.label)
+        }
       }
       filterIndex += 1
     }
@@ -201,11 +200,11 @@ describe('SearchResults tests', () => {
                   expect(allAltTexts.find(altText => altText === img.attributes().alt)).not.toBe(-1)
                 }
                 // effective dates
-                for (const role of roles) {
+                for (const role of roles || []) {
                   if (role.roleDates && role.roleDates.length > 0) {
                     for (const date of role.roleDates) {
-                      const start = toDateStr(date.start)
-                      const end = toDateStr(date.end as Date)
+                      const start = date.start?.substring(0, 10)
+                      const end = date.end?.substring(0, 10)
                       expect(items[itemIndx].text()).toContain(start || 'Unknown')
                       expect(items[itemIndx].text()).toContain(end || 'Current')
                     }
@@ -226,11 +225,11 @@ describe('SearchResults tests', () => {
               expect(items[itemIndx].text().toUpperCase()).toContain(role.roleType.toUpperCase())
               // contains effective dates, business details, business status, business email as well
               // effective dates
-              for (const role of roles) {
+              for (const role of roles || []) {
                 if (role.roleDates && role.roleDates.length > 0) {
                   for (const date of role.roleDates) {
-                    const start = toDateStr(date.start)
-                    const end = toDateStr(date.end as Date)
+                    const start = date.start?.substring(0, 10)
+                    const end = date.end?.substring(0, 10)
                     expect(items[itemIndx].text()).toContain(start || 'Unknown')
                     expect(items[itemIndx].text()).toContain(end || 'Current')
                   }

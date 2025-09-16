@@ -63,6 +63,7 @@ const isVitestRunning = !!process.env.VITEST_WORKER_ID
     readonly
     size="lg"
     :ui="{ base: 'placeholder:text-neutral font-normal cursor-pointer', trailing: 'size-8' }"
+    data-testid="base-table-header-filter"
     @click="scrollToDatePicker()"
     @click:append-inner="scrollToDatePicker()"
   >

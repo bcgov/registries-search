@@ -56,7 +56,6 @@ const getUpdatedControl = (
       control.inConcertNames = interest.relatedParties.map(val => val.interestPartyName).filter(val => !!val)
     }
   }
-
   return control
 }
 
@@ -140,17 +139,19 @@ onMounted(() => {
             :items="getAccordianObjs(control)"
             multiple
             :ui="{
-              wrapper: 'divide-none space-y-1',
-              default: { class: 'py-1 bg-transparent text-primary font-normal' },
+              item: 'border-none',
+              trigger: 'p-0 py-1 bg-transparent text-primary font-normal',
+              trailingIcon: 'hidden',
             }"
             data-testid="controls-accordion"
           >
             <template #default="{ item, open }">
               <UButton
                 color="primary"
+                class="p-0"
                 :label="item.label"
                 variant="link"
-                :data-testid="`controls-accordian-${item.type}`"
+                :data-testid="`controls-accordion-${item.type}`"
               >
                 <template #leading>
                   <UIcon
@@ -161,8 +162,8 @@ onMounted(() => {
                 </template>
               </UButton>
             </template>
-            <template #item="{ item }">
-              <div class="flex flex-col text-sm text-neutral">
+            <template #content="{ item }">
+              <div class="ml-[30px] mb-3 flex flex-col text-sm text-neutral">
                 <span v-for="name in item.content" :key="name">
                   {{ name }}
                 </span>

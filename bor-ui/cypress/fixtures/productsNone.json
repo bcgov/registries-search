@@ -1,4 +1,0 @@
-[
-  {"type": "INTERNAL", "code": "NDS", "parentCode": null, "url": "", "description": "New Director Search", "hidden": true, "keycloak_group": null, "needReview": false, "premiumOnly": false, "need_system_admin": true, "subscriptionStatus": "NOT_SUBSCRIBED"},
-  {"type": "INTERNAL", "code": "CA_SEARCH", "parentCode": null, "url": "", "description": "Competent Authority Search", "hidden": true, "keycloak_group": null, "needReview": false, "premiumOnly": false, "need_system_admin": true, "subscriptionStatus": "NOT_SUBSCRIBED"}
-]
