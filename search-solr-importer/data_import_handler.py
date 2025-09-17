@@ -22,6 +22,7 @@ from search_solr_importer import create_app
 from search_solr_importer.utils import (
     collect_btr_data,
     collect_colin_data,
+    collect_lear_businesses_requiring_transition,
     collect_lear_data,
     prep_data,
     prep_data_btr,
@@ -66,7 +67,8 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                 current_app.logger.debug("********** Mapping COLIN Entities **********")
                 prepped_colin_data = prep_data(colin_data,
                                                colin_data_descs,
-                                               "COLIN")
+                                               "COLIN",
+                                               [])
                 current_app.logger.debug(f"COLIN businesses ready for import: {len(prepped_colin_data)}")
                 # execute update to solr in batches
                 current_app.logger.debug("********** Importing COLIN Entities **********")
@@ -82,12 +84,16 @@ def load_search_core():  # noqa: PLR0915, PLR0912
                 current_app.logger.debug("---------- Collecting LEAR Entities ----------")
                 lear_data_cur = collect_lear_data()
                 lear_data = lear_data_cur.fetchall()
-
+                lear_requires_transition_cur = collect_lear_businesses_requiring_transition()
+                lear_requires_transition = lear_requires_transition_cur.fetchall()
+                requires_transition_identifiers: list[str] = [x[0] for x in lear_requires_transition]
+                current_app.logger.debug(f"Identifiers requiring a transition filing: {requires_transition_identifiers}")
                 current_app.logger.debug("---------- Mapping LEAR data ----------")
                 prepped_lear_data = prep_data(
                     data=lear_data,
                     data_descs=lear_data_cur.keys(),
                     source="LEAR",
+                    requires_transition=requires_transition_identifiers
                 )
                 current_app.logger.debug(f"{len(prepped_lear_data)} LEAR records ready for import.")
 

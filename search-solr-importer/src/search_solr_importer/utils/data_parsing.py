@@ -21,7 +21,7 @@ from search_api.services.business_solr.doc_fields import PartyField
 from search_solr_importer.enums import ColinPartyTypeCode
 
 
-def _is_good_standing(item_dict: dict, source: str) -> bool:  # noqa: PLR0911
+def _is_good_standing(item_dict: dict, source: str, requires_transition: list[str]) -> bool:  # noqa: PLR0911
     """Return the good standing value of the business."""
     # TODO: Simplify or break up to make following this easier / remove noqa
     if item_dict["state"] != "ACTIVE":
@@ -33,6 +33,8 @@ def _is_good_standing(item_dict: dict, source: str) -> bool:  # noqa: PLR0911
             return None
         if item_dict.get("restoration_expiry_date"):
             # A business in limited restoration is not in good standing according to LEAR
+            return False
+        if item_dict["identifier"] in requires_transition:
             return False
         # rule directly from LEAR code
         last_file_date = item_dict["last_ar_date"] or item_dict["founding_date"]
@@ -106,7 +108,7 @@ def _get_party_role(type_cd: str, legal_type: str) -> str:
     return "unknown"
 
 
-def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # noqa: PLR0912
+def prep_data(data: list, data_descs: list[str], source: str, requires_transition: list[str]) -> list[dict]:  # noqa: PLR0912
     """Return the list of BusinessDocs for the given raw db data."""
     # TODO: break up logic to make it easier to follow / remove noqa
     prepped_data = {}
@@ -152,7 +154,7 @@ def prep_data(data: list, data_descs: list[str], source: str) -> list[dict]:  # 
             if source == "COLIN" and item_dict["legal_type"] in ["BC", "CC", "ULC"]:
                 identifier = f"BC{identifier}"
             prepped_data[identifier] = {
-                "goodStanding": _is_good_standing(item_dict, source),
+                "goodStanding": _is_good_standing(item_dict, source, requires_transition),
                 "legalType": item_dict["legal_type"],
                 "id": identifier,
                 "identifier": identifier,

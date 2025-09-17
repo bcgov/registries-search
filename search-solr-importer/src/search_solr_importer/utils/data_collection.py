@@ -80,6 +80,34 @@ def collect_lear_data() -> CursorResult:
     ))
 
 
+def collect_lear_businesses_requiring_transition() -> CursorResult:
+    current_app.logger.debug("Connecting to LEAR Postgres instance...")
+    conn = lear_db.db.engine.connect()
+    current_app.logger.debug("Collecting LEAR businesses that require a transition application...")
+    return conn.execute(text(f"""
+        SELECT b.identifier
+        FROM businesses b
+        JOIN (
+            SELECT * FROM filings
+            WHERE filing_type in ('restoration','restorationApplication')
+                AND filing_sub_type not in ('limitedRestoration','limitedRestorationExtension')
+                AND status = 'COMPLETED'
+        ) as rf on rf.business_id = b.id
+        WHERE b.legal_type in ({_get_stringified_list_for_sql('TRANSITION_APPLICATION_LEGAL_TYPES')})
+            AND b.founding_date < '2004-03-29 00:00:00+00:00'
+            AND b.state = 'ACTIVE'
+            AND NOT EXISTS (
+                SELECT * FROM filings
+                WHERE business_id = b.id
+                    AND filing_type = 'transition'
+                    AND status = 'COMPLETED'
+                    AND effective_date > rf.effective_date
+            )
+        GROUP BY b.identifier
+        """
+    ))
+
+
 def collect_btr_data(limit: int | None = None, offset: int | None = None) -> CursorResult:
     """Collect data from BTR."""
     limit_clause = ""
