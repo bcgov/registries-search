@@ -1,4 +1,4 @@
-import { test, expect, type Locator } from '@playwright/test'
+import { test, expect, type Locator, type Request } from '@playwright/test'
 
 import { mockApiCallsForPage } from '../../mocks/playwright-mock-helpers'
 import { SearchAccess } from '../../../app/enums/search-access'
@@ -10,11 +10,12 @@ test.describe('Search Person - extended/filters/citizenship', () => {
   })
   test('Triggers a search with the expected payload when updating the filter', async ({ page }) => {
     const verifyFilterRequest = async (
+      request: Promise<Request>,
       name?: string,
       info?: string,
       citizenship?: string[]
     ) => {
-      const searchRequest = await page.waitForRequest('**/api/v1/search/extended', { timeout: 30000 })
+      const searchRequest = await request
       const requestBody = searchRequest.postDataJSON() as SearchPayload
       expect(requestBody).toBeDefined()
       expect(requestBody.query.value).toBe('a')
@@ -45,17 +46,20 @@ test.describe('Search Person - extended/filters/citizenship', () => {
     const headerFilters = await page.getByTestId('search-results-table').getByTestId('base-table-header-filter').all()
     expect(headerFilters.length).toBe(7)
     // Verify name filter
+    let request = page.waitForRequest('**/api/v1/search/extended', { timeout: 10000 })
     const nameFilter = headerFilters.at(0) as Locator
     await nameFilter.scrollIntoViewIfNeeded()
     const nameFilterValue = 'b'
     await triggerTextFilter(nameFilter, nameFilterValue)
-    await verifyFilterRequest(nameFilterValue)
+    await verifyFilterRequest(request, nameFilterValue)
     // Verify info filter
+    request = page.waitForRequest('**/api/v1/search/extended', { timeout: 10000 })
     const infoFilterValue = 'i'
     await triggerTextFilter(headerFilters.at(1) as Locator, infoFilterValue)
-    await verifyFilterRequest(nameFilterValue, infoFilterValue)
+    await verifyFilterRequest(request, nameFilterValue, infoFilterValue)
     // Verify citizenship filter
+    request = page.waitForRequest('**/api/v1/search/extended', { timeout: 10000 })
     await triggerSelectFilter(headerFilters.at(2) as Locator, 'Canada')
-    await verifyFilterRequest(nameFilterValue, infoFilterValue, ['CA'])
+    await verifyFilterRequest(request, nameFilterValue, infoFilterValue, ['CA'])
   })
 })

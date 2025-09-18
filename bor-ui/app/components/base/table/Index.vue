@@ -45,7 +45,6 @@ const resetAll = () => {
       }
     }
     resettingFilters.value = false
-    filter(headers[0])
   }
 }
 watch(() => localProps.resetFiltersTrigger, () => {
