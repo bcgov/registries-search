@@ -8,9 +8,7 @@
         </span>
         <template v-if="!props.filing.isTypeStaff">
             <span class="vert-pipe" />
-            <span>
-                EFFECTIVE as of <DateTooltip :date="props.filing.effectiveDate" />
-            </span>
+            <span>EFFECTIVE as of <DateTooltip :date="props.filing.effectiveDate" /></span>
         </template>
     </div>
 </template>
