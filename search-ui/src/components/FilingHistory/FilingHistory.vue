@@ -2,18 +2,19 @@
   <div id="filing-history-list">
     <span data-test-id="dashboard-filing-history-subtitle" class="section-header">
       <span v-if="props.isLocked">
-        Filing History
+        History
         <span v-if="historyItems.length" style="color:#868e96">({{historyItems.length}})</span>
       </span>
-      <span v-else>Filing History Documents</span>
+      <span v-else>History Documents</span>
       <span class="ml-1" v-if="filingHistory._loading">
         <v-progress-circular color="primary" indeterminate size="22" />
       </span>
     </span>
     <div class="mt-5 pa-5 court-order-section" v-if="hasCourtOrderFilings">
       <v-icon class="ml-1">mdi-gavel</v-icon>
-      <span class="ml-2">Court order(s) have been filed on this company. Review the 
-        filing history for impacts to business information.</span>
+      <span class="ml-2">
+        Court order(s) have been filed on this company. Review the history for impacts to business information.
+      </span>
     </div>
     <div class="scrollable-container soft-corners mt-4">
       <div v-if="filingHistory._loading" class="mx-auto my-15" style="width: 50px;">
@@ -41,7 +42,7 @@
                 <!-- NB: blocks below are mutually exclusive, and order is important -->
 
 
-                <div v-if="filing.isTypeStaff" class="item-header__subtitle">
+                <div v-if="filing.isTypeStaff || filing.name === 'changeOfOfficers'" class="item-header__subtitle">
                   <FiledLabel :filing="filing" />
                 </div>
 
@@ -550,7 +551,7 @@ watch(() => filings.value, () => {
 })
 
 onMounted(async () => {
-  if (filingHistory.filings.length > 0) {
+  if (filings.value.length > 0) {
     loadData()
   }
 })
