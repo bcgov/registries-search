@@ -21,7 +21,7 @@ test.describe('Search Business - filtering', () => {
       const requestBody = searchRequest.postDataJSON() as BusinessSearchPayload
       expect(requestBody).toBeDefined()
       expect(requestBody.query.value).toBe('a')
-      expect(requestBody.query.name).toBe(name || '' || undefined)
+      expect(requestBody.query.name).toBe(name)
       expect(requestBody.query.identifier).toBe(identifier)
       expect(requestBody.query.bn).toBe(bn)
       expect(requestBody.categories.legalType).toEqual(legalType || [])

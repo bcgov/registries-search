@@ -217,6 +217,7 @@ watch(() => localProps.setItems, (val) => {
                             color="primary"
                             variant="link"
                             icon="i-heroicons-x-mark-20-solid"
+                            data-testid="base-table-header-filter-clear"
                             @click="clearFilter(header)"
                           />
                           <UIcon name="i-mdi-arrow-drop-down" class="size-5 text-neutral" />
@@ -256,6 +257,7 @@ watch(() => localProps.setItems, (val) => {
                           variant="link"
                           icon="i-heroicons-x-mark-20-solid"
                           :padded="false"
+                          data-testid="base-table-header-filter-clear"
                           @click="clearFilter(header)"
                         />
                       </template>

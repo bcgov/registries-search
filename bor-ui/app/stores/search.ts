@@ -129,15 +129,17 @@ export const useSearchStore = defineStore('search', () => {
     // NB: i.e. ['one', 'two', 'three'] => { one: { two: { three: <val> }}}
     const newFilter = toRaw(path.reduceRight((value, next) => ({ [next]: value }), val))
     // apply newFilter to existing filter obj
-    search.value.filters = mergeWith(search.value.filters, newFilter, (existingValue, newValue) => {
-      // want to overwrite arrays instead of merging them
-      if (Array.isArray(existingValue)) {
-        return newValue
+    search.value.filters = mergeWith(search.value.filters, newFilter, (_sourceValue, targetValue) => {
+      // NOTE: when this returns undefined it will use the default deep merging alg for mergeWith
+      if (Array.isArray(targetValue)) {
+        // Arrays - overwrite instead of merging them
+        return targetValue
       }
-      // overwrite when new value obj is empty (obj was cleared)
-      if (!newValue || Object.keys(newValue).length === 0) {
-        return newValue || ''
+      if ([null, undefined, ''].includes(targetValue)) {
+        // Overwrite to null when target value is cleared instead of default mergeWith alg
+        return null
       }
+      // Anything that gets here will do default mergeWith alg
     })
 
     if (search.value.val) {
