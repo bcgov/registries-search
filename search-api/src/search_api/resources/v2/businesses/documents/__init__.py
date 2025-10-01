@@ -25,7 +25,6 @@ from search_api.utils.auth import jwt
 from .filings import bp as filings_bp
 from .requests import bp as document_request_bp
 
-
 bp = Blueprint("DOCUMENTS", __name__, url_prefix="/<string:business_identifier>/documents")
 bp.register_blueprint(filings_bp)
 bp.register_blueprint(document_request_bp)

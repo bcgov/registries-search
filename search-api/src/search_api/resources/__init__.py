@@ -16,7 +16,8 @@ from .constants import EndpointVersionPath
 from .internal import bp as internal_bp
 from .meta import bp as meta_bp
 from .ops import bp as ops_bp
-from .v1 import bus_bp as v1_bus_bp, purchases_bp as v1_purchases_bp
+from .v1 import bus_bp as v1_bus_bp
+from .v1 import purchases_bp as v1_purchases_bp
 from .v2 import businesses_bp, payments_bp, purchases_bp, search_bp
 from .version_endpoint import VersionEndpoint
 

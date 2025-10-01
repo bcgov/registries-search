@@ -20,12 +20,8 @@ from search_api.enums import DocumentType
 from search_api.exceptions import ApiConnectionException, UnauthorizedException
 from search_api.models import DocumentAccessRequest
 from search_api.services.authz import does_user_have_account
-from search_api.services.entity import (
-    get_business_filing_document,
-    get_business_filing_document_list,
-)
+from search_api.services.entity import get_business_filing_document, get_business_filing_document_list
 from search_api.utils.auth import jwt
-
 
 bp = Blueprint("FILINGS", __name__, url_prefix="/filings")
 

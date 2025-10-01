@@ -28,7 +28,7 @@ bp = Blueprint("PURCHASE_REQUESTS", __name__, url_prefix="/purchases")
 @bp.get("/<int:request_id>")
 @cross_origin(origins="*")
 @jwt.requires_auth
-def get(request_id=None):
+def get(request_id=None):  # noqa: PLR0911
     """Return all active requests for a business by an account or a request with the specified request id."""
     try:
         account_id = request.headers.get("Account-Id", None)
