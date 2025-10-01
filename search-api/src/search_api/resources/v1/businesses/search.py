@@ -165,7 +165,7 @@ def facets():  # noqa: PLR0912
                 },
                 "totalResults": results.get("response", {}).get("numFound"),
                 "results": results.get("response", {}).get("docs")},
-            "warnings": ["This endpoint is depreciated. Please use POST /api/v2/search/businesses instead."]}
+            "warnings": ["This endpoint is deprecated. Please use POST /api/v2/search/businesses instead."]}
 
         return jsonify(response), HTTPStatus.OK
 
@@ -291,7 +291,7 @@ def parties():  # noqa: PLR0912, PLR0911
                 "totalResults": results.get("response", {}).get("numFound"),
                 "results": results.get("response", {}).get("docs")
             },
-            "warnings": ["This endpoint is depreciated. Please use POST /api/v2/search/parties instead."]
+            "warnings": ["This endpoint is deprecated. Please use POST /api/v2/search/parties instead."]
         }
 
         return jsonify(response), HTTPStatus.OK

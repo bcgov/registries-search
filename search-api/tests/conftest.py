@@ -13,7 +13,7 @@
 # limitations under the License.
 """Common setup and fixtures for the pytest suite used by this service."""
 import os
-from contextlib import contextmanager, suppress
+from contextlib import contextmanager
 
 import pytest
 from ldclient.integrations.test_data import TestData

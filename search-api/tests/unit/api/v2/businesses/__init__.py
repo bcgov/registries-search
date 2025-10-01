@@ -11,21 +11,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Tests to verify the meta endpoints.
-
-Test-Suite to ensure that the /meta endpoint is working as expected.
-"""
-from http import HTTPStatus
-
-from search_api.utils.run_version import get_run_version
-
-def test_info(session, client, jwt):
-    """Assert that ops ready check endpoint works."""
-    # no setup
-
-    # test
-    rv = client.get('/meta/info')
-    # check
-    assert rv.status_code == HTTPStatus.OK
-    assert rv.json['API'] == f'search_api/{get_run_version()}'
+"""Test-Suite for the businesses endpoints."""

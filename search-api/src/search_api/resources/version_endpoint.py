@@ -17,7 +17,7 @@ from flask import Blueprint, Flask
 from .constants import EndpointVersionPath
 
 
-class VersionEndpoint:  # pylint: disable=too-few-public-methods
+class VersionEndpoint:
     """Manage the mounting, traversal and redirects for a versioned enpoint."""
 
     def __init__(self, name: str, path: EndpointVersionPath, bps: list, app: Flask = None):
@@ -34,6 +34,6 @@ class VersionEndpoint:  # pylint: disable=too-few-public-methods
     def init_app(self, app: Flask):
         """Add the version endpoint to the app."""
         if not app:
-            raise Exception("Cannot initialize without a Flask App.")  # pylint: disable=broad-exception-raised
+            raise Exception("Cannot initialize without a Flask App.")
         self.app = app
         self.app.register_blueprint(self.version_bp)

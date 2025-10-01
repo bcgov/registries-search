@@ -13,16 +13,19 @@
 # limitations under the License.
 """Exposes the versioned endpoints."""
 from .constants import EndpointVersionPath
-from .v1 import bus_bp, internal_bp, meta_bp, ops_bp, purchases_bp
-from .v2 import payments_bp, search_bp
+from .internal import bp as internal_bp
+from .meta import bp as meta_bp
+from .ops import bp as ops_bp
+from .v1 import bus_bp as v1_bus_bp, purchases_bp as v1_purchases_bp
+from .v2 import businesses_bp, payments_bp, purchases_bp, search_bp
 from .version_endpoint import VersionEndpoint
 
 v1_endpoint = VersionEndpoint(
     name="API_V1",
     path=EndpointVersionPath.API_V1,
-    bps=[bus_bp, meta_bp, ops_bp, purchases_bp, internal_bp])
+    bps=[v1_bus_bp, v1_purchases_bp])
 
 v2_endpoint = VersionEndpoint(
     name="API_V2",
     path=EndpointVersionPath.API_V2,
-    bps=[search_bp, payments_bp])
+    bps=[search_bp, payments_bp, businesses_bp, purchases_bp])

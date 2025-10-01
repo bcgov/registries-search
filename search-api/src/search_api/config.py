@@ -169,6 +169,9 @@ class Config:
     except:
         DOCUMENT_REQUEST_DAYS_DURATION = 14
 
+    # endpoint warnings
+    DEPRECATION_WARNING_MSG = os.getenv("DEPRECATION_WARNING_MSG", "")
+
     # temp migration vars
     BUSINESSES_MANAGED_BY_COLIN = (os.getenv("BUSINESSES_MANAGED_BY_COLIN", "")).split(",")
 

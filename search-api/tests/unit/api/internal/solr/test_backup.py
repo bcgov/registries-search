@@ -36,10 +36,9 @@ def test_replicate_solr_mocked(app, client, jwt, test_name: str, command: str):
     with requests_mock.mock() as m:
         m.post(solr_url)
         
-        api_response = client.post(f'/api/v1/internal/solr/command',
+        api_response = client.post(f'/internal/solr/command',
                                    json={'command': command},
-                                   headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                                'content-type': 'application/json'}))
+                                   headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
 
         # check success
         assert api_response.status_code == HTTPStatus.OK
@@ -58,10 +57,9 @@ def test_replicate_solr_mocked(app, client, jwt, test_name: str, command: str):
 ])
 def test_replicate_solr_mocked(app, client, jwt, test_name: str, command: str):
     """Assert that the backup endpoint is successful."""
-    api_response = client.post(f'/api/v1/internal/solr/command',
+    api_response = client.post(f'/internal/solr/command',
                                 json={'command': command},
-                                headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                            'content-type': 'application/json'}))
+                                headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
 
     # check success
     assert api_response.status_code == HTTPStatus.OK
@@ -73,19 +71,17 @@ def test_replicate_solr_mocked(app, client, jwt, test_name: str, command: str):
 ])
 def test_backup_solr_invalid_data(app, session, client, jwt, test_name, payload):
     """Assert that error is returned if payload is invalid."""
-    api_response = client.post(f'/api/v1/internal/solr/command',
+    api_response = client.post(f'/internal/solr/command',
                                json=payload,
-                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                               headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     assert api_response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_backup_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
     for role in [STAFF_ROLE, PUBLIC_USER]:
-        api_response = client.post(f'/api/v1/internal/solr/command',
+        api_response = client.post(f'/internal/solr/command',
                                    data={'command': 'command'},
-                                   headers=create_header(jwt, [role], **{'Accept-Version': 'v1',
-                                                                         'content-type': 'application/json'}))
+                                   headers=create_header(jwt, [role], **{'content-type': 'application/json'}))
         # check
         assert api_response.status_code == HTTPStatus.UNAUTHORIZED
