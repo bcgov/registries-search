@@ -18,7 +18,7 @@ import sys
 from flask import current_app
 
 from search_api.exceptions import SolrException
-from search_solr_importer import create_app
+from search_solr_importer import create_app, get_run_version
 from search_solr_importer.utils import (
     collect_btr_data,
     collect_colin_data,
@@ -176,7 +176,7 @@ def load_search_core():  # noqa: PLR0915, PLR0912
 
 
 if __name__ == "__main__":
-    print("Starting data importer...")  # noqa: T201
+    print(f"Starting data importer {get_run_version()}...")  # noqa: T201
     app = create_app()
     with app.app_context():
         load_search_core()

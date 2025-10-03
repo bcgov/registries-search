@@ -1,6 +1,6 @@
 [project]
 name = "search-solr-updater"
-version = "2.0.1"
+version = "2.0.2"
 description = "Serves updates to the registry search api to keep it in sync with changes in LEAR"
 authors = [
     {name = "Kial Jinnah",email = "kialj876@gmail.com"}

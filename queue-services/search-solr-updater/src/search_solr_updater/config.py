@@ -51,7 +51,7 @@ class _Config:
 
     LEAR_SVC_URL = os.getenv("BUSINESS_API_URL", "http://") + os.getenv("BUSINESS_API_VERSION_2", "/api/v2")
     LEAR_SVC_TIMEOUT = int(os.getenv("BUSINESS_SVC_TIMEOUT", "20"))
-    SEARCH_SVC_URL = os.getenv("SEARCH_API_INTERNAL_URL", "http://") + os.getenv("SEARCH_API_VERSION", "/api/v1")
+    SEARCH_SVC_URL = os.getenv("SEARCH_API_INTERNAL_URL", "http://")
     SEARCH_SVC_TIMEOUT = int(os.getenv("SEARCH_SVC_TIMEOUT", "30"))
 
     # Service account details

@@ -1,6 +1,6 @@
 [project]
 name = "search-solr-importer"
-version = "2.0.1"
+version = "2.0.2"
 description = "Deletes and reloads all the business search data in Solr"
 authors = [
     {name = "Kial Jinnah",email = "kialj876@gmail.com"}
