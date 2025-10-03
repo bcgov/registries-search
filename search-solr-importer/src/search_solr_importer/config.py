@@ -49,7 +49,6 @@ class Config:
     SOLR_RETRY_BACKOFF_FACTOR = int(os.getenv("SOLR_RETRY_BACKOFF_FACTOR", "5"))
 
     SEARCH_API_URL = os.getenv("SEARCH_API_INTERNAL_URL", "http://")
-    SEARCH_API_V1 = os.getenv("SEARCH_API_VERSION", "")
 
     BATCH_SIZE = int(os.getenv("SOLR_BATCH_UPDATE_SIZE", "1000"))
     REINDEX_CORE = os.getenv("REINDEX_CORE", "False") == "True"
@@ -157,7 +156,6 @@ class UnitTestingConfig(Config):
     HAS_FOLLOWER = SOLR_SVC_BUS_FOLLOWER_URL != SOLR_SVC_BUS_LEADER_URL
 
     SEARCH_API_URL = "http://test.SEARCH_API_URL.fake"
-    SEARCH_API_V1 = os.getenv("REGISTRIES_SEARCH_API_VERSION", "")
 
     # Service account details
     ACCOUNT_SVC_AUTH_URL = "http://test.account-svc-url.fake"

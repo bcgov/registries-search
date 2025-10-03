@@ -16,6 +16,7 @@
 This module is the API for the BC Registries Registry Search system.
 """
 import os
+from importlib.metadata import version
 
 from flask import Flask
 
@@ -23,20 +24,12 @@ from search_api.services import business_solr
 from search_solr_importer.config import DevelopmentConfig, ProductionConfig, UnitTestingConfig
 from search_solr_importer.services import btr_db, lear_db, oracle_db
 from search_solr_importer.translations import babel
-from search_solr_importer.version import __version__
 from structured_logging import StructuredLogging
 
 
-def _get_build_openshift_commit_hash():
-    return os.getenv("OPENSHIFT_BUILD_COMMIT", None)
-
-
 def get_run_version():
-    """Return a formatted version string for this service."""
-    commit_hash = _get_build_openshift_commit_hash()
-    if commit_hash:
-        return f"{__version__}-{commit_hash}"
-    return __version__
+    """Return the version specified in the toml file."""
+    return version(__name__[: __name__.find(".")])
 
 
 def register_shellcontext(app):

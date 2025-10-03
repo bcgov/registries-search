@@ -40,7 +40,7 @@ def update_solr(docs: list[dict], data_name: str, partial=False) -> int:
     token = get_bearer_token()
     headers = {"Authorization": "Bearer " + token}
     current_app.logger.debug("Token set.")
-    api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
+    api_url = current_app.config.get("SEARCH_API_URL")
     count = 0
     offset = 0
     rows = current_app.config.get("BATCH_SIZE_SOLR", 1000)
@@ -112,7 +112,7 @@ def resync():
     headers = {"Authorization": "Bearer " + token}
 
     current_app.logger.debug("Resyncing any overwritten docs during import...")
-    api_url = f'{current_app.config.get("SEARCH_API_URL")}{current_app.config.get("SEARCH_API_V1")}'
+    api_url = current_app.config.get("SEARCH_API_URL")
     resync_resp = requests.post(url=f"{api_url}/internal/solr/update/resync",
                                 headers=headers,
                                 json={"minutesOffset": current_app.config.get("RESYNC_OFFSET")},
