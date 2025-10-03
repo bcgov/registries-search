@@ -73,10 +73,9 @@ def test_resync_solr_mocked(app, session, client, jwt, test_name, payload: dict,
     with requests_mock.mock() as m:
         m.post(solr_url)
         
-        api_response = client.post(f'/api/v1/internal/solr/update/resync',
+        api_response = client.post(f'/internal/solr/update/resync',
                                    json=payload,
-                                   headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                                'content-type': 'application/json'}))
+                                   headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
 
         # check success
         assert api_response.status_code == HTTPStatus.CREATED
@@ -132,10 +131,9 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, businesses:
     business_solr.delete_all_docs()
 
     setup_info = prep_resync(businesses)
-    api_response = client.post(f'/api/v1/internal/solr/update/resync',
+    api_response = client.post(f'/internal/solr/update/resync',
                                json=payload,
-                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                               headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.CREATED
 
@@ -161,19 +159,17 @@ def test_resync_solr(session, client, jwt, test_name, payload: dict, businesses:
 def test_resync_solr_invalid_data(app, session, client, jwt, test_name, payload):
     """Assert that error is returned if data missing."""
 
-    api_response = client.post(f'/api/v1/internal/solr/update/resync',
+    api_response = client.post(f'/internal/solr/update/resync',
                                json=payload,
-                               headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                               headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     assert api_response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_update_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
     for role in [STAFF_ROLE, PUBLIC_USER]:
-        api_response = client.post(f'/api/v1/internal/solr/update/resync',
+        api_response = client.post(f'/internal/solr/update/resync',
                                    data={'identifiers': ['BC1234567']},
-                                   headers=create_header(jwt, [role], **{'Accept-Version': 'v1',
-                                                                         'content-type': 'application/json'}))
+                                   headers=create_header(jwt, [role], **{'content-type': 'application/json'}))
         # check
         assert api_response.status_code == HTTPStatus.UNAUTHORIZED

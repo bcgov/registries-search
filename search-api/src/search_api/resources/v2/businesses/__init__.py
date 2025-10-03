@@ -11,15 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Exposes all of the businesses endpoints in Flask-Blueprint style."""
+from flask import Blueprint
 
-"""Version of this service in PEP440.
+from .documents import bp as documents_bp
 
-[N!]N(.N)*[{a|b|rc}N][.postN][.devN]
-Epoch segment: N!
-Release segment: N(.N)*
-Pre-release segment: {a|b|rc}N
-Post-release segment: .postN
-Development release segment: .devN
-"""
-
-__version__ = "2.1.1"
+bp = Blueprint("BUSINESSES", __name__, url_prefix="/businesses")
+bp.register_blueprint(documents_bp)

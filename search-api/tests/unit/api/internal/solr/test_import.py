@@ -37,10 +37,9 @@ def test_import_solr_mocked(app, session, client, jwt, test_name, docs):
     docs_json = [asdict(x) for x in docs]
     with requests_mock.mock() as m:
         m.post(solr_url)
-        api_response = client.put(f'/api/v1/internal/solr/import',
+        api_response = client.put(f'/internal/solr/import',
                                   json={'businesses': docs_json},
-                                  headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                               'content-type': 'application/json'}))
+                                  headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
 
         # check success
         assert api_response.status_code == HTTPStatus.CREATED
@@ -67,10 +66,9 @@ def test_update_solr(session, client, jwt):
     business_solr.delete_all_docs()
     # import
     docs_json = [asdict(x) for x in SOLR_TEST_DOCS]
-    api_response = client.put(f'/api/v1/internal/solr/import',
+    api_response = client.put(f'/internal/solr/import',
                               json={'businesses': docs_json},
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.CREATED
 
@@ -105,10 +103,9 @@ def test_update_solr(session, client, jwt):
             ]
         }
     }]
-    api_response = client.put(f'/api/v1/internal/solr/import',
+    api_response = client.put(f'/internal/solr/import',
                               json={'type': 'partial', 'businesses': docs_json},
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     time.sleep(2)  # wait for solr to register update
     search_response = business_solr.query(payload={'query': f'id:{identifier}', 'fields': '*, [child]'})
     assert search_response['response']
@@ -123,9 +120,8 @@ def test_update_solr(session, client, jwt):
 def test_update_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
     docs_json = [asdict(x) for x in SOLR_TEST_DOCS]
-    api_response = client.put(f'/api/v1/internal/solr/import',
+    api_response = client.put(f'/internal/solr/import',
                               json={'entities': docs_json},
-                              headers=create_header(jwt, [], **{'Accept-Version': 'v1',
-                                                                'content-type': 'application/json'}))
+                              headers=create_header(jwt, [], **{'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.UNAUTHORIZED

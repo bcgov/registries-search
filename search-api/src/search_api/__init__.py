@@ -16,16 +16,15 @@
 This module is the API for the BC Registries Registry Search system.
 """
 import os
-from http import HTTPStatus
 from uuid import uuid4
 
-from flask import Flask, current_app, redirect, request
+from flask import Flask, Response, current_app, request
 from flask_migrate import Migrate
 
 from search_api import errorhandlers, models
 from search_api.config import DevelopmentConfig, MigrationConfig, ProductionConfig, UnitTestingConfig
 from search_api.models import db
-from search_api.resources import v1_endpoint, v2_endpoint
+from search_api.resources import internal_bp, meta_bp, ops_bp, v1_endpoint, v2_endpoint
 from search_api.services import Flags, business_solr, queue
 from search_api.services.authz import auth_cache
 from search_api.services.entity import entity_cache
@@ -64,15 +63,14 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         business_solr.init_app(app)
         babel.init_app(app)
 
-        v1_endpoint.init_app(app)
+        app.register_blueprint(internal_bp)
+        app.register_blueprint(meta_bp)
+        app.register_blueprint(ops_bp)
+        v1_endpoint.init_app(app, True)
         v2_endpoint.init_app(app)
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
         entity_cache.init_app(app)
-
-    @app.route("/")
-    def be_nice_swagger_redirect():
-        return redirect("/api/v1", code=HTTPStatus.MOVED_PERMANENTLY)
 
     @app.before_request
     def add_logger_context():
@@ -83,7 +81,8 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
                                  request.headers.get("x-apikey"))
 
     @app.after_request
-    def add_version(response):
+    def add_version(response: Response):
+        """Add the api version to the response header."""
         version = get_run_version()
         response.headers["API"] = f"search_api/{version}"
         return response

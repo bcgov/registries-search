@@ -1,0 +1,83 @@
+# Copyright © 2022 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""API endpoints for document access and json/pdfs."""
+from flask import Blueprint, current_app, jsonify, request
+from flask_cors import cross_origin
+
+import search_api.resources.utils as resource_utils
+from search_api.exceptions import ApiConnectionException, StorageException
+from search_api.models import Document, DocumentAccessRequest
+from search_api.services.authz import does_user_have_account
+from search_api.services.entity import get_business_document
+from search_api.utils.auth import jwt
+
+from .filings import bp as filings_bp
+from .requests import bp as document_request_bp
+
+bp = Blueprint("DOCUMENTS", __name__, url_prefix="/<string:business_identifier>/documents")
+bp.register_blueprint(filings_bp)
+bp.register_blueprint(document_request_bp)
+
+
+@bp.get("/<string:document_key>")
+@cross_origin(origins="*")
+@jwt.requires_auth
+def get_document_data(business_identifier, document_key):  # noqa: PLR0911
+    """Return the document json/pdf specified by the document key."""
+    try:
+        account_id = request.headers.get("Account-Id", None)
+        if not account_id:
+            return resource_utils.account_required_response()
+
+        token = jwt.get_token_auth_header()
+        user_is_part_of_org = does_user_have_account(token, account_id)
+
+        if not user_is_part_of_org:
+            return resource_utils.unauthorized_error_response(account_id)
+
+        if (content_type := str(request.accept_mimetypes)) not in ["application/json", "application/pdf"]:
+            msg = f"Invalid Accept header. Expected application/json or application/pdf but received {content_type}"
+            return resource_utils.bad_request_response(msg)
+
+        # get document
+        document = Document.find_by_document_key(document_key)
+        if not document:
+            return resource_utils.not_found_error_response("Document", document_key)
+
+        # check access
+        access_request = DocumentAccessRequest.find_by_id(document.access_request_id)
+        if str(access_request.account_id) != account_id:
+            return resource_utils.unauthorized_error_response(account_id)
+        if not access_request.is_active:
+            return resource_utils.authorization_expired_error_response(account_id)
+
+        # TODO: uncomment after testing with running gcp service and provide json option from gcp
+        # if document.file_name:
+        #     # get from google cache
+        #     raw_data = storage.get_document(document.file_name, document.document_type)  # noqa: ERA001
+        #     return raw_data, HTTPStatus.OK, {'Content-Type': 'application/pdf'}  # noqa: ERA001
+
+        # get from lear (cached doc not ready yet)
+        resp = get_business_document(business_identifier, document.document_type, content_type)
+        content = resp.content if content_type == "application/pdf" else jsonify(resp.json())
+        return content, resp.status_code
+
+    except ApiConnectionException as api_exception:
+        current_app.logger.error(api_exception)
+        return jsonify({"message": "Error getting document data.", "detail": api_exception.detail}), api_exception.code
+    except StorageException as storage_exception:
+        return resource_utils.gcp_storage_service_error(storage_exception)
+    except Exception as default_exception:
+        return resource_utils.default_exception_response(default_exception)
+

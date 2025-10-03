@@ -42,10 +42,9 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
     with requests_mock.mock() as m:
         m.post(solr_url_update)
         
-        api_response = client.put(f'/api/v1/internal/solr/update',
+        api_response = client.put(f'/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
 
         # check success
         assert api_response.status_code == HTTPStatus.ACCEPTED
@@ -56,7 +55,7 @@ def test_update_solr_mocked(app, session, client, jwt, test_name, request_json):
         # check did not call to solr mock (only updates the DB)
         assert m.called == False
         # call sync to update solr
-        api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
+        api_response = client.get(f'/internal/solr/update/sync', headers={'content-type': 'application/json'})
         # check success
         assert api_response.status_code == HTTPStatus.OK
         # check events were completed
@@ -123,10 +122,9 @@ def test_update_solr(session, client, jwt, test_name, request_json):
     business_solr.delete_all_docs()
     time.sleep(2)  # wait for solr to register update
     # update
-    api_response = client.put(f'/api/v1/internal/solr/update',
+    api_response = client.put(f'/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.ACCEPTED
     business_identifier = request_json['business']['identifier']
@@ -139,7 +137,7 @@ def test_update_solr(session, client, jwt, test_name, request_json):
     assert search_response['response']
     assert len(search_response['response']['docs']) == 0
     # call sync to update solr
-    api_response = client.get(f'/api/v1/internal/solr/update/sync', headers={'content-type': 'application/json'})
+    api_response = client.get(f'/internal/solr/update/sync', headers={'content-type': 'application/json'})
     # check success
     assert api_response.status_code == HTTPStatus.OK
     # check events were completed
@@ -175,10 +173,9 @@ def test_update_bc_class_adds_prefix(app, session, client, jwt, test_name, legal
         request_json['business']['legalType'] = legal_type
         request_json['business']['identifier'] = identifier
 
-        api_response = client.put(f'/api/v1/internal/solr/update',
+        api_response = client.put(f'/internal/solr/update',
                                 data=json.dumps(request_json),
-                                headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                            'content-type': 'application/json'}))
+                                headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'}))
         # check
         assert api_response.status_code == HTTPStatus.ACCEPTED
         # check business update in model with altered identfier
@@ -195,10 +192,9 @@ def test_update_business_in_solr_invalid_data(session, client, jwt, test_name, p
     request_json = deepcopy(FIRM_TEMPLATE)
     request_json['parties'][0]['officer']['partyType'] = party_type
     request_json['business']['goodStanding'] = good_standing
-    api_response = client.put(f'/api/v1/internal/solr/update',
+    api_response = client.put(f'/internal/solr/update',
                               data=json.dumps(request_json),
-                              headers=create_header(jwt, [SYSTEM_ROLE], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'})
+                              headers=create_header(jwt, [SYSTEM_ROLE], **{'content-type': 'application/json'})
                               )
     # check
     assert api_response.status_code == HTTPStatus.BAD_REQUEST
@@ -206,9 +202,8 @@ def test_update_business_in_solr_invalid_data(session, client, jwt, test_name, p
 
 def test_update_solr_unauthorized(client, jwt):
     """Assert that error is returned if unauthorized."""
-    api_response = client.put(f'/api/v1/internal/solr/update',
+    api_response = client.put(f'/internal/solr/update',
                               data=json.dumps(CORP_TEMPLATE),
-                              headers=create_header(jwt, [], **{'Accept-Version': 'v1',
-                                                                           'content-type': 'application/json'}))
+                              headers=create_header(jwt, [], **{'content-type': 'application/json'}))
     # check
     assert api_response.status_code == HTTPStatus.UNAUTHORIZED
