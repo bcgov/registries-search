@@ -1,6 +1,6 @@
 {
   "name": "@bcreg/search-business-person",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "type": "module",
   "private": true,
   "scripts": {

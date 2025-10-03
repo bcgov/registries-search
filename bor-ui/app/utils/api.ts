@@ -1,13 +1,10 @@
 import type { StatusCodes } from 'http-status-codes'
 
-export const getApiConfig = (pdfDownload: boolean, params?: any, overrideUrl?: string) => {
+export const getApiConfig = (pdfDownload: boolean, params?: any) => {
   const config: any = { headers: {}, params }
   if (pdfDownload) {
     config.headers.Accept = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     config.responseType = 'blob'
-  }
-  if (overrideUrl) {
-    config.baseURL = overrideUrl
   }
   return config
 }

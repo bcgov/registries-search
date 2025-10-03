@@ -56,7 +56,6 @@ export default defineNuxtConfig({
       borApiKey: '',
       businessDashUrl: '',
       registriesSearchApiUrl: '',
-      registriesSearchApiVersion: '',
       registriesSearchApiVersion2: '',
       registriesSearchApiKey: '',
       registriesSearchUrl: '',

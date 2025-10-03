@@ -59,8 +59,7 @@ export const useBusinessSearchApi = () => {
 
   const getDocAccessHistory = async (): Promise<DocAccessHistory> => {
     // add search-api config stuff
-    const { registriesSearchApiUrl, registriesSearchApiVersion } = useRuntimeConfig().public
-    const config = getApiConfig(false, undefined, registriesSearchApiUrl + registriesSearchApiVersion)
+    const config = getApiConfig(false, undefined)
     return await $businessSearchApi<DocAccessHistory>('purchases', config)
       .catch(({ data, status }) => {
         console.warn('Error fetching document access history.')

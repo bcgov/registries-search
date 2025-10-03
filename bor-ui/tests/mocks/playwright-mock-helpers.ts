@@ -22,7 +22,7 @@ export const mockApiCallsForPage = async (page: Page, accessLevel?: SearchAccess
   await page.route('**/api/v1/orgs/**/products*', async (route) => {
     await route.fulfill({ json: accessLevel ? productsMapping[accessLevel] : ProductsNone })
   })
-  await page.route('**/api/v1/purchases', async (route) => {
+  await page.route('**/api/v2/purchases', async (route) => {
     await route.fulfill({ json: DocumentAccessRequests })
   })
   await page.route('**/api/v2/search/businesses', async (route) => {
