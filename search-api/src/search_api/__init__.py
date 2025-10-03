@@ -19,7 +19,6 @@ import os
 from uuid import uuid4
 
 from flask import Flask, Response, current_app, request
-from flask_deprecate import deprecate_blueprint
 from flask_migrate import Migrate
 
 from search_api import errorhandlers, models
@@ -67,8 +66,7 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         app.register_blueprint(internal_bp)
         app.register_blueprint(meta_bp)
         app.register_blueprint(ops_bp)
-        deprecate_blueprint(v1_endpoint.version_bp, v2_endpoint.version_bp, app.config["DEPRECATION_WARNING_MSG"])
-        v1_endpoint.init_app(app)
+        v1_endpoint.init_app(app, True)
         v2_endpoint.init_app(app)
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
@@ -84,6 +82,7 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
 
     @app.after_request
     def add_version(response: Response):
+        """Add the api version to the response header."""
         version = get_run_version()
         response.headers["API"] = f"search_api/{version}"
         return response

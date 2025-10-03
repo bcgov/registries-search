@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Manage version endpoints."""
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, Response
 
 from .constants import EndpointVersionPath
 
@@ -31,9 +31,17 @@ class VersionEndpoint:
         if app:
             self.init_app(app)
 
-    def init_app(self, app: Flask):
+    def init_app(self, app: Flask, deprecated = False):
         """Add the version endpoint to the app."""
         if not app:
             raise Exception("Cannot initialize without a Flask App.")
         self.app = app
+
+        if deprecated:
+            @self.version_bp.after_request
+            def add_deprecation_warning(response: Response):
+                """Add a deprecation warning header to the response over the version blueprint."""
+                response.headers["Warning"] = app.config["DEPRECATION_WARNING_MSG"]
+                return response
+
         self.app.register_blueprint(self.version_bp)
