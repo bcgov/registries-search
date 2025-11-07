@@ -3,7 +3,7 @@ const { accessLevel } = storeToRefs(useSearchAccessStore())
 
 const showDocHelp = ref(false)
 
-const bcOnlineURL = useRuntimeConfig().public.bconlineUrl as string
+const bcOnlineURL = useRuntimeConfig().public.bconlineUrl
 </script>
 
 <template>
@@ -36,9 +36,9 @@ const bcOnlineURL = useRuntimeConfig().public.bconlineUrl as string
         <p>
           {{ $t('text.viewBusinessInformationHelp') }}
           <UButton
-            class="text-base p-0"
+            class="text-base p-0 underline"
             :to="bcOnlineURL"
-            label="BC OnLine"
+            :label="$t('label.bcOnline')"
             icon="i-mdi-open-in-new"
             target="_blank"
             trailing

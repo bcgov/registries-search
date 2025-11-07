@@ -54,7 +54,8 @@ const textForStatus = (status: string): string => {
 
 const actionButton = (item: DocAccess) => {
   if (['PAID', 'COMPLETED'].includes(item.status)) {
-    goToOpenDocAccess(item)
+    const localePath = useLocalePath()
+    useRouter().push(localePath(`/open/${item.businessIdentifier}/${item.id}`))
   } else if (item.status === 'ERROR') {
     const identifier = item.businessIdentifier
 
@@ -64,7 +65,7 @@ const actionButton = (item: DocAccess) => {
 }
 
 onMounted(() => {
-  docAccess.loadDocAccessHistory()
+  docAccess.init()
 })
 </script>
 
@@ -74,7 +75,7 @@ onMounted(() => {
       {{ t('text.tableInfo') }}
     </p>
     <BaseTable
-      class="rounded-t border-[1px] border-gray-200 mt-5"
+      class="rounded-t border border-gray-200 mt-5"
       height="100%"
       item-key="submissionDate"
       :loading="docAccessLoading"
@@ -131,7 +132,7 @@ onMounted(() => {
       <template v-if="docAccessErrors.length > 0" #body-empty>
         <ErrorRetry
           class="my-5"
-          :action="docAccess.loadDocAccessHistory"
+          :action="docAccess.init"
           :message="t('text.docAccess.errorRetry')"
         />
       </template>

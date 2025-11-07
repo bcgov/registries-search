@@ -105,6 +105,7 @@ watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
       <UAccordion
         class="w-full"
         :items="options"
+        :ui="{ trigger: 'bg-shade hover:bg-shade-highlighted' }"
         data-testid="control-filter-accordion"
       >
         <template #body="{ item }">

@@ -1,4 +1,4 @@
-<!-- TODO: will be replaced by common component #30551 -->
+<!-- FUTURE: will be replaced by common component #30551 -->
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker'
 

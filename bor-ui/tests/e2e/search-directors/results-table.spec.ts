@@ -62,8 +62,12 @@ test.describe('Search Directors', () => {
     // title
     expect(page.getByTestId('search-results-table')
       .getByRole('heading', { name: `Search Results (${resultsMock.searchResults.totalResults} Businesses)` }))
-    expect(page.getByTestId('search-results-table').getByTestId('table-export-select')).toBeVisible()
-    expect(page.getByTestId('search-results-table').getByTestId('table-export-select')).toHaveText('1000')
+    expect(page.getByTestId('search-results-table')
+      .getByTestId('table-export-select')
+      .getByTestId('exportDropdown')).toBeVisible()
+    expect(page.getByTestId('search-results-table')
+      .getByTestId('table-export-select')
+      .getByTestId('exportDropdown')).toHaveText('1000')
     // rows and result data
     const resultRows = await page.getByTestId('search-results-table').getByTestId('base-table-result-row').all()
     expect(resultRows.length).toBe(resultsMock.searchResults.results.length)

@@ -11,7 +11,7 @@ export default defineAppConfig({
         root: 'divide-y',
         item: 'border-gray-400',
         body: 'text-neutral p-3',
-        trigger: 'm-0 p-3 text-neutral-highlighted font-bold bg-shade hover:bg-shade-highlighted rounded-none'
+        trigger: 'm-0 p-3 text-neutral-highlighted font-bold rounded-none'
       }
     },
     badge: {
@@ -22,11 +22,6 @@ export default defineAppConfig({
           class: 'bg-shade-secondary text-highlighted'
         }
       ]
-    },
-    checkbox: {
-      slots: {
-        base: 'group-hover:before:bg-transparent group-active:before:bg-transparent has-data-[state=checked]:hover:before:bg-transparent has-data-[state=checked]:active:before:bg-transparent'
-      }
     },
     input: {
       slots: {

@@ -26,21 +26,19 @@ const exportToXlsx = useThrottleFn(async () => {
 </script>
 
 <template>
-  <div class="flex mt-3">
-    <USelectMenu
+  <div class="flex mt-3" data-testid="table-export-select">
+    <ConnectSelect
+      id="exportDropdown"
       v-model="exportRows"
-      color="primary"
       :content="{ align: 'start' }"
       :items="['50', '100', '250', '500', '1000', '2000']"
-      placeholder="Maximum results to export"
-      :search-input="false"
+      :label="$t('text.maximumResultsToExport')"
       style="width: 225px;"
-      data-testid="table-export-select"
     />
     <UButton
       class="px-4 hover:bg-inherit"
       icon="i-mdi-table-arrow-down"
-      label="Export to .xlsx"
+      :label="$t('text.exportToXlsx')"
       :loading="exportLoading"
       loading-icon="i-mdi-loading"
       variant="ghost"

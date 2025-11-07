@@ -49,7 +49,7 @@ onBeforeMount(() => {
   <div class="mt-8 mb-16" data-testid="search-page">
     <h1>{{ searchTitleText }}</h1>
     <div v-if="currentAccount?.id" class="flex mt-1 pt-2">
-      <div class="pl-[2px] pr-5 border-r-[1px] border-line" data-testid="account-name">
+      <div class="pl-[2px] pr-5 border-r border-line" data-testid="account-name">
         <span v-if="currentAccount.accountType === AccountType.STAFF">BC Registries Staff</span>
         <span v-else>{{ currentAccountName }}</span>
       </div>

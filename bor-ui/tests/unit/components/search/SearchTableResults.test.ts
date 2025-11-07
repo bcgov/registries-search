@@ -67,8 +67,8 @@ describe('SearchResults tests', () => {
     }
     // renders export excel stuff
     if (!hasPublicAccess.value) {
-      expect(wrapper.find('[data-testid=table-export-select]').exists()).toBe(true)
-      expect(wrapper.find('[data-testid=table-export-select]').text()).toContain('1000')
+      expect(wrapper.find('[data-testid=exportDropdown]').exists()).toBe(true)
+      expect(wrapper.find('[data-testid=exportDropdown]').text()).toContain('1000')
       expect(wrapper.find('[data-testid=table-export-btn]').exists()).toBe(true)
       expect(wrapper.find('[data-testid=table-export-btn]').text()).toContain('Export to .xlsx')
     }

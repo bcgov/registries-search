@@ -4,13 +4,13 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: '2025-08-25',
   devtools: { enabled: true },
 
-  extends: ['@sbc-connect/nuxt-pay', '@sbc-connect/nuxt-forms'],
+  extends: ['@sbc-connect/nuxt-business-base'],
 
   imports: {
-    dirs: ['enums', 'interfaces', 'stores']
+    dirs: ['enums', 'types', 'interfaces', 'stores']
   },
 
   app: {
@@ -58,9 +58,7 @@ export default defineNuxtConfig({
       registriesSearchApiUrl: '',
       registriesSearchApiVersion2: '',
       registriesSearchApiKey: '',
-      registriesSearchUrl: '',
-      searchRows: '',
-      playwright: process.env.playwright === 'true'
+      searchRows: ''
     }
   }
 })

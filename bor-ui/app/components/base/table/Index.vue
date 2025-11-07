@@ -182,7 +182,7 @@ watch(() => localProps.setItems, (val) => {
                       :disabled="header.filter.disabled"
                       :multiple="!!header.filter.multiple"
                       :search-input="false"
-                      :ui="{ content: 'w-full', placeholder: 'text-neutral' }"
+                      :ui="{ base: 'pt-2', content: 'w-full', placeholder: 'text-neutral' }"
                       data-testid="base-table-header-filter"
                       @update:model-value="filter(header)"
                     >
@@ -234,6 +234,13 @@ watch(() => localProps.setItems, (val) => {
                               :label="capFirstLetterAll(
                                 header.filter.itemValue ? item[header.filter.itemValue] : item)"
                               :model-value="header.filter.value?.includes(item.value)"
+                              :ui="{
+                                base: [
+                                  'group-hover:before:bg-transparent group-active:before:bg-transparent',
+                                  'has-data-[state=checked]:hover:before:bg-transparent',
+                                  'has-data-[state=checked]:active:before:bg-transparent',
+                                ],
+                              }"
                             />
                           </div>
                         </slot>
@@ -246,7 +253,7 @@ watch(() => localProps.setItems, (val) => {
                       :disabled="header.filter.disabled"
                       :placeholder="!header.filter.value ? header.filter.label || '' : ''"
                       size="lg"
-                      :ui="{ base: 'placeholder:text-neutral', trailing: 'size-8' }"
+                      :ui="{ base: 'placeholder:text-neutral pe-2', trailing: 'size-8' }"
                       data-testid="base-table-header-filter"
                       @update:model-value="filter(header)"
                     >
