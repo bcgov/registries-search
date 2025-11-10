@@ -176,7 +176,7 @@ def load_search_core():  # noqa: PLR0915, PLR0912
 
 
 if __name__ == "__main__":
-    print(f"Starting data importer {get_run_version()}...")  # noqa: T201
+    print(f"Starting data importer v{get_run_version()}...")  # noqa: T201
     app = create_app()
     with app.app_context():
         load_search_core()
