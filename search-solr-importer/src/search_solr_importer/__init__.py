@@ -29,7 +29,7 @@ from structured_logging import StructuredLogging
 
 def get_run_version():
     """Return the version specified in the toml file."""
-    return version(__name__[: __name__.find(".")])
+    return version(__name__)
 
 
 def register_shellcontext(app):
