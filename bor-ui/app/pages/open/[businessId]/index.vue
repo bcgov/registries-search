@@ -84,6 +84,7 @@ onMounted(() => {
     { to: localePath('/'), label: t('label.businessPersonSearch') },
     { label: businessId }
   ])
+  businessStore.$reset()
   setPublicDefault(businessId)
 })
 </script>

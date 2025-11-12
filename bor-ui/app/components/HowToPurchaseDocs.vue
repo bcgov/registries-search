@@ -9,6 +9,7 @@ const parseHowToAccessDisclaimer = () => {
 const howToAccessDisclaimerTexts = parseHowToAccessDisclaimer()
 
 const bcOnlineURL = useRuntimeConfig().public.bconlineUrl
+// eslint-disable-next-line max-len
 const docSearchURL = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/searches-certificates'
 </script>
 

@@ -46,7 +46,7 @@ const showLedger = computed(() => {
     val => val.documentType === DocAccessType.BUSINESS_SUMMARY_FILING_HISTORY)
 })
 
-onMounted(() => {
+onMounted(async () => {
   if (status === 'UEFZTUVOVF9DQU5DRUxMRUQ=') {
     // payment cancelled
     useRouter().push(localePath(`/open/${businessId}`))
@@ -57,8 +57,13 @@ onMounted(() => {
     { to: localePath(`/open/${businessId}`), label: businessId },
     { label: t('label.purchasedDocuments') }
   ])
+  useBusinessStore().$reset()
   setPublicDefault(businessId)
-  docAccessStore.init(darId)
+  await docAccessStore.init(darId)
+  if (![DocAccessStatus.COMPLETED, DocAccessStatus.PAID].includes(docAccess.value?.status as DocAccessStatus)) {
+    // Doc access not paid for
+    useRouter().push(localePath(`/open/${businessId}`))
+  }
 })
 </script>
 

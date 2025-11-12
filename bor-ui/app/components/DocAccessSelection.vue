@@ -38,7 +38,7 @@ const getPurchaseItems = () => [
         {
           code: SearchFeeCode.CGOOD,
           value: false,
-          disabled: true,
+          disabled: !business.value.goodStanding,
           tooltip: t('text.theCOGSisOnlyAvailableIf')
         },
         { code: SearchFeeCode.CSTAT, value: false }]
@@ -49,7 +49,7 @@ const getPurchaseItems = () => [
 
 const purchaseItems = ref(getPurchaseItems())
 
-watch(business, () => {
+watch(() => business.value?.identifier, () => {
   purchaseItems.value = getPurchaseItems()
 })
 
