@@ -1,7 +1,11 @@
 <script setup lang="ts">
+const props = defineProps<{ clearFilter?: boolean }>()
+
+const searchStore = useSearchStore()
+const { activeSearch } = storeToRefs(searchStore)
+
 const selectedDetailsFilters: Ref<string[]> = ref([])
 
-const props = defineProps<{ clearFilter?: boolean }>()
 watch(() => props.clearFilter, () => {
   selectedDetailsFilters.value = []
 })
@@ -59,12 +63,20 @@ const options = [
   }
 ]
 
-const { filterSearch } = useSearchStore()
 watch(selectedDetailsFilters, (newList: string[], oldList: string[]) => {
   if (oldList.length === 0 && newList.length === 0) {
     return
   }
-  filterSearch(['categories', 'roles', 'relatedInterests'], toRaw(newList))
+  searchStore.filterSearch(['categories', 'roles', 'relatedInterests'], toRaw(newList))
+})
+
+onMounted(() => {
+  // apply existing filter
+  const activeFilters = activeSearch.value.filters as SearchPayload
+  const relatedInterestFilter = activeFilters.categories.roles?.relatedInterests
+  if (relatedInterestFilter && relatedInterestFilter.length) {
+    selectedDetailsFilters.value = relatedInterestFilter
+  }
 })
 </script>
 

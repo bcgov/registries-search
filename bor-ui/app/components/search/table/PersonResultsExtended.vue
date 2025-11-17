@@ -47,7 +47,7 @@ const isVitestRunning = !!process.env.VITEST_WORKER_ID
     <template #header-filter-selected-slot-citizenship="{ selected }">
       <span v-if="!selected" class="text-neutral">All</span>
       <div v-else class="flex -mt-2">
-        <CountryFlag :country="getCode(selected)" size="normal" />
+        <CountryFlag :country="getCode(selected) || selected" size="normal" />
       </div>
     </template>
     <template #header-filter-slot-personControl>

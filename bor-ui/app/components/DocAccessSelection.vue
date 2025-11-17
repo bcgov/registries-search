@@ -68,6 +68,7 @@ const getFeeTotal = (code: SearchFeeCode) => {
 }
 
 const addRemoveFee = (item: { code: SearchFeeCode, value: boolean }) => {
+  useConnectButtonControl().setAlertText()
   if (item.value) {
     feeStore.addReplaceFee(item.code)
   } else {

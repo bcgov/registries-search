@@ -57,6 +57,7 @@ export const getPersonHeadersPublic = (): BaseTableHeader[] => {
       itemColspan: 2,
       itemHidden: false,
       slotId: 'details',
+      subCol: 'value',
       value: 'Business Details',
       width: '33%'
     },

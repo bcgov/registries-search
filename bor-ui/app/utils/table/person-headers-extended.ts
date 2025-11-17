@@ -69,6 +69,7 @@ export const getPersonHeadersExtended = (): BaseTableHeader[] => {
       itemColspan: 4,
       itemHidden: false,
       slotId: 'details',
+      subCol: 'value',
       value: 'Business Details',
       width: '14%'
     },
@@ -98,6 +99,7 @@ export const getPersonHeadersExtended = (): BaseTableHeader[] => {
         return 'N/A'
       },
       slotId: 'roles',
+      subCol: 'roleType',
       value: 'Roles',
       width: '16%'
     },

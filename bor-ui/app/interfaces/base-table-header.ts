@@ -10,6 +10,7 @@ export interface BaseTableHeader {
   itemLoadingClass?: string
   itemFn?: (val: any) => string
   slotId?: string
+  subCol?: string
   value: string // display text (v-html)
   width?: string
 }

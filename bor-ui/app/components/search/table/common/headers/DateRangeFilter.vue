@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { SearchType } from '#imports'
+import { SearchType, type SearchPayload } from '#imports'
 
 const search = useSearchStore()
-const { searchType } = storeToRefs(search)
+const { searchType, activeSearch } = storeToRefs(search)
 
 const datePickerRef: Ref<any> = ref(undefined)
 const dateRangeStart: Ref<Date | null> = ref(null)
@@ -19,17 +19,19 @@ const scrollToDatePicker = async () => {
   }
 }
 
-const updateDateRange = (val: { endDate: Date | null, startDate: Date | null }) => {
+const updateDateRange = (val: { endDate: Date | null, startDate: Date | null }, triggerSearch = true) => {
   showDatePicker.value = false
   dateRangeStart.value = val.startDate
   dateRangeEnd.value = val.endDate
-  if (val.endDate && val.startDate) {
-    search.filterSearch(
-      ['query', 'roles', 'roleDates'],
-      { start: toDateStr(val.startDate), end: toDateStr(val.endDate) }
-    )
-  } else {
-    search.filterSearch(['query', 'roles', 'roleDates'], {})
+  if (triggerSearch) {
+    if (val.endDate && val.startDate) {
+      search.filterSearch(
+        ['query', 'roles', 'roleDates'],
+        { start: toDateStr(val.startDate), end: toDateStr(val.endDate) }
+      )
+    } else {
+      search.filterSearch(['query', 'roles', 'roleDates'], {})
+    }
   }
 }
 
@@ -38,6 +40,16 @@ const props = defineProps<{ dateRangeReset?: boolean }>()
 const dateRangeResetTrigger = ref(false)
 watch(() => props.dateRangeReset, () => {
   dateRangeResetTrigger.value = !dateRangeResetTrigger.value
+})
+
+onMounted(() => {
+  // apply existing filters to component
+  const activeFilters = activeSearch.value.filters as SearchPayload
+  const startDate = toDate(activeFilters?.query?.roles?.roleDates?.start || '') || null
+  const endDate = toDate(activeFilters?.query?.roles?.roleDates?.end || '') || null
+  if (startDate || endDate) {
+    updateDateRange({ startDate, endDate }, false)
+  }
 })
 
 // for teleport behaviour in tests

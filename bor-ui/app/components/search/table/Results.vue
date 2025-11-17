@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useThrottleFn } from '@vueuse/core'
-import { SearchType } from '#imports'
+import { SearchType, type BaseTableHeader, type BusinessSearchPayload, type SearchPayload } from '#imports'
 
 const search = useSearchStore()
 const { activeSearch, hasMoreResults, searchType } = storeToRefs(search)
@@ -21,23 +21,50 @@ const resultsDesc = computed(() => {
   return `${activeSearch.value.resultsTotal} ${activeSearch.value.resultsTotal === 1 ? 'Person' : 'People'}`
 })
 
+const mapBusinessSearchFilters = (filters: BusinessSearchPayload) => {
+  return {
+    ...filters.query,
+    parties: undefined,
+    ...(filters.query.parties ? filters.query.parties : {}),
+    legalType: filters.categories.legalType ? filters.categories.legalType[0] : undefined,
+    status: filters.categories.status ? filters.categories.status[0] : undefined
+  }
+}
+
+const mapPersonSearchFilters = (filters: SearchPayload) => {
+  return {
+    ...filters.query,
+    ...(filters.query.roles ? filters.query.roles : {}),
+    ...filters.categories,
+    roles: undefined,
+    ...(filters.categories.roles ? filters.categories.roles : {}),
+    nationalities: filters.categories.nationalities ? filters.categories.nationalities[0] : undefined
+  }
+}
 /** Update the base table header filters to display what the current filters are.
  * (needed when leaving and coming back to the component)
  */
 const updateTableHeaderFilters = (headers: BaseTableHeader[]) => {
-  const activeFilters = Object.keys(activeSearch.value.filters)
+  const activeFilters = searchType.value === SearchType.BUSINESS
+    ? mapBusinessSearchFilters(activeSearch.value.filters)
+    : mapPersonSearchFilters(activeSearch.value.filters)
+
   for (const i in activeFilters) {
     // find header filter
-    const header = headers.find(item => item.col === activeFilters[i])
+    const header = headers.find(item => [item.col, item.subCol].includes(i))
     // update filter value to match search store
-    if (header) {
-      header.filter.value = activeSearch.value.filters[activeFilters[i]]
+    if (header && activeFilters[i]) {
+      header.filter!.value = activeFilters[i]
     }
   }
 }
 watch(searchType, (val) => {
   updateTableHeaderFilters(headers.value[val])
 }, { immediate: true })
+
+onMounted(() => {
+  updateTableHeaderFilters(headers.value[searchType.value])
+})
 
 const getNextSearches = useThrottleFn(async () => {
   await search.getNextResults()

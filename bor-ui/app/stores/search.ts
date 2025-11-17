@@ -139,6 +139,10 @@ export const useSearchStore = defineStore('search', () => {
         // Overwrite to null when target value is cleared instead of default mergeWith alg
         return null
       }
+      if (typeof targetValue === 'object' && Object.keys(targetValue).length === 0) {
+        // Overwrite to empty object when target object is cleared instead of default mergeWith alg
+        return {}
+      }
       // Anything that gets here will do default mergeWith alg
     })
 
