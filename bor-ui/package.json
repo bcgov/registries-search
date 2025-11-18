@@ -1,6 +1,6 @@
 {
   "name": "@bcreg/search-business-person",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "type": "module",
   "private": true,
   "scripts": {
@@ -20,7 +20,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@sbc-connect/nuxt-business-base": "^0.1.16",
+    "@sbc-connect/nuxt-business-base": "^0.1.19",
     "@types/iso-3166-2": "^1.0.4",
     "@vuepic/vue-datepicker": "^11.0.3",
     "country-list": "^2.4.1",
