@@ -29,7 +29,7 @@ const documentSelect = ref<{ $el: HTMLElement } | null>(null)
 const submit = async () => {
   if (fees.value && Object.keys(fees.value).length && business.value) {
     if (
-      [AccountType.STAFF, AccountType.SBC_STAFF].includes(
+      [AccountType.STAFF].includes(
         useConnectAccountStore().currentAccount?.accountType)
     ) {
       const staffModal = useModal().staffPaymentModal
