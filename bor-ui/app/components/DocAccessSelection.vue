@@ -22,15 +22,11 @@ feeStore.initFees(
 )
 
 const isStaff = [AccountType.STAFF, AccountType.SBC_STAFF].includes(currentAccount.value.accountType)
-const allowedSummaryCorpTypes = [
-  CorpTypeCd.BENEFIT_COMPANY, CorpTypeCd.COOP, CorpTypeCd.SOLE_PROP, CorpTypeCd.PARTNERSHIP]
 
 const getPurchaseItems = () => [
   {
     code: isStaff ? SearchFeeCode.SBSRCH : SearchFeeCode.BSRCH,
-    value: false,
-    disabled: !businessStore.isLegalType(allowedSummaryCorpTypes),
-    tooltip: t('text.theseDocumentsWillBeAvailableSoon')
+    value: false
   },
   ...(
     !businessStore.isFirm() && business.value?.state === EntityState.ACTIVE
