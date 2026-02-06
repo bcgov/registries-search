@@ -10,7 +10,11 @@ export default defineNuxtConfig({
   extends: ['@sbc-connect/nuxt-business-base'],
 
   imports: {
-    dirs: ['enums', 'types', 'interfaces', 'stores']
+    dirs: ['interfaces', 'types', 'enums', 'stores', 'utils']
+  },
+
+  typescript: {
+    includeWorkspace: true // required for ts to recognize autoimports in test files
   },
 
   app: {

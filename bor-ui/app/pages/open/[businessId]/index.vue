@@ -85,14 +85,14 @@ onMounted(() => {
     { label: businessId }
   ])
   businessStore.$reset()
-  setPublicDefault(businessId)
+  setPublicDefault(businessId, false)
 })
 </script>
 
 <template>
   <div class="py-10">
     <Divide class="divide-y-3 *:py-10" :orientation="'vertical'">
-      <BusinessAlerts v-if="alerts.length" :alert-info="alerts" />
+      <BusinessAlerts v-if="alerts.length" :alerts="alerts" />
       <HowToPurchaseDocs />
       <DocAccessSelection ref="documentSelect" />
       <BusinessLedgerWrapper

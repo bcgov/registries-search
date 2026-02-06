@@ -34,7 +34,7 @@ export default defineAppConfig({
         content: 'rounded-sm min-w-fit',
         group: 'px-0 py-2',
         trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200 text-(--ui-text) group-data-[state=open]:text-primary group-focus:text-primary',
-        item: 'my-0.75 min-w-[150px] text-neutral-highlighted before:rounded-none data-highlighted:not-data-disabled:text-primary data-highlighted:not-data-disabled:before:bg-shade data-[state=checked]:text-primary data-[state=checked]:bg-blue-50',
+        item: 'my-0.75 min-w-[150px] text-neutral-highlighted before:rounded-none data-highlighted:not-data-disabled:text-primary data-highlighted:not-data-disabled:before:bg-shade data-[state=checked]:text-primary data-[state=checked]:bg-blue-50 hover:bg-shade hover:text-primary hover:cursor-pointer',
         itemLeadingIcon: 'group-data-[state=checked]:text-primary group-data-highlighted:not-data-disabled:text-primary text-neutral-highlighted'
       },
       variants: {

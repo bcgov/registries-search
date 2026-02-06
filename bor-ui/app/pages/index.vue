@@ -19,8 +19,6 @@ const tabs = [
 definePageMeta({
   layout: 'connect-auth',
   middleware: [
-    // Mock auth if playwright is running
-    'mock-connect-auth',
     // Check for login redirect
     'connect-auth',
     // Initialize search access
