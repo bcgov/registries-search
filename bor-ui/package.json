@@ -20,7 +20,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@sbc-connect/nuxt-business-base": "0.10.1",
+    "@sbc-connect/nuxt-business-base": "0.11.1",
     "@types/iso-3166-2": "^1.0.4",
     "@vuepic/vue-datepicker": "^11.0.3",
     "country-list": "^2.4.1",
