@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@sbc-connect/nuxt-business-base':
-        specifier: 0.11.1
-        version: 0.11.1(e25ad3fc70ce6b115700d2f344dee434)
+        specifier: 0.14.1
+        version: 0.14.1(e25ad3fc70ce6b115700d2f344dee434)
       '@types/iso-3166-2':
         specifier: ^1.0.4
         version: 1.0.4
@@ -1765,20 +1765,20 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sbc-connect/nuxt-auth@0.5.0':
-    resolution: {integrity: sha512-Mx7kIZaoT+hF+vjttnVbxqHRuFMSFftbYFxP3nsyWZ9BYRJYmSL2qrr1JOCPUtAqHiuX5oQuKSScLYjudpQIdQ==}
+  '@sbc-connect/nuxt-auth@0.6.0':
+    resolution: {integrity: sha512-VEO5UodV6sTgrNjVkZmprgtYG6qg5hyKTcSl3/G13hcjtK0S3gV5QJs7DJbQOO0SaVP48h36O8kxxsVHYwa34g==}
 
-  '@sbc-connect/nuxt-base@0.6.0':
-    resolution: {integrity: sha512-KxVo6pdz+6vjvMZqg4m4krNbR3UWNRZd2ohVUPxGX6KMwp1+PbrWUspknLlTCalONwdaNOa5u2Ddx/U7WCc9pQ==}
+  '@sbc-connect/nuxt-base@0.6.1':
+    resolution: {integrity: sha512-Csd3M/L3JHNEWC/LoHxlSrCCu8jnmHMgNT5gNjZ/G43T4TnnrbX5peFNAaYb3FV8MbHKMAE60y6XyQH4UUQwpA==}
 
-  '@sbc-connect/nuxt-business-base@0.11.1':
-    resolution: {integrity: sha512-YnBgdh1yrrjmhNpCy6Sr5fMLHkxz1/c3rpEp668XRzFcV48rQHxaVuWZslrxfSM8vzqwRmsnDjUz34tH4B8BXw==}
+  '@sbc-connect/nuxt-business-base@0.14.1':
+    resolution: {integrity: sha512-Xzqym6q3Ezyif86XdMLNe9k58J7jrVmuJd+OxX7KRrlx6hJESLfqG7MbV0CujBIlebe4eZnRdp3whWbMzUNfwQ==}
 
-  '@sbc-connect/nuxt-forms@0.4.0':
-    resolution: {integrity: sha512-yfYo8oU16UnbdNKg1/s7jWN/aFzHw6E6p96QNr8pcjjCWtDG11xIbWCFwlRkSLq4oR/fttEnA+hNUN4/wPG3gA==}
+  '@sbc-connect/nuxt-forms@0.4.1':
+    resolution: {integrity: sha512-MthX/gzXK4Zs7neDJu4u0tx7Ijcyx0KWAYJ2/jdrjxG/RtXFQFpvBg83Iv2AMtCkLvb5LqG4nor2BDtwuVVARA==}
 
-  '@sbc-connect/nuxt-pay@0.2.2':
-    resolution: {integrity: sha512-QpdwoDUfNig4kDrZkRPBf6uMTusMPlruVUrXRqZ49ItWzTtckMNbsslDR47ruSQM8RIlenDVKmVR16jQ8K41Hw==}
+  '@sbc-connect/nuxt-pay@0.2.3':
+    resolution: {integrity: sha512-5KFR1Xp3ym9ou5AIeuZFOVKU4YgyMpc2yIaRJfgv9FO6n4GuDqDT16Qr61xH77IzbHYRVHeeWkEWG6SG/7BBRA==}
 
   '@sindresorhus/base62@1.0.0':
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
@@ -5422,6 +5422,7 @@ packages:
 
   unplugin-vue-router@0.16.2:
     resolution: {integrity: sha512-lE6ZjnHaXfS2vFI/PSEwdKcdOo5RwAbCKUnPBIN9YwLgSWas3x+qivzQvJa/uxhKzJldE6WK43aDKjGj9Rij9w==}
+    deprecated: 'Merged into vuejs/router. Migrate: https://router.vuejs.org/guide/migration/v4-to-v5.html'
     peerDependencies:
       '@vue/compiler-sfc': ^3.5.17
       vue-router: ^4.6.0
@@ -7045,7 +7046,7 @@ snapshots:
       '@tiptap/suggestion': 3.13.0(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0)
       '@tiptap/vue-3': 3.13.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0)(vue@3.5.26(typescript@5.9.3))
       '@unhead/vue': 2.1.4(vue@3.5.26(typescript@5.9.3))
-      '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.26(typescript@5.9.3))
       '@vueuse/integrations': 14.2.1(change-case@5.4.4)(fuse.js@7.1.0)(vue@3.5.26(typescript@5.9.3))
       colortranslator: 5.0.0
       consola: 3.4.2
@@ -7062,7 +7063,7 @@ snapshots:
       knitwork: 1.3.0
       magic-string: 0.30.21
       mlly: 1.8.0
-      motion-v: 1.10.3(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
+      motion-v: 1.10.3(@vueuse/core@14.2.1(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       ohash: 2.0.11
       pathe: 2.0.3
       reka-ui: 2.6.1(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
@@ -7073,7 +7074,7 @@ snapshots:
       tinyglobby: 0.2.15
       typescript: 5.9.3
       unplugin: 2.3.11
-      unplugin-auto-import: 20.3.0(@nuxt/kit@4.3.1(magicast@0.5.2))(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))
+      unplugin-auto-import: 20.3.0(@nuxt/kit@4.3.1(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.26(typescript@5.9.3)))
       unplugin-vue-components: 30.0.0(@babel/parser@7.29.0)(@nuxt/kit@4.3.1(magicast@0.5.2))(vue@3.5.26(typescript@5.9.3))
       vaul-vue: 0.4.1(reka-ui@2.6.1(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       vue-component-type-helpers: 3.2.4
@@ -7749,13 +7750,13 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.57.1':
     optional: true
 
-  '@sbc-connect/nuxt-auth@0.5.0(e25ad3fc70ce6b115700d2f344dee434)':
+  '@sbc-connect/nuxt-auth@0.6.0(e25ad3fc70ce6b115700d2f344dee434)':
     dependencies:
       '@pinia/colada': 0.20.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       '@pinia/colada-nuxt': 0.3.0(@pinia/colada@0.20.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)))(magicast@0.5.2)
       '@pinia/nuxt': 0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))
-      '@sbc-connect/nuxt-base': 0.6.0(22e5750ac6be506ea2a5203b2e08dec6)
-      '@sbc-connect/nuxt-forms': 0.4.0(22e5750ac6be506ea2a5203b2e08dec6)
+      '@sbc-connect/nuxt-base': 0.6.1(22e5750ac6be506ea2a5203b2e08dec6)
+      '@sbc-connect/nuxt-forms': 0.4.1(22e5750ac6be506ea2a5203b2e08dec6)
       keycloak-js: 26.2.2
       pinia: 3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
       pinia-plugin-persistedstate: 4.7.1(@nuxt/kit@4.3.1(magicast@0.5.2))(@pinia/nuxt@0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))
@@ -7817,7 +7818,7 @@ snapshots:
       - vue-router
       - yup
 
-  '@sbc-connect/nuxt-base@0.6.0(22e5750ac6be506ea2a5203b2e08dec6)':
+  '@sbc-connect/nuxt-base@0.6.1(22e5750ac6be506ea2a5203b2e08dec6)':
     dependencies:
       '@iconify-json/mdi': 1.2.3
       '@nuxt/ui': 4.3.0(cf7e06cdb50d990d0c256caa92566325)
@@ -7887,9 +7888,9 @@ snapshots:
       - vue-router
       - yup
 
-  '@sbc-connect/nuxt-business-base@0.11.1(e25ad3fc70ce6b115700d2f344dee434)':
+  '@sbc-connect/nuxt-business-base@0.14.1(e25ad3fc70ce6b115700d2f344dee434)':
     dependencies:
-      '@sbc-connect/nuxt-pay': 0.2.2(e25ad3fc70ce6b115700d2f344dee434)
+      '@sbc-connect/nuxt-pay': 0.2.3(e25ad3fc70ce6b115700d2f344dee434)
       http-status-codes: 2.3.0
       iso-3166-2: 1.0.0
       luxon: 3.7.2
@@ -7951,9 +7952,9 @@ snapshots:
       - vue-router
       - yup
 
-  '@sbc-connect/nuxt-forms@0.4.0(22e5750ac6be506ea2a5203b2e08dec6)':
+  '@sbc-connect/nuxt-forms@0.4.1(22e5750ac6be506ea2a5203b2e08dec6)':
     dependencies:
-      '@sbc-connect/nuxt-base': 0.6.0(22e5750ac6be506ea2a5203b2e08dec6)
+      '@sbc-connect/nuxt-base': 0.6.1(22e5750ac6be506ea2a5203b2e08dec6)
       country-codes-list: 2.0.0
       vue-country-flag-next: 2.3.2(vue@3.5.26(typescript@5.9.3))
     transitivePeerDependencies:
@@ -8013,9 +8014,9 @@ snapshots:
       - vue-router
       - yup
 
-  '@sbc-connect/nuxt-pay@0.2.2(e25ad3fc70ce6b115700d2f344dee434)':
+  '@sbc-connect/nuxt-pay@0.2.3(e25ad3fc70ce6b115700d2f344dee434)':
     dependencies:
-      '@sbc-connect/nuxt-auth': 0.5.0(e25ad3fc70ce6b115700d2f344dee434)
+      '@sbc-connect/nuxt-auth': 0.6.0(e25ad3fc70ce6b115700d2f344dee434)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -10689,9 +10690,9 @@ snapshots:
 
   motion-utils@12.29.2: {}
 
-  motion-v@1.10.3(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)):
+  motion-v@1.10.3(@vueuse/core@14.2.1(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)):
     dependencies:
-      '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.26(typescript@5.9.3))
       framer-motion: 12.34.0
       hey-listen: 1.0.8
       motion-dom: 12.34.0
@@ -12061,7 +12062,7 @@ snapshots:
       unplugin: 2.3.11
       unplugin-utils: 0.3.1
 
-  unplugin-auto-import@20.3.0(@nuxt/kit@4.3.1(magicast@0.5.2))(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3))):
+  unplugin-auto-import@20.3.0(@nuxt/kit@4.3.1(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.26(typescript@5.9.3))):
     dependencies:
       local-pkg: 1.1.2
       magic-string: 0.30.21
@@ -12071,7 +12072,7 @@ snapshots:
       unplugin-utils: 0.3.1
     optionalDependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
-      '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.26(typescript@5.9.3))
 
   unplugin-utils@0.2.5:
     dependencies:
