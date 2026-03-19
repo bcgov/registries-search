@@ -30,7 +30,7 @@ jobs:
     uses: bcgov/bcregistry-sre/.github/workflows/frontend-cd.yaml@main
     with:
       target: ${{ inputs.environment }}
-      node_version: "18.16.0"
+      node_version: "24"
       app_name: "registries-search-ui"
       working_directory: "search-ui"
       redeploy: ${{ inputs.redeploy }}
