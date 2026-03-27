@@ -86,6 +86,32 @@ USERS_ORG_1234 = {
     ]
 }
 
+MOCK_SERVICE_AUTH_URL="https://test.api.connect.gov.bc.ca/mockTarget/auth/api/v1/"
+
+
+def test_user_orgs_mock(client, session, jwt):
+    """Assert that the mock service auth orgs endpoint has the expected structure."""
+    # setup
+    auth_url = current_app.config.get('AUTH_SVC_URL')
+    current_app.config.update(AUTH_SVC_URL=MOCK_SERVICE_AUTH_URL)
+    token = helper_create_jwt(jwt, [authz.PPR_ROLE])
+
+    # test
+    org_data = authz.user_orgs(token)
+
+    # check
+    assert org_data
+    assert 'orgs' in org_data
+    assert len(org_data['orgs']) == 1
+    org = org_data['orgs'][0]
+    assert org['orgStatus'] == 'ACTIVE'
+    assert org['statusCode'] == 'ACTIVE'
+    assert org['orgType'] == 'PREMIUM'
+    assert org['id']
+    assert org['name']
+    # set the app auth url back
+    current_app.config.update(AUTH_SVC_URL=auth_url)
+
 
 @pytest.mark.parametrize('_test_name, claims, account_id, user_orgs, expect_auth_call, expected',[
     ('regular_user_valid', {'loginSource': 'Not API'}, '123', USERS_ORG_123, True, True),
