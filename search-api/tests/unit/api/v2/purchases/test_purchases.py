@@ -23,6 +23,7 @@ from search_api.models import Document, DocumentAccessRequest, User
 from search_api.services.authz import STAFF_ROLE
 from search_api.utils.util import utcnow
 from tests.unit.services.utils import create_header
+from tests.unit.utils import USERS_ORG
 
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
@@ -35,13 +36,13 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     }
 }
 
-MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
-ACCOUNT_ID = 2617
+ACCOUNT_ID = USERS_ORG['orgs'][0]['id']
 
-def test_get_business_documents_by_account(session, client, jwt):
+def test_get_business_documents_by_account(session, app, client, jwt, requests_mock):
     """Assert that document requests are returned."""
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     create_document_access_request(business_identifier, account_id, True)
     rv = client.get(f'/api/v2/purchases',
                     headers=create_header(jwt, [STAFF_ROLE], business_identifier, **{'Account-Id': account_id})

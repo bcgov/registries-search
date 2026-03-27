@@ -30,6 +30,7 @@ from search_api.utils.util import utcnow
 
 from tests.unit import MockResponse
 from tests.unit.services.utils import create_header
+from tests.unit.utils import USERS_ORG
 
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
@@ -42,12 +43,11 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     }
 }
 
-MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
-ACCOUNT_ID = 2617
+ACCOUNT_ID = USERS_ORG['orgs'][0]['id']
 
-def test_get_business_documents(session, client, jwt):
+def test_get_business_documents(session, client, jwt, app, requests_mock):
     """Assert that document requests are returned."""
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     create_document_access_request(business_identifier, account_id, True)
@@ -61,8 +61,9 @@ def test_get_business_documents(session, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 1
 
 
-def test_get_business_documents_no_payment(session, client, jwt):
+def test_get_business_documents_no_payment(session, client, jwt, app, requests_mock):
     """Assert that document requests with no payment are not returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     create_document_access_request(business_identifier, account_id, False)
@@ -76,8 +77,9 @@ def test_get_business_documents_no_payment(session, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 0
 
 
-def test_get_business_documents_no_records(session, client, jwt):
+def test_get_business_documents_no_records(session, client, jwt, app, requests_mock):
     """Assert that document requests are not returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     rv = client.get(f'/api/v1/businesses/{business_identifier}/documents/requests',
@@ -90,8 +92,9 @@ def test_get_business_documents_no_records(session, client, jwt):
     assert len(rv.json['documentAccessRequests']) == 0
 
 
-def test_get_business_documents_invalid_account(session, client, jwt):
+def test_get_business_documents_invalid_account(session, client, jwt, app, requests_mock):
     """Assert that document requests are not returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     create_document_access_request(business_identifier, account_id)
@@ -104,8 +107,9 @@ def test_get_business_documents_invalid_account(session, client, jwt):
 
 
 
-def test_get_business_document_by_id(session, client, jwt):
+def test_get_business_document_by_id(session, client, jwt, app, requests_mock):
     """Assert that the document request having the specified id is returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     access_request = create_document_access_request(business_identifier, account_id, True)
@@ -118,8 +122,9 @@ def test_get_business_document_by_id(session, client, jwt):
     assert 'documentAccessRequest' in rv.json
 
 
-def test_get_business_document_by_invalid_id(session, client, jwt):
+def test_get_business_document_by_invalid_id(session, client, jwt, app, requests_mock):
     """Assert that document request is not returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     access_request = create_document_access_request(business_identifier, account_id, True)
@@ -131,8 +136,9 @@ def test_get_business_document_by_invalid_id(session, client, jwt):
     assert rv.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_get_business_document_by_id_unauthorized(session, client, jwt):
+def test_get_business_document_by_id_unauthorized(session, client, jwt, app, requests_mock):
     """Assert that unauthorized error is returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     access_request = create_document_access_request(business_identifier, account_id, True)
@@ -144,8 +150,9 @@ def test_get_business_document_by_id_unauthorized(session, client, jwt):
     assert rv.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_post_business_document(session, client, jwt, mocker):
+def test_post_business_document(session, client, jwt, mocker, app, requests_mock):
     """Assert that unauthorized error is returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
@@ -175,8 +182,9 @@ def test_post_business_document(session, client, jwt, mocker):
     assert response_json['id']
 
 
-def test_post_business_document_payment_failure(session, client, jwt, mocker):
+def test_post_business_document_payment_failure(session, client, jwt, mocker, app, requests_mock):
     """Assert that unauthorized error is returned."""
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     mocker.patch('search_api.services.validator.RequestValidator.validate_document_access_request',
@@ -246,11 +254,10 @@ def create_user():
     (False),
     ('unknown'),
 ])
-def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, mocker, create_user, set_env,
-                                                   flag_value):
+def test_post_business_document_submit_ce_to_queue(ld, session, client, jwt, mocker, create_user, set_env, app, requests_mock, flag_value):
     """Assert that unauthorized error is returned."""
     # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
+    requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     account_id = ACCOUNT_ID
     business_identifier = 'CP1234567'
     username = 'username'

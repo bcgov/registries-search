@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Common setup and fixtures for the pytest suite used by this service."""
+# FUTURE: add fixtures for widely used mocks (auth / pay / lear)
 import os
 from contextlib import contextmanager
 

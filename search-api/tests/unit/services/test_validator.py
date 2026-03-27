@@ -23,12 +23,10 @@ from search_api.services import authz
 from search_api.services.validator import RequestValidator
 
 from tests.unit.utils import (SOLR_UPDATE_REQUEST_TEMPLATE_CORP as CORP_TEMPLATE,
-                              SOLR_UPDATE_REQUEST_TEMPLATE_FIRM as FIRM_TEMPLATE)
+                              SOLR_UPDATE_REQUEST_TEMPLATE_FIRM as FIRM_TEMPLATE,
+                              USERS_ORG)
 from tests.unit.services.utils import helper_create_jwt
 
-
-MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
-MOCK_URL = 'https://bcregistry-bcregistry-mock.apigee.net/auth/api/v1/'
 
 DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     "documentAccessRequest":{
@@ -40,23 +38,9 @@ DOCUMENT_ACCESS_REQUEST_TEMPLATE = {
     }
 }
 
-USERS_ORG =  {
-  "orgs": [
-    {
-      "accessType": "REGULAR",
-      "id": 2617,
-      "name": "Test",
-      "orgStatus": "ACTIVE",
-      "orgType": "PREMIUM",
-      "statusCode": "ACTIVE"
-    }
-  ]
-}
-
 def test_document_access_request_valid(client, session, jwt, requests_mock):
     """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
     # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
     token = helper_create_jwt(jwt, [authz.PPR_ROLE])
     org = USERS_ORG['orgs'][0]
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
@@ -78,8 +62,7 @@ def test_document_access_request_valid(client, session, jwt, requests_mock):
 def test_document_access_request_invalid(client, session, jwt, requests_mock, test_name, error_message):
     """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
     # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
-    token = helper_create_jwt(jwt, [authz.PPR_ROLE])
+    token = helper_create_jwt(jwt, [authz.BASIC_USER])
     org = USERS_ORG['orgs'][0]
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG)
     requests_mock.get(f"{current_app.config.get('AUTH_SVC_URL')}orgs/{org['id']}", json=org)
