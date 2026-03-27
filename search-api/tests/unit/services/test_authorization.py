@@ -23,9 +23,6 @@ from search_api import auth_cache
 from search_api.services import authz
 from tests.unit.services.utils import helper_create_jwt
 
-MOCK_URL_NO_KEY = 'https://bcregistry-bcregistry-mock.apigee.net/mockTarget/auth/api/v1/'
-MOCK_URL = 'https://bcregistry-bcregistry-mock.apigee.net/auth/api/v1/'
-
 # testdata pattern is ({description}, {account id}, {valid})
 TEST_SBC_DATA = [
     ('Valid account id', authz.GOV_ACCOUNT_ROLE, 'Service BC', True),
@@ -47,33 +44,12 @@ TEST_STAFF_DATA = [
 ]
 
 
-def test_user_orgs_mock(client, session, jwt):
-    """Assert that a auth-api user orgs request works as expected with the mock service endpoint."""
-    # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
-    token = helper_create_jwt(jwt, [authz.PPR_ROLE])
-
-    # test
-    org_data = authz.user_orgs(token)
-
-    # check
-    assert org_data
-    assert 'orgs' in org_data
-    assert len(org_data['orgs']) == 1
-    org = org_data['orgs'][0]
-    assert org['orgStatus'] == 'ACTIVE'
-    assert org['statusCode'] == 'ACTIVE'
-    assert org['orgType'] == 'PREMIUM'
-    assert org['id']
-    assert org['name']
-
-
 @pytest.mark.parametrize('desc,account_id,branch_name,valid', TEST_SBC_DATA)
 def test_sbc_office_account(session, jwt, requests_mock, desc, account_id, branch_name, valid):
     """Assert that sbc office account check returns the expected result."""
     # setup
-    current_app.config.update(AUTH_SVC_URL=MOCK_URL)
-    requests_mock.get(f'{MOCK_URL}orgs/{account_id}', json={'branchName': branch_name})
+    auth_url = current_app.config.get('AUTH_SVC_URL')
+    requests_mock.get(f'{auth_url}orgs/{account_id}', json={'branchName': branch_name})
     token = helper_create_jwt(jwt, [authz.GOV_ACCOUNT_ROLE])
     result = authz.is_sbc_office_account(token, account_id) or False
     # check
@@ -120,7 +96,6 @@ USERS_ORG_1234 = {
 def test_does_user_have_account(app, requests_mock, jwt, _test_name, claims, account_id, user_orgs, expect_auth_call, expected):
     """Assert that the account access check works correctly."""
     auth_cache.clear()
-    app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
     auth_mock = requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=user_orgs)
     with app.test_request_context("test", headers={'Account-Id': account_id}) as r:
         # Set request_ctx is set by flask_jwt_oidc during the request, need to set it manually here
@@ -141,7 +116,6 @@ def test_does_user_have_account(app, requests_mock, jwt, _test_name, claims, acc
 def test_does_user_have_account_caching(app, requests_mock):
     """Assert that the user has account caching works correctly."""
     auth_cache.clear()
-    app.config.update(AUTH_SVC_URL=MOCK_URL_NO_KEY)
 
     requests_mock.get(f"{app.config.get('AUTH_SVC_URL')}users/orgs", json=USERS_ORG_123)
     with app.test_request_context("test") as r:

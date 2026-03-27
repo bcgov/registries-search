@@ -125,3 +125,16 @@ SOLR_TEST_DOCS = [
     create_solr_doc('C0004569', 'c_identifier', 'ACTIVE', 'C', '111111111BC0001'),
     create_solr_doc('BC0030017', 'Modernized flag set', 'ACTIVE', 'BC', '111111112BC0001', None, True, True)
 ]
+
+USERS_ORG =  {
+  "orgs": [
+    {
+      "accessType": "REGULAR",
+      "id": 2617,
+      "name": "Test",
+      "orgStatus": "ACTIVE",
+      "orgType": "PREMIUM",
+      "statusCode": "ACTIVE"
+    }
+  ]
+}
