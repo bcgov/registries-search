@@ -39,6 +39,7 @@ def get_document_data(business_identifier, document_key):  # noqa: PLR0911
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         token = jwt.get_token_auth_header()
         user_is_part_of_org = does_user_have_account(token, account_id)

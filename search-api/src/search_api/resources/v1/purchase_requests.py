@@ -34,6 +34,7 @@ def get(request_id=None):  # noqa: PLR0911
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         # updates user information with given jwt
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
