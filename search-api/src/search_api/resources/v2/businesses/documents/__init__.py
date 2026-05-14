@@ -58,7 +58,7 @@ def get_document_data(business_identifier, document_key):  # noqa: PLR0911
 
         # check access
         access_request = DocumentAccessRequest.find_by_id(document.access_request_id)
-        if str(access_request.account_id) != account_id:
+        if access_request.account_id != account_id:
             return resource_utils.unauthorized_error_response(account_id)
         if not access_request.is_active:
             return resource_utils.authorization_expired_error_response(account_id)

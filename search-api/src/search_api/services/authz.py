@@ -197,14 +197,14 @@ def does_user_have_account(jwt_token: str, account_id: str) -> bool:
         jwt_info.get(current_app.config["JWT_OIDC_LOGIN_SOURCE"]) == current_app.config["JWT_OIDC_API_GW"]
     ):
         # account id request context matches the provided account id
-        return jwt_account_id == account_id
+        return str(jwt_account_id) == str(account_id)
 
     # For non api gw users account id isn't in the jwt
     orgs = user_orgs(jwt_token)
     if orgs and "orgs" in orgs:
         orgs = orgs["orgs"]
         for org in orgs:
-            if str(org.get("id")) == account_id:
+            if str(org.get("id")) == str(account_id):
                 return True
 
     return False

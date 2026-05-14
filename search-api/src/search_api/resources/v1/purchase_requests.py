@@ -51,7 +51,7 @@ def get(request_id=None):  # noqa: PLR0911
             access_request = DocumentAccessRequest.find_by_id(request_id)
             if not access_request:
                 return resource_utils.not_found_error_response("Document Access Request", request_id)
-            if str(access_request.account_id) != account_id:
+            if access_request.account_id != account_id:
                 return resource_utils.unauthorized_error_response(account_id)
             return jsonify(documentAccessRequest=access_request.json)
 
