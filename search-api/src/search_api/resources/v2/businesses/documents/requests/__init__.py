@@ -43,6 +43,7 @@ def get(business_identifier, request_id=None):
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         token = jwt.get_token_auth_header()
         user_is_part_of_org = does_user_have_account(token, account_id)
@@ -54,7 +55,7 @@ def get(business_identifier, request_id=None):
             access_request = DocumentAccessRequest.find_by_id(request_id)
             if not access_request:
                 return resource_utils.not_found_error_response("Document Access Request", request_id)
-            if str(access_request.account_id) != account_id:
+            if access_request.account_id != account_id:
                 raise UnauthorizedException(account_id)
             return jsonify(documentAccessRequest=access_request.json)
 
@@ -80,6 +81,7 @@ def post(business_identifier):  # noqa: PLR0911
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         token = jwt.get_token_auth_header()
         user_is_part_of_org = does_user_have_account(token, account_id)
@@ -155,6 +157,7 @@ def cancel_request(business_identifier, request_id):
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         token = jwt.get_token_auth_header()
         user_is_part_of_org = does_user_have_account(token, account_id)
@@ -166,7 +169,7 @@ def cancel_request(business_identifier, request_id):
 
         if not access_request or access_request.business_identifier != business_identifier:
             return resource_utils.not_found_error_response("Document Access Request", request_id)
-        if str(access_request.account_id) != account_id:
+        if access_request.account_id != account_id:
             return resource_utils.unauthorized_error_response(account_id)
 
         access_request.cancel()

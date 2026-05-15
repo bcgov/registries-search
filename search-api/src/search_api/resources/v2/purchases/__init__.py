@@ -34,6 +34,7 @@ def get(request_id=None):  # noqa: PLR0911
         account_id = request.headers.get("Account-Id", None)
         if not account_id:
             return resource_utils.account_required_response()
+        account_id = int(account_id)
 
         # updates user information with given jwt
         user = User.get_or_create_user_by_jwt(g.jwt_oidc_token_info)
@@ -50,7 +51,7 @@ def get(request_id=None):  # noqa: PLR0911
             access_request = DocumentAccessRequest.find_by_id(request_id)
             if not access_request:
                 return resource_utils.not_found_error_response("Document Access Request", request_id)
-            if str(access_request.account_id) != account_id:
+            if access_request.account_id != account_id:
                 return resource_utils.unauthorized_error_response(account_id)
             return jsonify(documentAccessRequest=access_request.json)
 
