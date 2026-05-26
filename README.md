@@ -1,6 +1,6 @@
 # Registries Search [![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](<Redirect-URL>)
 BC Registry's business search service
-## search-ui
+## search-ui [![Lifecycle:Retired](https://img.shields.io/badge/Lifecycle-Retired-d45500)](<Redirect-URL>)
 UI portion for registries search. Contains user facing registries searching and results components.
 ## search-api
 Makes calls to solr for search, calls to lear apps, etc. for business data, and stores payments/access rights for documents.
