@@ -9,7 +9,6 @@ __pycache__
 .eggs
 Makefile
 manage.py
-migrations
 tests
 build
 htmlcov
