@@ -18,7 +18,7 @@ This module is the API for the BC Registries Registry Search system.
 import os
 from uuid import uuid4
 
-from cloud_sql_connector import DBConfig
+from cloud_sql_connector import setup_pg8000_close_event_listener
 from flask import Flask, Response, current_app, request
 from flask_migrate import Migrate
 
@@ -49,22 +49,6 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
     app.logger = StructuredLogging(app).get_logger().new(worker_id=str(uuid4()))
     app.config.from_object(CONFIG_MAP.get(environment, ProductionConfig))
 
-    if app.config.get("CLOUDSQL_INSTANCE_CONNECTION_NAME"):  # pragma: no cover
-
-        db_config = DBConfig(
-            instance_name=app.config["CLOUDSQL_INSTANCE_CONNECTION_NAME"],
-            database=app.config.get("DB_NAME", ""),
-            user=app.config.get("DB_USER", ""),
-            ip_type=app.config["DB_IP_TYPE"],
-            schema="public",
-            pool_timeout=app.config["DB_CONN_WAIT_TIMEOUT"],
-            pool_recycle=app.config["DB_CONN_TIMEOUT"],
-            pool_size=app.config["DB_MIN_POOL_SIZE"],
-            max_overflow=int(app.config["DB_MAX_POOL_SIZE"]) - int(app.config["DB_MIN_POOL_SIZE"]),
-        )
-
-        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = db_config.get_engine_options()
-
     db.init_app(app)
 
     if environment == "migration":
@@ -88,6 +72,9 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
         entity_cache.init_app(app)
+        with app.app_context():
+            engine = db.engine
+            setup_pg8000_close_event_listener(engine)
 
     @app.before_request
     def add_logger_context():
