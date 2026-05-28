@@ -63,6 +63,7 @@ RUN groupadd -g "${GID}" -r web \
 COPY --chown=web:web ./poetry.lock ./pyproject.toml /code/
 
 COPY --chown=web:web ./src /code/src
+COPY --chown=web:web ./migrations /code/migrations
 COPY --chown=web:web ./README.md /code
 
 RUN mkdir /code/cache && chown web:web /code/cache
