@@ -55,6 +55,10 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         Migrate(app, db)
 
     else:
+        if environment != "testing":  # or check if in test mode
+            with app.app_context():
+                engine = db.engine
+                setup_pg8000_close_event_listener(engine)
         # td is testData instance passed in to support testing
         td = kwargs.get("ld_test_data")
         Flags().init_app(app, td)
@@ -72,9 +76,6 @@ def create_app(environment: str = os.getenv("DEPLOYMENT_ENV", "production"), **k
         setup_jwt_manager(app, jwt)
         auth_cache.init_app(app)
         entity_cache.init_app(app)
-        with app.app_context():
-            engine = db.engine
-            setup_pg8000_close_event_listener(engine)
 
     @app.before_request
     def add_logger_context():
