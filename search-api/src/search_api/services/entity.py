@@ -93,10 +93,6 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
     if (report_type := request.args.get("reportType")) and (drs_id := request.args.get("drsId")):
         lear_svc_url += f"?reportType={report_type}&drsId={drs_id}"
 
-    elif url_with_drs_params := _get_drs_document_url(identifier, filing_id, filing_name):
-        # override url with the full document url including drs params
-        lear_svc_url = url_with_drs_params
-
     try:
         token = get_bearer_token()
         headers = {"Authorization": "Bearer " + token, "Content-Type": "application/pdf"}
