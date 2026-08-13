@@ -17,7 +17,12 @@
               <v-chip id="historical-chip" small label>
                 <strong>HISTORICAL</strong>
               </v-chip>
-              <!-- <span class="mx-3" style="font-size: 0.875rem;">{{ historicalReason }}</span> -->
+              <span
+                v-if="historicalReason"
+                id="historical-reason"
+                class="mx-3"
+                style="font-size: 0.875rem;"
+              >{{ historicalReason }}</span>
             </span>
           </menu>
         </v-col>
@@ -43,7 +48,7 @@ import { BusinessStatuses, CorpTypeCd } from '@/enums'
 
 // composables
 const { pacificDate } = useDatetime()
-const { entity, entityNumberLabel, isFirm, getEntityDescription } = useEntity()
+const { entity, entityNumberLabel, historicalReason, isFirm, getEntityDescription } = useEntity()
 // computed
 const businessDescription = computed(() => getEntityDescription(entity.legalType as CorpTypeCd))
 const incorpDate = computed(() => pacificDate(new Date(entity.incorporationDate)))

@@ -157,6 +157,7 @@ export const getCorpTypeNumberedDescription = GetCorpNumberedDescription
         case FilingTypes.CHANGE_OF_ADDRESS: return FilingNames.CHANGE_OF_ADDRESS
         case FilingTypes.CHANGE_OF_DIRECTORS: return FilingNames.CHANGE_OF_DIRECTORS
         case FilingTypes.CHANGE_OF_NAME: return FilingNames.CHANGE_OF_NAME
+        case FilingTypes.CONTINUATION_OUT: return FilingNames.CONTINUATION_OUT
         case FilingTypes.CONVERSION: return FilingNames.CONVERSION
         case FilingTypes.CORRECTION: return FilingNames.CORRECTION
         case FilingTypes.COURT_ORDER: return FilingNames.COURT_ORDER

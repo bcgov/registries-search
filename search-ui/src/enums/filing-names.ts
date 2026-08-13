@@ -1,11 +1,14 @@
 export enum FilingNames {
+    ADMINISTRATIVE_DISSOLUTION = 'Administrative Dissolution',
     ALTERATION = 'Alteration',
+    AMALGAMATION = 'Amalgamation',
     ANNUAL_REPORT = 'Annual Report',
     CHANGE_OF_ADDRESS = 'Address Change',
     CHANGE_OF_COMPANY_INFO = 'Change of Company Information', // type of alteration
     CHANGE_OF_DIRECTORS = 'Director Change',
     CHANGE_OF_NAME = 'Legal Name Change',
     CHANGE_OF_REGISTRATION = 'Change of Registration',
+    CONTINUATION_OUT = 'Continuation Out',
     CONVERSION = 'Conversion',
     CORRECTION = 'Correction',
     COURT_ORDER = 'Court Order',

@@ -31,6 +31,7 @@ describe('Entity Factory tests', () => {
     // setup
     const { setEntity } = useEntity()
     const newEntity = {
+      amalgamatedInto: null,
       bn: 'bnwjff2229',
       identifier: 'T2344567',
       incorporationDate: 'date',
@@ -38,10 +39,13 @@ describe('Entity Factory tests', () => {
       name: 'blabla test bla',
       goodStanding: true,
       status: BusinessStatuses.ACTIVE,
+      stateFiling: '',
       _error: null,
-      _loading: false
+      _loading: false,
+      _stateFilingInfo: null
     } as EntityI
     const clearedEntity = {
+      amalgamatedInto: null,
       bn: '',
       identifier: '',
       incorporationDate: '',
@@ -50,8 +54,10 @@ describe('Entity Factory tests', () => {
       goodStanding: true,
       inDissolution: false,
       status: null,
+      stateFiling: '',
       _error: null,
-      _loading: false
+      _loading: false,
+      _stateFilingInfo: null
     } as EntityI
     expect(entity).not.toEqual(newEntity)
     // set entity
@@ -104,5 +110,108 @@ describe('Entity Factory tests', () => {
     expect(entity.legalType).toBe(mockedBusinessResp.legalType)
     expect(entity.name).toBe(mockedBusinessResp.legalName)
     expect(entity.status).toBe(mockedBusinessResp.state)
+  })
+  it('loads the state filing info for a historical entity', async () => {
+    // setup
+    const url = 'http://legal-api-stub'
+    sessionStorage.setItem('LEGAL_API_URL', url)
+    const stateFilingUrl = `${url}/businesses/${identifier}/filings/112233`
+    const mockGet = jest.spyOn(axios, 'get')
+    mockGet.mockImplementation((getUrl) => {
+      switch (getUrl) {
+        case `businesses/${identifier}?slim=true`:
+          return Promise.resolve({
+            data: {
+              business: {
+                ...mockedBusinessResp,
+                state: BusinessStatuses.HISTORICAL,
+                stateFiling: stateFilingUrl
+              }
+            }
+          })
+        case `${stateFilingUrl}?public=true`:
+          return Promise.resolve({
+            data: {
+              filing: {
+                header: { name: 'dissolution', effectiveDate: '2024-03-15T18:30:00+00:00' },
+                dissolution: { type: 'voluntary' }
+              }
+            }
+          })
+      }
+    })
+    const { loadEntity } = useEntity()
+    // test fn
+    await loadEntity(identifier)
+    // check both calls were made and state filing info was set
+    expect(axios.get).toBeCalledTimes(2)
+    expect(axios.get).toHaveBeenCalledWith(`${stateFilingUrl}?public=true`)
+    expect(entity._stateFilingInfo?.header?.name).toBe('dissolution')
+  })
+  it('sets the historical reason for an amalgamated entity', () => {
+    const { historicalReason, setEntity } = useEntity()
+    setEntity({
+      ...entity,
+      status: BusinessStatuses.HISTORICAL,
+      amalgamatedInto: {
+        amalgamationDate: '2024-03-15T18:30:00+00:00',
+        amalgamationType: 'regular',
+        courtApproval: false,
+        identifier: 'BC7654321',
+        legalName: 'new amalgamated business'
+      }
+    } as EntityI)
+    expect(historicalReason.value).toBe('Amalgamation – March 15, 2024 – BC7654321')
+  })
+  it('sets the historical reason based on the state filing', () => {
+    const { historicalReason, setEntity } = useEntity()
+    const baseEntity = {
+      ...entity,
+      legalType: BusinessTypes.BC_LIMITED_COMPANY,
+      status: BusinessStatuses.HISTORICAL,
+      stateFiling: 'http://fake-url'
+    }
+    // voluntary dissolution
+    setEntity({
+      ...baseEntity,
+      _stateFilingInfo: {
+        header: { name: 'dissolution', effectiveDate: '2024-03-15T18:30:00+00:00' },
+        dissolution: { type: 'voluntary' }
+      }
+    } as EntityI)
+    expect(historicalReason.value).toBe('Voluntary Dissolution – March 15, 2024')
+    // involuntary dissolution
+    setEntity({
+      ...baseEntity,
+      _stateFilingInfo: {
+        header: { name: 'dissolution', effectiveDate: '2024-03-15T18:30:00+00:00' },
+        dissolution: { type: 'involuntary' }
+      }
+    } as EntityI)
+    expect(historicalReason.value).toBe('Involuntary Dissolution – March 15, 2024')
+    // put back off
+    setEntity({
+      ...baseEntity,
+      _stateFilingInfo: {
+        header: { name: 'putBackOff', effectiveDate: '2024-03-15T18:30:00+00:00' },
+        putBackOff: { reason: 'Limited Restoration', expiryDate: '2024-03-15' }
+      }
+    } as EntityI)
+    expect(historicalReason.value).toBe('Limited Restoration on March 15, 2024')
+    // continuation out
+    setEntity({
+      ...baseEntity,
+      _stateFilingInfo: {
+        header: { name: 'continuationOut', effectiveDate: '2024-03-15T18:30:00+00:00' },
+        continuationOut: {}
+      }
+    } as EntityI)
+    expect(historicalReason.value).toBe('Continuation Out – March 15, 2024 at 11:30 am Pacific time')
+    // no state filing info
+    setEntity({ ...baseEntity, _stateFilingInfo: null } as EntityI)
+    expect(historicalReason.value).toBe('')
+    // not historical
+    setEntity({ ...baseEntity, status: BusinessStatuses.ACTIVE } as EntityI)
+    expect(historicalReason.value).toBe('')
   })
 })

@@ -54,4 +54,26 @@ describe('Entity Info tests', () => {
     expect(htmlUpdated).toContain(newEntity.identifier)
     expect(htmlUpdated).toContain(newEntity.bn)
   })
+  it('renders the historical badge with the historical reason', async () => {
+    const { setEntity } = useEntity()
+    setEntity({
+      bn: 'bnwjff2229',
+      identifier: 'BC1234567',
+      incorporationDate: 'date',
+      legalType: BusinessTypes.BC_LIMITED_COMPANY,
+      name: 'blabla test bla',
+      goodStanding: true,
+      inDissolution: false,
+      status: BusinessStatuses.HISTORICAL,
+      stateFiling: 'http://fake-url',
+      _stateFilingInfo: {
+        header: { name: 'dissolution', effectiveDate: '2024-03-15T18:30:00+00:00' },
+        dissolution: { type: 'voluntary' }
+      }
+    } as EntityI)
+    await nextTick()
+    const html = wrapper.html()
+    expect(html).toContain('HISTORICAL')
+    expect(wrapper.find('#historical-reason').text()).toBe('Voluntary Dissolution – March 15, 2024')
+  })
 })

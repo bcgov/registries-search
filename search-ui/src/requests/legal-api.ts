@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 // local
 import { ErrorCategories, ErrorCodes } from '@/enums'
 import { CommentIF, EntityRespI } from '@/interfaces'
-import { ApiFilingsRespI } from '@/interfaces/legal-api-responses'
+import { ApiFilingsRespI, StateFilingI } from '@/interfaces/legal-api-responses'
 import { axios } from '@/utils'
 
 export async function getEntity(identifier: string): Promise<EntityRespI> {
@@ -24,6 +24,23 @@ export async function getEntity(identifier: string): Promise<EntityRespI> {
           type: error?.parsed?.rootCause?.type || ErrorCodes.SERVICE_UNAVAILABLE
         }
       }
+    })
+}
+
+/**
+ * Fetches the public (slim) version of the filing at the given url.
+ * @param url the full url of the filing (i.e. the business stateFiling url)
+ * @returns a promise to return the filing json or null on error
+ */
+export async function getStateFilingInfo(url: string): Promise<StateFilingI> {
+  return axios.get<any>(`${url}?public=true`)
+    .then(response => {
+      const data = response?.data
+      if (!data?.filing) throw new Error('Expecting `filing` in API response.')
+      return data.filing
+    }).catch(error => {
+      console.warn('getStateFilingInfo() error =', error)
+      return null
     })
 }
 

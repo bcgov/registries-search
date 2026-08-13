@@ -114,6 +114,38 @@ export function apiToDate(dateTimeString: string): Date {
 }
 
 /**
+ * Creates and returns a new Date object in UTC, given parameters in Pacific timezone.
+ * @example "2021, 0, 1" -> "2021-01-01T08:00:00.000Z" (Pacific Standard Time)
+ * @example "2021, 6, 1" -> "2021-07-01T07:00:00.000Z" (Pacific Daylight Time)
+ */
+export function createUtcDate(year: number, month: number, day: number, hours = 0, minutes = 0): Date {
+  // 1. create the new date in UTC
+  // 2. compute the offset between UTC and Pacific timezone
+  // 3. add the offset to convert the date to Pacific timezone
+  // Ref: https://stackoverflow.com/questions/15141762/
+  const date = new Date(Date.UTC(year, month, day, hours, minutes))
+  const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }))
+  const tzDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/Vancouver' }))
+  const offset = utcDate.getTime() - tzDate.getTime()
+  date.setTime(date.getTime() + offset)
+
+  return date
+}
+
+/**
+ * Converts a date string (YYYY-MM-DD) to a Date object at 12:00:00 am Pacific time.
+ * @example "2021-01-01" -> "2021-01-01T08:00:00.000Z"
+ */
+export function yyyyMmDdToDate(dateStr: string): Date {
+  // safety checks
+  if (!dateStr) return null
+  if (dateStr.length !== 10) return null
+
+  const [year, month, day] = dateStr.split('-')
+  return createUtcDate(+year, (+month - 1), +day)
+}
+
+/**
 * Converts a Date object to a date string (YYYY-MM-DD) in Pacific timezone.
 * @example "2021-01-01 07:00:00 GMT" -> "2020-12-31"
 * @example "2021-01-01 08:00:00 GMT" -> "2021-01-01"
