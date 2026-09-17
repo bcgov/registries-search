@@ -1,84 +1,121 @@
 #!/bin/bash
+set -euo pipefail
 
-# Change for follower vs leader and per env
-## dev/test/sandbox: 1g
-## prod follower: 1g, prod leader: 2g
-JVM_MEM="1g"
+### ============================================================
+### READ METADATA (injected from instance template)
+### ============================================================
 
-# Change for follower vs leader
-IMAGE="business-solr-leader"
+JVM_MEM="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/jvm_mem -H 'Metadata-Flavor: Google')"
+ROLE="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/role -H 'Metadata-Flavor: Google')"
+ENV="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/env -H 'Metadata-Flavor: Google')"
+LABEL="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/label -H 'Metadata-Flavor: Google')"
+FILTERCACHE_MAXRAM="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/filtercache_maxram -H 'Metadata-Flavor: Google' || true)"
+QRCACHE_MAXRAM="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/qrcache_maxram -H 'Metadata-Flavor: Google' || true)"
+DOCCACHE_MAXRAM="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/doccache_maxram -H 'Metadata-Flavor: Google' || true)"
+PERSEGCACHE_MAXRAM="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/persegcache_maxram -H 'Metadata-Flavor: Google' || true)"
 
-# Change per env
-ENV="dev"
-LABEL="Development"
+IMAGE_PROJECT="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/image_project -H 'Metadata-Flavor: Google')"
+IMAGE_REPO="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/image_repo -H 'Metadata-Flavor: Google')"
+IMAGE="$(curl -fs http://metadata.google.internal/computeMetadata/v1/instance/attributes/image -H 'Metadata-Flavor: Google')"
 
-# Change per app
-IMAGE_PROJECT="**--tools"
-IMAGE_REPO="business-solr"
-
+REGION="northamerica-northeast1"
 CONTAINER_NAME="solr-container"
-ZONE="northamerica-northeast1"
-IMAGE_PATH="${ZONE}-docker.pkg.dev/${IMAGE_PROJECT}/${IMAGE_REPO}/${IMAGE}"
+
+IMAGE_PATH="${REGION}-docker.pkg.dev/${IMAGE_PROJECT}/${IMAGE_REPO}/${IMAGE}"
 SOLR_ENV_SETTINGS="${ENV},label=${LABEL}"
 
-sudo useradd -m solr
+SOLR_CACHE_OPTS=""
+[ -n "$FILTERCACHE_MAXRAM" ] && SOLR_CACHE_OPTS="$SOLR_CACHE_OPTS -Dsolr.filterCache.maxRamMB=$FILTERCACHE_MAXRAM"
+[ -n "$QRCACHE_MAXRAM" ]     && SOLR_CACHE_OPTS="$SOLR_CACHE_OPTS -Dsolr.queryResultCache.maxRamMB=$QRCACHE_MAXRAM"
+[ -n "$DOCCACHE_MAXRAM" ]    && SOLR_CACHE_OPTS="$SOLR_CACHE_OPTS -Dsolr.documentCache.maxRamMB=$DOCCACHE_MAXRAM"
+[ -n "$PERSEGCACHE_MAXRAM" ] && SOLR_CACHE_OPTS="$SOLR_CACHE_OPTS -Dsolr.perSegFilter.maxRamMB=$PERSEGCACHE_MAXRAM"
 
-# Stop and remove container if it already exists
+echo "=== Solr startup script ==="
+echo "ROLE=${ROLE}"
+echo "ENV=${ENV}"
+echo "LABEL=${LABEL}"
+echo "IMAGE=${IMAGE}"
+echo "JVM_MEM=${JVM_MEM}"
+echo "IMAGE_PATH=${IMAGE_PATH}:${ENV}"
+echo "==========================="
+
+### ============================================================
+### CREATE SOLR USER
+### ============================================================
+
+sudo useradd -m solr || true
+export HOME="/home/solr"
+sudo chmod 777 "$HOME"
+
+### ============================================================
+### PREP DOCKER AUTH + VOLUME MOUNTS
+### ============================================================
+
 docker stop $CONTAINER_NAME || true
 docker rm $CONTAINER_NAME || true
 
-# Set home directory to save docker credentials
-export HOME="/home/solr"
+docker-credential-gcr configure-docker --registries="${REGION}-docker.pkg.dev"
 
-sudo chmod 777 $HOME
-
-# Configure docker with credentials for gcr.io and pkg.dev
-docker-credential-gcr configure-docker --registries=northamerica-northeast1-docker.pkg.dev
-
-# Set volume path for host
 HOST_COPY_PATH=$HOME/volume
 HOST_MOUNT_PATH=$HOST_COPY_PATH/data
 HOST_MOUNT_PATH_ENV=$HOST_COPY_PATH/default
 
-# Set volume path for docker container
 CONTAINER_MOUNT_PATH=/var/solr/data
 CONTAINER_MOUNT_PATH_ENV=/etc/default
 
+### ============================================================
+### INIT SOLR DATA DIRECTORY (FIRST BOOT ONLY)
+### ============================================================
+
 if [ -d "$HOST_MOUNT_PATH" ]; then
-  echo "Solr already initialized previously. Using existing data."
+  echo "Solr data exists — skipping initialization."
 else
-  echo "Initializing solr..."
-  mkdir -p "${HOST_MOUNT_PATH}"
+  echo "Initializing Solr persistent storage..."
 
-  # Run docker container without volume
-  docker run -d --name=$CONTAINER_NAME --log-driver=gcplogs -p 8983:8983 $IMAGE_PATH:$ENV
+  mkdir -p "$HOST_MOUNT_PATH"
 
-  echo "Waiting 60s for solr to initialize..."
+  docker run -d \
+    --name=$CONTAINER_NAME \
+    --log-driver=gcplogs \
+    -p 8983:8983 \
+    "$IMAGE_PATH:$ENV"
+
+  echo "Waiting 60 seconds for Solr initial boot..."
   sleep 60
 
-  echo "Solr initialized. Copying files to host..."
-
-  # Stop container and copy files into host (so that we can apply a volume onto it)
   docker stop $CONTAINER_NAME
-  
-  # copy initialzed files
-  docker cp $CONTAINER_NAME:$CONTAINER_MOUNT_PATH $HOST_COPY_PATH
-  docker cp $CONTAINER_NAME:$CONTAINER_MOUNT_PATH_ENV $HOST_COPY_PATH
-  
-  # set solr user as the owner so that it has needed permissions
-  sudo chown -R solr: $HOME/*/**
-  sudo chmod -R 777 $HOME/*/**
 
-  # Remove the existing container
+  docker cp "$CONTAINER_NAME:$CONTAINER_MOUNT_PATH" "$HOST_COPY_PATH"
+  docker cp "$CONTAINER_NAME:$CONTAINER_MOUNT_PATH_ENV" "$HOST_COPY_PATH"
+
+  sudo chown -R solr: "$HOME"
+  sudo chmod -R 777 "$HOME"
+
   docker rm $CONTAINER_NAME
-  echo "Files copied to host. Updating env overrides..."
-  # Set 'SOLR_OPTS_VAR' to ensure existing SOLR_OPTS in the solr config are not overwritten
+
   SOLR_OPTS_VAR='$SOLR_OPTS'
-  echo SOLR_OPTS=\"$SOLR_OPTS_VAR -Dsolr.environment=$SOLR_ENV_SETTINGS\" >> $HOST_MOUNT_PATH_ENV/solr.in.sh
-  echo SOLR_JAVA_MEM=\"-Xms$JVM_MEM -Xmx$JVM_MEM\" >> $HOST_MOUNT_PATH_ENV/solr.in.sh
-  echo "Updated env overrides."
+
+  echo "SOLR_OPTS=\"$SOLR_OPTS_VAR -Dsolr.environment=$SOLR_ENV_SETTINGS$SOLR_CACHE_OPTS\"" \
+    >> "$HOST_MOUNT_PATH_ENV/solr.in.sh"
+  echo "SOLR_JAVA_MEM=\"-Xms$JVM_MEM -Xmx$JVM_MEM\"" \
+    >> "$HOST_MOUNT_PATH_ENV/solr.in.sh"
+
+  echo "Initialization complete."
 fi
 
-# Start the container again with the volume so that the data persists
-echo "Running solr container..."
-docker run -d --name=$CONTAINER_NAME --log-driver=gcplogs -v $HOST_MOUNT_PATH:$CONTAINER_MOUNT_PATH -v $HOST_MOUNT_PATH_ENV:$CONTAINER_MOUNT_PATH_ENV -p 8983:8983 $IMAGE_PATH:$ENV
+### ============================================================
+### START SOLR WITH VOLUME
+### ============================================================
+
+SOLR_OPTS="-Djetty.host=0.0.0.0"
+
+docker run -d \
+  --name=$CONTAINER_NAME \
+  --log-driver=gcplogs \
+  -v "$HOST_MOUNT_PATH:$CONTAINER_MOUNT_PATH" \
+  -v "$HOST_MOUNT_PATH_ENV:$CONTAINER_MOUNT_PATH_ENV" \
+  -p 8983:8983 \
+  -e SOLR_OPTS="$SOLR_OPTS" \
+  "$IMAGE_PATH:$ENV"
+
+echo "Solr container running."
