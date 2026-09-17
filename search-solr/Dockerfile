@@ -1,7 +1,7 @@
-FROM solr:9.6.1
+FROM solr:9.10.1
 USER root
 
-ARG SOLR_VERSION="9.6.1"
+ARG SOLR_VERSION="9.10.1"
 ARG VCS_REF="missing"
 ARG BUILD_DATE="missing"
 ARG CORE="business"
