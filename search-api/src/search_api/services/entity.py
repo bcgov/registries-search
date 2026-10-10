@@ -13,6 +13,7 @@
 # limitations under the License.
 """Manages LEAR api interactions."""
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 import requests
 from flask import current_app, request
@@ -90,8 +91,13 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
         current_app.config.get("LEAR_SVC_URL") + \
         f"/businesses/{identifier}/filings/{filing_id}/documents/{filing_name}"
 
-    if (report_type := request.args.get("reportType")) and (drs_id := request.args.get("drsId")):
-        lear_svc_url += f"?reportType={report_type}&drsId={drs_id}"
+    query_params = {
+        name: request.args[name]
+        for name in ("reportType", "documentClass", "drsId")
+        if request.args.get(name)
+    }
+    if query_params:
+        lear_svc_url += f"?{urlencode(query_params)}"
 
     try:
         token = get_bearer_token()
