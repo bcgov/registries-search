@@ -48,24 +48,22 @@ DOCUMENT_TYPE_TO_FILING_TYPE = {
     }
 }
 
-PAYMENT_REQUEST_TEMPLATE = {
-    "filingInfo": {
-        "filingTypes": [
-            {"filingTypeCode": ""}
-        ]
-    },
-    "businessInfo": {
-        "corpType": "BUS"
-    }
-}
-
 
 def create_payment(account_id: str, filing_types: list[str], user_jwt: JwtManager, header: dict, business_json: str) -> \
         tuple[int, dict, int]:
     """Create the invoice for the document access request."""
     payment_svc_url = current_app.config.get("PAYMENT_SVC_URL")
 
-    payload = PAYMENT_REQUEST_TEMPLATE
+    payload = {
+        "filingInfo": {
+            "filingTypes": [
+                {"filingTypeCode": ""}
+            ]
+        },
+        "businessInfo": {
+            "corpType": "BUS"
+        }
+    }
     payload["filingInfo"]["filingTypes"] = filing_types
 
     if folio_number := header.get("folioNumber"):
