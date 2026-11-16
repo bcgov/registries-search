@@ -93,8 +93,8 @@ def get_business_filing_document(identifier: str, filing_id: int, filing_name: s
     if (report_type := request.args.get("reportType")) and (drs_id := request.args.get("drsId")):
         lear_svc_url += f"?reportType={report_type}&drsId={drs_id}"
 
-    if (documentClass := request.args.get("documentClass")) and (drs_id := request.args.get("drsId")):
-        lear_svc_url += f"?documentClass={documentClass}&drsId={drs_id}"
+    if (document_class := request.args.get("documentClass")) and (drs_id := request.args.get("drsId")):
+        lear_svc_url += f"?documentClass={document_class}&drsId={drs_id}"
 
     try:
         token = get_bearer_token()
