@@ -2,7 +2,7 @@ name: SEARCH UI CI
 
 on:
   pull_request:
-    types: [assigned, synchronize]
+    types: [assigned, synchronize, opened]
     paths:
       - "search-ui/**"
 

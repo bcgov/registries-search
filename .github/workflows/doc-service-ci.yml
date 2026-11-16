@@ -2,7 +2,7 @@ name: SEARCH DOC SERVICE CI
 
 on:
   pull_request:
-    types: [assigned, synchronize]
+    types: [assigned, synchronize, opened]
     paths:
       - "doc-service/**"
 
