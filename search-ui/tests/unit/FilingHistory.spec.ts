@@ -117,6 +117,46 @@ describe('Filing History List - misc functionality', () => {
         wrapper.unmount()
     })
 
+    it('shows the review imported data filing with its display name', async () => {
+        // init store
+        setEntity(cp_entity)
+        filingHistory.filings = [
+            {
+                availableOnPaperOnly: false,
+                businessIdentifier: 'BC1234567',
+                commentsCount: 0,
+                displayName: 'Review Migrated Information',
+                effectiveDate: '2026-11-17 22:15:42 GMT',
+                filingId: 333,
+                isFutureEffective: false,
+                name: FilingTypes.REVIEW_IMPORTED_DATA,
+                status: FilingStatus.COMPLETED,
+                submittedDate: '2026-11-17 22:15:42 GMT',
+                submitter: 'Submitter 3',
+                documentsLink: '',
+                commentsLink: '',
+                filingLink: '',
+                data: {
+                    applicationDate: '',
+                    legalFilings: ['reviewImportedData'],
+                    reviewImportedData: { sectionsChanged: ['offices'] }
+                }
+            }
+        ]
+
+        const wrapper = mount(FilingHistoryList, { isLocked: true })
+        const vm = wrapper.vm as any
+        await vm.loadData()
+        await wrapper.vm.$nextTick()
+
+        expect(vm.historyItems.length).toEqual(1)
+        expect(vm.historyItems[0].isTypeStaff).toBeFalsy()
+        expect(wrapper.find('.filing-history-item').find('.item-header__title').text())
+        .toEqual('Review Migrated Information')
+
+        wrapper.unmount()
+    })
+
     it('expands a paper-only filing', async () => {
         // init store
         setEntity(cp_entity)

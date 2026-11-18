@@ -75,6 +75,11 @@ export interface ApiFiling {
     // registrar's order filings only
     registrarsOrder?: any // some object
 
+    // review imported data filings only
+    reviewImportedData?: {
+      sectionsChanged: Array<string>
+    }
+
     // special resolution filings only
     specialResolution?: any // some object
 

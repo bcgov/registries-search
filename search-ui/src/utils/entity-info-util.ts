@@ -166,6 +166,7 @@ export const getCorpTypeNumberedDescription = GetCorpNumberedDescription
         case FilingTypes.INVOLUNTARY_DISSOLUTION: return FilingNames.INVOLUNTARY_DISSOLUTION
         case FilingTypes.REGISTRARS_NOTATION: return FilingNames.REGISTRARS_NOTATION
         case FilingTypes.REGISTRARS_ORDER: return FilingNames.REGISTRARS_ORDER
+        case FilingTypes.REVIEW_IMPORTED_DATA: return FilingNames.REVIEW_IMPORTED_DATA
         case FilingTypes.SPECIAL_RESOLUTION: return FilingNames.SPECIAL_RESOLUTION
         case FilingTypes.TRANSITION: return FilingNames.TRANSITION_APPLICATION
         case FilingTypes.VOLUNTARY_DISSOLUTION: return FilingNames.VOLUNTARY_DISSOLUTION
