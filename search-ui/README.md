@@ -1,5 +1,11 @@
 [![Lifecycle:Retired](https://img.shields.io/badge/Lifecycle-Retired-d45500)](<Redirect-URL>)
 
+> [!WARNING]
+> **ARCHIVED / DEPRECATED**
+> This directory contains legacy code and is no longer maintained.
+>
+> **Replacement:** See [`bor-ui`](https://github.com/bcgov/person-search/tree/main/bor-ui) for the active implementation.
+
 # search-ui
 
 ## Project configuration
