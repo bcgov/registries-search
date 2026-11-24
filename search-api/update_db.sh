@@ -1,4 +1,5 @@
 #! /bin/sh
+set -e
 COMMAND=${1:-upgrade}
 REVISION=${2:-}
 echo starting $COMMAND $REVISION
