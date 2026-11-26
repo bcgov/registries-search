@@ -90,7 +90,8 @@ def test_create_invoice(client, session, jwt, mocker, test_name, mock_response, 
         assert not document_access_request.expiry_date
 
 
-def test_create_invoice_failure(client, session, jwt, mocker):
+@pytest.mark.parametrize('pay_status', [HTTPStatus.BAD_REQUEST, HTTPStatus.PAYMENT_REQUIRED])
+def test_create_invoice_failure(client, session, jwt, mocker, pay_status):
     """Assert that access request is updated with payment error."""
     document_access_request = DocumentAccessRequest(
         business_identifier='CP1234567',
@@ -106,7 +107,7 @@ def test_create_invoice_failure(client, session, jwt, mocker):
         'documentAccessRequest': document_access_request
     }
 
-    mock_response = MockResponse({'type': 'BAD_REQUEST'}, HTTPStatus.BAD_REQUEST)
+    mock_response = MockResponse({'type': 'BAD_REQUEST'}, pay_status)
     mocker.patch('search_api.request_handlers.document_access_request_handler.create_payment',
                  return_value=mock_response)
     mocker.patch('search_api.request_handlers.document_access_request_handler.get_role',

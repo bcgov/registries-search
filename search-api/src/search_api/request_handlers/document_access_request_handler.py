@@ -86,7 +86,7 @@ def create_invoice(document_access_request: DocumentAccessRequest, user_jwt: Jwt
 
             document_access_request.save()
             return {"isPaymentActionRequired": is_action_required}, HTTPStatus.CREATED
-        if payment_response.status_code == HTTPStatus.BAD_REQUEST:
+        if payment_response.status_code in (HTTPStatus.BAD_REQUEST, HTTPStatus.PAYMENT_REQUIRED):
             # Set payment error type used to retrieve error messages from pay-api
             error_type = payment_response.json().get("type")
             document_access_request.payment_status_code = error_type
